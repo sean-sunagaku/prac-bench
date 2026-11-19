@@ -220,6 +220,7 @@ Create the most realistic editable 3D upper-body portrait you can in the actual 
 | [research/aggregation/candidates.md](research/aggregation/candidates.md) | 集約結果。全30案を統合した22候補のリストと下書きスコア |
 | [research/round2/](research/round2/) | ラウンド2の記録。レビューブリーフ（`brief-template.md`）と各モデルの相互レビュー（`neon-REVIEW.md`、`carbon-REVIEW.md`、`astra-REVIEW.md`、`sol-REVIEW.md`） |
 | [research/x-research-notes.md](research/x-research-notes.md) | 評価軸「Xバズり度」の根拠にした、X上で伸びている投稿形式の調査ノート |
+| [results/](results/) | 実施結果の格納先。日付ごとのディレクトリに、タスク別・モデル別に分けて出力を入れる（ルールは [results/README.md](results/README.md)） |
 | [final/shortlist-draft.md](final/shortlist-draft.md) | 最終候補の下書き合成（レビューの合成スコア表、評価が割れた候補、選定理由） |
 | [final/task-instructions.md](final/task-instructions.md) | 確定11件の指示文章集。各枠の「送るテキスト」と、運営側の仕様整理・実施手順・採点方法・未確定事項 |
 | [final/materials-frame6-traps.md](final/materials-frame6-traps.md) | 枠6の実施素材（罠の最終セット6種と題材の設計） |
