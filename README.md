@@ -213,13 +213,13 @@ Create the most realistic editable 3D upper-body portrait you can in the actual 
 
 | パス | 内容 |
 |---|---|
-| [brief.md](brief.md) | ラウンド1のブリーフ（依頼内容、分野バランス、評価軸、各案に書く項目） |
-| [addendum-round1.md](addendum-round1.md) / [addendum2-round1.md](addendum2-round1.md) | ラウンド1の途中で全モデルへ送った補足指示 |
-| [round1/](round1/) | ラウンド1の記録。各モデルの提案（`neon-RESULT.md`、`carbon-RESULT.md`、`astra-RESULT.md`、`sol-RESULT.md`、`opus-RESULT.md`）と、配布に使ったプロンプト |
-| [aggregation-rubric.md](aggregation-rubric.md) | 集約のルール（候補の統合規則と下書きスコアの配点） |
-| [aggregation/candidates.md](aggregation/candidates.md) | 集約結果。全30案を統合した22候補のリストと下書きスコア |
-| [round2/](round2/) | ラウンド2の記録。レビューブリーフ（`brief-template.md`）と各モデルの相互レビュー（`neon-REVIEW.md`、`carbon-REVIEW.md`、`astra-REVIEW.md`、`sol-REVIEW.md`） |
-| [x-research-notes.md](x-research-notes.md) | 評価軸「Xバズり度」の根拠にした、X上で伸びている投稿形式の調査ノート |
+| [research/brief.md](research/brief.md) | ラウンド1のブリーフ（依頼内容、分野バランス、評価軸、各案に書く項目） |
+| [research/addendum-round1.md](research/addendum-round1.md) / [research/addendum2-round1.md](research/addendum2-round1.md) | ラウンド1の途中で全モデルへ送った補足指示 |
+| [research/round1/](research/round1/) | ラウンド1の記録。各モデルの提案（`neon-RESULT.md`、`carbon-RESULT.md`、`astra-RESULT.md`、`sol-RESULT.md`、`opus-RESULT.md`）と、配布に使ったプロンプト |
+| [research/aggregation-rubric.md](research/aggregation-rubric.md) | 集約のルール（候補の統合規則と下書きスコアの配点） |
+| [research/aggregation/candidates.md](research/aggregation/candidates.md) | 集約結果。全30案を統合した22候補のリストと下書きスコア |
+| [research/round2/](research/round2/) | ラウンド2の記録。レビューブリーフ（`brief-template.md`）と各モデルの相互レビュー（`neon-REVIEW.md`、`carbon-REVIEW.md`、`astra-REVIEW.md`、`sol-REVIEW.md`） |
+| [research/x-research-notes.md](research/x-research-notes.md) | 評価軸「Xバズり度」の根拠にした、X上で伸びている投稿形式の調査ノート |
 | [final/shortlist-draft.md](final/shortlist-draft.md) | 最終候補の下書き合成（レビューの合成スコア表、評価が割れた候補、選定理由） |
 | [final/task-instructions.md](final/task-instructions.md) | 確定11件の指示文章集。各枠の「送るテキスト」と、運営側の仕様整理・実施手順・採点方法・未確定事項 |
 | [final/materials-frame6-traps.md](final/materials-frame6-traps.md) | 枠6の実施素材（罠の最終セット6種と題材の設計） |

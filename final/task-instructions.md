@@ -2,7 +2,7 @@
 
 作成日：2026-11-20／更新日：2026-11-20
 
-モデル比較ベンチマーク（参加モデル：Neon／Carbon／Astra／Sol／Opus の5モデル）で実施する確定10タスクについて、「モデルに送るテキスト」と「運営側の仕様整理・実施手順」を分けて整理した文書。選定の経緯・理由は `final/shortlist-draft.md`、候補の詳細は `aggregation/candidates.md`、原案は `round1/` の各 RESULT.md を参照。
+モデル比較ベンチマーク（参加モデル：Neon／Carbon／Astra／Sol／Opus の5モデル）で実施する確定11タスクについて、「モデルに送るテキスト」と「運営側の仕様整理・実施手順」を分けて整理した文書。選定の経緯・理由は `final/shortlist-draft.md`、候補の詳細は `research/aggregation/candidates.md`、原案は `research/round1/` の各 RESULT.md を参照。
 
 ## 全体方針（本人の最終方針 2026-11-20）
 
