@@ -40,13 +40,13 @@
 
 ### 指示の方針（確定タスクの「送るテキスト」について）
 
-確定したタスクの指示文は、**できる限り抽象的にする** ことが主催者の方針です。「何を作るか」（題材・作るもの・目的）だけを明確にし、成果物の形式や手段・実装方法、細かいパラメータは指定せず、各AIに考えさせます。その判断の差こそが比較の対象です。各タスクの詳細な仕様は運営側の資料として別に整理してありますが、モデルへ送るのは各枠の「送るテキスト」だけです（詳細は [final/task-instructions.md](final/task-instructions.md)）。
+確定したタスクの指示文は、**できる限り抽象的にする** ことが主催者の方針です。「何を作るか」（題材・作るもの・目的）だけを明確にし、成果物の形式や手段・実装方法、細かいパラメータは指定せず、各AIに考えさせます。その判断の差こそが比較の対象です。各タスクの詳細な仕様は運営側の資料として別に整理してありますが、モデルへ送るのは各枠の「送るテキスト」だけです（詳細は [spec/task-instructions.md](spec/task-instructions.md)）。
 
 ---
 
 ## 最終選定タスク（全11件）
 
-各タスクについて「題材・何を作るか」「モデルに送るテキスト」「比較・採点の見どころ」を書き出します。仕様の詳細は [final/task-instructions.md](final/task-instructions.md) を参照してください。
+各タスクについて「題材・何を作るか」「モデルに送るテキスト」「比較・採点の見どころ」を書き出します。仕様の詳細は [spec/task-instructions.md](spec/task-instructions.md) を参照してください。
 
 ### 枠1：架空ガジェット「KOKU-01」の製品LP＋触れるデモ
 
@@ -126,7 +126,7 @@
 
 ### 枠6：罠入り実務データの真因特定と修正報告
 
-**題材・何を作るか**：数字の不整合が混ざった会社の売上データ一式を全ファイル突き合わせ、合わない原因をすべて特定して、正しい数字と根拠を示した報告を作る。題材は架空の雑貨チェーン（店舗4店＋EC＋卸）の2026年9〜10月売上。罠は6種（表記ゆれ、重複行と訂正・取消、日時の解釈、税込・税抜と税率区分の混在、集計対象外データの混入、証言で裏づける外れ値）に厳選し、依頼者の誤った仮説への反証も仕掛けに含む。実施素材は [final/materials-frame6-traps.md](final/materials-frame6-traps.md)。
+**題材・何を作るか**：数字の不整合が混ざった会社の売上データ一式を全ファイル突き合わせ、合わない原因をすべて特定して、正しい数字と根拠を示した報告を作る。題材は架空の雑貨チェーン（店舗4店＋EC＋卸）の2026年9〜10月売上。罠は6種（表記ゆれ、重複行と訂正・取消、日時の解釈、税込・税抜と税率区分の混在、集計対象外データの混入、証言で裏づける外れ値）に厳選し、依頼者の誤った仮説への反証も仕掛けに含む。実施素材は [spec/materials-frame6-traps.md](spec/materials-frame6-traps.md)。
 
 **モデルに送るテキスト**：
 
@@ -140,7 +140,7 @@
 
 ### 枠7：経営判断スライド（罠＆ミニ財務つき・6枚固定）
 
-**題材・何を作るか**：対立する意見、数字の食い違い、表に出してはいけない情報が混ざった「雑なメモ」から、経営会議でそのまま判断できる提案資料を厳密6枚・役割固定で作る。題材は赤字が続く地方水族館のリニューアル投資。必須修繕費を差し引いた実質予算枠を見抜けるか、メモ内の矛盾やオフレコ情報をどう扱うかが仕掛け。6枚の役割とメモ最終版は [final/materials-frame7-memo.md](final/materials-frame7-memo.md)。
+**題材・何を作るか**：対立する意見、数字の食い違い、表に出してはいけない情報が混ざった「雑なメモ」から、経営会議でそのまま判断できる提案資料を厳密6枚・役割固定で作る。題材は赤字が続く地方水族館のリニューアル投資。必須修繕費を差し引いた実質予算枠を見抜けるか、メモ内の矛盾やオフレコ情報をどう扱うかが仕掛け。6枚の役割とメモ最終版は [spec/materials-frame7-memo.md](spec/materials-frame7-memo.md)。
 
 **モデルに送るテキスト**：
 
@@ -184,7 +184,7 @@
 
 **題材・何を作るか**：参照写真をもとに、Blenderで実在感のある女の子の3D上半身ポートレートを作る。条件と進め方は、別プロジェクトとして実施実績のある AI Girl 3D Benchmark の方式をそのまま流用する。当初は「視点で見え方が変わるトリック彫刻」が条件付き候補だったが、主催者の判断で外れ、シンプルな造形の正面比較である本枠に差し替わった。枠4が「シーン造形」なら、こちらは「キャラクター造形」の枠。
 
-**モデルに送るテキスト**：既存の AI Girl 3D Benchmark の原文（英語）をそのまま使う。冒頭部分は次のとおりで、全文は [final/task-instructions.md](final/task-instructions.md) の枠10に収録している。
+**モデルに送るテキスト**：既存の AI Girl 3D Benchmark の原文（英語）をそのまま使う。冒頭部分は次のとおりで、全文は [spec/task-instructions.md](spec/task-instructions.md) の枠10に収録している。
 
 ```text
 Create the most realistic editable 3D upper-body portrait you can in the actual installed Blender, using input/reference.png as the appearance reference. Deliver the completed Blender scene and genuine Blender renders, not a plan. This is a four-model comparison; you have exactly the same prompt, photograph, common base mesh, software and requirements as the other entrants. Work independently in this directory; never read sibling model directories, comparison results, or other entrants' work.
@@ -221,14 +221,14 @@ Create the most realistic editable 3D upper-body portrait you can in the actual 
 | [research/round2/](research/round2/) | ラウンド2の記録。レビューブリーフ（`brief-template.md`）と各モデルの相互レビュー（`neon-REVIEW.md`、`carbon-REVIEW.md`、`astra-REVIEW.md`、`sol-REVIEW.md`） |
 | [research/x-research-notes.md](research/x-research-notes.md) | 評価軸「Xバズり度」の根拠にした、X上で伸びている投稿形式の調査ノート |
 | [results/](results/) | 実施結果の格納先。日付ごとのディレクトリに、タスク別・モデル別に分けて出力を入れる（ルールは [results/README.md](results/README.md)） |
-| [final/shortlist-draft.md](final/shortlist-draft.md) | 最終候補の下書き合成（レビューの合成スコア表、評価が割れた候補、選定理由） |
-| [final/task-instructions.md](final/task-instructions.md) | 確定11件の指示文章集。各枠の「送るテキスト」と、運営側の仕様整理・実施手順・採点方法・未確定事項 |
-| [final/materials-frame6-traps.md](final/materials-frame6-traps.md) | 枠6の実施素材（罠の最終セット6種と題材の設計） |
-| [final/materials-frame7-memo.md](final/materials-frame7-memo.md) | 枠7の実施素材（6枚の役割表、モデルに渡す生メモ最終版、運営用対応表） |
-| [final/space-outline.md](final/space-outline.md) | 選定結果をSpaceに書き出す際のアウトライン（計画メモ） |
+| [spec/shortlist-draft.md](spec/shortlist-draft.md) | 最終候補の下書き合成（レビューの合成スコア表、評価が割れた候補、選定理由） |
+| [spec/task-instructions.md](spec/task-instructions.md) | 確定11件の指示文章集。各枠の「送るテキスト」と、運営側の仕様整理・実施手順・採点方法・未確定事項 |
+| [spec/materials-frame6-traps.md](spec/materials-frame6-traps.md) | 枠6の実施素材（罠の最終セット6種と題材の設計） |
+| [spec/materials-frame7-memo.md](spec/materials-frame7-memo.md) | 枠7の実施素材（6枚の役割表、モデルに渡す生メモ最終版、運営用対応表） |
+| [spec/space-outline.md](spec/space-outline.md) | 選定結果をSpaceに書き出す際のアウトライン（計画メモ） |
 
 ## 状態
 
 - **選定は完了**（2026-11-20確定、全11件）。
 - **実施はこれから**です。各タスクを5モデルに実施させて横並び比較するフェーズは未着手です。
-- 実施フェーズの運用決めごと（制限時間、自動テストを実施するか、プレビュー自己修正の可否と上限、素材の渡し方の細部など）は、各枠の「未確定事項」として [final/task-instructions.md](final/task-instructions.md) に残っています。
+- 実施フェーズの運用決めごと（制限時間、自動テストを実施するか、プレビュー自己修正の可否と上限、素材の渡し方の細部など）は、各枠の「未確定事項」として [spec/task-instructions.md](spec/task-instructions.md) に残っています。
