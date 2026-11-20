@@ -1,0 +1,298 @@
+<a class="skip" href="#ch1">本文へ移動</a>
+<noscript><p style="margin:0;padding:12px 16px;background:#fbf6e8;font-size:15px">このページの図は JavaScript で動きます。ブラウザの設定で JavaScript を有効にしてください。</p></noscript>
+
+<header class="hero">
+  <div class="wide">
+    <h1><span class="line">渋滞を抜けたら、</span><span class="line">何もなかった。</span></h1>
+    <p class="lede">事故も工事もない高速道路で、なぜ突然、渋滞が生まれるのでしょうか。答えは「1台のブレーキ」と「人間の反応の遅れ」にあります。下の道路で、あなた自身の手で渋滞を起こして確かめてみてください。</p>
+
+    <div class="fig hero-fig" id="hero">
+      <canvas id="heroCanvas" aria-label="1周1kmの環状道路を30台の車が走るシミュレーション。車をタップするとブレーキを踏みます。" role="img"></canvas>
+      <div class="hero-panel static" id="heroPanel">
+        <div class="live" id="heroLive" aria-live="polite"></div>
+        <div class="row">
+          <button class="btn brake" id="heroBrake" aria-describedby="heroLive"><span class="fill"></span><span>黄色い印の車でブレーキ</span><small>長押しするほど強く</small></button>
+        </div>
+        <div class="stats" id="heroStats">
+          <div class="stat">ブレーキから<b class="tnum" id="hsT">—</b></div>
+          <div class="stat">いちばん遅い車<b class="tnum" id="hsMin">—</b></div>
+          <div class="stat">止まった車（延べ）<b class="tnum" id="hsStop">0<small>台</small></b></div>
+          <div class="stat">平均の速さ<b class="tnum" id="hsMean">—</b></div>
+        </div>
+      </div>
+      <div class="fig-bar">
+        <div class="legend-wrap" data-legend></div>
+        <span class="spacer"></span>
+        <div class="seg" data-speed="hero" role="group" aria-label="再生の速さ"><span class="lab">速さ</span><button aria-pressed="true" data-v="1">×1</button><button aria-pressed="false" data-v="3">×3</button></div>
+        <button class="btn ghost" id="heroReset">最初から</button>
+      </div>
+    </div>
+    <p class="fig-cap">1周1kmの環状道路を、30台が時速65kmで等間隔に走っています。合流も坂もありません。どの車もタップ（クリック）すると、その車が軽くブレーキを踏みます。色は速さを表し、白いほど速く、赤いほど遅い車です。</p>
+  </div>
+</header>
+
+<main>
+  <!-- 1 -->
+  <section class="chapter" id="ch1">
+    <div class="col">
+      <div class="sign"><div class="in"><span class="no">1</span><h2>犯人は、とっくに走り去っている</h2></div></div>
+      <p>ボタンを軽く押しただけなら、ブレーキを踏んだ車が落とした速さは十数km/hほどです。しかも数秒後には元の速さに戻っています。それなのに数十秒たつと、ずっと後ろの車が完全に止まりました。</p>
+      <p>止まった車のドライバーには、前が詰まったから止まったように見えます。原因になった車は、そのころには半周近く先を順調に走っています。誰も事故を起こしていないし、乱暴な運転をした人もいません。（環状道路なので、しばらくすると犯人の車も1周して、自分が作った渋滞の最後尾に追いつきます。それでも渋滞は消えません。もう誰か1台のせいではなくなっているからです。）</p>
+      <p>このとき、渋滞の<strong>かたまり</strong>そのものにも注目してください。ブレーキを踏んだ場所（赤い旗）にとどまらず、少しずつ<strong>後ろへ</strong>ずれていきます。次の図で、この動きをじっくり見てみましょう。</p>
+      <div class="note">この道路は1kmあたり30台で、第4章で見る「分かれ目（約25台）」をすでに超えています。それでもブレーキを踏ませるまで渋滞しないのは、第1〜3章では全員が完璧に一定の速さで走れることにしてあるからです。現実の道路では、誰かのわずかな減速が、このブレーキの役目を果たします。</div>
+    </div>
+  </section>
+
+  <!-- 2 -->
+  <section class="chapter" id="ch2">
+    <div class="col">
+      <div class="sign"><div class="in"><span class="no">2</span><h2>車は前へ、渋滞は後ろへ</h2></div></div>
+      <p>さっきの環状道路を切り開いて、まっすぐに並べました。右へ走って右端から出た車は、左端に戻ってきます。青い車が「あなた」で、黄色い枠の車が、あなたのちょうど半周先にいる15台前の車です。この車にブレーキを踏ませて、あなたに何が起きるか見てみましょう。</p>
+    </div>
+    <div class="wide">
+      <div class="fig" id="wave">
+        <canvas id="waveCanvas" role="img" aria-label="まっすぐに伸ばした道路と、その走行記録。車の跡は右上へ、渋滞の赤い帯は左上へ伸びていく。"></canvas>
+        <div class="panel">
+          <div class="live" id="waveLive" aria-live="polite"></div>
+          <div class="ctrls" style="align-items:center">
+            <button class="btn" id="waveGo">15台前の車にブレーキを踏ませる</button>
+            <div class="seg" data-speed="wave" role="group" aria-label="再生の速さ"><span class="lab">速さ</span><button aria-pressed="false" data-v="1">×1</button><button aria-pressed="true" data-v="2">×2</button><button aria-pressed="false" data-v="4">×4</button></div>
+            <div class="stats">
+              <div class="stat">渋滞が動く向きと速さ<b class="tnum" id="wsWave">—</b></div>
+              <div class="stat">あなたが渋滞で失った時間<b class="tnum" id="wsLost">—</b></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="fig-cap">上は道路のいまの様子です。下の「走行記録」は、道路の様子を0.25秒ごとに写し取って積み重ねたもので、いちばん上が「いま」、下へいくほど前の時刻です。1本の線が1台の車の動きを表し、赤い帯が渋滞（時速40km以下）の場所です。</p>
+    </div>
+    <div class="col">
+      <p>走行記録では、車の線は右上へ伸びます（時間がたつと前へ進む）。ところが渋滞の赤い帯は<strong>左上</strong>へ伸びます。渋滞は、車とは逆向きに動いているのです。</p>
+      <p>しくみは単純です。渋滞の先頭では、前が空いた車から順に走り去っていきます。最後尾には、後ろから来た車が次々に加わります。車は先頭から抜け、最後尾に加わる。その結果、かたまりの位置は後ろへずれていきます。</p>
+      <div class="note">駅の改札に並ぶ行列を思い浮かべてください。先頭の人が1歩進むと、その人の後ろにできたすき間を次の人が詰め、そのまた後ろの人が詰め……と、すき間が1人ずつ後ろへ伝わっていきます。人は前へ進んでいるのに、すき間は後ろへ進みます。渋滞の波も同じです。</div>
+      <p>実際の高速道路でも、渋滞の波はおよそ<strong>時速15〜20km</strong>で後ろへ進むことが観測されています。この図で測れる速さも時速20km前後で、ほぼ同じです。渋滞の中にいる人からは、波が後ろへ去っていくのは見えません。抜けた先に何もないのは、そのためです。</p>
+    </div>
+  </section>
+
+  <!-- 3 -->
+  <section class="chapter" id="ch3">
+    <div class="col">
+      <div class="sign"><div class="in"><span class="no">3</span><h2>小さなブレーキが育つわけ</h2></div></div>
+      <p>なぜ十数km/hの減速が、後ろでは「止まる」ほど大きくなるのでしょうか。カギは<strong>反応の遅れ</strong>です。前の車のブレーキランプが点いてから自分がブレーキを踏むまで、人はおよそ1秒かかります。</p>
+      <p>時速80kmの車は、1秒で約22m進みます。前の車が減速を始めてから自分が気づくまでの1秒間、自分はまだ元の速さのままなので、車間はぐっと詰まります。後ろの車は、詰まった分を取り戻すため、前の車より少し<strong>強く</strong>ブレーキを踏むことになります。その後ろの車は、さらに強く踏みます。伝言ゲームで話がだんだん大げさになるように、減速は後ろへいくほど大きくなります。</p>
+      <p>12台の車列で試してみましょう。先頭の車が、時速80kmから60kmへ減速します。</p>
+    </div>
+    <div class="wide">
+      <div class="fig" id="chain">
+        <div class="quiz" id="quiz">
+          <div class="q">予想してください。12台目の車はどうなると思いますか？</div>
+          <div class="choices" role="group" aria-label="予想">
+            <button class="btn ghost" data-a="small">少しだけ減速する</button>
+            <button class="btn ghost" data-a="same">先頭と同じくらい減速する</button>
+            <button class="btn ghost" data-a="stop">止まってしまう</button>
+          </div>
+        </div>
+        <canvas id="chainCanvas" role="img" aria-label="12台の車列と、各車がいちばん遅くなったときの速さの棒グラフ"></canvas>
+        <div class="verdict" id="chainVerdict" aria-live="polite"></div>
+        <div class="panel">
+          <div class="ctrls">
+            <div class="ctrl">
+              <label for="chTau">反応の遅れ <b class="tnum" id="chTauV">1.1秒</b></label>
+              <input type="range" id="chTau" min="0.3" max="2" step="0.1" value="1.1">
+              <span class="hint">前の車の変化に気づいてから、ペダルを踏むまでの時間</span>
+            </div>
+            <div class="ctrl">
+              <label for="chGap">車間距離 <b class="tnum" id="chGapV">25m</b></label>
+              <input type="range" id="chGap" min="15" max="60" step="1" value="25">
+              <span class="hint">時速80kmで走っているときに、前の車とあける距離</span>
+            </div>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center">
+            <button class="btn" id="chGo">先頭の車がブレーキ</button>
+            <div class="seg" data-speed="chain" role="group" aria-label="再生の速さ"><span class="lab">速さ</span><button aria-pressed="false" data-v="0.5">スロー</button><button aria-pressed="true" data-v="1.5">ふつう</button><button aria-pressed="false" data-v="4">速く</button></div>
+          </div>
+          <div style="font-size:14.5px;font-weight:700;color:#ffd27a;margin-top:2px">やってみよう<span style="font-weight:400;color:#9fb0b6;font-size:13px">（スライダーで条件を変えると自動で再生し、条件を満たすとチェックが付きます）</span></div>
+          <ul class="missions" id="missions">
+            <li data-m="1"><span class="box">✓</span><span class="t">そのままブレーキを踏ませて、止まる車が出るのを見る<span class="why"></span></span></li>
+            <li data-m="2"><span class="box">✓</span><span class="t">車間距離だけを広げて、止まる車をゼロにする<span class="why"></span></span></li>
+            <li data-m="3"><span class="box">✓</span><span class="t">車間距離は25m以下のまま、反応の遅れだけを短くして、止まる車をゼロにする<span class="why"></span></span></li>
+          </ul>
+        </div>
+      </div>
+      <p class="fig-cap">棒の高さは、各車がいちばん遅くなったときの速さです。右端が先頭で、左へいくほど後ろの車です。薄い枠は、ひとつ前に試した結果です。</p>
+    </div>
+    <div class="col">
+      <div class="got">
+        <h4>わかったこと</h4>
+        <ul>
+          <li><strong>車間が詰まっているほど</strong>、反応が遅れたぶんを取り戻す余裕がなく、減速が大きく伝わります。</li>
+          <li><strong>反応が遅いほど</strong>、気づいたときには車間が詰まっていて、強いブレーキが必要になります。</li>
+          <li>車間がたっぷりあれば、反応が遅れても、ゆっくりした減速で受け止められます。波はそこで小さくなって消えます。</li>
+        </ul>
+      </div>
+      <p>前の車の減速に気づいてブレーキを踏むまでには、状況によっておよそ0.7〜1.5秒かかるとされます。身構えていれば約0.7秒ですが、前の車のブレーキランプのように不意に来る合図だと約1.25秒かかります。反応の遅れはゼロにはできません。だから現実の道路で効くのは、<strong>車間</strong>のほうです。この図では、車間をおよそ40mまで広げると、反応の遅れが1.1秒でも波は育たなくなります。</p>
+    </div>
+  </section>
+
+  <!-- 4 -->
+  <section class="chapter" id="ch4">
+    <div class="col">
+      <div class="sign"><div class="in"><span class="no">4</span><h2>1kmに25台を超えると、自然に生まれる</h2></div></div>
+      <p>現実のドライバーは、ずっと一定の速さでは走れません。少しアクセルが緩んだり、気づかない上り坂で速度が落ちたりします。これまでの図では全員が完璧に一定の速さで走っていましたが、ここでは全員の運転に、こうした小さな<strong>ゆらぎ</strong>を入れます。わざとブレーキを踏む車は1台もありません。</p>
+      <p>台数を変えて、何が起きるか見てください。</p>
+    </div>
+    <div class="wide">
+      <div class="fig" id="dens">
+        <canvas id="densCanvas" role="img" aria-label="運転にゆらぎのある環状道路。台数を変えられる。"></canvas>
+        <div class="panel">
+          <div class="live" id="densLive" aria-live="polite"></div>
+          <div class="ctrls" style="align-items:flex-end">
+            <div class="ctrl" style="max-width:420px">
+              <label for="dnN">1kmあたりの台数 <b class="tnum" id="dnNV">20台</b></label>
+              <input type="range" id="dnN" min="10" max="50" step="1" value="20">
+              <span class="hint" id="dnHint">車間 およそ45m</span>
+            </div>
+            <div class="seg" data-speed="dens" role="group" aria-label="再生の速さ"><span class="lab">速さ</span><button aria-pressed="false" data-v="1">×1</button><button aria-pressed="true" data-v="3">×3</button><button aria-pressed="false" data-v="6">×6</button></div>
+            <div class="stats">
+              <div class="stat">平均の速さ<b class="tnum" id="dsMean">—</b></div>
+              <div class="stat">1時間に流れる台数<b class="tnum" id="dsFlow">—</b></div>
+            </div>
+          </div>
+        </div>
+        <div class="chart" id="flowChart">
+          <div class="ttl">混み具合と、1時間に流れる台数</div>
+          <div class="sub">点線は、全員が等間隔のまま走れた場合の計算値です。実線は、ゆらぎのある道路を10分間走らせて測った値です。大きな丸は、いま上で走っている道路の値です。</div>
+          <svg id="flowSvg" role="img" aria-label="横軸が1kmあたりの台数、縦軸が1時間に流れる台数のグラフ"></svg>
+          <div class="tip" id="flowTip"></div>
+        </div>
+        <div class="tablebox"><button class="linkbtn" id="flowTableBtn" aria-expanded="false">グラフの数値を表で見る</button><div id="flowTable" hidden></div></div>
+      </div>
+      <p class="fig-cap">流れる台数は「1kmあたりの台数 × 平均の速さ」で計算しています。台数を変えると、道路は等間隔の状態からやり直します。</p>
+    </div>
+    <div class="col">
+      <p>1kmあたり20台くらいまでは、ゆらぎがあってもすぐ消えて、流れは順調なままです。ところが25台を超えると、しばらくして誰かのわずかな減速が育ち、止まる車が出てきます。これが自然渋滞です。</p>
+      <p>実際の高速道路でも、1車線1kmあたり約25台（平均すると約40mに1台）を超えると、渋滞が起きやすくなることが観測データから分かっています。渋滞を研究する西成活裕さん（東京大学）らが示した値です。この図の道路も、ちょうどそのあたりで性質が変わります。</p>
+      <p>グラフも見てください。台数が増えるほど、1時間に流れる台数は増えていきます。ただしそれは分かれ目までです。分かれ目を超えると渋滞が起きて、<strong>台数を増やしたのに、流れる台数はかえって減ります</strong>。点線（等間隔のまま走れた場合）との差が、渋滞のせいで失われた分です。</p>
+      <div class="note">2008年に発表された実験で、名古屋大学の杉山雄規さん、東京大学の西成活裕さんらは、1周230mの円形コースで22台の車に「時速30kmくらいで、前の車に安全についていく」ことだけを頼みました。坂も合流もないのに、しばらくすると渋滞のかたまりが生まれ、時速約20kmで後ろへ進んでいきました。この図は、その実験を高速道路の速さで再現したものです。</div>
+    </div>
+  </section>
+
+  <!-- 5 -->
+  <section class="chapter" id="ch5">
+    <div class="col">
+      <div class="sign"><div class="in"><span class="no">5</span><h2>最初のブレーキは、どこで生まれる？</h2></div></div>
+      <p>現実の高速道路では、最初のきっかけを作るのは「わざとのブレーキ」ではありません。ドライバー自身も気づかないくらいの減速です。車が多いときに次のような場所でそれが起きると、波が育ちはじめます。</p>
+      <div class="places">
+        <div class="place">
+          <svg viewBox="0 0 220 90" aria-hidden="true"><path d="M0 30 C60 30 80 70 110 70 S170 26 220 22" fill="none" stroke="#262f39" stroke-width="9" stroke-linecap="round"/><path d="M0 30 C60 30 80 70 110 70 S170 26 220 22" fill="none" stroke="#fff" stroke-width="1.2" stroke-dasharray="6 7"/><g transform="translate(140 55) rotate(-22)"><rect x="-9" y="-5" width="18" height="10" rx="3" fill="#f7931e"/><circle cx="-9" cy="-3" r="2.2" fill="#ff3b30"/><circle cx="-9" cy="3" r="2.2" fill="#ff3b30"/></g><text x="98" y="88" font-size="11" fill="#4a5853" text-anchor="middle">ここから上り坂</text></svg>
+          <h4>サグ（下り坂から上り坂へ変わる所）</h4>
+          <p>坂がゆるやかすぎて、上り坂だと気づきません。アクセルを踏み増さないので、知らないうちに速度が落ちます。</p>
+        </div>
+        <div class="place">
+          <svg viewBox="0 0 220 90" aria-hidden="true"><path d="M120 76 V40 A40 40 0 0 1 200 40 V76 Z" fill="#cfd9d4"/><path d="M134 76 V44 A26 26 0 0 1 186 44 V76 Z" fill="#16201c"/><rect x="0" y="70" width="220" height="10" fill="#262f39"/><g transform="translate(92 64)"><rect x="-10" y="-6" width="20" height="11" rx="3" fill="#ffd35a"/><circle cx="-10" cy="-3" r="2.2" fill="#ff3b30"/><circle cx="-10" cy="2" r="2.2" fill="#ff3b30"/></g><text x="60" y="40" font-size="11" fill="#4a5853" text-anchor="middle">暗い・狭く見える</text></svg>
+          <h4>トンネルの入口</h4>
+          <p>中が暗く、壁が迫って見えるので、思わずアクセルを緩めたり、ブレーキを踏んだりしがちです。</p>
+        </div>
+        <div class="place">
+          <svg viewBox="0 0 220 90" aria-hidden="true"><rect x="0" y="22" width="220" height="40" fill="#262f39"/><path d="M0 42 H220" stroke="#fff" stroke-width="1.2" stroke-dasharray="8 8"/><path d="M0 84 C60 84 90 64 140 62" fill="none" stroke="#262f39" stroke-width="16"/><g transform="translate(118 60) rotate(-10)"><rect x="-10" y="-5" width="20" height="10" rx="3" fill="#e8f1ee"/></g><g transform="translate(150 52)"><rect x="-10" y="-5" width="20" height="10" rx="3" fill="#f7931e"/><circle cx="-10" cy="-3" r="2.2" fill="#ff3b30"/><circle cx="-10" cy="3" r="2.2" fill="#ff3b30"/></g><text x="60" y="15" font-size="11" fill="#4a5853" text-anchor="middle">急に割り込まれると…</text></svg>
+          <h4>合流・車線変更</h4>
+          <p>目の前に車が入ってくると車間が急に短くなり、後ろの車はブレーキを踏みます。それが最初の一押しになります。</p>
+        </div>
+      </div>
+      <p id="nexcoText">NEXCO東日本によると、管内で1年間に起きる渋滞の約7割は、事故や工事ではなく、車が集中する「交通集中」によるものです。そしてその発生場所の約6割を、上り坂とサグが占めています（2025年）。</p>
+    </div>
+  </section>
+
+  <!-- 6 -->
+  <section class="chapter" id="ch6">
+    <div class="col">
+      <div class="sign"><div class="in"><span class="no">6</span><h2>波は、車間のゆとりで消せる</h2></div></div>
+      <p>反応の遅れが波を育てるなら、波を吸収するのは<strong>車間のゆとり</strong>です。下の道路では、すでに渋滞の波が何周も回っています。ここに「ゆとり運転」の車を入れてみましょう。</p>
+      <p>ゆとり運転の車は、前の車にぴったりついていくのをやめて、自分のこれまでの平均の速さで、一定のペースで走ります。前の車が離れても急いで追いつかず、前が詰まってきたら早めにゆっくり減速します。あいた車間がクッションになり、止まらずに波をやり過ごします。</p>
+    </div>
+    <div class="wide">
+      <div class="fig" id="fix">
+        <canvas id="fixCanvas" role="img" aria-label="渋滞の波がある環状道路。ゆとり運転の車を加えられる。"></canvas>
+        <div class="panel">
+          <div class="live" id="fixLive" aria-live="polite"></div>
+          <div class="ctrls" style="align-items:center">
+            <div class="seg" id="absSeg" role="group" aria-label="ゆとり運転の車の台数"><span class="lab">ゆとり運転の車</span><button aria-pressed="true" data-n="0">0台</button><button aria-pressed="false" data-n="1">1台</button><button aria-pressed="false" data-n="2">2台</button><button aria-pressed="false" data-n="3">3台</button></div>
+            <div class="seg" data-speed="fix" role="group" aria-label="再生の速さ"><span class="lab">速さ</span><button aria-pressed="false" data-v="1">×1</button><button aria-pressed="true" data-v="3">×3</button><button aria-pressed="false" data-v="6">×6</button></div>
+            <button class="btn ghost" id="fixReset">渋滞した状態に戻す</button>
+          </div>
+          <div class="stats">
+            <div class="stat">直近1分で止まった車<b class="tnum" id="fsStops">—</b></div>
+            <div class="stat">いちばん遅い車<b class="tnum" id="fsMin">—</b></div>
+            <div class="stat">平均の速さ（直近1分）<b class="tnum" id="fsMean">—</b></div>
+          </div>
+        </div>
+        <details class="more" id="fixMore">
+          <summary>条件を自由に変えて試す</summary>
+          <div class="ctrls">
+            <div class="ctrl"><label for="fxN">1kmあたりの台数 <b class="tnum" id="fxNV">26台</b></label><input type="range" id="fxN" min="10" max="50" step="1" value="26"></div>
+            <div class="ctrl"><label for="fxTau">反応の遅れ <b class="tnum" id="fxTauV">1.1秒</b></label><input type="range" id="fxTau" min="0.3" max="2" step="0.1" value="1.1"></div>
+            <div class="ctrl"><label for="fxNoise">運転のゆらぎ <b class="tnum" id="fxNoiseV">ふつう</b></label><input type="range" id="fxNoise" min="0" max="3" step="1" value="2"></div>
+            <span class="hint" style="font-size:13px;color:#9fb0b6;flex-basis:100%">ここでも、車をタップするとその車がブレーキを踏みます。台数を変えると道路はやり直しになります。</span>
+          </div>
+        </details>
+      </div>
+      <p class="fig-cap">水色の車がゆとり運転の車です。ほかの車の色は速さを表します。グラフの線は、いちばん遅い車の速さの移り変わりです。</p>
+    </div>
+    <div class="col">
+      <p>1台だけでは、波は弱まるものの消えきらず、止まる車がまた出てきます。2〜3台（全体の1割ほど）入れると、数分で渋滞の波が消えていきます（×6で見ると早く確かめられます）。そして<strong>全体の平均の速さは、むしろ上がります</strong>。止まっては発進する運転より、ゆったりでも一定に流れるほうが、結果として速く進めるのです。</p>
+      <p>2018年に発表されたアメリカの研究チーム（Sternら）の実験では、1周260mのコースを約20台で走らせ、そのうち1台だけを、速さを自動で調整する車にしてゆとりのある走り方をさせました。すると渋滞の波が消え、いちばんうまくいった条件では、速さのばらつきが約8割減り、燃料の消費は約4割減り、通過できた台数は約14%増えました。この実験は時速30km弱のゆっくりした流れでしたが、この図は高速道路の速さで、波がより育ちやすい条件にしてあります。そのため1台だけでは消えきりません。日本でも2009年に、中央道の小仏トンネル付近で、車間を40mほどあけて走る車を何台か走らせる実験が行われ、流れの速さが回復したと報じられています。</p>
+
+      <h3>ふだんの運転でできること</h3>
+      <p>NEXCO東日本も「渋滞予防運転」として、上り坂やサグでの無意識な速度低下に気をつけること、車間距離をとること、むやみに車線変更をしないこと、渋滞の先頭では速やかに速度を戻すことを呼びかけています。</p>
+      <ul class="tips">
+        <li><span><strong>車間距離をたっぷりとる。</strong>前の車が減速しても、強いブレーキを踏まずに済みます。後ろへ波を送らないための、いちばん確かな方法です。</span></li>
+        <li><span><strong>上り坂やトンネルの手前では、速度の低下に気をつける。</strong>知らないうちに落ちた速度が、最初のきっかけになります。</span></li>
+        <li><span><strong>前方にブレーキランプが見えたら、早めにアクセルを緩める。</strong>止まる直前まで詰めるより、ゆっくり近づくほうが波を吸収できます。</span></li>
+        <li><span><strong>渋滞の先頭では、前が空いたらすぐスムーズに発進する。</strong>出ていく車が早いほど、渋滞は早く小さくなります。</span></li>
+        <li><span><strong>無理な車線変更や割り込みをしない。</strong>入られた側の車間が急に縮み、ブレーキの連鎖が始まります。</span></li>
+      </ul>
+      <p>「車間をあけると割り込まれる」と思うかもしれません。割り込まれたら、あわてて詰め直したり強いブレーキを踏んだりせず、少しずつ車間を戻せば十分です。</p>
+    </div>
+  </section>
+
+  <!-- まとめ -->
+  <section class="chapter" id="ch7">
+    <div class="col">
+      <div class="sign"><div class="in"><span class="no">7</span><h2>まとめ：渋滞は誰のせいでもない</h2></div></div>
+      <ol class="summary">
+        <li><b>きっかけは、ほんの小さな減速</b>1台の軽いブレーキや、坂道でのわずかな速度低下で十分です。</li>
+        <li><b>反応の遅れが、減速を後ろへ大きくしていく</b>車間が詰まっていると、後ろの車ほど強いブレーキが必要になり、ついには止まる車が出ます。</li>
+        <li><b>車が多すぎると、波は消えずに育つ</b>1車線1kmに約25台（約40mに1台）を超えると、誰が悪いわけでもなく渋滞が生まれ、後ろへ時速15〜20kmほどで進んでいきます。抜けた先に何もないのはそのためです。</li>
+        <li><b>車間のゆとりが、波を消す</b>ゆとりのある運転をする車が少しいるだけで、波は弱まり、全体が速く流れます。</li>
+      </ol>
+      <p style="margin-top:22px">次に渋滞につかまったら、少しだけ車間をあけてみてください。あなたの後ろの何十台かは、止まらずに済むかもしれません。</p>
+    </div>
+  </section>
+</main>
+
+<footer class="notes">
+  <div class="col">
+    <h2>このシミュレーションについて</h2>
+    <p>車の動きは、交通工学でよく使われる追従モデル「Intelligent Driver Model」（Treiber ら, 2000）に、<strong>反応の遅れ</strong>を加えて計算しています。各ドライバーは、反応の遅れの分だけ前に見た「車間」「自分の速さ」「前の車の速さ」をもとに、アクセルとブレーキを決めます。危険なほど近づいたときだけは、遅れなしで強いブレーキを踏みます（車どうしが重なることはありません）。</p>
+    <ul>
+      <li>出したい速さ 時速100km、止まったときの車間 2.5m、車の長さ 4.6m、反応の遅れ 1.1秒（第3章と第6章で変えられます）</li>
+      <li>計算の刻み 0.05秒。描画はその間をなめらかにつないでいます。</li>
+      <li>第1〜3章では全員が完璧に一定の速さで走れることにしてあり、ブレーキを踏ませない限り等間隔のまま走り続けます。第4章からは、運転に小さなゆらぎを入れています。</li>
+      <li>ゆとり運転の車は、Stern ら（2018）の実験で使われた制御方法を、高速道路の速さに合わせて簡単にしたものです。</li>
+      <li>現実の道路の数値（分かれ目約25台/km、波の速さ時速15〜20km）に近くなるようにパラメータを決めています。ただし実際の道路には車線変更や大型車などもあり、この図はしくみを確かめるための単純化したモデルです。</li>
+    </ul>
+    <h3>参考にした資料</h3>
+    <ol id="refs">
+      <li>Y. Sugiyama, M. Fukui, M. Kikuchi, K. Hasebe, A. Nakayama, K. Nishinari, S. Tadaki, S. Yukawa, “Traffic jams without bottlenecks — experimental evidence for the physical mechanism of the formation of a jam”, <i>New Journal of Physics</i> 10, 033001 (2008). <a href="https://iopscience.iop.org/article/10.1088/1367-2630/10/3/033001">論文</a>（周長230m・22台・時速約30km、渋滞は時速約20kmで後ろへ。臨界密度 約25台/km の観測データも掲載）</li>
+      <li>国土交通省 国土交通政策研究所の講演（西成活裕氏, 2015年2月4日）の概要 <a href="https://www.mlit.go.jp/pri/kouenkai/syousai/pdf/b-150204.pdf">PDF</a>（25台/kmが臨界、波の速さ15〜20km/h）</li>
+      <li>M. Treiber, A. Hennecke, D. Helbing, “Congested traffic states in empirical observations and microscopic simulations”, <i>Physical Review E</i> 62, 1805 (2000). <a href="https://arxiv.org/abs/cond-mat/0002177">arXiv</a>（このページのモデルのもと。ストップ＆ゴーの波は約15km/hで後ろへ）</li>
+      <li>A. Kesting, M. Treiber, D. Helbing（2008）<a href="https://arxiv.org/abs/0805.0300">arXiv:0805.0300</a>（ミュンヘン北のA9で波の速さ 約15.5km/h、各国の典型値 15±5km/h）</li>
+      <li>NEXCO中日本 報道発表（2009年7月28日）<a href="https://www.c-nexco.co.jp/corporate/pressroom/news_old/?id=1481">渋滞の定義</a>：時速40km以下で低速走行あるいは停止発進を繰り返す車列が、1km以上かつ15分以上継続した状態</li>
+      <li>NEXCO東日本「渋滞対策」<a href="https://www.e-nexco.co.jp/activity/safety/detail_07.html">ページ</a>（渋滞の約7割が交通集中、その約6割が上り坂・サグ部〔2025年〕、渋滞予防運転の4箇条）</li>
+      <li>R. E. Stern ほか, “Dissipation of stop-and-go waves via control of autonomous vehicles: Field experiments”, <i>Transportation Research Part C</i> 89, 205–221 (2018). <a href="https://arxiv.org/abs/1705.01693">arXiv</a>（周長260m・21〜22台、自動制御の車1台）</li>
+      <li>M. Green, “How long does it take to stop? Methodological analysis of driver perception-brake times”, <i>Transportation Human Factors</i> 2, 195–216 (2000). 著者による解説：<a href="https://www.visualexpert.com/Resources/reactiontime.html">Driver Reaction Time</a></li>
+      <li>小仏トンネル付近での実験（2009年）の報道：<a href="https://newswitch.jp/p/4578">ニュースイッチ（日刊工業新聞）</a></li>
+      <li>西成活裕『渋滞学』新潮選書（2006）</li>
+    </ol>
+  </div>
+</footer>

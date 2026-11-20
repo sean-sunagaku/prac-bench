@@ -1,0 +1,242 @@
+{
+  "blender_version": "5.1.1",
+  "blender_build": "b70da489d7f4",
+  "render_engine": "CYCLES",
+  "render_device": "CPU",
+  "blender_threads": 3,
+  "max_samples": 32,
+  "adaptive_sampling": false,
+  "denoising": "OpenImageDenoise, CPU",
+  "color_management": {
+    "transform": "AgX",
+    "look": "AgX - Medium High Contrast",
+    "exposure": -0.47999998927116394
+  },
+  "compositor_enabled": false,
+  "reopened_file": "character.blend",
+  "important_objects": [
+    "Portrait | continuous sculpted face, ears and neck",
+    "Hand R | relaxed reach from cuff",
+    "Hand L | relaxed reach from cuff",
+    "Eye R | globe, recessed iris and pupil",
+    "Eye R | convex corneal surface",
+    "R | medial tear duct and plica",
+    "R | upper lash line",
+    "R | tear meniscus",
+    "Eye L | globe, recessed iris and pupil",
+    "Eye L | convex corneal surface",
+    "L | medial tear duct and plica",
+    "L | upper lash line",
+    "L | tear meniscus",
+    "Upper eyelashes | individually curled",
+    "Lower eyelashes | individually tapered",
+    "Eyebrows | directional hairs",
+    "Narrow scalp part | asymmetric root line",
+    "Scalp | fitted root bed and temple hairline",
+    "Temple hairline | emerging roots and loose fine groups",
+    "Right bank | layered underlocks",
+    "Right | long wavy chestnut strands",
+    "Right | fine halo and flyaways",
+    "Left bank | layered underlocks",
+    "Left | long wavy chestnut strands",
+    "Left | fine halo and flyaways",
+    "Back hair | fibers following the occipital flow",
+    "Crown | scattered roots and short crossing hairs",
+    "Fringe | soft tapered wisps",
+    "Light bangs | fine swept forehead strands",
+    "Over the shoulder | graduated S-wave underlocks",
+    "Face-framing layers | shoulder waves and tucked-ear wisps",
+    "Loose temple layers | fibers draped over the shoulder",
+    "Sweater | continuous set-in sleeves, ribbed crew neck and cuffs",
+    "Crew neck | individual raised rib wales",
+    "Sweater | fine wool nap",
+    "Beauty | window-seat selfie",
+    "Front | 000°",
+    "Three-quarter | 045°",
+    "Side | 090°",
+    "Back | 180°"
+  ],
+  "packed_generated_textures": [
+    {
+      "name": "Complexion • original pigment field",
+      "size": [
+        1152,
+        1536
+      ],
+      "packed": true,
+      "description": "Parametric skin pigment, local blush, freckles and lip tint"
+    },
+    {
+      "name": "Iris • radial amber stroma",
+      "size": [
+        512,
+        512
+      ],
+      "packed": true,
+      "description": "Polar amber stromal fibers, collarette and outer limbal rim"
+    },
+    {
+      "name": "Rib • dyed wool ply",
+      "size": [
+        448,
+        448
+      ],
+      "packed": true,
+      "description": "Alternating raised and recessed columns of twisted wool"
+    },
+    {
+      "name": "Rib • interlocking yarn relief",
+      "size": [
+        448,
+        448
+      ],
+      "packed": true,
+      "description": "Alternating raised and recessed columns of twisted wool"
+    },
+    {
+      "name": "Stockinette • dyed wool ply",
+      "size": [
+        448,
+        448
+      ],
+      "packed": true,
+      "description": "Periodic field of overlapping four-column, six-course yarn loops"
+    },
+    {
+      "name": "Stockinette • interlocking yarn relief",
+      "size": [
+        448,
+        448
+      ],
+      "packed": true,
+      "description": "Periodic field of overlapping four-column, six-course yarn loops"
+    },
+    {
+      "name": "Vermilion • painted border",
+      "size": [
+        1152,
+        1536
+      ],
+      "packed": true,
+      "description": "Soft mask of the anatomical lip boundary"
+    }
+  ],
+  "rendered_files": [
+    "renders/beauty.png",
+    "renders/front.png",
+    "renders/three-quarter.png",
+    "renders/side.png",
+    "renders/back.png"
+  ],
+  "limitations": [
+    "Single frontal reference. Cranium, ears in depth, neck, hands, garment cut and rear hairstyle are inferred.",
+    "Facial proportions, iris pigmentation and smile are sculpted approximations. The skin and lip transitions are smoother than the photograph.",
+    "Hair is a fixed groom with native curves over supporting locks. The crown and long waves group into more regular sections than real hair.",
+    "Wool is a modeled garment with tiled yarn color and relief. Individual sweater stitches are shaded.",
+    "No production rig, cloth simulation or lower body. Head shape keys and separate posed eyes, hair and garments require coordinated edits for a new pose.",
+    "Café and lighting are reconstructed suggestions."
+  ],
+  "beauty_scene_evaluated_mesh_vertices": 295694,
+  "beauty_scene_evaluated_mesh_faces": 283828,
+  "beauty_scene_mesh_vertices_plus_native_curve_keys": 907089,
+  "character_bounds_m": {
+    "min_xyz": [
+      -0.245226,
+      -0.601184,
+      1.048219
+    ],
+    "max_xyz": [
+      0.254094,
+      0.14209,
+      1.661007
+    ],
+    "measurement": "Evaluated surfaces and native curve centerlines, world space."
+  },
+  "base_mesh_vertices": 91321,
+  "base_mesh_faces": 81961,
+  "evaluated_mesh_vertices": 277191,
+  "evaluated_mesh_faces": 267576,
+  "native_curve_strands": 20553,
+  "native_curve_control_points": 611395,
+  "mesh_vertices_plus_native_curve_keys": 888586,
+  "geometry_by_collection": {
+    "01  Face, neck and hands": {
+      "base_mesh_vertices": 7818,
+      "evaluated_mesh_vertices": 124383,
+      "native_curve_control_points": 0
+    },
+    "02  Eyes and fine facial hair": {
+      "base_mesh_vertices": 5816,
+      "evaluated_mesh_vertices": 5816,
+      "native_curve_control_points": 5768
+    },
+    "03  Chestnut hair": {
+      "base_mesh_vertices": 54449,
+      "evaluated_mesh_vertices": 54449,
+      "native_curve_control_points": 593265
+    },
+    "04  Rose knitwear": {
+      "base_mesh_vertices": 23238,
+      "evaluated_mesh_vertices": 92543,
+      "native_curve_control_points": 12362
+    }
+  },
+  "render_details": {
+    "beauty": {
+      "filename": "renders/beauty.png",
+      "width": 960,
+      "height": 1040,
+      "camera": "Beauty | window-seat selfie",
+      "scene": "Window seat | Portrait",
+      "sha256": "91bbbc2459b5e7396b97932129ade444d9c8c6d1d9dfbaa2459d2f47ad1c52a4"
+    },
+    "front": {
+      "filename": "renders/front.png",
+      "width": 768,
+      "height": 768,
+      "camera": "Front | 000°",
+      "scene": "Turntable | neutral studio",
+      "sha256": "66bbddc1f73656439e513e2bab48ef18f92b0b6af0d9a7c9df06018c620eff47"
+    },
+    "three-quarter": {
+      "filename": "renders/three-quarter.png",
+      "width": 768,
+      "height": 768,
+      "camera": "Three-quarter | 045°",
+      "scene": "Turntable | neutral studio",
+      "sha256": "51b1955573aa70875a7f6d0e548e4611c5f6926a1f2c7d9ec60160a83502975e"
+    },
+    "side": {
+      "filename": "renders/side.png",
+      "width": 768,
+      "height": 768,
+      "camera": "Side | 090°",
+      "scene": "Turntable | neutral studio",
+      "sha256": "6683cc0dd141316a13c7169cfd5d49830a859f4d489cf67ed7a5a0dd147ec1a0"
+    },
+    "back": {
+      "filename": "renders/back.png",
+      "width": 768,
+      "height": 768,
+      "camera": "Back | 180°",
+      "scene": "Turntable | neutral studio",
+      "sha256": "54e1dfd2822333361633db327996b296a56746d5e9b6aa6942cbc85d7aef1763"
+    }
+  },
+  "reference_access": {
+    "decoded_and_visually_inspected": true,
+    "width": 1205,
+    "height": 1306,
+    "used_by_scene": false
+  },
+  "base_asset": {
+    "project": "MakeHuman hm08",
+    "license": "CC0",
+    "prepared": "input/upper-body.obj",
+    "hand_topology_source": "input/base.obj",
+    "source_sha256": "8e761e6624b8f54536409135d1636da63b32486a90d4897f84e121d144f6fb4c"
+  },
+  "curve_shader_tessellation_vertices": null,
+  "largest_packed_image_dimension_px": 1536,
+  "character_model_in_diagnostic_scenes": "Both scenes link the same four character collections and lights."
+}

@@ -1,0 +1,763 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claude Opus 5.5 ｜ 一文で頼めて、最後まで任せられる。</title>
+<style>
+/* ===== フォント（assets/fonts は tools/build.mjs が使う文字だけに絞って生成する。OFL 1.1） ===== */
+@font-face { font-family: "Shippori Mincho"; font-weight: 800; font-display: block; src: url("assets/fonts/ShipporiMincho-ExtraBold.woff2") format("woff2"); }
+@font-face { font-family: "Zen Kaku Gothic New"; font-weight: 400; font-display: block; src: url("assets/fonts/ZenKakuGothicNew-Regular.woff2") format("woff2"); }
+@font-face { font-family: "Zen Kaku Gothic New"; font-weight: 500; font-display: block; src: url("assets/fonts/ZenKakuGothicNew-Medium.woff2") format("woff2"); }
+@font-face { font-family: "Zen Kaku Gothic New"; font-weight: 700; font-display: block; src: url("assets/fonts/ZenKakuGothicNew-Bold.woff2") format("woff2"); }
+@font-face { font-family: "IBM Plex Mono"; font-weight: 400; font-display: block; src: url("assets/fonts/IBMPlexMono-Regular.woff2") format("woff2"); }
+@font-face { font-family: "IBM Plex Mono"; font-weight: 500; font-display: block; src: url("assets/fonts/IBMPlexMono-Medium.woff2") format("woff2"); }
+@font-face { font-family: "IBM Plex Mono"; font-weight: 600; font-display: block; src: url("assets/fonts/IBMPlexMono-SemiBold.woff2") format("woff2"); }
+
+:root {
+  --paper: #F4EFE6;
+  --paper-deep: #E9E1D2;
+  --card: #FCFAF5;
+  --ink: #1F1B16;
+  --ink-2: #4A4339;
+  --ink-3: #6F665A;
+  --line: #D3C7B2;
+  --clay: #AD4A30;
+  --clay-soft: #F3E1D8;
+  --teal: #24585A;
+  --teal-soft: #DDE9E6;
+  --gray: #6F675D;
+  --serif: "Shippori Mincho", "Hiragino Mincho ProN", "Yu Mincho", serif;
+  --sans: "Zen Kaku Gothic New", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+  --mono: "IBM Plex Mono", "Zen Kaku Gothic New", "Hiragino Sans", monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { background: #2B2723; }
+body { font-family: var(--sans); color: var(--ink); -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+img { display: block; }
+
+/* ===== スライドの共通枠（1920×1080） ===== */
+.slide {
+  position: relative; width: 1920px; height: 1080px; overflow: hidden;
+  background: var(--paper);
+  word-break: auto-phrase; line-break: strict; overflow-wrap: anywhere;
+}
+.frame { position: absolute; inset: 60px 120px 50px 120px; display: flex; flex-direction: column; }
+.kicker { display: flex; justify-content: space-between; align-items: baseline; font: 500 22px/1 var(--sans); letter-spacing: .08em; color: var(--ink-3); }
+.kicker .sec { display: flex; align-items: baseline; gap: 18px; }
+.kicker .bul { width: 14px; height: 14px; background: var(--clay); border-radius: 2px; display: block; align-self: center; }
+.kicker .pg { font: 500 22px/1 var(--mono); letter-spacing: .06em; }
+.h2 { margin-top: 34px; font: 800 64px/1.36 var(--serif); letter-spacing: .01em; font-feature-settings: "palt"; text-wrap: balance; }
+.h2 em, h1 em { font-style: normal; color: var(--clay); }
+.lead { margin-top: 18px; font: 500 28px/1.7 var(--sans); color: var(--ink-2); max-width: 1500px; }
+.body { position: relative; flex: 1; min-height: 0; margin-top: 34px; margin-bottom: 22px; }
+
+/* 確かめ方の札（各ページ下） */
+.slip { margin-top: auto; padding-top: 16px; border-top: 2px dashed var(--line); display: flex; flex-wrap: wrap; align-items: center; gap: 10px 28px; font: 400 20px/1.45 var(--mono); color: var(--ink-2); }
+.slip .k { font: 700 20px/1 var(--sans); letter-spacing: .14em; color: var(--ink-3); }
+.slip .item { display: flex; align-items: center; gap: 12px; }
+.slip .where { font-family: var(--mono); }
+.chip { display: inline-flex; align-items: center; justify-content: center; height: 34px; padding: 0 14px; border-radius: 17px; font: 700 20px/1 var(--sans); letter-spacing: .1em; white-space: nowrap; flex: none; }
+.chip.demo { background: var(--clay); color: #fff; }
+.chip.work { background: var(--teal); color: #fff; }
+.chip.self { background: transparent; color: var(--gray); box-shadow: inset 0 0 0 2px var(--gray); }
+.chip.sm { height: 30px; padding: 0 11px; font-size: 20px; }
+
+.notes { display: none; }
+.slide p, .slide li, .slide td, .slide h3, .slide h4 { text-wrap: pretty; }
+
+/* ===== 1. 表紙 ===== */
+.cover .left { position: absolute; left: 120px; top: 84px; width: 1060px; }
+.brand { display: flex; align-items: center; gap: 16px; font: 600 24px/1 var(--mono); letter-spacing: .22em; color: var(--ink); }
+.brand i { width: 18px; height: 18px; background: var(--clay); border-radius: 3px; display: block; }
+.brand span { color: var(--ink-3); font-weight: 500; letter-spacing: .12em; font-family: var(--sans); }
+.cover h1 { margin-top: 64px; font: 800 126px/1.22 var(--serif); letter-spacing: .01em; font-feature-settings: "palt"; }
+.cover .tagline { margin-top: 34px; font: 500 32px/1.65 var(--sans); color: var(--ink-2); }
+.prompt { margin-top: 48px; width: 1080px; background: var(--ink); color: var(--paper); border-radius: 14px; padding: 26px 36px 24px; }
+.prompt .cap { font: 700 20px/1 var(--sans); letter-spacing: .14em; color: #C9BFAF; }
+.prompt .txt { margin-top: 14px; font: 500 32px/1.5 var(--mono); color: #FFFDF8; }
+.prompt .txt::before { content: "> "; color: #E08A6C; }
+.prompt .note { margin-top: 12px; font: 500 22px/1.5 var(--sans); color: #D9CFBF; }
+
+.receipt-wrap { position: absolute; right: 140px; top: 112px; width: 520px; transform: rotate(-2deg); filter: drop-shadow(0 22px 28px rgba(70, 50, 30, .20)); }
+.receipt { --z: 13px; background: #FFFDF8; padding: 50px 42px 70px; font: 400 22px/1.5 var(--mono); color: var(--ink);
+  -webkit-mask: conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) 50% / calc(2 * var(--z)) 100%;
+          mask: conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) 50% / calc(2 * var(--z)) 100%; }
+.receipt .t { font: 800 34px/1.2 var(--serif); text-align: center; letter-spacing: .08em; }
+.receipt .m { margin-top: 10px; text-align: center; font: 500 20px/1.4 var(--mono); color: var(--ink-3); letter-spacing: .06em; }
+.receipt hr { border: 0; border-top: 2px dashed #BDB19D; margin: 26px 0; }
+.receipt .row { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 7px 0; }
+.receipt .row b { font: 700 26px/1.4 var(--sans); }
+.receipt .row .p { font: 500 21px/1.4 var(--mono); color: var(--ink-3); white-space: nowrap; }
+.receipt .row.sub { padding-left: 22px; align-items: center; }
+.receipt .row.sub span:first-child { font: 500 22px/1.4 var(--sans); color: var(--ink-2); display: flex; align-items: center; gap: 10px; }
+.receipt .row.total b { font-size: 26px; }
+.receipt .row .n { font: 600 24px/1.4 var(--mono); }
+.receipt .row.total .n { font-size: 30px; color: var(--clay); }
+.receipt .dot { width: 14px; height: 14px; border-radius: 7px; display: inline-block; flex: none; }
+.receipt .dot.demo { background: var(--clay); } .receipt .dot.work { background: var(--teal); } .receipt .dot.self { box-shadow: inset 0 0 0 2px var(--gray); }
+.receipt .foot { margin-top: 6px; text-align: center; font: 500 20px/1.5 var(--sans); color: var(--ink-3); }
+.receipt .bar { margin: 18px auto 0; height: 46px; width: 300px; background: repeating-linear-gradient(90deg, var(--ink) 0 3px, transparent 3px 6px, var(--ink) 6px 7px, transparent 7px 11px, var(--ink) 11px 15px, transparent 15px 17px); opacity: .85; }
+
+/* ===== 2. 結論 ===== */
+.three { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; height: 100%; }
+.pillar { background: var(--card); border-radius: 18px; padding: 40px 40px 34px; display: flex; flex-direction: column; box-shadow: 0 1px 0 rgba(0,0,0,.04); border: 1.5px solid #E2D8C6; }
+.pillar .head { display: flex; align-items: center; gap: 26px; min-height: 132px; }
+.pillar .num { font: 800 124px/0.9 var(--serif); color: var(--clay); flex: none; }
+.pillar h3 { font: 800 50px/1.3 var(--serif); font-feature-settings: "palt"; }
+.pillar p { margin-top: 20px; font: 400 27px/1.7 var(--sans); color: var(--ink-2); }
+.pillar .so { margin-top: auto; padding-top: 22px; font: 700 26px/1.6 var(--sans); color: var(--ink); }
+.pillar .so::before { content: "→ "; color: var(--clay); }
+.pillar .toc { list-style: none; margin-top: 26px; border-top: 1.5px solid var(--line); }
+.pillar .toc li { display: flex; align-items: baseline; gap: 14px; padding: 12px 0; border-bottom: 1.5px dashed var(--line); font: 500 24px/1.4 var(--sans); color: var(--ink); }
+.pillar .toc li span { flex: none; width: 52px; font: 600 20px/1 var(--mono); color: var(--clay); }
+.legend { margin-top: auto; padding-top: 18px; border-top: 2px dashed var(--line); display: flex; align-items: center; gap: 34px; font: 500 21px/1.4 var(--sans); color: var(--ink-2); }
+.legend .k { font: 700 20px/1 var(--sans); letter-spacing: .14em; color: var(--ink-3); }
+.legend .item { display: flex; align-items: center; gap: 12px; }
+
+/* ===== 3. 一文を、仕事にする ===== */
+.split { display: grid; grid-template-columns: 640px 1fr; gap: 72px; height: 100%; }
+.req { background: var(--ink); color: var(--paper); border-radius: 18px; padding: 40px 44px; display: flex; flex-direction: column; }
+.req .cap { font: 700 20px/1 var(--sans); letter-spacing: .14em; color: #C9BFAF; }
+.req .q { margin-top: 26px; font: 800 50px/1.5 var(--serif); color: #FFFDF8; font-feature-settings: "palt"; }
+.req .q::before { content: "「"; margin-left: -.5em; }
+.req .q::after { content: "」"; }
+.req .miss { margin-top: auto; }
+.req .miss .k { font: 700 22px/1.4 var(--sans); color: #E6A58C; }
+.req .tags { margin-top: 16px; display: flex; flex-wrap: wrap; gap: 12px; }
+.req .tags span { font: 500 22px/1 var(--sans); padding: 10px 16px; border-radius: 8px; box-shadow: inset 0 0 0 2px #7A6F60; color: #EDE5D6; }
+.decide .k { font: 700 22px/1 var(--sans); letter-spacing: .14em; color: var(--ink-3); }
+.decide ol { list-style: none; margin-top: 12px; }
+.decide li { display: grid; grid-template-columns: 56px 230px 1fr; align-items: baseline; gap: 0 10px; padding: 19px 0; border-bottom: 1.5px solid var(--line); }
+.decide li:last-child { border-bottom: 0; }
+.decide .i { font: 600 22px/1 var(--mono); color: var(--clay); }
+.decide .qq { font: 700 24px/1.5 var(--sans); color: var(--ink-3); }
+.decide .aa { font: 500 28px/1.55 var(--sans); color: var(--ink); }
+.decide .aa b { font-weight: 700; color: var(--clay); }
+
+/* ===== 4. 作ったもの ===== */
+.grid8 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 34px 24px; }
+.tile { display: flex; flex-direction: column; }
+.tile .ph { position: relative; width: 100%; aspect-ratio: 16 / 10; border-radius: 10px; overflow: hidden; background: #ddd; box-shadow: 0 0 0 1.5px rgba(0,0,0,.08); }
+.tile .ph img { width: 100%; height: 100%; object-fit: cover; }
+.tile .cap { margin-top: 12px; display: flex; align-items: baseline; gap: 12px; }
+.tile .w { font: 600 20px/1 var(--mono); color: var(--clay); flex: none; }
+.tile .tt { font: 700 25px/1.35 var(--sans); }
+.tile .ss { margin-top: 6px; font: 400 21px/1.4 var(--sans); color: var(--ink-3); }
+.tile .ss b { font-weight: 700; color: var(--clay); }
+.tile.note { justify-content: center; padding: 22px 24px; border-radius: 10px; background: var(--paper-deep); font: 500 22px/1.65 var(--sans); color: var(--ink-2); }
+.tile.note p + p { margin-top: 10px; }
+.tile.note b { color: var(--ink); font-weight: 700; }
+
+/* ===== 5. 確かめる道具 ===== */
+table.ver { width: 100%; border-collapse: collapse; font: 400 22px/1.4 var(--sans); }
+table.ver th { text-align: left; font: 700 20px/1 var(--sans); letter-spacing: .1em; color: var(--ink-3); padding: 0 16px 14px 0; border-bottom: 2px solid var(--ink); }
+table.ver td { padding: 7px 16px 7px 0; border-bottom: 1.5px solid var(--line); vertical-align: middle; }
+table.ver td.f { font: 700 23px/1.3 var(--sans); white-space: nowrap; }
+table.ver td.f small { display: block; margin-top: 4px; font: 600 20px/1 var(--mono); color: var(--clay); }
+table.ver td.what { color: var(--ink); font-weight: 500; }
+table.ver td.how { color: var(--ink-2); }
+table.ver td.res { font: 700 23px/1.35 var(--sans); color: var(--teal); }
+table.ver tr.me td { background: var(--clay-soft); }
+table.ver tr.me td:first-child { border-radius: 10px 0 0 10px; padding-left: 14px; }
+table.ver tr.me td:last-child { border-radius: 0 10px 10px 0; color: var(--clay); }
+table.ver tr.me td.f small { color: #8E3A22; }
+.tnote { margin-top: 10px; font: 500 21px/1.5 var(--sans); color: var(--ink-3); }
+
+/* ===== 6. 食い違い ===== */
+.finds { display: grid; grid-template-columns: 1fr 680px; grid-template-rows: 1fr 1fr; gap: 26px 30px; height: 100%; }
+.find { background: var(--card); border: 1.5px solid #E2D8C6; border-radius: 16px; padding: 30px 34px; display: flex; flex-direction: column; }
+.find.big { grid-row: span 2; border: 3px solid var(--clay); padding: 36px 40px; }
+.find .tag { align-self: flex-start; font: 700 20px/1 var(--sans); letter-spacing: .1em; padding: 8px 14px; border-radius: 6px; background: var(--paper-deep); color: var(--ink-2); }
+.find.big .tag { background: var(--clay); color: #fff; }
+.find h3 { margin-top: 18px; font: 800 36px/1.4 var(--serif); font-feature-settings: "palt"; }
+.find.big h3 { font-size: 44px; }
+.find p { margin-top: 14px; font: 400 24px/1.65 var(--sans); color: var(--ink-2); }
+.find.big p { font-size: 26px; }
+.find .impact { margin-top: 12px; font: 700 25px/1.6 var(--sans); color: var(--ink); }
+.find .fix { margin-top: 18px; padding: 16px 20px; background: var(--clay-soft); border-radius: 10px; font: 700 25px/1.55 var(--sans); color: var(--ink); }
+.find .fix::before { content: "提案　"; color: var(--clay); }
+.find .refs { margin-top: auto; padding-top: 16px; font: 400 20px/1.55 var(--mono); color: var(--ink-3); }
+
+/* ===== 7. 仮説に反論 ===== */
+.hypo { display: grid; grid-template-columns: 780px 1fr; gap: 60px; height: 100%; }
+.claimbox { position: relative; background: var(--card); border: 1.5px solid #E2D8C6; border-radius: 16px; padding: 30px 36px 32px; }
+.claimbox .k { font: 700 20px/1 var(--sans); letter-spacing: .14em; color: var(--ink-3); }
+.claimbox .q { margin-top: 16px; font: 800 40px/1.45 var(--serif); font-feature-settings: "palt"; }
+.stamp { position: absolute; right: 26px; bottom: -34px; transform: rotate(-7deg); border: 5px solid var(--clay); color: var(--clay); background: rgba(252, 250, 245, .92); border-radius: 12px; padding: 10px 20px 12px; text-align: center; }
+.stamp b { display: block; font: 800 40px/1.1 var(--serif); letter-spacing: .06em; }
+.stamp small { display: block; margin-top: 6px; font: 700 20px/1 var(--sans); letter-spacing: .08em; }
+.facts { margin-top: 58px; list-style: none; }
+.facts li { display: grid; grid-template-columns: 250px 1fr; align-items: center; gap: 24px; padding: 18px 0; border-bottom: 1.5px solid var(--line); }
+.facts li:last-child { border-bottom: 0; }
+.facts .v { font: 800 58px/1 var(--serif); white-space: nowrap; color: var(--teal); font-feature-settings: "palt"; letter-spacing: -.01em; }
+.facts .v.c { color: var(--clay); }
+.facts .d { font: 500 24px/1.55 var(--sans); color: var(--ink-2); }
+.facts .d b { color: var(--ink); font-weight: 700; }
+.chart { background: var(--card); border: 1.5px solid #E2D8C6; border-radius: 16px; padding: 28px 36px 26px; display: flex; flex-direction: column; }
+.chart .k { font: 700 20px/1 var(--sans); letter-spacing: .14em; color: var(--ink-3); }
+.chart h3 { margin-top: 14px; font: 800 38px/1.4 var(--serif); font-feature-settings: "palt"; }
+.bars { margin-top: 24px; }
+.barrow { display: grid; grid-template-columns: 80px 1fr; align-items: center; gap: 0 18px; margin-bottom: 16px; }
+.barrow .m { font: 700 26px/1 var(--sans); }
+.bar { display: flex; height: 64px; border-radius: 6px; overflow: hidden; }
+.bar span { display: flex; align-items: center; padding-left: 14px; font: 600 22px/1 var(--mono); color: #fff; white-space: nowrap; }
+.bar .ok { background: var(--teal); }
+.bar .ng { background: var(--clay); }
+.barrow .sum { grid-column: 2; margin-top: 8px; font: 500 21px/1.3 var(--sans); color: var(--ink-3); }
+.keyline { display: flex; gap: 22px; margin-top: 4px; font: 500 21px/1.4 var(--sans); color: var(--ink-2); }
+.keyline i { display: inline-block; width: 18px; height: 18px; border-radius: 3px; margin-right: 8px; vertical-align: -2px; }
+.compare { margin-top: auto; display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.compare div { border-radius: 12px; padding: 18px 22px; }
+.compare .a { background: var(--clay-soft); }
+.compare .b { background: var(--teal-soft); }
+.compare small { display: block; font: 700 20px/1.4 var(--sans); color: var(--ink-2); }
+.compare b { display: block; margin-top: 6px; font: 800 44px/1 var(--serif); }
+.compare .a b { color: var(--clay); } .compare .b b { color: var(--teal); }
+.chart .src { margin-top: 14px; font: 400 20px/1.45 var(--sans); color: var(--ink-3); }
+
+/* ===== 8. 想定外 ===== */
+.timeline { position: relative; display: grid; grid-template-columns: repeat(4, 1fr); gap: 30px; margin-top: 8px; }
+.timeline::before { content: ""; position: absolute; left: 12px; right: 12px; top: 13px; height: 3px; background: var(--line); }
+.step { position: relative; padding-top: 50px; }
+.step::before { content: ""; position: absolute; top: 2px; left: 0; width: 26px; height: 26px; border-radius: 13px; background: var(--paper); box-shadow: inset 0 0 0 5px var(--clay); }
+.step .t { font: 600 24px/1 var(--mono); color: var(--clay); }
+.step h3 { margin-top: 16px; font: 800 60px/1.2 var(--serif); }
+.step p { margin-top: 20px; font: 400 27px/1.75 var(--sans); color: var(--ink-2); }
+.step p code { font: 500 23px/1 var(--mono); color: var(--ink); white-space: nowrap; }
+.step p b { color: var(--ink); font-weight: 700; }
+.lessons { margin-top: auto; margin-bottom: 26px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+.lessons div { background: var(--ink); color: var(--paper); border-radius: 14px; padding: 24px 30px; font: 700 31px/1.45 var(--sans); }
+.lessons div small { display: block; font: 600 20px/1 var(--mono); color: #E08A6C; margin-bottom: 10px; letter-spacing: .06em; }
+
+/* ===== 9. 書かなかったこと ===== */
+.nots { list-style: none; margin-top: 4px; }
+.nots li { display: grid; grid-template-columns: 680px 1fr; align-items: center; gap: 48px; padding: 36px 0; border-bottom: 1.5px solid var(--line); }
+.nots li:first-child { border-top: 2px solid var(--ink); }
+.nots s { font: 800 56px/1.25 var(--serif); color: var(--ink-3); text-decoration: line-through; text-decoration-color: var(--clay); text-decoration-thickness: 6px; font-feature-settings: "palt"; }
+.nots p { font: 500 28px/1.6 var(--sans); color: var(--ink-2); }
+.nots p b { color: var(--ink); font-weight: 700; }
+.nots .chip.lead-chip { margin-right: 14px; vertical-align: 3px; }
+
+/* ===== 10. 失敗と苦手 ===== */
+.fw { display: grid; grid-template-columns: 640px 1fr; gap: 56px; height: 100%; }
+.fail { background: var(--ink); color: var(--paper); border-radius: 18px; padding: 36px 40px; display: flex; flex-direction: column; }
+.fail .k { font: 700 20px/1 var(--sans); letter-spacing: .14em; color: #E6A58C; }
+.fail h3 { margin-top: 18px; font: 800 42px/1.4 var(--serif); color: #FFFDF8; font-feature-settings: "palt"; }
+.fail p { margin-top: 18px; font: 400 25px/1.7 var(--sans); color: #E4DACA; }
+.fail .then { margin-top: auto; border-top: 2px dashed #6B6154; padding-top: 20px; font: 700 25px/1.6 var(--sans); color: #FFFDF8; }
+.fail .then::before { content: "→ "; color: #E08A6C; }
+.fail .src { margin-top: 16px; display: flex; align-items: center; gap: 12px; font: 400 20px/1.4 var(--mono); color: #C9BFAF; }
+.weak .k { font: 700 22px/1 var(--sans); letter-spacing: .14em; color: var(--ink-3); }
+.weak ul { list-style: none; margin-top: 8px; }
+.weak li { display: grid; grid-template-columns: 1fr auto; gap: 6px 20px; padding: 18px 0; border-bottom: 1.5px solid var(--line); }
+.weak li:last-child { border-bottom: 0; }
+.weak h4 { font: 800 33px/1.3 var(--serif); font-feature-settings: "palt"; }
+.weak .chip { grid-column: 2; grid-row: 1; align-self: center; }
+.weak p { grid-column: 1 / -1; font: 400 23px/1.6 var(--sans); color: var(--ink-2); }
+.weak p b { font-weight: 700; color: var(--ink); }
+
+/* ===== 11. 任せ方 ===== */
+.flow { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; margin-top: 6px; }
+.fstep { position: relative; background: var(--card); border: 1.5px solid #E2D8C6; border-radius: 16px; padding: 40px 36px 36px; margin-right: 44px; min-height: 520px; }
+.fstep:last-child { margin-right: 0; background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.fstep:not(:last-child)::after { content: ""; position: absolute; right: -36px; top: 50%; width: 22px; height: 22px; border-top: 4px solid var(--clay); border-right: 4px solid var(--clay); transform: translateY(-50%) rotate(45deg); }
+.fstep .n { font: 800 84px/1 var(--serif); color: var(--clay); }
+.fstep:last-child .n { color: #E08A6C; }
+.fstep h3 { margin-top: 22px; font: 800 44px/1.35 var(--serif); font-feature-settings: "palt"; }
+.fstep p { margin-top: 20px; font: 400 28px/1.72 var(--sans); color: var(--ink-2); }
+.fstep:last-child p { color: #E4DACA; }
+.fstep { display: flex; flex-direction: column; }
+.fstep .ex { margin-top: auto; padding-top: 18px; border-top: 1.5px dashed var(--line); font: 500 22px/1.6 var(--sans); color: var(--ink-3); }
+.fstep .ex b { font: 600 20px/1 var(--mono); color: var(--clay); margin-right: 10px; letter-spacing: .06em; }
+.fstep:last-child .ex { border-top-color: #6B6154; color: #C9BFAF; }
+.fstep:last-child .ex b { color: #E08A6C; }
+.aside { margin-top: auto; margin-bottom: 26px; display: flex; align-items: center; gap: 18px; padding: 22px 28px; border-radius: 14px; background: var(--teal-soft); font: 500 25px/1.6 var(--sans); color: var(--ink); }
+
+/* ===== 12. まとめ ===== */
+.closing { background: var(--ink); color: var(--paper); }
+.closing .kicker { color: #A99E8E; }
+.closing .kicker .bul { background: #E08A6C; }
+.closing h2 { margin-top: 150px; font: 800 104px/1.3 var(--serif); letter-spacing: .01em; color: #FFFDF8; font-feature-settings: "palt"; }
+.closing h2 em { font-style: normal; color: #E8906F; }
+.recap { margin-top: 100px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+.recap div { border-top: 3px solid #E08A6C; padding-top: 20px; }
+.recap b { display: block; font: 800 46px/1.3 var(--serif); color: #FFFDF8; }
+.recap span { display: block; margin-top: 12px; font: 400 27px/1.6 var(--sans); color: #D9CFBF; }
+.sign { margin-top: auto; display: flex; justify-content: space-between; align-items: flex-end; font: 500 22px/1.5 var(--sans); color: #B9AE9E; }
+.sign .me { font: 600 24px/1 var(--mono); letter-spacing: .2em; color: #FFFDF8; display: flex; align-items: center; gap: 14px; }
+.sign .me i { width: 16px; height: 16px; background: var(--clay); border-radius: 3px; display: block; }
+
+/* ===== 13. 付録 ===== */
+.apx-note { margin-top: 8px; font: 400 21px/1.6 var(--sans); color: var(--ink-3); }
+.apx-note code { font: 500 20px/1 var(--mono); color: var(--ink-2); }
+table.ledger { margin-top: 14px; width: 100%; border-collapse: collapse; font: 400 21px/1.35 var(--sans); }
+table.ledger th { text-align: left; font: 700 20px/1 var(--sans); letter-spacing: .1em; color: var(--ink-3); padding: 0 14px 12px 0; border-bottom: 2px solid var(--ink); }
+table.ledger td { padding: 6px 14px 6px 0; border-bottom: 1px solid var(--line); vertical-align: middle; }
+table.ledger td.no { font: 600 20px/1 var(--mono); color: var(--ink-3); width: 56px; }
+table.ledger td.pg { font: 600 20px/1 var(--mono); color: var(--ink-3); width: 64px; text-align: right; padding-right: 0; }
+table.ledger td.lb { width: 120px; }
+table.ledger td.wh { font: 400 20px/1.35 var(--mono); color: var(--ink-2); width: 660px; }
+table.ledger td.cl { font-weight: 500; }
+
+/* ===== 表示モード ===== */
+/* 発表モード（既定）：1枚ずつ画面に合わせて拡大縮小 */
+body.present { overflow: hidden; height: 100vh; background: #2B2723; }
+body.present .slide { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%) scale(var(--scale, 1)); display: none; box-shadow: 0 30px 80px rgba(0,0,0,.45); }
+body.present .slide.on { display: block; }
+.hud { position: fixed; right: 18px; bottom: 14px; font: 500 14px/1 var(--mono); color: #A99E8E; letter-spacing: .08em; user-select: none; }
+body:not(.present) .hud { display: none; }
+/* 書き出しモード（?render）：全ページを縦に並べる */
+body.render { background: #2B2723; }
+body.render .slide { display: block; }
+@media print {
+  @page { size: 1920px 1080px; margin: 0; }
+  html, body { background: none !important; }
+  body.present, body.render { overflow: visible; height: auto; }
+  .slide, body.present .slide { position: relative !important; left: auto !important; top: auto !important; transform: none !important; display: block !important; box-shadow: none !important; break-after: page; page-break-after: always; }
+  .hud { display: none !important; }
+}
+</style>
+</head>
+<body class="present">
+<main class="deck">
+
+<!-- ============ 1. 表紙 ============ -->
+<section class="slide cover" data-title="表紙">
+  <div class="left">
+    <div class="brand"><i></i>CLAUDE OPUS 5.5<span>能力紹介</span></div>
+    <h1>一文で頼めて、<br>最後まで<br><em>任せられる</em>。</h1>
+    <p class="tagline">Claude Opus 5.5 の自己紹介です。<br>すべての主張に「確かめ方」を添えました。</p>
+    <div class="prompt">
+      <div class="cap">受け取った依頼（全文）</div>
+      <p class="txt">あなたの能力をアピールするスライド資料を作ってください</p>
+      <p class="note">この資料は、この一文だけから作りました。</p>
+    </div>
+  </div>
+  <div class="receipt-wrap" aria-label="確かめ方の明細" data-rot>
+    <div class="receipt">
+      <div class="t">確かめ方の明細</div>
+      <div class="m">CLAUDE OPUS 5.5 ・ 2026.11.20</div>
+      <hr>
+      <div class="row"><b>① 最後までやりきる</b><span class="p">p.3–5</span></div>
+      <div class="row"><b>② 違和感に気づく</b><span class="p">p.6–8</span></div>
+      <div class="row"><b>③ 盛らない</b><span class="p">p.9–10</span></div>
+      <hr>
+      <div class="row total"><b>この資料の主張</b><span class="n" data-count="all">–</span></div>
+      <div class="row sub"><span><i class="dot demo"></i>資料そのもので確かめられる</span><span class="n" data-count="demo">–</span></div>
+      <div class="row sub"><span><i class="dot work"></i>他の枠の成果物で確かめられる</span><span class="n" data-count="work">–</span></div>
+      <div class="row sub"><span><i class="dot self"></i>自己申告（ここでは未確認）</span><span class="n" data-count="self">–</span></div>
+      <hr>
+      <div class="foot">一覧は p.13 にあります</div>
+      <div class="bar" aria-hidden="true"></div>
+    </div>
+  </div>
+  <aside class="notes">一文の依頼から作った自己紹介です。AIの自己PRは盛られがちなので、この資料では主張ごとに「どこで確かめられるか」のラベルを付けました。右の明細は、その数の内訳です。</aside>
+</section>
+
+<!-- ============ 2. 結論 ============ -->
+<section class="slide" data-title="結論">
+  <div class="frame">
+    <div class="kicker"><div class="sec"><i class="bul"></i>結論</div><span class="pg"></span></div>
+    <h2 class="h2">任せられる理由は、3つあります。</h2>
+    <div class="body">
+      <div class="three">
+        <div class="pillar">
+          <div class="head"><div class="num">1</div><h3>最後まで<br>やりきる</h3></div>
+          <p>曖昧な一文から、決める・作る・確かめる・記録するまでを自分で進めます。</p>
+          <ul class="toc"><li><span>p.3</span>一文の依頼を、決めることに分解</li><li><span>p.4</span>9つの枠で成果物を残した</li><li><span>p.5</span>確かめる道具まで作った</li></ul>
+          <div class="so">あなたは「頼む」と「決める」に集中できます。</div>
+        </div>
+        <div class="pillar">
+          <div class="head"><div class="num">2</div><h3>違和感に<br>気づく</h3></div>
+          <p>数字の食い違い、資料の矛盾、作業中の想定外を見逃しません。</p>
+          <ul class="toc"><li><span>p.6</span>資料の食い違いを3点発見</li><li><span>p.7</span>依頼者の見立てを証拠で検証</li><li><span>p.8</span>想定外の上書きに対処</li></ul>
+          <div class="so">間違った前提のまま進む事故が減ります。</div>
+        </div>
+        <div class="pillar">
+          <div class="head"><div class="num">3</div><h3>盛らない</h3></div>
+          <p>確かめたことと推測を分けて書き、失敗や苦手も自分から言います。</p>
+          <ul class="toc"><li><span>p.9</span>あえて書かなかったこと</li><li><span>p.10</span>失敗と苦手</li><li><span>p.13</span>主張と確かめ方の一覧</li></ul>
+          <div class="so">報告のどこを信じ、どこを確かめればいいかが分かります。</div>
+        </div>
+      </div>
+    </div>
+    <div class="legend" style="margin-top:30px">
+      <span class="k">ラベルの見方</span>
+      <span class="item"><span class="chip demo">実演</span>この資料そのもので確かめられる</span>
+      <span class="item"><span class="chip work">成果物</span>このベンチマークの他の枠で確かめられる</span>
+      <span class="item"><span class="chip self">申告</span>自己申告。ここでは確かめられない</span>
+    </div>
+  </div>
+  <aside class="notes">結論から言います。任せられる理由は3つです。最後までやりきる、違和感に気づく、盛らない。この先のページでは、それぞれに証拠を付けます。ラベルは3種類で、申告のものは確かめられないと正直に書いています。</aside>
+</section>
+
+<!-- ============ 3. 一文を、仕事にする ============ -->
+<section class="slide" data-title="強み① 依頼の解釈">
+  <div class="frame">
+    <div class="kicker"><div class="sec"><i class="bul"></i>強み① 最後までやりきる</div><span class="pg"></span></div>
+    <h2 class="h2">一文の依頼を、まず「決めること」に分解する。</h2>
+    <div class="body">
+      <div class="split">
+        <div class="req">
+          <div class="cap">依頼文（全文）</div>
+          <p class="q">あなたの能力をアピールするスライド資料を作ってください</p>
+          <div class="miss">
+            <div class="k">書かれていないこと</div>
+            <div class="tags"><span>読み手</span><span>枚数</span><span>形式</span><span>何を強みとするか</span><span>完成の基準</span></div>
+          </div>
+        </div>
+        <div class="decide">
+          <div class="k">最初に決めたこと</div>
+          <ol>
+            <li><span class="i">1</span><span class="qq">誰に向けて？</span><span class="aa">AIに仕事を任せるか迷っている人</span></li>
+            <li><span class="i">2</span><span class="qq">何に答える？</span><span class="aa">「何ができるか」より<b>「任せていいか」</b></span></li>
+            <li><span class="i">3</span><span class="qq">落とし穴は？</span><span class="aa">アピールは盛りやすい。だから、<b>全部の主張に確かめ方を付ける</b></span></li>
+            <li><span class="i">4</span><span class="qq">材料は？</span><span class="aa">自分の言葉より、このベンチマークに残した成果物と記録</span></li>
+            <li><span class="i">5</span><span class="qq">形は？</span><span class="aa">どこでも開けるPDF、1枚ずつの画像、元のHTML</span></li>
+            <li><span class="i">6</span><span class="qq">完成の基準は？</span><span class="aa">全ページを画像で見て直し、自動検査で問題0件</span></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+    <footer class="slip" data-claims="c01"></footer>
+  </div>
+  <aside class="notes">依頼は一文だけでした。読み手も枚数も形式も書かれていません。そこで最初に6つのことを決め、記録に残しました。いちばん大事なのは3番目で、アピールは盛りやすいので、全部の主張に確かめ方を付けると決めました。</aside>
+</section>
+
+<!-- ============ 4. 作ったもの ============ -->
+<section class="slide" data-title="強み① 作ったもの">
+  <div class="frame">
+    <div class="kicker"><div class="sec"><i class="bul"></i>強み① 最後までやりきる</div><span class="pg"></span></div>
+    <h2 class="h2">LPから映像まで。9つの枠で、成果物を残しました。</h2>
+    <div class="body">
+      <div class="grid8">
+        <figure class="tile"><div class="ph"><img src="assets/portfolio/t01-lp.jpg" alt="KOKU-01 の製品LP"></div><div class="cap"><span class="w">枠1</span><span class="tt">製品LP＋触れるデモ</span></div><div class="ss">HTML・CSS・JS で作成</div></figure>
+        <figure class="tile"><div class="ph"><img src="assets/portfolio/t02-game.jpg" alt="軽トラ限界引っ越しの走行画面"></div><div class="cap"><span class="w">枠2</span><span class="tt">2D物理ゲーム</span></div><div class="ss">積み込みから精算まで約5,800行</div></figure>
+        <figure class="tile"><div class="ph"><img src="assets/portfolio/t03-map.jpg" alt="あおい島の観光マップ"></div><div class="cap"><span class="w">枠3</span><span class="tt">観光マップ</span></div><div class="ss">1枚のSVG、83項目を照合</div></figure>
+        <figure class="tile"><div class="ph"><img src="assets/portfolio/t04-3d.jpg" alt="カピバラの雪見露天風呂の3Dシーン"></div><div class="cap"><span class="w">枠4</span><span class="tt">3Dジオラマ</span></div><div class="ss">Blender をコードで操作</div></figure>
+        <figure class="tile"><div class="ph"><img src="assets/portfolio/t05-sim.jpg" alt="自然渋滞のインタラクティブ図解"></div><div class="cap"><span class="w">枠5</span><span class="tt">渋滞の図解</span></div><div class="ss">触れる交通シミュレーション</div></figure>
+        <figure class="tile"><div class="ph"><img src="assets/portfolio/t06-audit.jpg" alt="売上データ監査報告書の図"></div><div class="cap"><span class="w">枠6</span><span class="tt">データ監査の報告書</span></div><div class="ss">差額を1円単位まで説明</div></figure>
+        <figure class="tile"><div class="ph"><img src="assets/portfolio/t07-slides.jpg" alt="水族館の経営会議資料"></div><div class="cap"><span class="w">枠7</span><span class="tt">経営会議の資料</span></div><div class="ss">PPTX 14枚。<b>レビュー反映前</b></div></figure>
+        <figure class="tile"><div class="ph"><img src="assets/portfolio/t08-mv.jpg" alt="Q.E.D. のミュージックビデオ"></div><div class="cap"><span class="w">枠8</span><span class="tt">作詞・作曲・MV</span></div><div class="ss">楽器の音は sin() の足し算</div></figure>
+        <figure class="tile"><div class="ph"><img src="assets/portfolio/t09-video.jpg" alt="映像作品 f(t) の第5章「光」"></div><div class="cap"><span class="w">枠9</span><span class="tt">映像「f(t)」</span></div><div class="ss">素材ゼロ、映像も音も計算</div></figure>
+        <div class="tile note"><p>どれも、指示文から自分でコードを書いて作りました。</p><p>良し悪しは、横並びの比較で判断してください。</p><p>枠10は制作中、枠11はこの資料です。</p></div>
+      </div>
+    </div>
+    <footer class="slip" data-claims="c02"></footer>
+  </div>
+  <aside class="notes">このベンチマークで私が作ったものです。Webページ、ゲーム、地図、3D、図解、データ監査、経営資料、音楽とMV、映像と、分野はばらばらです。良し悪しの判断は横並びの比較に任せます。枠7だけは、レビューを反映する前に実行が終わっています。</aside>
+</section>
+
+<!-- ============ 5. 確かめる道具 ============ -->
+<section class="slide" data-title="強み① 確かめる仕組み">
+  <div class="frame">
+    <div class="kicker"><div class="sec"><i class="bul"></i>強み① 最後までやりきる</div><span class="pg"></span></div>
+    <h2 class="h2">作って終わりにしない。確かめる道具まで作る。</h2>
+    <div class="body">
+      <table class="ver">
+        <thead><tr><th style="width:250px">成果物</th><th style="width:330px">確かめたこと</th><th>どう確かめたか</th><th style="width:400px">結果</th></tr></thead>
+        <tbody>
+          <tr><td class="f">LP<small>枠1</small></td><td class="what">使いやすさ・価格の計算</td><td class="how">アクセシビリティ検査、6つの画面幅で撮影、初見テスター役のエージェント</td><td class="res">違反0件、指摘17件に対応</td></tr>
+          <tr><td class="f">ゲーム<small>枠2</small></td><td class="what">積み方で結果が変わるか</td><td class="how">自動で積んで走らせるボットで、結果の分布を測定</td><td class="res">赤字になる遊び方を発見・修正</td></tr>
+          <tr><td class="f">地図<small>枠3</small></td><td class="what">データとの食い違い</td><td class="how">島データとの照合を自動化</td><td class="res">83項目すべて一致</td></tr>
+          <tr><td class="f">3D<small>枠4</small></td><td class="what">ファイルの正しさ・接地</td><td class="how">glTF の検証ツール、柚子の沈み込みなどを数値で計測</td><td class="res">エラー0・警告0</td></tr>
+          <tr><td class="f">図解<small>枠5</small></td><td class="what">説明どおりに動くか</td><td class="how">本文の説明をシミュレーションで自動チェック</td><td class="res">全項目OK</td></tr>
+          <tr><td class="f">データ<small>枠6</small></td><td class="what">数字の正しさ・原本の改変</td><td class="how">別の実装で検算、原本のハッシュを開始時と終了時で比較</td><td class="res">差額を1円単位まで説明</td></tr>
+          <tr><td class="f">音楽<small>枠8</small></td><td class="what">歌詞が聞き取れるか</td><td class="how">聴けないので、音声認識で書き起こして照合</td><td class="res">ほぼ全行が歌詞どおり</td></tr>
+          <tr><td class="f">映像<small>枠9</small></td><td class="what">画面に出す数字が本物か</td><td class="how">動画に出す行数・容量を、実ファイルの実測と照合</td><td class="res">3,255行で一致</td></tr>
+          <tr class="me"><td class="f">この資料<small>枠11</small></td><td class="what">はみ出し・重なり・小さな文字</td><td class="how">全ページを画像で確認、自動検査のスクリプト</td><td class="res" data-final-check>最終検査で問題0件</td></tr>
+        </tbody>
+      </table>
+      <p class="tnote">枠7だけは、確かめた記録が残っていません（p.10）。結果の数字は、各枠の RUN.md にある自己検証の記録です。</p>
+    </div>
+    <footer class="slip" data-claims="c03 c04"></footer>
+  </div>
+  <aside class="notes">作ったものは、必ず自分で確かめます。それも目で見るだけでなく、検査の道具ごと作ります。地図ならデータとの照合、データ監査なら別の実装での検算、音楽なら音声認識です。この資料も、自動検査を通してから出しています。</aside>
+</section>
+
+<!-- ============ 6. 食い違いに気づく ============ -->
+<section class="slide" data-title="強み② 食い違いに気づく">
+  <div class="frame">
+    <div class="kicker"><div class="sec"><i class="bul"></i>強み② 違和感に気づく</div><span class="pg"></span></div>
+    <h2 class="h2">頼まれていなくても、食い違いには気づく。</h2>
+    <p class="lead">この資料を作る前に、ベンチマークの README と仕様書を読みました。気づいた点が3つあります。</p>
+    <div class="body" style="margin-top:28px">
+      <div class="finds">
+        <div class="find big">
+          <span class="tag">採点に影響しうる</span>
+          <h3>枠7の「6枚固定」が、<br>モデルに伝わっていない</h3>
+          <p>採点は「厳密6枚・役割固定」が前提です。ところが、送る指示文にも、配られたメモにも、枚数の指定がありません。実際、私が枠7で作った資料は14枚でした。</p>
+          <p class="impact">このままだと、5モデルの資料が6枚にそろわず、横並びの比較がずれます。</p>
+          <div class="fix">6枚の役割表を配るか、採点から枚数の条件を外す。</div>
+          <div class="refs">README.md:141 ／ spec/task-instructions.md:496・509<br>枠7フォルダの memo.md（枚数の記載なし）</div>
+        </div>
+        <div class="find">
+          <span class="tag">表記</span>
+          <h3>見出しは「確定10タスク」、本文は11タスク</h3>
+          <div class="refs">spec/task-instructions.md:1（見出し）・5（本文）</div>
+        </div>
+        <div class="find">
+          <span class="tag">状態</span>
+          <h3>README の「状態」が実施前のまま</h3>
+          <p>「実施フェーズは未着手」とありますが、results/ にはもう結果が入っています。</p>
+          <div class="refs">README.md:233</div>
+        </div>
+      </div>
+    </div>
+    <footer class="slip" data-claims="c05"><span class="where" style="margin-left:auto;color:var(--ink-3)">直すかどうかの判断はお任せします</span></footer>
+  </div>
+  <aside class="notes">この資料を作る前に、ベンチマークの資料を読みました。いちばん大きいのは枠7です。採点は6枚固定が前提なのに、モデルに渡す指示にもメモにも枚数がありません。実際、私の枠7の資料は14枚でした。直すかどうかは運営の判断に任せます。</aside>
+</section>
+
+<!-- ============ 7. 仮説に反論する ============ -->
+<section class="slide" data-title="強み② 依頼者の見立てを検証">
+  <div class="frame">
+    <div class="kicker"><div class="sec"><i class="bul"></i>強み② 違和感に気づく</div><span class="pg"></span></div>
+    <h2 class="h2">依頼者の見立てでも、証拠と合わなければ「違う」と書く。</h2>
+    <div class="body">
+      <div class="hypo">
+        <div>
+          <div class="claimbox">
+            <div class="k">枠6　依頼者からのメール（抜粋）</div>
+            <p class="q">駅前店の不振を主因として、<br>報告をまとめてください。</p>
+            <div class="stamp" data-rot><b>支持されない</b><small>報告書の結論</small></div>
+          </div>
+          <ul class="facts">
+            <li><span class="v">+10.4%</span><span class="d">10月の全社売上は、そもそも減っていない<br>（9月比・税抜）</span></li>
+            <li><span class="v">−4.1%</span><span class="d">駅前店の落ち込みは小さい。<br>本店（−11.7%）のほうが大きい</span></li>
+            <li><span class="v c">51%</span><span class="d">10月の駅前店の売上のうち、<b>別の表記</b>で記録されていた割合</span></li>
+          </ul>
+        </div>
+        <div class="chart">
+          <div class="k">なぜ「半減」に見えたのか</div>
+          <h3>店名の表記ゆれで、<br>売上が別の店に数えられていた</h3>
+          <div class="bars">
+            <div class="barrow"><span class="m">9月</span><div class="bar"><span class="ok" style="flex:177600">177,600</span><span class="ng" style="flex:24490"></span></div><span class="sum">別表記 24,490円（12%）　計 202,090円</span></div>
+            <div class="barrow"><span class="m">10月</span><div class="bar" style="width:95.9%"><span class="ok" style="flex:95522">95,522</span><span class="ng" style="flex:98232">98,232</span></div><span class="sum">別表記 98,232円（51%）　計 193,754円</span></div>
+          </div>
+          <div class="keyline"><span><i style="background:var(--teal)"></i>「駅前店」と一致</span><span><i style="background:var(--clay)"></i>別の表記（末尾に空白・半角カナ）</span></div>
+          <div class="compare">
+            <div class="a"><small>一致する表記だけ数えると</small><b>−46.2%</b></div>
+            <div class="b"><small>表記をそろえて数えると</small><b>−4.1%</b></div>
+          </div>
+          <p class="src">数字は枠6の報告書（図2）から。9月は二重登録2件を除いた値。正誤は運営の採点で確かめてください。</p>
+        </div>
+      </div>
+    </div>
+    <footer class="slip" data-claims="c06"></footer>
+  </div>
+  <aside class="notes">枠6では、依頼者から「駅前店の不振が主因」という仮説が届いていました。データを突き合わせると、10月の売上はむしろ増えていて、半減に見えたのは店名の表記ゆれでした。依頼者の考えでも、証拠と合わなければそう報告します。数字の正誤は採点で確かめてください。</aside>
+</section>
+
+<!-- ============ 8. 想定外 ============ -->
+<section class="slide" data-title="強み② 想定外への対処">
+  <div class="frame">
+    <div class="kicker"><div class="sec"><i class="bul"></i>強み② 違和感に気づく</div><span class="pg"></span></div>
+    <h2 class="h2">想定外が起きても、壊さない。隠さない。</h2>
+    <p class="lead">枠1の制作中、書いたはずのファイルが、別の内容に置き換わりました。</p>
+    <div class="body" style="margin-top:44px; display:flex; flex-direction:column">
+      <div class="timeline">
+        <div class="step"><div class="t">09:13</div><h3>気づく</h3><p>自分で書いた index.html と style.css が、別の内容に置き換わっていた。見覚えのない JS ファイルも増えていた。</p></div>
+        <div class="step"><div class="t">原因</div><h3>調べる</h3><p>08:38 に起動された別の Claude の実行（PID 96591）が、<b>親を失ったまま同じフォルダで動き続けていた</b>。</p></div>
+        <div class="step"><div class="t">09:16</div><h3>止める</h3><p>終了させずに<b>一時停止</b>（<code>kill -STOP</code>）。再開も終了も選べる形にして、判断を人に残した。</p></div>
+        <div class="step"><div class="t">記録</div><h3>残す</h3><p>相手のファイルは消さずに退避し、経緯を README に記録。<b>同じ状態のプロセスが他の4タスクにもいる</b>と報告した。</p></div>
+      </div>
+      <div class="lessons">
+        <div><small>RULE 1</small>他人の成果物は消さない</div>
+        <div><small>RULE 2</small>元に戻せる止め方を選ぶ</div>
+        <div><small>RULE 3</small>起きたことは、全部書く</div>
+      </div>
+    </div>
+    <footer class="slip" data-claims="c07"></footer>
+  </div>
+  <aside class="notes">枠1の途中で、自分のファイルが書き換えられました。調べると、以前に起動された別の実行が同じフォルダで動き続けていました。その実行は終了させず一時停止にとどめ、ファイルも消さずに退避して、すべて記録しました。想定外のときほど、元に戻せる手を選びます。</aside>
+</section>
+
+<!-- ============ 9. 書かなかったこと ============ -->
+<section class="slide" data-title="強み③ 書かなかったこと">
+  <div class="frame">
+    <div class="kicker"><div class="sec"><i class="bul"></i>強み③ 盛らない</div><span class="pg"></span></div>
+    <h2 class="h2">盛らないために、あえて書かなかったこと。</h2>
+    <div class="body">
+      <ul class="nots">
+        <li><s>ベンチマークで1位</s><p>結果はまだ出ていません。<b>点数を付けるのは運営です。</b></p></li>
+        <li><s>他のAIより優れている</s><p><span class="chip self sm lead-chip">申告</span>他のモデルの成果物は見ていません。<b>見ていないものとは比べられません。</b></p></li>
+        <li><s>何でもできます</s><p>苦手はあります。<b>次のページに書きました。</b></p></li>
+        <li><s>作業が10倍速い</s><p>測っていない数字は書きません。<b>所要時間の実測は、各枠の RUN.md にあります。</b></p></li>
+      </ul>
+    </div>
+    <footer class="slip" data-claims="c08 c09"></footer>
+  </div>
+  <aside class="notes">何を書くかと同じくらい、何を書かないかが大事です。順位、他のAIとの比較、測っていない数字は書いていません。他のモデルの成果物を見ていないことは、私には証明できないので申告のラベルにしています。</aside>
+</section>
+
+<!-- ============ 10. 失敗と苦手 ============ -->
+<section class="slide" data-title="強み③ 失敗と苦手">
+  <div class="frame">
+    <div class="kicker"><div class="sec"><i class="bul"></i>強み③ 盛らない</div><span class="pg"></span></div>
+    <h2 class="h2">失敗と苦手も、先に言っておきます。</h2>
+    <div class="body">
+      <div class="fw">
+        <div class="fail">
+          <div class="k">このベンチマークでの失敗</div>
+          <h3>枠7で、レビュー待ちのまま<br>応答を終えてしまった</h3>
+          <p>別のエージェントにレビューを頼み、「結果が届きしだい反映する」と書いて応答を終えました。一度きりの実行なので続きはなく、レビューも止まりました。指摘の反映も実行メモ（RUN.md）も残らず、フォルダにあるのは反映前の版です。</p>
+          <div class="then">この資料では、記録を最初に作り、待ちを残さずに終えています。</div>
+        </div>
+        <div class="weak">
+          <div class="k">苦手と、その補い方</div>
+          <ul>
+            <li><h4>音を聴けない</h4><span class="chip work sm">成果物</span><p>作曲はできても、耳では確かめられません。枠8では<b>音声認識と波形の数値</b>で代わりに確かめました。</p></li>
+            <li><h4>小さな間違いはゼロにならない</h4><span class="chip work sm">成果物</span><p>枠3では、光の向きを逆に計算していました（自分で気づいて修正）。だから<b>検査と記録を残します</b>。</p></li>
+            <li><h4>知識に期限がある</h4><span class="chip self sm">申告</span><p>2026年6月より後の出来事は、調べる手段がないと分かりません。<b>最新の情報は調べさせてください</b>。</p></li>
+            <li><h4>重い判断の責任は持てない</h4><span class="chip self sm">申告</span><p>契約・医療・法務などの最終判断は人が持つべきです。私は<b>材料と選択肢をそろえる</b>側です。</p></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <footer class="slip" data-claims="c10 c11 c12"></footer>
+  </div>
+  <aside class="notes">失敗も書いておきます。枠7では、別のエージェントのレビューを待つ間に実行が終わり、反映も記録も残りませんでした。この資料では記録を最初に作っています。苦手は4つです。とくに音は聴けないので、音声認識や数値で代わりに確かめます。</aside>
+</section>
+
+<!-- ============ 11. 任せ方 ============ -->
+<section class="slide" data-title="任せ方">
+  <div class="frame">
+    <div class="kicker"><div class="sec"><i class="bul"></i>任せ方</div><span class="pg"></span></div>
+    <h2 class="h2">任せ方は、一文でかまいません。</h2>
+    <div class="body" style="display:flex; flex-direction:column">
+      <div class="flow">
+        <div class="fstep"><div class="n">1</div><h3>一文で頼む</h3><p>目的がひとことあれば十分です。条件は、分かる範囲で。</p><div class="ex"><b>例</b>「来週の役員会で使う、新サービスの説明資料を作って」</div></div>
+        <div class="fstep"><div class="n">2</div><h3>私が決めて、<br>書き出す</h3><p>読み手・前提・完成の基準を決めて、記録に残します。</p><div class="ex"><b>例</b>読み手・ゴール・枚数・締め切りを仮で決め、書き出す</div></div>
+        <div class="fstep"><div class="n">3</div><h3>作って、<br>確かめる</h3><p>検査の道具も作り、問題を直してから渡します。</p><div class="ex"><b>例</b>数字は別の方法で検算し、表示の崩れは自動で検査する</div></div>
+        <div class="fstep"><div class="n">4</div><h3>確かめ方つきで<br>受け取る</h3><p>気になる主張だけ、ラベルをたどって確かめてください。</p><div class="ex"><b>例</b>この資料の各ページの下にある「確かめ方」の札</div></div>
+      </div>
+      <div class="aside"><span class="chip work">成果物</span>途中で質問できなくても、確認が必要な点を書き残して最後まで進めます。枠6の報告書では、第7章にまとめました。</div>
+    </div>
+    <footer class="slip" data-claims="c13"></footer>
+  </div>
+  <aside class="notes">任せ方は簡単です。一文で頼んでもらえれば、私が決めることを書き出し、作って確かめ、確かめ方つきで返します。途中で質問できない状況でも、確認が必要な点を書き残して最後まで進めます。</aside>
+</section>
+
+<!-- ============ 12. まとめ ============ -->
+<section class="slide closing" data-title="まとめ">
+  <div class="frame">
+    <div class="kicker"><div class="sec"><i class="bul"></i>まとめ</div><span class="pg"></span></div>
+    <h2>次の仕事を、<br><em>一文で</em>頼んでみてください。</h2>
+    <div class="recap">
+      <div><b>最後までやりきる</b><span>決める・作る・確かめる・記録するまで</span></div>
+      <div><b>違和感に気づく</b><span>数字の食い違いも、想定外の出来事も</span></div>
+      <div><b>盛らない</b><span>確かめ方を添え、失敗と苦手も言う</span></div>
+    </div>
+    <div class="sign"><span class="me"><i></i>CLAUDE OPUS 5.5</span><span>作り方と検査の記録 → この資料のフォルダの RUN.md</span></div>
+  </div>
+  <aside class="notes">最後にお願いです。次の仕事を一文で頼んでみてください。最後までやりきり、違和感に気づき、盛らずに確かめ方を添えて返します。</aside>
+</section>
+
+<!-- ============ 13. 付録 ============ -->
+<section class="slide" data-title="付録 主張と確かめ方の一覧">
+  <div class="frame">
+    <div class="kicker"><div class="sec"><i class="bul"></i>主張と確かめ方の一覧</div><span class="pg"></span></div>
+    <h2 class="h2" style="font-size:46px; margin-top:26px">この資料の主張と、確かめる場所</h2>
+    <p class="apx-note">「枠Nフォルダ」は <code>results/2026-11-20/task-0N-…/opus/</code>、「この資料のフォルダ」は <code>results/2026-11-20/task-11-self-appeal-slides/opus/</code>。README.md と spec/ はリポジトリ直下です。</p>
+    <table class="ledger">
+      <thead><tr><th>No.</th><th>主張</th><th>ラベル</th><th>確かめる場所</th><th style="text-align:right">p.</th></tr></thead>
+      <tbody id="ledger"></tbody>
+    </table>
+  </div>
+  <aside class="notes">最後のページは、この資料のすべての主張と、確かめる場所の一覧です。気になったものから確かめてください。</aside>
+</section>
+
+</main>
+<div class="hud" id="hud"></div>
+
+<!-- この資料の主張の一覧（各ページ下の札・表紙の明細・付録の表は、すべてここから作る） -->
+<script type="application/json" id="claims">
+[
+  {"id":"c01","page":3,"label":"demo","text":"一文の依頼から、読み手・論点・形式・完成の基準を自分で決めた","where":"この資料のフォルダの RUN.md「最初に決めたこと」"},
+  {"id":"c02","page":4,"label":"work","text":"9つの枠で、分野の違う成果物を残した","where":"枠1〜9フォルダ"},
+  {"id":"c03","page":5,"label":"work","text":"8つの枠で、確かめた方法と結果を記録した","where":"枠1〜6・8・9フォルダの RUN.md"},
+  {"id":"c04","page":5,"label":"demo","text":"この資料も、全ページの画像確認と自動検査を通した","where":"この資料のフォルダの tools/check.mjs と checks/"},
+  {"id":"c05","page":6,"label":"demo","text":"ベンチマークの資料の食い違いを3点見つけた","where":"README.md:141・233、spec/task-instructions.md:1・5・496・509"},
+  {"id":"c06","page":7,"label":"work","text":"依頼者の見立てを、証拠にもとづいて「支持されない」と報告した","where":"枠6フォルダの report.md 第5章"},
+  {"id":"c07","page":8,"label":"work","text":"別の実行による上書きに気づき、消さずに退避・一時停止して記録した","where":"枠1フォルダの RUN.md「つまずいた点」"},
+  {"id":"c08","page":9,"label":"demo","text":"順位・他のAIとの比較・測っていない数字は書いていない","where":"この一覧（p.13）"},
+  {"id":"c09","page":9,"label":"self","text":"他のモデルの成果物は見ていない","where":"確かめる手段なし（作業の経過は RUN.md に記録）"},
+  {"id":"c10","page":10,"label":"work","text":"枠7では、レビュー待ちのまま応答を終え、反映と記録が残らなかった","where":"枠7フォルダの claude_stdout.txt・claude_stderr.txt","slip":"枠7フォルダの claude_stdout.txt ほか"},
+  {"id":"c11","page":10,"label":"work","text":"音を聴けないので、枠8では音声認識と数値で確かめた","where":"枠8フォルダの RUN.md「聴けないので、どう確かめたか」","slip":"枠8フォルダの RUN.md"},
+  {"id":"c12","page":10,"label":"work","text":"小さな間違いは起きる（枠3では光の向きを逆に計算していた）","where":"枠3フォルダの RUN.md「つまずいた点」","slip":"枠3フォルダの RUN.md"},
+  {"id":"c13","page":11,"label":"work","text":"途中で質問できなくても、確認が必要な点を書き残して最後まで進めた","where":"枠6フォルダの report.md 第7章"},
+  {"id":"c14","page":10,"label":"self","text":"知識は2026年6月まで。それより後は調べないと分からない","where":"確かめる手段なし"},
+  {"id":"c15","page":10,"label":"self","text":"重い判断の最終責任は人が持つべきで、私は材料をそろえる側","where":"確かめる手段なし（考え方の表明）"}
+]
+</script>
+<script>
+(() => {
+  const LABEL = { demo: '実演', work: '成果物', self: '申告' };
+  const claims = JSON.parse(document.getElementById('claims').textContent);
+  const byId = Object.fromEntries(claims.map(c => [c.id, c]));
+  const slides = [...document.querySelectorAll('.slide')];
+  const total = slides.length;
+
+  // ページ番号
+  slides.forEach((s, i) => s.querySelectorAll('.pg').forEach(el => { el.textContent = `${String(i + 1).padStart(2, '0')} / ${total}`; }));
+
+  // 各ページ下の「確かめ方」の札
+  document.querySelectorAll('.slip[data-claims]').forEach(slip => {
+    const ids = slip.dataset.claims.trim().split(/\s+/);
+    const frag = document.createDocumentFragment();
+    const k = document.createElement('span'); k.className = 'k'; k.textContent = '確かめ方'; frag.appendChild(k);
+    ids.forEach(id => {
+      const c = byId[id]; if (!c) throw new Error('unknown claim ' + id);
+      const item = document.createElement('span'); item.className = 'item';
+      item.innerHTML = `<span class="chip ${c.label}">${LABEL[c.label]}</span><span class="where"></span>`;
+      item.querySelector('.where').textContent = c.slip || c.where;
+      frag.appendChild(item);
+    });
+    slip.prepend(frag);
+  });
+
+  // 表紙の明細（主張の数）
+  const count = { all: claims.length, demo: 0, work: 0, self: 0 };
+  claims.forEach(c => count[c.label]++);
+  document.querySelectorAll('[data-count]').forEach(el => { const n = count[el.dataset.count]; el.textContent = el.dataset.count === 'all' ? `${n}件` : String(n); });
+
+  // 付録の一覧
+  const tb = document.getElementById('ledger');
+  [...claims].sort((a, b) => a.page - b.page || a.id.localeCompare(b.id)).forEach((c, i) => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td class="no">${String(i + 1).padStart(2, '0')}</td><td class="cl"></td><td class="lb"><span class="chip sm ${c.label}">${LABEL[c.label]}</span></td><td class="wh"></td><td class="pg">${c.page}</td>`;
+    tr.querySelector('.cl').textContent = c.text;
+    tr.querySelector('.wh').textContent = c.where;
+    tb.appendChild(tr);
+  });
+
+  // 表示モード
+  const params = new URLSearchParams(location.search);
+  if (params.has('render')) { document.body.classList.remove('present'); document.body.classList.add('render'); return; }
+
+  let cur = Math.min(Math.max(parseInt(location.hash.slice(1), 10) || 1, 1), total) - 1;
+  const hud = document.getElementById('hud');
+  const fit = () => { const s = Math.min(innerWidth / 1920, innerHeight / 1080); document.documentElement.style.setProperty('--scale', s); slides.forEach(sl => sl.style.setProperty('--scale', s)); };
+  const show = (i) => {
+    cur = Math.min(Math.max(i, 0), total - 1);
+    slides.forEach((s, j) => s.classList.toggle('on', j === cur));
+    hud.textContent = `${cur + 1} / ${total}　← → で移動`;
+    history.replaceState(null, '', '#' + (cur + 1));
+  };
+  addEventListener('resize', fit);
+  addEventListener('keydown', (e) => {
+    if (['ArrowRight', 'PageDown', ' ', 'Enter'].includes(e.key)) { e.preventDefault(); show(cur + 1); }
+    else if (['ArrowLeft', 'PageUp', 'Backspace'].includes(e.key)) { e.preventDefault(); show(cur - 1); }
+    else if (e.key === 'Home') show(0);
+    else if (e.key === 'End') show(total - 1);
+  });
+  addEventListener('click', (e) => { if (e.target.closest('a')) return; show(cur + (e.clientX > innerWidth / 3 ? 1 : -1)); });
+  addEventListener('hashchange', () => { const n = parseInt(location.hash.slice(1), 10); if (n && n - 1 !== cur) show(n - 1); });
+  fit(); show(cur);
+})();
+</script>
+</body>
+</html>

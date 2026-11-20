@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="1台にブレーキをかけ、車間を変えて実験。自然渋滞の波が後ろへ伝わるしくみを、車の動きと減速の記録から確かめよう。">
+  <meta name="theme-color" content="#f6f3ec">
+  <title>なぜ、何もない道で渋滞が起きるのか？</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%2320211e'/%3E%3Cpath d='M7 27 12 5M25 27 20 5M16 6v4m0 3v4m0 3v5' fill='none' stroke='%23f6f3ec' stroke-width='2'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="traffic.js"></script>
+  <script defer src="drawing.js"></script>
+  <script defer src="explainer.js"></script>
+</head>
+<body id="top">
+  <header class="masthead page-width">
+    <a class="masthead-title" href="#top"><span class="road-icon" aria-hidden="true"></span>交通のしくみ</a>
+    <a class="chapter-link" href="#mechanism">しくみを読む <span aria-hidden="true">↓</span></a>
+  </header>
+
+  <main class="page-width">
+    <section class="intro" aria-labelledby="page-title">
+      <div class="intro-copy">
+        <h1 id="page-title"><span class="title-line">なぜ、何もない道で</span><span class="title-line"><em>渋滞</em>が起きるのか？</span></h1>
+        <p><span>事故も工事もない高速道路で、1台が減速したら？</span> <span>車間を変えて、自然渋滞が生まれる瞬間を見てみよう。</span></p>
+      </div>
+      <img class="hero-image" src="assets/highway.webp" width="1560" height="680" alt="草地を横切る道路を走る車を、真上から見たイメージ">
+    </section>
+
+    <section class="experiment" id="experiment" aria-labelledby="experiment-title">
+      <h2 id="experiment-title">ブレーキをかけてみよう</h2>
+      <noscript><p>図解を動かすには、ブラウザで JavaScript を有効にしてください。</p></noscript>
+      <div class="bench">
+        <div class="controls">
+          <fieldset aria-describedby="spacing-hint">
+            <legend>車の間隔</legend>
+            <div class="spacing">
+              <label><input type="radio" name="spacing" value="wide"><span>広い</span></label>
+              <label><input type="radio" name="spacing" value="medium"><span>ふつう</span></label>
+              <label><input type="radio" name="spacing" value="close" checked><span>狭い</span></label>
+            </div>
+            <p class="spacing-hint" id="spacing-hint">車間を変えて、同じブレーキを試せます。</p>
+            <p class="setup" id="setup">13台 <span aria-hidden="true">/</span> 初めの車間 約7.5 m</p>
+          </fieldset>
+          <button type="button" class="button brake-button" id="brake" aria-describedby="guidance">
+            <span class="brake-icon" aria-hidden="true"><span>!</span></span><span id="brake-label">1台にブレーキ</span>
+          </button>
+          <div class="playback-buttons">
+            <button type="button" class="button secondary-button" id="playback"><span class="play-icon" aria-hidden="true"></span><span id="playback-label">一時停止</span></button>
+            <button type="button" class="button secondary-button" id="reset"><span class="reset-icon" aria-hidden="true">↻</span>リセット</button>
+          </div>
+        </div>
+
+        <figure class="simulator" aria-labelledby="course-title" aria-describedby="figure-caption">
+          <div class="simulator-head">
+            <h3 id="course-title">環状コース</h3>
+            <div class="directions">
+              <span class="wave-direction"><span aria-hidden="true">←</span><span>渋滞の波</span></span>
+              <span class="car-direction"><span>車が進む向き</span><span aria-hidden="true">→</span></span>
+            </div>
+            <div class="clock" aria-label="ブレーキ後の経過時間"><span id="elapsed">0.0</span><span class="clock-unit">秒</span></div>
+          </div>
+
+          <div class="course">
+            <div class="pin-area" aria-hidden="true">
+              <span class="car-pin" id="car-pin">ブレーキをかける車</span>
+              <span class="car-pin queue-pin" id="queue-pin" hidden>← 低速の列</span>
+            </div>
+            <canvas class="road" id="road" role="img" aria-label="上から見た道路。車は右へ進みます。赤い車は減速中、黄色い帯は低速の車が詰まっている場所です。"></canvas>
+          </div>
+
+          <div class="trace">
+            <div class="trace-heading">
+              <h3>減速の足あと</h3><span id="preview-label" class="preview-label">見本</span>
+            </div>
+            <div class="trace-body">
+              <div class="plot-area">
+                <canvas class="plot" id="plot" role="img" aria-label="減速した場所の記録。横軸はコース上の位置で、時間は上から下に進みます。点線は減速が順に始まった場所を結びます。"></canvas>
+              </div>
+              <div class="key" aria-label="色の見方">
+                <span><i class="swatch strong" aria-hidden="true"></i>強い減速</span>
+                <span><i class="swatch light" aria-hidden="true"></i>弱い減速</span>
+                <span><i class="swatch chain" aria-hidden="true"></i>減速の連鎖</span>
+              </div>
+            </div>
+            <div class="scrubber">
+              <label for="scrub">再生位置</label>
+              <input type="range" id="scrub" min="0" max="18" step="0.1" value="0" aria-valuetext="0.0 秒" disabled>
+              <span aria-hidden="true">18 秒</span>
+            </div>
+          </div>
+
+          <figcaption class="figure-caption" id="figure-caption">
+            <strong>見方</strong>
+            <span>右端を出た車は左端から戻ります。下の図では時間が下へ進み、点線が左下に伸びるほど、減速が始まる場所は後ろへ移ります。</span>
+          </figcaption>
+        </figure>
+
+        <div class="feedback">
+          <p id="guidance" class="guidance" role="status">枠で囲んだ車が一度だけブレーキをかけます。すぐ後ろの車のブレーキランプに注目しましょう。</p>
+          <div class="observation">
+            <div class="observation-head">
+              <span>減速が伝わった車</span>
+              <span class="observation-value"><strong id="affected" aria-live="polite">—</strong><span class="observation-unit">台</span></span>
+            </div>
+            <p>初めの速度より 4 km/h 以上遅くなったことのある後続車</p>
+            <div class="comparison" id="comparison" hidden>
+              <p id="comparison-title">18秒後の比較</p>
+              <dl aria-labelledby="comparison-title">
+                <div><dt>広い</dt><dd data-result="wide">未試行</dd></div>
+                <div><dt>ふつう</dt><dd data-result="medium">未試行</dd></div>
+                <div><dt>狭い</dt><dd data-result="close">未試行</dd></div>
+              </dl>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="mechanism" id="mechanism" aria-labelledby="mechanism-title">
+      <h2 id="mechanism-title">渋滞の波は、どうして後ろへ？</h2>
+      <div class="steps">
+        <article class="step">
+          <h3>1台が少し減速</h3>
+          <canvas class="step-image" aria-hidden="true" data-step="0"></canvas>
+          <p>車が同じ速度で走っているところで、1台が少し速度を落とします。これが波のきっかけです。</p>
+        </article>
+        <article class="step">
+          <h3>後ろの車が追いつく</h3>
+          <canvas class="step-image" aria-hidden="true" data-step="1"></canvas>
+          <p>減速に気づくまでの間に、前の車との距離が縮まります。車間に余裕がなければ、間隔を取り戻そうと前の車より強くブレーキをかけることがあります。</p>
+        </article>
+        <article class="step">
+          <h3>減速する場所が後ろへ</h3>
+          <canvas class="step-image" aria-hidden="true" data-step="2"></canvas>
+          <p>先に減速した車が前へ抜けても、次の車が後ろから加わります。こうして低速のかたまりが、車とは逆向きに進みます。</p>
+        </article>
+      </div>
+
+      <footer class="notes">
+        <p><strong>実際の車でも確かめられた</strong>　2008年、22台が走った一周230 mの円形コースで、速度の小さな乱れから渋滞が生まれ、車の進行方向と逆へ伝わりました。 <a href="https://ir.library.osaka-u.ac.jp/repo/ouka/all/93262/" target="_blank" rel="noopener">Sugiyama ほかの論文 <span aria-hidden="true">↗</span></a></p>
+        <details>
+          <summary>シミュレーションの条件</summary>
+          <p>一周160 mの1車線を想定した簡略モデルです。前の車との間隔と速度を見て加減速する動きに、約0.3秒の反応の遅れを含めています。車の間隔を選ぶと、台数と走り始めの速度が変わります。最初の1台には、どの設定でも約0.7秒間で約11 km/hの減速に相当するブレーキをかけます。黄色い帯は、初めの速度の55％を下回る車が2台以上、初めより狭い間隔で続く区間を表します。</p>
+        </details>
+      </footer>
+    </section>
+  </main>
+</body>
+</html>

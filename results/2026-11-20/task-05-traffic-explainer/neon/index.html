@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>なぜ突然、自然渋滞が生まれるのか？ — 触ってわかる高速道路のしくみ</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Scroll reading progress bar -->
+  <div class="reading-progress" aria-hidden="true">
+    <div class="reading-progress__fill" id="readingProgress"></div>
+  </div>
+
+  <!-- Minimal sticky chapter navigation -->
+  <nav class="chapter-nav" aria-label="章ナビゲーション">
+    <div class="chapter-nav__inner">
+      <a class="chapter-nav__brand" href="#top">自然渋滞のしくみ</a>
+      <div class="chapter-nav__links">
+        <a href="#top" class="chapter-nav__link is-active" data-nav="top">導入</a>
+        <a href="#ch1" class="chapter-nav__link" data-nav="ch1">1. 反応の連鎖</a>
+        <a href="#ch2" class="chapter-nav__link" data-nav="ch2">2. 臨界点</a>
+        <a href="#ch3" class="chapter-nav__link" data-nav="ch3">3. サグ部の罠</a>
+        <a href="#ch4" class="chapter-nav__link" data-nav="ch4">4. 渋滞を消す</a>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+    <!-- ================================================================
+         HERO SECTION — Instant Interactive Hook
+         ================================================================ -->
+    <header id="top" class="hero section-anchor">
+      <div class="prose-wrap">
+        <p class="eyebrow">インタラクティブ図解 ・ 交通流の物理</p>
+        <h1 class="hero__title">
+          事故も工事もない高速道路で、<br class="br-desktop" />
+          なぜ突然「自然渋滞」が生まれるのか？
+        </h1>
+        <p class="hero__lead">
+          長い渋滞をやっと抜けたのに、先頭には事故も故障車も工事もない——。<br />
+          そんな不思議な現象の正体は、<strong>たった1台のわずかなブレーキ</strong>から生まれ、
+          車の流れに逆らって後ろへ伝わっていく<strong>「見えない波」</strong>にあります。
+        </p>
+        <p class="hero__lead">
+          まずは下の高速道路で、どれか1台の車を<strong>クリック</strong>（または赤いボタン）して、
+          ほんの1.5秒だけブレーキを踏ませてみてください。
+        </p>
+      </div>
+
+      <!-- Hero Interactive Simulation Stage -->
+      <section class="stage-card stage-card--hero" aria-label="直線の高速道路シミュレーション">
+        <div class="stage-header">
+          <div class="stage-header__left">
+            <span class="stage-badge" id="heroStatusBadge">順調に流れています</span>
+            <span class="stage-metric">平均時速 <strong id="heroAvgSpeed">69</strong> km/h</span>
+            <span class="stage-metric">最低時速 <strong id="heroMinSpeed">69</strong> km/h</span>
+          </div>
+          <div class="legend" aria-label="凡例">
+            <span class="legend__item"><i class="dot dot--fast"></i>スムーズ</span>
+            <span class="legend__item"><i class="dot dot--mid"></i>減速</span>
+            <span class="legend__item"><i class="dot dot--jam"></i>渋滞・ブレーキ</span>
+            <span class="legend__item"><i class="dot dot--trigger"></i>きっかけの車</span>
+          </div>
+        </div>
+
+        <div class="canvas-stack">
+          <div class="canvas-pane">
+            <div class="canvas-pane__label">
+              <span>高速道路（上空からの視点・クリックでブレーキ）</span>
+              <span class="canvas-pane__subhint">※ 車は左から右へ進みます</span>
+            </div>
+            <canvas id="heroRoadCanvas" class="sim-canvas sim-canvas--clickable" height="134"></canvas>
+          </div>
+          <div class="canvas-pane canvas-pane--sub">
+            <div class="canvas-pane__label canvas-pane__label--between">
+              <span>
+                リアルタイム「渋滞の足跡」
+                <span class="canvas-pane__subhint">（上が現在・下ほど過去。真上の道路と左右の位置が一致）</span>
+              </span>
+              <span class="mini-legend">
+                <span class="mini-legend__item mini-legend__item--fast">↗ 車（右へ前進）</span>
+                <span class="mini-legend__item mini-legend__item--jam">↖ 渋滞の波（左へ後退）</span>
+              </span>
+            </div>
+            <canvas id="heroTraceCanvas" class="sim-canvas" height="174"></canvas>
+          </div>
+        </div>
+
+        <div class="stage-controls stage-controls--wrap">
+          <div class="control-group">
+            <button type="button" class="btn btn--danger" id="heroBrakeBtn">
+              <span class="btn__icon" aria-hidden="true">🛑</span> 1台だけ1.5秒ブレーキを踏ませる
+            </button>
+            <div class="segmented segmented--compact" role="group" aria-label="再生速度">
+              <button type="button" class="seg-btn is-active" data-hero-speed="1">通常</button>
+              <button type="button" class="seg-btn" data-hero-speed="0.4">スロー</button>
+              <button type="button" class="seg-btn" data-hero-speed="0">一時停止</button>
+            </div>
+            <button type="button" class="btn btn--ghost btn--sm" id="heroResetBtn">リセット</button>
+          </div>
+        </div>
+        <div class="live-narration live-narration--full" id="heroNarration" aria-live="polite">
+          今は時速69kmほどでスムーズに流れています。道路上の<strong>どれか1台をクリック</strong>するか赤いボタンを押して、一瞬だけブレーキを踏ませてみてください。
+        </div>
+      </section>
+    </header>
+
+    <!-- ================================================================
+         CHAPTER 1 — Why One Tap Amplifies (Domino Chain)
+         ================================================================ -->
+    <section id="ch1" class="chapter section-anchor">
+      <div class="prose-wrap">
+        <div class="chapter-num">CHAPTER 01</div>
+        <h2 class="chapter__title">なぜ「ほんの一瞬のブレーキ」が消えずに膨らむのか？</h2>
+        <p>
+          さきほどの実験で、<strong>きっかけとなった青い車（最初にブレーキを踏んだ車）</strong>に注目しましたか？
+          その車は1.5秒後にすぐ加速して、何事もなかったかのように画面の右へ走り去ってしまいました。
+        </p>
+        <p>
+          それなのに後ろの車ほど強くブレーキを踏み、やがて完全に止まってしまった理由は、
+          人間の運転にある<strong>2つのクセ</strong>にあります。
+        </p>
+
+        <div class="insight-pair">
+          <div class="insight-mini">
+            <div class="insight-mini__num">理由①</div>
+            <h3>反応の遅れ（約0.7〜1.0秒）</h3>
+            <p>前のブレーキランプを見てから自分の足がブレーキを踏むまでに約1秒かかります。その間に車間が詰まるため、<strong>前の車より強めに踏まざるを得なくなります。</strong></p>
+          </div>
+          <div class="insight-mini">
+            <div class="insight-mini__num">理由②</div>
+            <h3>減速は一瞬、加速はゆっくり</h3>
+            <p>ブレーキなら1秒で時速20km以上落とせますが、元のスピードに戻るには何倍もの時間がかかります。回復しきる前に、次の車がどんどん追いついてしまいます。</p>
+          </div>
+        </div>
+
+        <p>
+          下の実験では、時速80kmで走る8台の列で<strong>先頭だけが時速58kmまで軽く減速</strong>します。
+          「人間の反応遅れ」と「遅れがほとんどない場合」を切り替えて、8台目に何が起きるか比べてみてください。
+        </p>
+      </div>
+
+      <div class="stage-card" aria-label="8台のドミノ連鎖実験">
+        <div class="stage-header">
+          <div class="stage-header__left">
+            <span class="stage-title-sm">実験1：先頭が軽く減速したときの「8台の連鎖」</span>
+          </div>
+          <div class="preset-pills" role="group" aria-label="反応遅れプリセット">
+            <button type="button" class="pill is-active" id="dominoPresetHuman">🧑 人間の反応（0.85秒）</button>
+            <button type="button" class="pill" id="dominoPresetFast">⚡ ほぼ遅れなし（0.15秒）</button>
+          </div>
+        </div>
+
+        <div class="canvas-stack">
+          <div class="canvas-pane">
+            <div class="canvas-pane__label canvas-pane__label--between">
+              <span>
+                8台の連なり（車列と一緒にカメラ移動）
+                <span class="canvas-pane__subhint">※ 車の間の帯＝車間の余裕／黄色の円＝反応待ち</span>
+              </span>
+              <span class="timeline-readout" id="dominoTimeReadout">0.0 / 16.0 秒</span>
+            </div>
+            <canvas id="dominoRoadCanvas" class="sim-canvas" height="132"></canvas>
+          </div>
+          <div class="canvas-pane canvas-pane--sub">
+            <div class="canvas-pane__label">
+              <span>各車がどこまで減速したか（最低速度の比較：1台目 → 8台目）</span>
+              <span class="canvas-pane__subhint">※ 先頭（青）は58km/hまでしか落としていません</span>
+            </div>
+            <canvas id="dominoChartCanvas" class="sim-canvas" height="192"></canvas>
+          </div>
+        </div>
+
+        <div class="stage-controls stage-controls--wrap">
+          <div class="slider-control">
+            <label for="dominoDelaySlider">
+              人間の反応遅れ：<strong id="dominoDelayVal">0.85 秒</strong>
+            </label>
+            <input type="range" id="dominoDelaySlider" min="0.10" max="1.00" step="0.05" value="0.85" />
+            <div class="slider-ticks">
+              <span>0.1秒（AI並み）</span>
+              <span>0.5秒</span>
+              <span>0.85秒（標準）</span>
+              <span>1.0秒（疲労時）</span>
+            </div>
+          </div>
+          <div class="control-group">
+            <button type="button" class="btn btn--primary" id="dominoReplayBtn">▶ もう一度試す</button>
+            <button type="button" class="btn btn--ghost btn--sm" id="dominoPauseBtn">一時停止</button>
+          </div>
+        </div>
+        <div class="live-narration live-narration--full" id="dominoNarration" aria-live="polite">
+          先頭が時速80kmから58kmへ軽く減速する実験です。反応遅れが後ろの車へどう連鎖するか観察してみてください。
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================================
+         CHAPTER 2 — Critical Density & Ring-Road Experiment
+         ================================================================ -->
+    <section id="ch2" class="chapter section-anchor">
+      <div class="prose-wrap">
+        <div class="chapter-num">CHAPTER 02</div>
+        <h2 class="chapter__title">すいている道路では起きない — 「臨界点」の秘密</h2>
+        <p>
+          では、誰かがブレーキを踏むたびに毎回渋滞になるのでしょうか？
+          もちろん違います。<strong>道路がすいていて車間距離に十分な余裕があれば</strong>、
+          後ろの車はブレーキを強く踏まずにアクセルを緩めるだけで吸収でき、波はすぐに消えてしまいます。
+        </p>
+        <p>
+          ところが、交通量がある<strong>「臨界点（限界の混み具合）」</strong>を超えると、状況は一変します。
+          2008年に名古屋大学の杉山雄規教授らが行った有名な実験では、
+          <strong>障害物が何もない円形の道路に22台の車を等間隔で走らせただけ</strong>で、
+          ほんのわずかな速度ムラから自然渋滞が発生し、ぐるぐると後ろ向きに回り続けることが実証されました。
+        </p>
+        <p>
+          下の円形サーキットで<strong>「車の台数」</strong>を動かして、臨界点の手前と先で世界がどう変わるか確かめてみてください。
+          <strong>右側のグラフ（時空図）</strong>では、1台1台の車が前へ進んでいるのに、赤い渋滞の帯だけが逆向きに伝わっていく様子がくっきり見えます。
+        </p>
+      </div>
+
+      <div class="stage-card" aria-label="円形サーキットの臨界点シミュレーション">
+        <div class="stage-header">
+          <div class="stage-header__left">
+            <span class="stage-title-sm">実験2：円形サーキット（1周 520m）</span>
+            <span class="stage-badge stage-badge--jam" id="ringStatusBadge">自然渋滞が発生中！</span>
+          </div>
+          <div class="preset-pills" role="group" aria-label="混雑度プリセット">
+            <button type="button" class="pill" data-ring-preset="14">すいている（14台）</button>
+            <button type="button" class="pill is-active" data-ring-preset="22">臨界点超え・名大モデル（22台）</button>
+            <button type="button" class="pill" data-ring-preset="30">過密状態（30台）</button>
+          </div>
+        </div>
+
+        <div class="split-stage">
+          <div class="split-stage__left">
+            <div class="canvas-pane__label">
+              <span>円形道路（車をクリックでブレーキ・青＝追跡車）</span>
+            </div>
+            <canvas id="ringRoadCanvas" class="sim-canvas sim-canvas--clickable" height="320"></canvas>
+            <!-- Driver POV mini bar for the tracked blue car -->
+            <div class="driver-pov-bar" id="ringDriverPov">
+              <span class="driver-pov__dot" aria-hidden="true"></span>
+              <span class="driver-pov__label">青い車（追跡車）の視点：</span>
+              <strong class="driver-pov__speed" id="ringTrackedSpeed">58 km/h</strong>
+              <span class="driver-pov__state" id="ringTrackedState">快走中</span>
+            </div>
+          </div>
+          <div class="split-stage__right">
+            <div class="canvas-pane__label canvas-pane__label--between">
+              <span>時空図：車の動きと渋滞の波</span>
+              <span class="mini-legend">
+                <span class="mini-legend__item mini-legend__item--fast">↗ 車（前進）</span>
+                <span class="mini-legend__item mini-legend__item--jam">↘ 渋滞の波（後退）</span>
+                <span class="mini-legend__item mini-legend__item--blue">━ 追跡車</span>
+              </span>
+            </div>
+            <canvas id="ringSpaceTimeCanvas" class="sim-canvas" height="360"></canvas>
+          </div>
+        </div>
+
+        <!-- Live KPI Strip -->
+        <div class="kpi-strip">
+          <div class="kpi-card">
+            <div class="kpi-card__label">平均時速</div>
+            <div class="kpi-card__value"><span id="ringAvgSpeed">44</span> <small>km/h</small></div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-card__label">渋滞中（35km/h未満）</div>
+            <div class="kpi-card__value"><span id="ringJamCount">9</span> <small>/ <span id="ringTotalCount">22</span>台</small></div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-card__label">道路の輸送効率（交通流量）</div>
+            <div class="kpi-card__value">
+              <span id="ringFlowRate">1,850</span> <small>台/時</small>
+              <span class="kpi-delta kpi-delta--drop" id="ringFlowDelta">−25%</span>
+            </div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-card__label">渋滞の波の速さ</div>
+            <div class="kpi-card__value"><span id="ringWaveSpeed">逆向き 20 km/h</span></div>
+          </div>
+        </div>
+
+        <div class="stage-controls stage-controls--wrap">
+          <div class="slider-control slider-control--wide">
+            <label for="ringCountSlider">
+              円形道路を走る車の台数：<strong id="ringCountVal">22 台</strong>
+              <span class="density-tag" id="ringDensityTag">臨界点超え（自然渋滞が起きる！）</span>
+            </label>
+            <div class="slider-with-marker">
+              <input type="range" id="ringCountSlider" min="10" max="34" step="1" value="22" />
+              <div class="critical-marker" style="left: 37.5%" title="臨界点（19台）">
+                <span>▲ 臨界点(19台)</span>
+              </div>
+            </div>
+            <div class="slider-ticks slider-ticks--positioned">
+              <span style="left: 0%; transform: translateX(0)">10台（ガラガラ）</span>
+              <span style="left: 37.5%">19台</span>
+              <span style="left: 66.7%">26台</span>
+              <span style="left: 100%; transform: translateX(-100%)">34台（超過密）</span>
+            </div>
+          </div>
+          <div class="control-group">
+            <button type="button" class="btn btn--danger" id="ringBrakeBtn">🛑 1台にブレーキ</button>
+            <button type="button" class="btn btn--ghost btn--sm" id="ringResetBtn">均等スタートに戻す</button>
+          </div>
+        </div>
+        <div class="live-narration live-narration--full" id="ringNarration" aria-live="polite">
+          22台（臨界点超え）で自然渋滞が回っています。台数を<strong>14台</strong>に下げて「1台にブレーキ」を押すと、波がすぐ消える違いを体感できます。
+        </div>
+      </div>
+
+      <div class="prose-wrap">
+        <div class="callout-box">
+          <strong>もうひとつの意外な事実：「渋滞すると、道路が運べる車の数まで減る」</strong>
+          <p>
+            上の「道路の輸送効率（台/時）」に注目してみてください。22台がスムーズに流れているときは1時間に約2,470台運べるのに、
+            ひとたび自然渋滞が起きると<strong>同じ台数なのに1,700〜1,900台前後まで効率が2〜3割もガクンと落ちます</strong>（容量低下現象）。
+            つまり渋滞は「遅くなる」だけでなく、道路の処理能力そのものを奪ってしまうのです。
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================================
+         CHAPTER 3 — Real-World Trigger: The "Sag" (見えない上り坂)
+         ================================================================ -->
+    <section id="ch3" class="chapter section-anchor">
+      <div class="prose-wrap">
+        <div class="chapter-num">CHAPTER 03</div>
+        <h2 class="chapter__title">現実の高速道路では、何が「最初のブレーキ」を起こすのか？</h2>
+        <p>
+          ここまでで「混み合った道路で1台がブレーキを踏むと渋滞の波が生まれる」ことがわかりました。
+          では実際の高速道路では、なぜ毎回<strong>同じ場所</strong>（東名・大和トンネル付近や中央道・小仏トンネル付近など）で自然渋滞が起きるのでしょうか？
+        </p>
+        <p>
+          日本の高速道路で起きる自然渋滞の<strong>約6割</strong>は、
+          <strong>「サグ部」</strong>と呼ばれる地形がきっかけです。
+          サグ部とは、ゆるやかな下り坂から気づきにくい上り坂（勾配2〜3%ほど）へ切り替わる「谷底」のこと。
+          見た目はほとんど平坦なのに、アクセルの踏み加減がそのままなので<strong>無意識にスピードが落ち</strong>、
+          後ろの車が次々とブレーキを踏んでしまうのです。
+        </p>
+        <p>
+          下のシミュレーターで<strong>「サグ部あり」</strong>と<strong>「ペースメーカーライト対策」</strong>（実際の高速道路で導入されている、
+          壁面の光が前へ流れて速度低下を防ぐ装置）を切り替え、渋滞がみるみる消えていく様子を確かめてみてください。
+        </p>
+      </div>
+
+      <div class="stage-card" aria-label="サグ部（見えない上り坂）シミュレーション">
+        <div class="stage-header">
+          <div class="stage-header__left">
+            <span class="stage-title-sm">実験3：気づきにくい上り坂「サグ部」で何が起きるか</span>
+            <span class="stage-badge stage-badge--jam" id="sagStatusBadge">サグ部で自然渋滞が発生</span>
+          </div>
+          <div class="preset-pills" role="group" aria-label="道路条件切替">
+            <button type="button" class="pill" data-sag-mode="flat">平坦な道路</button>
+            <button type="button" class="pill is-active" data-sag-mode="sag">⛰️ サグ部あり（上り+3%）</button>
+            <button type="button" class="pill" data-sag-mode="pacemaker">✨ サグ部＋ペースメーカーライト</button>
+          </div>
+        </div>
+
+        <div class="canvas-pane">
+          <div class="canvas-pane__label">
+            <span>上：横から見た道路の勾配（高低差を強調表示） ／ 下：真上から見た高速道路の流れ</span>
+          </div>
+          <canvas id="sagCanvas" class="sim-canvas" height="278"></canvas>
+        </div>
+
+        <div class="kpi-strip kpi-strip--3">
+          <div class="kpi-card">
+            <div class="kpi-card__label">区間平均時速</div>
+            <div class="kpi-card__value"><span id="sagAvgSpeed">56</span> <small>km/h</small></div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-card__label">サグ手前の渋滞車</div>
+            <div class="kpi-card__value"><span id="sagJamCount">8</span> <small>台</small></div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-card__label">通過効率（交通流量）</div>
+            <div class="kpi-card__value"><span id="sagFlowRate">1,820</span> <small>台/時</small></div>
+          </div>
+        </div>
+
+        <div class="stage-controls stage-controls--wrap">
+          <div class="slider-control">
+            <label for="sagDensitySlider">
+              交通量：<strong id="sagDensityVal">やや多い（臨界付近）</strong>
+            </label>
+            <input type="range" id="sagDensitySlider" min="0.40" max="0.88" step="0.04" value="0.72" />
+            <div class="slider-ticks">
+              <span>少ない</span>
+              <span>中くらい</span>
+              <span>多い</span>
+            </div>
+          </div>
+          <div class="control-group">
+            <button type="button" class="btn btn--ghost btn--sm" id="sagResetBtn">流れをリセット</button>
+          </div>
+        </div>
+        <div class="live-narration live-narration--full" id="sagNarration" aria-live="polite">
+          サグ部（上り坂の入り口）で前の車が無意識に減速し、手前（左側）に赤い渋滞の列が伸びていきます。坂を登りきった先（右側）はガラガラに流れている点に注目してください。
+        </div>
+      </div>
+
+      <div class="prose-wrap">
+        <p class="caption-note">
+          だからこそ、渋滞を抜けた瞬間に「えっ、前に何もないのに！」と不思議に感じます。
+          あなたが先頭に出る頃には、きっかけとなったわずかな上り坂をすでに登りきっているか、
+          最初にブレーキを踏んだ車はとっくに何キロも先へ走り去っているからです。
+        </p>
+      </div>
+    </section>
+
+    <!-- ================================================================
+         CHAPTER 4 — How Can We Dissolve Phantom Traffic Jams? (Lab)
+         ================================================================ -->
+    <section id="ch4" class="chapter section-anchor">
+      <div class="prose-wrap">
+        <div class="chapter-num">CHAPTER 04</div>
+        <h2 class="chapter__title">どうすれば自然渋滞は消せるのか？ — 渋滞解消チャレンジ</h2>
+        <p>
+          自然渋滞の正体が「後ろへ伝わる波」だとすれば、<strong>波のエネルギーを吸収するクッション</strong>を入れれば、
+          道路を広げなくても渋滞そのものを消せるはずです。
+        </p>
+        <p>
+          2018年、米アリゾナ大学などの研究チーム（Sternら）は驚くべき実験に成功しました。
+          22台が自然渋滞を起こして回っている円形道路で、<strong>わずか1〜2台（全体の5〜9%）だけが
+          「前が詰まっていても急加速せず、車間を広めにとって一定速度で走る（渋滞吸収走行）」</strong>に切り替えたところ、
+          全員の渋滞がみるみる消滅し、全体の平均速度と燃費が大幅に改善したのです。
+        </p>
+        <p>
+          下の実験室は<strong>すでに自然渋滞が発生している状態</strong>からスタートします。
+          3つの作戦をオンにして、赤い渋滞の波がどう溶けていくか自分の目で確かめてみてください。
+        </p>
+      </div>
+
+      <div class="stage-card stage-card--lab" aria-label="渋滞解消チャレンジ実験室">
+        <div class="stage-header">
+          <div class="stage-header__left">
+            <span class="stage-title-sm">実験4：渋滞解消ラボ（22台の円形道路）</span>
+            <span class="stage-badge stage-badge--jam" id="labStatusBadge">自然渋滞が発生中</span>
+          </div>
+          <div class="control-group">
+            <button type="button" class="btn btn--ghost btn--sm" id="labReseedBtn">🔄 渋滞状態に戻す</button>
+          </div>
+        </div>
+
+        <!-- Three Tactile Solution Cards -->
+        <div class="solution-grid">
+          <div class="solution-card" id="solCardBuster">
+            <div class="solution-card__head">
+              <span class="solution-tag solution-tag--cyan">作戦①</span>
+              <h3>渋滞吸収車（ジャムバスター）</h3>
+            </div>
+            <p>急加速して渋滞の列に突っ込まず、前方にクッション車間を保ちながら一定ペースで走る車（水色）を投入します。</p>
+            <div class="segmented" role="group" aria-label="渋滞吸収車の台数">
+              <button type="button" class="seg-btn is-active" data-jb="0">OFF</button>
+              <button type="button" class="seg-btn" data-jb="1">1台（5%）</button>
+              <button type="button" class="seg-btn" data-jb="2">2台（9%）</button>
+            </div>
+          </div>
+
+          <div class="solution-card" id="solCardCushion">
+            <div class="solution-card__head">
+              <span class="solution-tag solution-tag--emerald">作戦②</span>
+              <h3>みんなの「ゆとり運転」</h3>
+            </div>
+            <p>車間距離を少し広めにとり、前の減速に気づいたらブレーキより先に早めのアクセルオフで滑らかに合わせます。</p>
+            <div class="segmented" role="group" aria-label="ゆとり運転の切替">
+              <button type="button" class="seg-btn is-active" data-cushion="1.0">通常の運転</button>
+              <button type="button" class="seg-btn" data-cushion="1.45">ゆとり運転 ON</button>
+            </div>
+          </div>
+
+          <div class="solution-card" id="solCardAuto">
+            <div class="solution-card__head">
+              <span class="solution-tag solution-tag--indigo">作戦③</span>
+              <h3>自動運転・ACCの普及</h3>
+            </div>
+            <p>反応遅れがほぼゼロで滑らかに追従する車（紫色）の割合を増やしてみます。</p>
+            <div class="slider-control slider-control--compact">
+              <label for="labAutoSlider">普及率：<strong id="labAutoVal">0%</strong></label>
+              <input type="range" id="labAutoSlider" min="0" max="100" step="10" value="0" />
+            </div>
+          </div>
+        </div>
+
+        <div class="split-stage">
+          <div class="split-stage__left">
+            <div class="canvas-pane__label">
+              <span>円形道路（水色＝渋滞吸収車 / 紫＝自動運転）</span>
+            </div>
+            <canvas id="labRingCanvas" class="sim-canvas sim-canvas--clickable" height="314"></canvas>
+          </div>
+          <div class="split-stage__right">
+            <div class="canvas-pane__label canvas-pane__label--between">
+              <span>平均時速と最低時速の推移</span>
+              <span class="mini-legend">
+                <span class="mini-legend__item mini-legend__item--ink">━ 平均時速</span>
+                <span class="mini-legend__item mini-legend__item--jam">┅ もっとも遅い車</span>
+              </span>
+            </div>
+            <canvas id="labChartCanvas" class="sim-canvas" height="314"></canvas>
+          </div>
+        </div>
+
+        <div class="kpi-strip">
+          <div class="kpi-card">
+            <div class="kpi-card__label">平均時速</div>
+            <div class="kpi-card__value">
+              <span id="labAvgSpeed">46</span> <small>km/h</small>
+              <span class="kpi-delta kpi-delta--gain is-hidden" id="labSpeedDelta">+25%</span>
+            </div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-card__label">もっとも遅い車</div>
+            <div class="kpi-card__value"><span id="labMinSpeed">0</span> <small>km/h</small></div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-card__label">渋滞中の車</div>
+            <div class="kpi-card__value"><span id="labJamCount">9</span> <small>/ 22台</small></div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-card__label">輸送効率</div>
+            <div class="kpi-card__value">
+              <span id="labFlowRate">1,950</span> <small>台/時</small>
+              <span class="kpi-delta kpi-delta--gain is-hidden" id="labFlowDelta">+25%</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="live-narration live-narration--full" id="labNarration" aria-live="polite">
+          現在は全員が人間の通常運転で、赤い渋滞の塊がぐるぐる回っています。上の<strong>作戦①〜③</strong>のいずれかを試してみてください。数秒〜十秒ほどで波が溶け始めます！
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================================
+         SUMMARY / TAKEAWAYS
+         ================================================================ -->
+    <section class="summary-section">
+      <div class="prose-wrap">
+        <div class="chapter-num">SUMMARY</div>
+        <h2 class="chapter__title">今日から高速道路の見え方が変わる3つのポイント</h2>
+
+        <div class="takeaway-grid">
+          <article class="takeaway-card">
+            <div class="takeaway-card__num">01</div>
+            <h3>渋滞は「モノ」ではなく「後ろへ伝わる波」</h3>
+            <p>
+              車は前へ進んでいるのに、渋滞という「密集した状態」だけが時速約20kmで後ろへ移動します。
+              あなたが渋滞を抜けた頃には、きっかけの車はずっと先に走り去っているため、先頭には何もないのです。
+            </p>
+          </article>
+          <article class="takeaway-card">
+            <div class="takeaway-card__num">02</div>
+            <h3>原因は「臨界の混雑」＋「反応の遅れ」</h3>
+            <p>
+              車間距離の余裕がなくなる臨界点を超えると、サグ部（見えない上り坂）でのわずかな減速や1回のブレーキが、
+              人間の反応遅れによってドミノ倒しのように増幅されます。
+            </p>
+          </article>
+          <article class="takeaway-card">
+            <div class="takeaway-card__num">03</div>
+            <h3>前の「ちょっとした車間」が後ろを救う</h3>
+            <p>
+              詰まっているからといって前の車に張り付いて急加速・急ブレーキを繰り返すほど、後ろの渋滞は悪化します。
+              少し広めの車間を保ち一定のペースで走ることは、後ろ何キロもの渋滞を溶かすクッションになります。
+            </p>
+          </article>
+        </div>
+
+        <footer class="credits">
+          <p>
+            <strong>シミュレーションの背景モデル：</strong>
+            本図解のリアルタイム物理演算は、交通流物理学における最適速度＋相対速度モデル（Bando OVM / Jiang Full Velocity Difference Model）に人間の反応遅延を組み込み、
+            名古屋大学・杉山雄規教授らの円形サーキット実験（2008年）、Sternらによる渋滞吸収走行実験（2018年）、および高速道路サグ部の速度低下現象を参考に設計しています。
+          </p>
+        </footer>
+      </div>
+    </section>
+  </main>
+
+  <script src="simulation.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

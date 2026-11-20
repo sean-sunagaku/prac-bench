@@ -1,0 +1,55 @@
+{
+  "build_seconds": 16.6,
+  "base_mesh_vertices": 103180,
+  "evaluated_mesh_vertices_render_levels": null,
+  "evaluated_mesh_vertices_viewport": 125098,
+  "hair_curve_points": 640052,
+  "hair": {
+    "Hair_Long": {
+      "strands": 18706,
+      "points": 598592
+    },
+    "Hair_FaceFraming": {
+      "strands": 735,
+      "points": 19110
+    },
+    "Hair_Bangs": {
+      "strands": 1125,
+      "points": 15750
+    }
+  },
+  "character_bounds": {
+    "min": [
+      -0.26662251353263855,
+      -0.47383251786231995,
+      0.8971042037010193
+    ],
+    "max": [
+      0.352395236492157,
+      0.2353878915309906,
+      1.6490583419799805
+    ]
+  },
+  "base_info": {
+    "upper_body_vertices": 6093,
+    "upper_body_faces_in_crop": 6044,
+    "combined_vertices": 9517,
+    "combined_faces": 9494,
+    "max_distance_upper_body_to_combined": 0.0
+  },
+  "fast": false,
+  "camera": {
+    "location": [
+      -0.013013511797036546,
+      -0.45922571862846395,
+      1.5714906172628582
+    ],
+    "look_at": [
+      -0.03801351179703655,
+      -0.08422571862846398,
+      1.4114906172628583
+    ],
+    "lens": 25.5,
+    "fstop": 2.2
+  }
+}

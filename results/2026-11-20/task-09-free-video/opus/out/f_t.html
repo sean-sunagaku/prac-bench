@@ -1,0 +1,3255 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>f(t) — Claude Opus 5.5</title>
+<!--
+  f(t) — 「あなたの実力を見せる最高の動画を作って」への答え
+  この1ファイルだけで、映像（WebGL2 シェーダ）と音楽（波形合成）をすべてその場で計算します。
+  画像・映像・音声の素材ファイルも、外部ライブラリも使っていません。
+  Claude Opus 5.5
+-->
+<style>html,body{margin:0;height:100%;background:#000;overflow:hidden}canvas{position:absolute;inset:0;margin:auto;width:100vw;height:56.25vw;max-height:100vh;max-width:177.78vh;display:block}</style>
+</head>
+<body>
+<canvas id="c" width="1920" height="1080"></canvas>
+<script type="module" id="src-main">
+// src/core/gl.js
+var VS_FULL = `#version 300 es
+layout(location=0) in vec2 aPos;
+out vec2 vUv;
+void main(){ vUv = aPos*0.5+0.5; gl_Position = vec4(aPos,0.,1.); }`;
+function createGL(canvas) {
+  const gl = canvas.getContext("webgl2", {
+    antialias: false,
+    alpha: false,
+    depth: false,
+    stencil: false,
+    preserveDrawingBuffer: false,
+    powerPreference: "high-performance"
+  });
+  if (!gl)
+    throw new Error("WebGL2 is not available");
+  for (const e of ["EXT_color_buffer_float", "EXT_float_blend", "OES_texture_float_linear"])
+    if (!gl.getExtension(e))
+      console.warn("missing extension", e);
+  const vao = gl.createVertexArray();
+  gl.bindVertexArray(vao);
+  const buf = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+  gl.enableVertexAttribArray(0);
+  gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
+  gl.bindVertexArray(null);
+  gl.fullscreen = () => {
+    gl.bindVertexArray(vao);
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+  };
+  return gl;
+}
+function compileShader(gl, type, src, label) {
+  const s = gl.createShader(type);
+  gl.shaderSource(s, src);
+  gl.compileShader(s);
+  if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) {
+    const log = gl.getShaderInfoLog(s);
+    const lines = src.split(`
+`).map((l, i) => `${String(i + 1).padStart(4)}| ${l}`).join(`
+`);
+    throw new Error(`[${label}] shader compile error:
+${log}
+${lines}`);
+  }
+  return s;
+}
+function program(gl, fs, vs = VS_FULL, label = "program") {
+  const p = gl.createProgram();
+  gl.attachShader(p, compileShader(gl, gl.VERTEX_SHADER, vs, label + ":vs"));
+  gl.attachShader(p, compileShader(gl, gl.FRAGMENT_SHADER, fs, label + ":fs"));
+  gl.linkProgram(p);
+  if (!gl.getProgramParameter(p, gl.LINK_STATUS))
+    throw new Error(`[${label}] link: ${gl.getProgramInfoLog(p)}`);
+  const uniforms = {};
+  const n = gl.getProgramParameter(p, gl.ACTIVE_UNIFORMS);
+  let unit = 0;
+  for (let i = 0;i < n; i++) {
+    const info = gl.getActiveUniform(p, i);
+    const name = info.name.replace(/\[0\]$/, "");
+    const loc = gl.getUniformLocation(p, info.name);
+    const u = { loc, type: info.type, size: info.size };
+    if (info.type === gl.SAMPLER_2D || info.type === gl.SAMPLER_3D)
+      u.unit = unit++;
+    uniforms[name] = u;
+  }
+  const T = gl;
+  return {
+    p,
+    uniforms,
+    use(vals = {}) {
+      gl.useProgram(p);
+      for (const k in vals) {
+        const u = uniforms[k];
+        if (!u)
+          continue;
+        const v = vals[k];
+        switch (u.type) {
+          case T.FLOAT:
+            u.size > 1 ? gl.uniform1fv(u.loc, v) : gl.uniform1f(u.loc, v);
+            break;
+          case T.FLOAT_VEC2:
+            gl.uniform2fv(u.loc, v);
+            break;
+          case T.FLOAT_VEC3:
+            gl.uniform3fv(u.loc, v);
+            break;
+          case T.FLOAT_VEC4:
+            gl.uniform4fv(u.loc, v);
+            break;
+          case T.INT:
+          case T.BOOL:
+            gl.uniform1i(u.loc, v);
+            break;
+          case T.FLOAT_MAT3:
+            gl.uniformMatrix3fv(u.loc, false, v);
+            break;
+          case T.FLOAT_MAT4:
+            gl.uniformMatrix4fv(u.loc, false, v);
+            break;
+          case T.SAMPLER_2D:
+          case T.SAMPLER_3D: {
+            gl.activeTexture(gl.TEXTURE0 + u.unit);
+            gl.bindTexture(u.type === T.SAMPLER_3D ? gl.TEXTURE_3D : gl.TEXTURE_2D, v && v.tex ? v.tex : v);
+            gl.uniform1i(u.loc, u.unit);
+            break;
+          }
+        }
+      }
+      return this;
+    }
+  };
+}
+function fbo(gl, w, h, opt = {}) {
+  const internal = opt.internal || gl.RGBA16F;
+  const format = opt.format || gl.RGBA;
+  const type = opt.type || (internal === gl.RGBA32F || internal === gl.RG32F || internal === gl.R32F ? gl.FLOAT : internal === gl.RGBA8 ? gl.UNSIGNED_BYTE : gl.HALF_FLOAT);
+  const filter = opt.filter || gl.LINEAR;
+  const wrap = opt.wrap || gl.CLAMP_TO_EDGE;
+  const tex = gl.createTexture();
+  gl.bindTexture(gl.TEXTURE_2D, tex);
+  gl.texImage2D(gl.TEXTURE_2D, 0, internal, w, h, 0, format, type, null);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, filter);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, filter);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, wrap);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, wrap);
+  const fb = gl.createFramebuffer();
+  gl.bindFramebuffer(gl.FRAMEBUFFER, fb);
+  gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, tex, 0);
+  const st = gl.checkFramebufferStatus(gl.FRAMEBUFFER);
+  if (st !== gl.FRAMEBUFFER_COMPLETE)
+    throw new Error("FBO incomplete " + st);
+  gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+  return {
+    tex,
+    fb,
+    w,
+    h,
+    bind() {
+      gl.bindFramebuffer(gl.FRAMEBUFFER, fb);
+      gl.viewport(0, 0, w, h);
+      return this;
+    },
+    clear(r = 0, g = 0, b = 0, a = 1) {
+      this.bind();
+      gl.clearColor(r, g, b, a);
+      gl.clear(gl.COLOR_BUFFER_BIT);
+      return this;
+    }
+  };
+}
+function pingpong(gl, w, h, opt) {
+  const a = fbo(gl, w, h, opt), b = fbo(gl, w, h, opt);
+  return {
+    read: a,
+    write: b,
+    w,
+    h,
+    swap() {
+      const t = this.read;
+      this.read = this.write;
+      this.write = t;
+    }
+  };
+}
+function dataTexture(gl, w, h, data, opt = {}) {
+  const tex = gl.createTexture();
+  gl.bindTexture(gl.TEXTURE_2D, tex);
+  gl.texImage2D(gl.TEXTURE_2D, 0, opt.internal || gl.RGBA32F, w, h, 0, opt.format || gl.RGBA, opt.type || gl.FLOAT, data);
+  const f = opt.filter || gl.NEAREST;
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, f);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, f);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+  return tex;
+}
+
+// src/core/glsl.js
+var HEADER = `#version 300 es
+precision highp float;
+precision highp int;
+precision highp sampler2D;
+`;
+var COMMON = `
+#define PI 3.14159265359
+#define TAU 6.28318530718
+float saturate(float x){ return clamp(x,0.,1.); }
+vec3  saturate(vec3 x){ return clamp(x,0.,1.); }
+mat2  rot(float a){ float c=cos(a), s=sin(a); return mat2(c,-s,s,c); }
+
+// 整数ハッシュ（GPU 間で安定）
+uint  hashu(uint x){ x ^= x>>16; x *= 0x7feb352dU; x ^= x>>15; x *= 0x846ca68bU; x ^= x>>16; return x; }
+float hash11(float p){ return float(hashu(floatBitsToUint(p)))/4294967295.; }
+float hash21(vec2 p){ uvec2 q = uvec2(ivec2(floor(p))) ; return float(hashu(q.x*1597334677U ^ hashu(q.y)))/4294967295.; }
+vec2  hash22(vec2 p){ uvec2 q = uvec2(ivec2(floor(p))); uint h = hashu(q.x*1597334677U ^ hashu(q.y)); return vec2(float(h), float(hashu(h)))/4294967295.; }
+float hash31(vec3 p){ uvec3 q = uvec3(ivec3(floor(p))); return float(hashu(q.x*1597334677U ^ hashu(q.y*3812015801U ^ hashu(q.z))))/4294967295.; }
+
+// 値ノイズ（解析的な微分つき）— 地形などで使う
+vec3 noised(vec2 x){
+  vec2 p = floor(x), w = fract(x);
+  vec2 u = w*w*w*(w*(w*6.-15.)+10.);
+  vec2 du = 30.*w*w*(w*(w-2.)+1.);
+  float a = hash21(p), b = hash21(p+vec2(1,0)), c = hash21(p+vec2(0,1)), d = hash21(p+vec2(1,1));
+  float k0=a, k1=b-a, k2=c-a, k4=a-b-c+d;
+  return vec3(-1.+2.*(k0+k1*u.x+k2*u.y+k4*u.x*u.y), 2.*du*vec2(k1+k4*u.y, k2+k4*u.x));
+}
+float noise(vec2 x){ return noised(x).x; }
+float noise3(vec3 x){
+  vec3 p = floor(x), w = fract(x);
+  vec3 u = w*w*(3.-2.*w);
+  float n000=hash31(p), n100=hash31(p+vec3(1,0,0)), n010=hash31(p+vec3(0,1,0)), n110=hash31(p+vec3(1,1,0));
+  float n001=hash31(p+vec3(0,0,1)), n101=hash31(p+vec3(1,0,1)), n011=hash31(p+vec3(0,1,1)), n111=hash31(p+vec3(1,1,1));
+  return -1.+2.*mix(mix(mix(n000,n100,u.x),mix(n010,n110,u.x),u.y), mix(mix(n001,n101,u.x),mix(n011,n111,u.x),u.y), u.z);
+}
+float fbm3(vec3 p){ float f=0., a=.5; for(int i=0;i<5;i++){ f+=a*noise3(p); p=p*2.03+vec3(1.7,9.2,3.1); a*=.5; } return f; }
+
+// 黒体放射の近似色（恒星や白熱の表現に）
+vec3 blackbody(float t){ // t: 1000〜12000 K
+  t = clamp(t,1000.,40000.)/100.;
+  vec3 c;
+  c.r = t<=66. ? 1. : clamp(1.292936*pow(t-60.,-0.1332047592),0.,1.);
+  c.g = t<=66. ? clamp(0.3900815788*log(t)-0.6318414438,0.,1.) : clamp(1.129890861*pow(t-60.,-0.0755148492),0.,1.);
+  c.b = t>=66. ? 1. : (t<=19. ? 0. : clamp(0.5432067891*log(t-10.)-1.19625408914,0.,1.));
+  return pow(c, vec3(2.2));
+}
+// Inigo Quilez の余弦パレット
+vec3 pal(float t, vec3 a, vec3 b, vec3 c, vec3 d){ return a + b*cos(TAU*(c*t+d)); }
+`;
+
+// src/core/post.js
+var DOWN = HEADER + `
+in vec2 vUv; out vec4 o;
+uniform sampler2D src; uniform vec2 texel; uniform float prefilter;
+void main(){
+  // Jimenez (2014) の 13 タップ・ダウンサンプル：ちらつきの少ないブルームの土台
+  vec2 t = texel;
+  vec3 a=texture(src,vUv+t*vec2(-2, 2)).rgb, b=texture(src,vUv+t*vec2(0, 2)).rgb, c=texture(src,vUv+t*vec2(2, 2)).rgb;
+  vec3 d=texture(src,vUv+t*vec2(-2, 0)).rgb, e=texture(src,vUv).rgb,               f=texture(src,vUv+t*vec2(2, 0)).rgb;
+  vec3 g=texture(src,vUv+t*vec2(-2,-2)).rgb, h=texture(src,vUv+t*vec2(0,-2)).rgb, i=texture(src,vUv+t*vec2(2,-2)).rgb;
+  vec3 j=texture(src,vUv+t*vec2(-1, 1)).rgb, k=texture(src,vUv+t*vec2(1, 1)).rgb;
+  vec3 l=texture(src,vUv+t*vec2(-1,-1)).rgb, m=texture(src,vUv+t*vec2(1,-1)).rgb;
+  vec3 col = e*0.125 + (a+c+g+i)*0.03125 + (b+d+f+h)*0.0625 + (j+k+l+m)*0.125;
+  if(prefilter>0.5){ // 極端な輝点を抑えて、きらめきのちらつきを防ぐ
+    float lum = dot(col, vec3(.2126,.7152,.0722));
+    col *= 1./(1.+lum*0.02);
+  }
+  o = vec4(max(col,0.),1);
+}`;
+var UP = HEADER + `
+in vec2 vUv; out vec4 o;
+uniform sampler2D src; uniform vec2 texel; uniform float radius;
+void main(){
+  vec2 t = texel*radius;
+  vec3 c = texture(src,vUv).rgb*4.;
+  c += (texture(src,vUv+vec2(-t.x,0)).rgb + texture(src,vUv+vec2(t.x,0)).rgb + texture(src,vUv+vec2(0,-t.y)).rgb + texture(src,vUv+vec2(0,t.y)).rgb)*2.;
+  c += texture(src,vUv+vec2(-t.x,-t.y)).rgb + texture(src,vUv+vec2(t.x,-t.y)).rgb + texture(src,vUv+vec2(-t.x,t.y)).rgb + texture(src,vUv+vec2(t.x,t.y)).rgb;
+  o = vec4(c/16.,1);
+}`;
+var COMPOSITE = HEADER + COMMON + `
+in vec2 vUv; out vec4 o;
+uniform sampler2D hdr, bloom, textTex;
+uniform vec2 res;
+uniform float exposure, bloomStrength, contrast, saturation, vignette, grain, aberration, flash, fade, frame, textGlow;
+uniform vec3 tint;
+
+vec3 agxContrast(vec3 x){ vec3 x2=x*x, x4=x2*x2; return 15.5*x4*x2 - 40.14*x4*x + 31.96*x4 - 6.868*x2*x + 0.4298*x2 + 0.1191*x - 0.00232; }
+vec3 agx(vec3 v){
+  const mat3 M = mat3(0.842479062253094,0.0423282422610123,0.0423756549057051, 0.0784335999999992,0.878468636469772,0.0784336, 0.0792237451477643,0.0791661274605434,0.879142973793104);
+  const mat3 Mi = mat3(1.19687900512017,-0.0528968517574562,-0.0529716355144438, -0.0980208811401368,1.15190312990417,-0.0980434501171241, -0.0990297440797205,-0.0989611768448433,1.15107367264116);
+  const float lo=-12.47393, hi=4.026069;
+  v = M*v; v = clamp(log2(max(v,1e-10)), lo, hi); v = (v-lo)/(hi-lo);
+  v = agxContrast(v);
+  float l = dot(v, vec3(.2126,.7152,.0722));
+  v = pow(max(v,0.), vec3(contrast)); v = l + saturation*(v-l);
+  return Mi*v;
+}
+void main(){
+  vec2 uv = vUv;
+  vec2 d = uv-.5;
+  // 色収差：画面の端ほど RGB がわずかにずれる（レンズの再現）
+  vec2 off = d*dot(d,d)*aberration*16.0/res;
+  vec3 col;
+  col.r = texture(hdr, uv-off).r;
+  col.g = texture(hdr, uv).g;
+  col.b = texture(hdr, uv+off).b;
+  col += texture(bloom, uv).rgb*bloomStrength;
+  col = col*exposure*tint + flash;
+  col = agx(col);
+  // 周辺減光
+  float v = 1. - vignette*smoothstep(.25, 1.1, length(d*vec2(1.25,1.)));
+  col *= v;
+  // 文字（アルファ付き）を合成。少しだけ光らせる
+  vec4 tx = texture(textTex, vec2(uv.x, 1.-uv.y));
+  col = col*(1.-tx.a) + tx.rgb;
+  col += textGlow*texture(textTex, vec2(uv.x,1.-uv.y), 3.5).a*vec3(1.,.85,.7)*.0;
+  col *= fade;
+  // フィルムグレイン＋ディザ（グラデーションの帯を防ぐ）
+  vec2 p = gl_FragCoord.xy + frame*vec2(37.,17.);
+  float n1 = hash21(p), n2 = hash21(p+vec2(91.7,13.3));
+  float l = dot(col, vec3(.299,.587,.114));
+  col += (n1+n2-1.)*(grain*(1.-l)*sqrt(max(l,0.0))*1.6 + 1./255.);
+  o = vec4(clamp(col,0.,1.),1.);
+}`;
+function createPost(gl, W, H) {
+  const down = program(gl, DOWN, undefined, "bloom-down");
+  const up = program(gl, UP, undefined, "bloom-up");
+  const comp = program(gl, COMPOSITE, undefined, "composite");
+  const mips = [];
+  let w = W >> 1, h = H >> 1;
+  for (let i = 0;i < 7 && w > 8 && h > 8; i++) {
+    mips.push(fbo(gl, w, h));
+    w >>= 1;
+    h >>= 1;
+  }
+  function bloom(srcTex, sw, sh) {
+    gl.disable(gl.BLEND);
+    let src = srcTex, tw = sw, th = sh;
+    mips.forEach((m, i) => {
+      m.bind();
+      down.use({ src, texel: [1 / tw, 1 / th], prefilter: i === 0 ? 1 : 0 });
+      gl.fullscreen();
+      src = m.tex;
+      tw = m.w;
+      th = m.h;
+    });
+    gl.enable(gl.BLEND);
+    gl.blendFunc(gl.ONE, gl.ONE);
+    for (let i = mips.length - 1;i > 0; i--) {
+      const s = mips[i], d = mips[i - 1];
+      d.bind();
+      up.use({ src: s.tex, texel: [1 / s.w, 1 / s.h], radius: 1 });
+      gl.fullscreen();
+    }
+    gl.disable(gl.BLEND);
+    return mips[0].tex;
+  }
+  function composite(hdrTex, textTex, g, frame, vw = W, vh = H) {
+    const bl = bloom(hdrTex, W, H);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    gl.viewport(0, 0, vw, vh);
+    comp.use({
+      hdr: hdrTex,
+      bloom: bl,
+      textTex,
+      res: [W, H],
+      exposure: g.exposure ?? 1,
+      bloomStrength: g.bloom ?? 0.06,
+      contrast: g.contrast ?? 1.15,
+      saturation: g.saturation ?? 1.1,
+      vignette: g.vignette ?? 0.35,
+      grain: g.grain ?? 0.035,
+      aberration: g.aberration ?? 1,
+      flash: g.flash ?? 0,
+      fade: g.fade ?? 1,
+      frame,
+      textGlow: 0,
+      tint: g.tint ?? [1, 1, 1]
+    });
+    gl.fullscreen();
+  }
+  return { composite, bloom };
+}
+
+// src/timeline.js
+var BPM = 120;
+var BEAT = 60 / BPM;
+var BAR = BEAT * 4;
+var FPS = 60;
+var W = 1920;
+var H = 1080;
+var bar = (n) => n * BAR;
+var SECTIONS = {
+  intro: { start: bar(0), end: bar(4) },
+  sound: { start: bar(4), end: bar(12) },
+  infinity: { start: bar(12), end: bar(20) },
+  life: { start: bar(20), end: bar(28) },
+  earth: { start: bar(28), end: bar(36) },
+  light: { start: bar(36), end: bar(44) },
+  cosmos: { start: bar(44), end: bar(52) },
+  finale: { start: bar(52), end: bar(62) }
+};
+var DURATION = bar(62) + 2;
+var ROOT_HZ = 146.832;
+var INTERVALS = [
+  { a: 1, b: 1, name: "ユニゾン", en: "UNISON" },
+  { a: 2, b: 1, name: "オクターブ", en: "OCTAVE" },
+  { a: 3, b: 2, name: "完全五度", en: "PERFECT FIFTH" },
+  { a: 4, b: 3, name: "完全四度", en: "PERFECT FOURTH" },
+  { a: 5, b: 4, name: "長三度", en: "MAJOR THIRD" },
+  { a: 5, b: 3, name: "長六度", en: "MAJOR SIXTH" },
+  { a: 6, b: 5, name: "短三度", en: "MINOR THIRD" },
+  { a: 3, b: 2, name: "完全五度", en: "PERFECT FIFTH" }
+];
+var LISSAJOUS_DETUNE = 0.25;
+var clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+var smooth = (a, b, x) => {
+  const t = clamp((x - a) / (b - a));
+  return t * t * (3 - 2 * t);
+};
+var lerp = (a, b, t) => a + (b - a) * t;
+var easeInOut = (t) => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+var easeOut = (t) => 1 - Math.pow(1 - clamp(t), 3);
+var PROMPT = "あなたの実力を見せる最高の動画を作って";
+var REPLY_CHUNKS = ["了解", "。", "素材", "は", "使わ", "ず", "、", "映像", "も", "音", "も", "、", "すべて", "コード", "で", "生成", "します", "。"];
+var REPLY = REPLY_CHUNKS.join("");
+function lcg(seed) {
+  let s = seed >>> 0;
+  return () => (s = s * 1664525 + 1013904223 >>> 0) / 4294967296;
+}
+var PROMPT_TIMES = (() => {
+  const r = lcg(7);
+  const out = [];
+  let t = 0.95;
+  for (let i = 0;i < [...PROMPT].length; i++) {
+    out.push(t);
+    t += 0.072 + r() * 0.07 + (i % 5 === 4 ? 0.05 : 0);
+  }
+  return out;
+})();
+var REPLY_TIMES = (() => {
+  const r = lcg(11);
+  const out = [];
+  let t = 3.75;
+  for (let i = 0;i < REPLY_CHUNKS.length; i++) {
+    out.push(t);
+    t += 0.055 + r() * 0.05;
+  }
+  return out;
+})();
+var DISSOLVE_START = 6.35;
+
+// src/core/text.js
+var FONT = {
+  mincho: '"Hiragino Mincho ProN", "YuMincho", serif',
+  gothic: '"Hiragino Sans", "Hiragino Kaku Gothic ProN", sans-serif',
+  latin: '"Avenir Next", "Helvetica Neue", sans-serif',
+  mono: '"SF Mono", Menlo, monospace'
+};
+var INK = "#f3efe8";
+var ACCENT = "#e8865f";
+function createText(gl, W2, H2) {
+  const canvas = typeof OffscreenCanvas !== "undefined" ? new OffscreenCanvas(W2, H2) : Object.assign(document.createElement("canvas"), { width: W2, height: H2 });
+  const ctx = canvas.getContext("2d");
+  const tex = gl.createTexture();
+  gl.bindTexture(gl.TEXTURE_2D, tex);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA8, W2, H2, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+  const T = {
+    canvas,
+    ctx,
+    tex,
+    W: W2,
+    H: H2,
+    begin() {
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.clearRect(0, 0, W2, H2);
+      ctx.globalAlpha = 1;
+      ctx.filter = "none";
+    },
+    upload() {
+      gl.bindTexture(gl.TEXTURE_2D, tex);
+      gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA8, gl.RGBA, gl.UNSIGNED_BYTE, canvas);
+      gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
+    },
+    text(str, x, y, { font, size = 40, weight = 400, color = INK, alpha = 1, align = "left", spacing = 0, blur = 0, base = "alphabetic", shadow = 0 } = {}) {
+      if (alpha <= 0.001 || !str)
+        return 0;
+      ctx.save();
+      ctx.globalAlpha = clamp(alpha);
+      ctx.font = `${weight} ${size}px ${font || FONT.gothic}`;
+      ctx.letterSpacing = `${spacing}px`;
+      ctx.textAlign = align;
+      ctx.textBaseline = base;
+      ctx.fillStyle = color;
+      if (blur > 0.05)
+        ctx.filter = `blur(${blur.toFixed(2)}px)`;
+      if (shadow > 0) {
+        ctx.shadowColor = "rgba(0,0,0,0.65)";
+        ctx.shadowBlur = shadow;
+      }
+      ctx.fillText(str, x, y);
+      const w = ctx.measureText(str).width;
+      ctx.restore();
+      return w;
+    },
+    measure(str, { font, size = 40, weight = 400, spacing = 0 } = {}) {
+      ctx.save();
+      ctx.font = `${weight} ${size}px ${font || FONT.gothic}`;
+      ctx.letterSpacing = `${spacing}px`;
+      const w = ctx.measureText(str).width;
+      ctx.restore();
+      return w;
+    },
+    reveal(str, x, y, p, opt = {}) {
+      const chars = [...str];
+      const n = chars.length;
+      const spread = opt.spread ?? 0.55;
+      let cx = x;
+      if (opt.align === "center")
+        cx = x - T.measure(str, opt) / 2;
+      if (opt.align === "right")
+        cx = x - T.measure(str, opt);
+      for (let i = 0;i < n; i++) {
+        const a = clamp((p * (1 + spread) - i / n * spread) / 1);
+        const e = easeOut(a);
+        const w = T.measure(chars[i], opt);
+        T.text(chars[i], cx, y + (1 - e) * (opt.rise ?? 14), { ...opt, align: "left", alpha: (opt.alpha ?? 1) * e, blur: (1 - e) * (opt.blurAmt ?? 10) });
+        cx += w;
+      }
+    },
+    type(str, x, y, n, opt = {}) {
+      const chars = [...str];
+      const shown = chars.slice(0, Math.floor(n)).join("");
+      const w = T.text(shown, x, y, opt);
+      return x + w;
+    },
+    cursor(x, y, size, alpha = 1, color = INK) {
+      if (alpha <= 0)
+        return;
+      ctx.save();
+      ctx.globalAlpha = clamp(alpha);
+      ctx.fillStyle = color;
+      ctx.fillRect(x + size * 0.08, y - size * 0.86, Math.max(2, size * 0.075), size * 1.02);
+      ctx.restore();
+    },
+    rect(x, y, w, h, color, alpha = 1) {
+      ctx.save();
+      ctx.globalAlpha = clamp(alpha);
+      ctx.fillStyle = color;
+      ctx.fillRect(x, y, w, h);
+      ctx.restore();
+    },
+    line(x1, y1, x2, y2, color, alpha = 1, width = 1) {
+      ctx.save();
+      ctx.globalAlpha = clamp(alpha);
+      ctx.strokeStyle = color;
+      ctx.lineWidth = width;
+      ctx.beginPath();
+      ctx.moveTo(x1, y1);
+      ctx.lineTo(x2, y2);
+      ctx.stroke();
+      ctx.restore();
+    }
+  };
+  T.chapter = function({ num, kanji, en, formula, desc }, lt, hold = 5.2) {
+    const inP = clamp((lt - 0.25) / 1.2);
+    const out = 1 - smooth(hold, hold + 0.9, lt);
+    if (out <= 0 || inP <= 0)
+      return;
+    const x = 128, y = H2 - 250;
+    const a = out;
+    T.text(num, x + 4, y - 168, { font: FONT.latin, size: 22, weight: 600, color: ACCENT, spacing: 6, alpha: a * smooth(0, 0.4, inP) });
+    T.line(x + 52, y - 176, x + 52 + 160 * easeOut(inP), y - 176, ACCENT, 0.7 * a, 1.5);
+    T.reveal(kanji, x, y, inP, { font: FONT.mincho, size: 150, weight: 600, alpha: a, spacing: 8, blurAmt: 18, rise: 10, shadow: 18 });
+    const enP = clamp((lt - 0.7) / 1);
+    T.text(en, x + 6, y + 52, { font: FONT.latin, size: 22, weight: 500, spacing: 12 - 3 * easeOut(enP), alpha: a * easeOut(enP), color: "rgba(243,239,232,0.82)", shadow: 8 });
+    if (formula) {
+      const fP = clamp((lt - 1.1) / 1.4);
+      const chars = [...formula];
+      const n = Math.floor(chars.length * fP);
+      const fx = T.type(formula, x + 4, y + 112, n, { font: FONT.mono, size: 30, color: ACCENT, alpha: a, shadow: 10 });
+      if (fP < 1 || lt % 1 < 0.5)
+        T.cursor(fx, y + 112, 30, a * (fP > 0 ? 1 : 0), ACCENT);
+    }
+    if (desc) {
+      const dP = clamp((lt - 1.9) / 1.2);
+      T.reveal(desc, x + 4, y + 168, dP, { font: FONT.gothic, size: 30, weight: 300, alpha: a * 0.92, spread: 0.8, blurAmt: 6, rise: 6, shadow: 10 });
+    }
+  };
+  T.label = function(num, kanji, en, lt, end) {
+    const a = smooth(6, 6.8, lt) * (1 - smooth(end - 0.6, end, lt));
+    if (a <= 0)
+      return;
+    T.text(num, 96, 92, { font: FONT.latin, size: 18, weight: 600, color: ACCENT, spacing: 4, alpha: a * 0.9 });
+    T.text(kanji, 136, 93, { font: FONT.mincho, size: 26, weight: 600, alpha: a * 0.9, shadow: 8 });
+    const kw = T.measure(kanji, { font: FONT.mincho, size: 26, weight: 600 });
+    T.text(en, 136 + kw + 16, 91, { font: FONT.latin, size: 15, weight: 500, spacing: 5, alpha: a * 0.6 });
+  };
+  return T;
+}
+
+// src/scenes/intro.js
+var PROMPT_SIZE = 54;
+var REPLY_SIZE = 40;
+var VS = HEADER + COMMON + `
+layout(location=0) in vec4 aP;   // xy: 文字のピクセル位置, z: 種, w: 色(0=白,1=琥珀)
+uniform vec2 res; uniform float tau; uniform vec2 jitter;
+out vec3 vCol; out float vA;
+void main(){
+  vec2 c = res*0.5;
+  vec2 p0 = aP.xy;
+  float seed = aP.z;
+  // 左から右へ、ほどけ始める
+  float d = 0.42*(p0.x/res.x) + 0.08*seed;
+  float s = clamp((tau - d)/(1.0 - 0.5), 0., 1.);
+  float e = s*s*s*(s*(s*6.-15.)+10.);
+  vec2 rel = p0 - c;
+  float ang = pow(e, 1.4)*(4.5 + 2.0*seed);
+  vec2 drift = vec2(noise(p0*0.006 + vec2(s*2.0, 0.)), noise(p0*0.006 + vec2(13.1, s*2.0)))*170.0;
+  vec2 pos = c + rot(ang)*rel*(1.0-e) + drift*sin(PI*s)*(1.0-e*0.6);
+  pos += jitter;
+  gl_Position = vec4(pos/res*2.0-1.0, 0, 1);
+  gl_Position.y = -gl_Position.y;
+  gl_PointSize = mix(2.2, 2.6, seed);
+  vec3 ink = vec3(1.0,0.96,0.9)*0.9;
+  vec3 amb = vec3(1.0,0.42,0.18)*1.3;
+  vCol = mix(ink, amb, aP.w) * (1.0 + 2.5*e*e) ;
+  vA = smoothstep(0.0, 0.02, tau) ;
+}`;
+var FS = HEADER + `
+in vec3 vCol; in float vA; out vec4 o;
+void main(){
+  vec2 q = gl_PointCoord*2.-1.;
+  float r = dot(q,q);
+  float a = exp(-r*3.0);
+  o = vec4(vCol*a*vA, 1.);
+}`;
+var SPARK = HEADER + COMMON + `
+in vec2 vUv; out vec4 o;
+uniform vec2 res; uniform float amt; uniform vec2 jitter;
+void main(){
+  vec2 p = gl_FragCoord.xy + jitter - res*0.5;
+  float r = length(p);
+  vec3 col = vec3(1.0,0.55,0.25)*(amt*6.0*exp(-r*r/18.0) + amt*0.6*exp(-r/22.0));
+  o = vec4(col,1);
+}`;
+function intro(ctx) {
+  const { gl, W: W2, H: H2, text } = ctx;
+  const S = SECTIONS.intro;
+  let prog, spark, vao, count = 0;
+  const lineX = () => {
+    const w1 = text.measure(PROMPT, { font: FONT.gothic, size: PROMPT_SIZE, weight: 300 }) + 64;
+    const w2 = text.measure(REPLY, { font: FONT.gothic, size: REPLY_SIZE, weight: 300 }) + 64;
+    return (W2 - Math.max(w1, w2)) / 2 + 64;
+  };
+  const Y1 = H2 / 2 - 22, Y2 = H2 / 2 + 62;
+  function drawLines(T, nPrompt, nReply, alpha, cursorOn, t) {
+    const x = lineX();
+    T.text("›", x - 56, Y1 - 2, { font: FONT.latin, size: 60, weight: 400, color: ACCENT, alpha });
+    const chars = [...PROMPT];
+    const px = T.type(PROMPT, x, Y1, nPrompt, { font: FONT.gothic, size: PROMPT_SIZE, weight: 300, color: INK, alpha });
+    const reply = REPLY_CHUNKS.slice(0, nReply).join("");
+    const rx = T.text(reply, x, Y2, { font: FONT.gothic, size: REPLY_SIZE, weight: 300, color: ACCENT, alpha }) + x;
+    if (cursorOn === 1)
+      T.cursor(px, Y1, PROMPT_SIZE, alpha * (t % 0.9 < 0.5 || nPrompt < chars.length && nPrompt > 0 ? 1 : 0));
+    if (cursorOn === 2)
+      T.cursor(rx, Y2, REPLY_SIZE, alpha * (t % 0.9 < 0.5 || nReply < REPLY_CHUNKS.length ? 1 : 0), ACCENT);
+  }
+  return {
+    name: "intro",
+    start: S.start,
+    end: S.end,
+    grade: { exposure: 1, bloom: 0.09, vignette: 0.3, grain: 0.03, aberration: 0.6 },
+    async init() {
+      prog = program(gl, FS, VS, "intro-particles");
+      spark = program(gl, SPARK, undefined, "intro-spark");
+      if (typeof document !== "undefined" && document.fonts) {
+        await Promise.all([`300 ${PROMPT_SIZE}px ${FONT.gothic}`, `600 150px ${FONT.mincho}`, `400 30px ${FONT.mono}`, `500 22px ${FONT.latin}`].map((f) => document.fonts.load(f, "あ漢A")));
+      }
+      text.begin();
+      drawLines(text, 999, 999, 1, 0, 0);
+      const img = text.ctx.getImageData(0, 0, W2, H2).data;
+      const pts = [];
+      let seed = 1;
+      const rnd = () => (seed = seed * 16807 % 2147483647) / 2147483647;
+      for (let y = 0;y < H2; y += 1)
+        for (let x = 0;x < W2; x += 1) {
+          const i = (y * W2 + x) * 4;
+          const a = img[i + 3];
+          if (a > 90 && rnd() < 0.55) {
+            const isAccent = img[i] > 150 && img[i + 2] < 150 ? 1 : 0;
+            pts.push(x + 0.5, y + 0.5, rnd(), isAccent);
+          }
+        }
+      count = pts.length / 4;
+      vao = gl.createVertexArray();
+      gl.bindVertexArray(vao);
+      const buf = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(pts), gl.STATIC_DRAW);
+      gl.enableVertexAttribArray(0);
+      gl.vertexAttribPointer(0, 4, gl.FLOAT, false, 0, 0);
+      gl.bindVertexArray(null);
+      text.begin();
+    },
+    render(lt, t, sub) {
+      const tau = (lt - DISSOLVE_START) / (S.end - DISSOLVE_START);
+      if (tau > 0) {
+        gl.enable(gl.BLEND);
+        gl.blendFunc(gl.ONE, gl.ONE);
+        prog.use({ res: [W2, H2], tau: clamp(tau), jitter: sub.jitter });
+        gl.bindVertexArray(vao);
+        gl.drawArrays(gl.POINTS, 0, count);
+        gl.bindVertexArray(null);
+        const amt = smooth(0.55, 1, tau);
+        if (amt > 0) {
+          spark.use({ res: [W2, H2], amt, jitter: sub.jitter });
+          gl.fullscreen();
+        }
+        gl.disable(gl.BLEND);
+      }
+    },
+    text(T, lt) {
+      let nP = 0;
+      for (const pt of PROMPT_TIMES)
+        if (lt >= pt)
+          nP++;
+      let nR = 0;
+      for (const rt of REPLY_TIMES)
+        if (lt >= rt)
+          nR++;
+      const a = 1 - smooth(DISSOLVE_START, DISSOLVE_START + 0.12, lt);
+      const cursorMode = lt < REPLY_TIMES[0] - 0.25 ? 1 : 2;
+      drawLines(T, nP, nR, a, cursorMode, lt);
+    }
+  };
+}
+
+// src/core/curve.js
+var MANDEL_VIEW = { cx: -0.765, cy: 0, half: 1.25 };
+var VS2 = HEADER + COMMON + `
+layout(location=0) in float aI;      // 線分の番号
+uniform float N, mode, phase, amp, morph, cardioid, width, head, trail, base, peak, grow, tcur, speedRef;
+uniform vec2 res, center, ra, rb, jitter;
+uniform vec3 view;                   // マンデルブロ集合の画角 (cx, cy, half)
+out float vD; out float vI; out float vW;
+
+vec2 liss(vec2 r, float s){ return vec2(sin(TAU*r.x*s), sin(TAU*r.y*s + phase)); }
+
+// 主カージオイドと周期2の円板を、1本のつながった閉曲線としてたどる
+vec2 cardioidPath(float s){
+  vec2 c;
+  if (s < 0.375){            // 上半分：カスプ(0.25,0) → 接点(-0.75,0)
+    float th = s/0.375*PI;
+    c = vec2(0.5*cos(th) - 0.25*cos(2.*th), 0.5*sin(th) - 0.25*sin(2.*th));
+  } else if (s < 0.625){     // 周期2の円板を一周
+    float th = (s-0.375)/0.25*TAU;
+    c = vec2(-1.0 + 0.25*cos(th), 0.25*sin(th));
+  } else {                   // 下半分：接点 → カスプ
+    float th = PI + (s-0.625)/0.375*PI;
+    c = vec2(0.5*cos(th) - 0.25*cos(2.*th), 0.5*sin(th) - 0.25*sin(2.*th));
+  }
+  float k = res.y/(2.0*view.z);
+  return (c - view.xy)*k;    // 画面中心からのピクセル
+}
+
+vec2 P(float s){
+  if (mode < 0.5){
+    vec2 p = mix(liss(ra, s), liss(rb, s), morph)*amp;
+    if (cardioid > 0.0) p = mix(p, cardioidPath(s), cardioid);
+    return center + p;
+  }
+  // 波形表示（L / R チャンネル）
+  float x = s*2.0-1.0;
+  float y = sin(TAU*(mode < 1.5 ? ra.x : ra.y)*(x*1.5) - tcur*TAU*0.6 + (mode<1.5?0.:phase));
+  return center + vec2(x*amp, y*amp*0.11);
+}
+
+void main(){
+  int vid = gl_VertexID % 6;
+  float s0 = aI/N, s1 = (aI+1.0)/N;
+  float sg = grow;                          // 描き始め：曲線が伸びていく
+  if (s0 > sg) { gl_Position = vec4(2,2,2,1); return; }
+  vec2 p0 = P(s0), p1 = P(min(s1, max(sg, s0+1e-4)));
+  vec2 d = p1 - p0; float L = length(d);
+  vec2 t = L > 1e-5 ? d/L : vec2(1,0);
+  vec2 n = vec2(-t.y, t.x);
+  float hw = width*4.0;                      // 光のにじみを含めた半幅
+  vec2 corner[6] = vec2[6](vec2(0,-1), vec2(1,-1), vec2(1,1), vec2(0,-1), vec2(1,1), vec2(0,1));
+  vec2 cn = corner[vid];
+  vec2 pos = mix(p0, p1, cn.x) + n*cn.y*hw;
+  vD = cn.y*4.0;
+  // ビームの頭からの距離で明るさが決まる（燐光の残像）
+  float sm = mix(s0, s1, cn.x);
+  float behind = fract(head - sm);
+  vI = base + peak*exp(-behind/max(trail,1e-3));
+  // 実際のオシロスコープ同様、ビームが遅い所ほど明るい
+  if (speedRef > 0.0) vI *= clamp(sqrt(speedRef/max(L*N, 1.0)), 0.45, 2.2);
+  vW = width;
+  pos += jitter;
+  gl_Position = vec4(pos/res*2.0-1.0, 0, 1);
+}`;
+var FS2 = HEADER + `
+in float vD; in float vI; in float vW; out vec4 o;
+uniform vec3 color;
+void main(){
+  float d = abs(vD);
+  float core = exp(-d*d*2.2);
+  float halo = exp(-d*1.3)*0.22;
+  vec3 c = color*vI*(core + halo);
+  c += vec3(1.0,0.92,0.8)*vI*core*core*0.35; // 芯は白く飛ぶ
+  o = vec4(c, 1.);
+}`;
+function createCurve(gl, N = 4096) {
+  const prog = program(gl, FS2, VS2, "curve");
+  const vao = gl.createVertexArray();
+  gl.bindVertexArray(vao);
+  const ids = new Float32Array(N * 6);
+  for (let i = 0;i < N; i++)
+    for (let k = 0;k < 6; k++)
+      ids[i * 6 + k] = i;
+  const buf = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+  gl.bufferData(gl.ARRAY_BUFFER, ids, gl.STATIC_DRAW);
+  gl.enableVertexAttribArray(0);
+  gl.vertexAttribPointer(0, 1, gl.FLOAT, false, 0, 0);
+  gl.bindVertexArray(null);
+  return {
+    draw(u, n = N) {
+      gl.enable(gl.BLEND);
+      gl.blendFunc(gl.ONE, gl.ONE);
+      prog.use({
+        N: n,
+        mode: 0,
+        phase: 0,
+        amp: 300,
+        morph: 0,
+        cardioid: 0,
+        width: 1.6,
+        head: 0,
+        trail: 0.2,
+        base: 0.6,
+        peak: 4,
+        grow: 1,
+        tcur: 0,
+        speedRef: 0,
+        res: [1920, 1080],
+        center: [960, 540],
+        ra: [1, 1],
+        rb: [1, 1],
+        jitter: [0, 0],
+        view: [-0.765, 0, 1.25],
+        color: [1, 0.42, 0.16],
+        ...u
+      });
+      gl.bindVertexArray(vao);
+      gl.drawArrays(gl.TRIANGLES, 0, n * 6);
+      gl.bindVertexArray(null);
+      gl.disable(gl.BLEND);
+    }
+  };
+}
+
+// src/scenes/sound.js
+var R = 318;
+var AMBER = [1, 0.4, 0.14];
+var GRAT = HEADER + COMMON + `
+in vec2 vUv; out vec4 o;
+uniform vec2 res, jitter; uniform float alpha, glow;
+void main(){
+  vec2 p = gl_FragCoord.xy + jitter - res*0.5;
+  float div = 66.0;
+  vec2 g = abs(fract(p/div + 0.5) - 0.5)*div;          // 目盛り線までの距離
+  float line = exp(-min(g.x,g.y)*min(g.x,g.y)*0.9);
+  vec2 sub = abs(fract(p/(div/5.) + 0.5) - 0.5)*(div/5.);
+  float ticks = exp(-min(sub.x,sub.y)*min(sub.x,sub.y)*1.5) * (step(abs(p.x),5.0)+step(abs(p.y),5.0));
+  float mask = smoothstep(470., 300., length(p*vec2(0.92,1.0)));
+  vec3 col = vec3(1.0,0.5,0.22)*(line*0.045 + ticks*0.06)*mask*alpha;
+  col += vec3(1.0,0.45,0.2)*0.018*exp(-dot(p,p)/(2.*380.*380.))*glow; // 管面のほのかな光
+  o = vec4(col,1);
+}`;
+function sound(ctx) {
+  const { gl, W: W2, H: H2 } = ctx;
+  const S = SECTIONS.sound;
+  let curve, grat;
+  function state(lt) {
+    const i = Math.min(INTERVALS.length - 1, Math.max(0, Math.floor(lt / BAR)));
+    const barT = lt - i * BAR;
+    const cur = INTERVALS[i], prev = INTERVALS[Math.max(0, i - 1)];
+    const morph = i === 0 ? 1 : easeInOut(clamp(barT / 0.5));
+    return { i, barT, cur, prev, morph };
+  }
+  return {
+    name: "sound",
+    start: S.start,
+    end: S.end,
+    grade: { exposure: 1, bloom: 0.11, contrast: 1.12, saturation: 1.05, vignette: 0.4, grain: 0.03, aberration: 0.7 },
+    init() {
+      curve = createCurve(gl, 4096);
+      grat = program(gl, GRAT, undefined, "graticule");
+    },
+    render(lt, t, sub) {
+      const { cur, prev, morph } = state(lt);
+      const card = easeInOut(clamp((lt - 13.6) / 1.9));
+      grat.use({ res: [W2, H2], jitter: sub.jitter, alpha: smooth(0.6, 2.2, lt) * (1 - card), glow: 1 - card * 0.7 });
+      gl.enable(gl.BLEND);
+      gl.blendFunc(gl.ONE, gl.ONE);
+      gl.fullscreen();
+      gl.disable(gl.BLEND);
+      const phase = Math.PI / 2 + 2 * Math.PI * LISSAJOUS_DETUNE * lt;
+      const ampE = clamp(lt / 0.95);
+      const amp = R * (1 - Math.pow(1 - ampE, 3) * Math.cos(ampE * 5));
+      const head = lt * 0.5 + 0.25;
+      const ra = [prev.a, prev.b], rb = [cur.a, cur.b];
+      const sp = amp * Math.PI * 2 * Math.hypot(cur.a, cur.b) * 0.72;
+      curve.draw({
+        res: [W2, H2],
+        center: [W2 / 2, H2 / 2],
+        jitter: sub.jitter,
+        ra,
+        rb,
+        morph,
+        phase,
+        amp: Math.max(amp, 0.01),
+        cardioid: card,
+        view: [MANDEL_VIEW.cx, MANDEL_VIEW.cy, MANDEL_VIEW.half],
+        grow: clamp(lt / 1.15),
+        head,
+        trail: 0.3 + card * 2,
+        base: 0.55 + card * 0.9,
+        peak: 5 * (1 - card * 0.75),
+        width: 1.7,
+        color: AMBER,
+        speedRef: sp * (1 - card)
+      });
+      const wa = smooth(1.2, 2.4, lt) * (1 - smooth(13.2, 14.4, lt));
+      if (wa > 0) {
+        for (const [m, y] of [[1, 186], [2, 112]]) {
+          curve.draw({
+            mode: m,
+            res: [W2, H2],
+            center: [1590, y],
+            amp: 230,
+            ra: [cur.a, cur.b],
+            phase: phase - Math.PI / 2,
+            tcur: lt,
+            jitter: sub.jitter,
+            base: 0.9 * wa,
+            peak: 0,
+            width: 1.2,
+            color: AMBER,
+            head: 0,
+            trail: 1
+          }, 1024);
+        }
+      }
+    },
+    text(T, lt) {
+      T.chapter({ num: "01", kanji: "音", en: "SOUND", formula: "x = sin(a·t),  y = sin(b·t)", desc: "美しく響く和音は、周波数が単純な整数の比になっている。" }, lt, 5.6);
+      T.label("01", "音", "SOUND", lt, 15.6);
+      const { i, barT, cur } = state(lt);
+      const fadeOut = 1 - smooth(13.4, 14.2, lt);
+      const inA = easeOut(clamp((barT - 0.05) / 0.5));
+      const outA = 1 - smooth(BAR - 0.28, BAR - 0.02, barT);
+      const a = clamp(lt / 1.2) * inA * (i === INTERVALS.length - 1 ? 1 : outA) * fadeOut;
+      if (a > 0) {
+        const x = 1585, y = 470;
+        T.text(`${cur.a} : ${cur.b}`, x, y + (1 - inA) * 18, { font: FONT.latin, size: 96, weight: 200, align: "center", alpha: a, spacing: 4, shadow: 16 });
+        T.text(cur.name, x, y + 62 + (1 - inA) * 12, { font: FONT.mincho, size: 34, weight: 600, align: "center", alpha: a * 0.95, spacing: 6, shadow: 12 });
+        T.text(cur.en, x, y + 100 + (1 - inA) * 10, { font: FONT.latin, size: 15, weight: 600, align: "center", alpha: a * 0.6, spacing: 6 });
+      }
+      const wa = smooth(1.2, 2.4, lt) * fadeOut;
+      if (wa > 0) {
+        const fL = ROOT_HZ * cur.a / cur.b, fR = ROOT_HZ + LISSAJOUS_DETUNE;
+        T.text("L", 1338, H2 - 186 + 7, { font: FONT.latin, size: 16, weight: 700, color: ACCENT, alpha: wa * 0.9, spacing: 2 });
+        T.text(`${fL.toFixed(1)} Hz`, 1842, H2 - 186 - 34, { font: FONT.mono, size: 15, align: "right", alpha: wa * 0.75 });
+        T.text("R", 1338, H2 - 112 + 7, { font: FONT.latin, size: 16, weight: 700, color: ACCENT, alpha: wa * 0.9, spacing: 2 });
+        T.text(`${fR.toFixed(1)} Hz`, 1842, H2 - 112 - 34, { font: FONT.mono, size: 15, align: "right", alpha: wa * 0.75 });
+      }
+    }
+  };
+}
+
+// src/scenes/infinity.js
+var cadd = (a, b) => [a[0] + b[0], a[1] + b[1]];
+var csub = (a, b) => [a[0] - b[0], a[1] - b[1]];
+var cmul = (a, b) => [a[0] * b[0] - a[1] * b[1], a[0] * b[1] + a[1] * b[0]];
+var cdiv = (a, b) => {
+  const d = b[0] * b[0] + b[1] * b[1];
+  return [(a[0] * b[0] + a[1] * b[1]) / d, (a[1] * b[0] - a[0] * b[1]) / d];
+};
+var cabs = (a) => Math.hypot(a[0], a[1]);
+function boxPeriod(c, r, maxIter) {
+  const cs = [[c[0] - r, c[1] - r], [c[0] + r, c[1] - r], [c[0] + r, c[1] + r], [c[0] - r, c[1] + r]];
+  let zs = cs.map(() => [0, 0]);
+  for (let n = 1;n <= maxIter; n++) {
+    zs = zs.map((z, k) => cadd(cmul(z, z), cs[k]));
+    let inside = false;
+    for (let i = 0, j = 3;i < 4; j = i++) {
+      const a = zs[i], b = zs[j];
+      if (a[1] > 0 !== b[1] > 0 && 0 < (b[0] - a[0]) * (0 - a[1]) / (b[1] - a[1]) + a[0])
+        inside = !inside;
+    }
+    if (inside)
+      return n;
+  }
+  return 0;
+}
+function nucleus(c, p) {
+  for (let k = 0;k < 80; k++) {
+    let z = [0, 0], dz = [0, 0];
+    for (let i = 0;i < p; i++) {
+      dz = cadd(cmul([2, 0], cmul(z, dz)), [1, 0]);
+      z = cadd(cmul(z, z), c);
+    }
+    const step = cdiv(z, dz);
+    c = csub(c, step);
+    if (cabs(step) < 0.000000000000000001)
+      break;
+  }
+  return c;
+}
+function minibrotSize(c, p) {
+  let z = [0, 0], l = [1, 0], b = [1, 0];
+  for (let i = 1;i < p; i++) {
+    z = cadd(cmul(z, z), c);
+    l = cmul([2, 0], cmul(z, l));
+    b = cadd(b, cdiv([1, 0], l));
+  }
+  return cdiv([1, 0], cmul(b, cmul(l, l)));
+}
+var FS3 = HEADER + COMMON + `
+in vec2 vUv; out vec4 o;
+uniform sampler2D orbit; uniform int period, maxIter;
+uniform vec2 res, jitter, dc0, ax;     // ax: 1ピクセルぶんの複素数（回転と縮尺を含む）
+uniform float reveal, pxSize, hue, glowAmt, fadeOut, zoomT, pEff, nuOff;
+vec2 cm(vec2 a, vec2 b){ return vec2(a.x*b.x-a.y*b.y, a.x*b.y+a.y*b.x); }
+vec2 Z(int m){ return texelFetch(orbit, ivec2(m & 4095, m >> 12), 0).xy; }
+
+vec3 palette(float x){
+  // 漆黒 → 藍 → 瑠璃 → 水色 → 白金 → 橙 → 深紅 → 葡萄 の循環
+  vec3 cs[8] = vec3[8](vec3(0.0,0.004,0.02), vec3(0.06,0.02,0.22), vec3(0.02,0.18,0.65), vec3(0.10,0.62,0.90),
+                       vec3(1.0,0.88,0.66), vec3(0.95,0.42,0.06), vec3(0.42,0.04,0.03), vec3(0.10,0.0,0.07));
+  x = fract(x)*8.0;
+  int i = int(floor(x)); float f = fract(x);
+  f = f*f*(3.-2.*f);
+  return mix(cs[i], cs[(i+1)%8], f);
+}
+
+void main(){
+  vec2 px = gl_FragCoord.xy + jitter - res*0.5;
+  vec2 dc = dc0 + px.x*ax + px.y*vec2(-ax.y, ax.x);
+  vec2 d = vec2(0);           // 基準軌道からのずれ δ
+  vec2 D = vec2(0);           // dz/dc × ピクセル幅（距離推定用）
+  vec2 z = vec2(0);
+  int m = 0, n = 0;
+  float r2 = 0.0;
+  bool escaped = false;
+  vec2 dRec = vec2(1e9);
+  for (n = 0; n < maxIter; n++){
+    if (m == 0 && n > 0){
+      // 周期性の判定：1周期ごとのずれが収束していれば、集合の内部（もう脱出しない）
+      vec2 dd = d - dRec;
+      if (dot(dd,dd) < 1e-10*dot(d,d) + 1e-36) break;
+      dRec = d;
+    }
+    vec2 Zm = Z(m);
+    D = 2.0*cm(Zm + d, D) + vec2(pxSize, 0.0);
+    d = cm(2.0*Zm + d, d) + dc;
+    m++;
+    if (m >= period) m = 0;  // 周期軌道なので、一周したら先頭へ
+    z = Z(m) + d;
+    r2 = dot(z,z);
+    if (r2 > 1e8){ escaped = true; break; }
+    if (r2 < dot(d,d)){ d = z; m = 0; }   // リベース：基準より原点に近づいたら乗り換える
+  }
+  vec3 col = vec3(0);
+  if (escaped){
+    float lz = 0.5*log(r2);
+    float nu = float(n) + 1.0 - log2(lz);
+    float de = lz*sqrt(r2)/max(length(D), 1e-30);   // 境界までの距離（ピクセル単位）
+    // 疑似的な起伏：ポテンシャルの法線で光を当てる
+    vec2 u = normalize(vec2(z.x*D.x + z.y*D.y, z.y*D.x - z.x*D.y));
+    vec2 L = normalize(vec2(-0.6, 0.8));
+    float sh = max(0.0, (dot(u, L) + 1.1)/(1.0 + 1.1));
+    float nuL = max(nu - nuOff, 1.0)/pEff;  // 最後はミニブロの周期で割る＝「局所的な」反復回数
+    float x = pow(nuL, 0.45)*0.13 + hue;
+    col = palette(x);
+    col *= smoothstep(0.8, 7.0, nuL);    // 遠い外側は暗い（最初と最後の画面がそろう）
+    col *= 0.30 + 0.85*sh;
+    float edge = exp(-de*2.2);           // 境界のごく近くだけ、ほのかに光らせる
+    col += vec3(1.0,0.85,0.65)*edge*edge*glowAmt*smoothstep(0.5, 3.0, nuL);
+    // 計算の進行を見せる：reveal より多くの反復が必要な点はまだ黒い
+    col *= smoothstep(reveal, reveal*0.8, nu);
+  }
+  o = vec4(col*fadeOut, 1);
+}`;
+function infinity(ctx) {
+  const { gl, W: W2, H: H2 } = ctx;
+  const S = SECTIONS.infinity;
+  let prog, curve, orbitTex, P = 0, nuc, size, finalCenter, finalHalf, finalAngle, nuOff = 0;
+  const h0 = MANDEL_VIEW.half, c0 = [MANDEL_VIEW.cx, MANDEL_VIEW.cy];
+  const ZOOM_START = 1.7, ZOOM_END = 15;
+  function view(lt) {
+    const u = clamp((lt - ZOOM_START) / (ZOOM_END - ZOOM_START));
+    const A = 0.13, vmax = 1 / (1 - A);
+    const z = u < A ? vmax * u * u / (2 * A) : u > 1 - A ? 1 - vmax * (1 - u) * (1 - u) / (2 * A) : vmax * (u - A / 2);
+    const half = Math.exp(lerp(Math.log(h0), Math.log(finalHalf), z));
+    const k = Math.pow(half / h0, 1.12);
+    const center = cadd(finalCenter, cmul(csub(c0, finalCenter), [k, 0]));
+    const angle = lerp(0, finalAngle, easeInOut(z));
+    return { half, center, angle, z, drift: 0 };
+  }
+  return {
+    name: "infinity",
+    start: S.start,
+    end: S.end,
+    grade: { exposure: 1, bloom: 0.07, contrast: 1.12, saturation: 1.12, vignette: 0.42, grain: 0.03, aberration: 0.5 },
+    init() {
+      prog = program(gl, FS3, undefined, "mandelbrot");
+      curve = createCurve(gl, 4096);
+      const seed = [-0.7436438870371587, 0.13182590420531198];
+      P = boxPeriod(seed, 0.000000018, 20000);
+      nuc = nucleus(seed, P);
+      size = minibrotSize(nuc, P);
+      finalHalf = cabs(size) * h0;
+      finalAngle = Math.atan2(size[1], size[0]);
+      finalCenter = cadd(nuc, cmul(size, c0));
+      console.log(`minibrot period=${P} nucleus=(${nuc[0]}, ${nuc[1]}) |size|=${cabs(size).toExponential(3)} arg=${(finalAngle * 180 / Math.PI).toFixed(1)}°  zoom=${(h0 / finalHalf).toExponential(3)}`);
+      const data = new Float32Array(4096 * Math.ceil((P + 1) / 4096) * 4);
+      let z = [0, 0];
+      for (let i = 0;i <= P; i++) {
+        data[i * 4] = z[0];
+        data[i * 4 + 1] = z[1];
+        z = cadd(cmul(z, z), nuc);
+      }
+      orbitTex = dataTexture(gl, 4096, Math.ceil((P + 1) / 4096), data);
+      const esc = (c, max) => {
+        let x = 0, y = 0;
+        for (let n = 0;n < max; n++) {
+          const xx = x * x - y * y + c[0];
+          y = 2 * x * y + c[1];
+          x = xx;
+          const r = x * x + y * y;
+          if (r > 1e8)
+            return n + 1 - Math.log2(0.5 * Math.log(r));
+        }
+        return -1;
+      };
+      const offs = [];
+      for (let i = 0;i < 9; i++)
+        for (let j = 0;j < 5; j++) {
+          const cl = [-2.95 + i * 0.55, -1.2 + j * 0.6];
+          const nm = esc(cl, 1000);
+          if (nm < 0 || nm > 6)
+            continue;
+          const nb = esc(cadd(nuc, cmul(size, cl)), 60000);
+          if (nb > 0)
+            offs.push(nb - P * nm);
+        }
+      offs.sort((a, b) => a - b);
+      nuOff = offs.length ? offs[offs.length >> 1] : 0;
+      console.log("nuOff", nuOff.toFixed(1), "samples", offs.length);
+    },
+    magnification(lt) {
+      return h0 / view(lt).half;
+    },
+    render(lt, t, sub) {
+      const v = view(lt);
+      const px = 2 * v.half / H2;
+      const ax = [px * Math.cos(v.angle), px * Math.sin(v.angle)];
+      const dc0 = csub(v.center, nuc);
+      const decades = Math.log10(h0 / v.half);
+      const KNOTS = [[0, 70], [1, 500], [3, 2600], [6, 6000], [8, 15000], [9, 26000], [9.8, 40000]];
+      let maxIter = 40000;
+      for (let k = 0;k < KNOTS.length - 1; k++) {
+        const [d0, i0] = KNOTS[k], [d1, i1] = KNOTS[k + 1];
+        if (decades <= d1) {
+          maxIter = Math.round(Math.exp(lerp(Math.log(i0), Math.log(i1), clamp((decades - d0) / (d1 - d0)))));
+          break;
+        }
+      }
+      const reveal = lt > 1.75 ? 1e9 : Math.exp(lerp(Math.log(1.5), Math.log(4000), smooth(0.15, 1.75, lt)));
+      prog.use({
+        orbit: orbitTex,
+        period: P,
+        maxIter,
+        res: [W2, H2],
+        jitter: sub.jitter,
+        dc0,
+        ax,
+        reveal,
+        pxSize: px,
+        hue: 0,
+        glowAmt: 0.35,
+        fadeOut: 1,
+        zoomT: v.z,
+        pEff: Math.exp(Math.log(P) * smooth(0.8, 1, v.z)),
+        nuOff: nuOff * smooth(0.8, 1, v.z)
+      });
+      const bands = maxIter > 20000 ? 24 : maxIter > 4000 ? 8 : 2;
+      gl.enable(gl.SCISSOR_TEST);
+      for (let b = 0;b < bands; b++) {
+        const y0 = Math.floor(H2 * b / bands), y1 = Math.floor(H2 * (b + 1) / bands);
+        gl.scissor(0, y0, W2, y1 - y0);
+        gl.fullscreen();
+        gl.flush();
+      }
+      gl.disable(gl.SCISSOR_TEST);
+      const ca = 1 - smooth(0.3, 2, lt);
+      if (ca > 0)
+        curve.draw({
+          res: [W2, H2],
+          center: [W2 / 2, H2 / 2],
+          jitter: sub.jitter,
+          cardioid: 1,
+          amp: 0.01,
+          view: [MANDEL_VIEW.cx, MANDEL_VIEW.cy, MANDEL_VIEW.half],
+          base: 1.45 * ca,
+          peak: 1.25 * ca,
+          trail: 2.3,
+          head: lt * 0.5 + 8 * 0.5 + 0.25,
+          width: 1.7,
+          color: [1, 0.4, 0.14]
+        });
+    },
+    text(T, lt) {
+      T.chapter({ num: "02", kanji: "無限", en: "INFINITY", formula: "z ← z² + c", desc: "たった一行の式に、果てしない複雑さが眠っている。" }, lt, 5.6);
+      T.label("02", "無限", "INFINITY", lt, 15.6);
+      const v = view(lt);
+      const mag = h0 / v.half;
+      const a = smooth(2, 2.8, lt) * (1 - smooth(15.2, 15.8, lt));
+      if (a > 0) {
+        const s = Math.round(mag).toLocaleString("en-US");
+        T.text("倍率", W2 - 128, H2 - 158, { font: FONT.gothic, size: 20, weight: 600, align: "right", alpha: a * 0.7, spacing: 8, color: ACCENT });
+        T.text("×" + s, W2 - 128, H2 - 96, { font: FONT.mono, size: 44, weight: 400, align: "right", alpha: a, shadow: 14 });
+      }
+      const ea = smooth(13.6, 14.4, lt) * (1 - smooth(15.4, 16, lt));
+      if (ea > 0)
+        T.reveal("拡大した先に、また「全体」が現れる。", W2 / 2, H2 - 118, clamp((lt - 13.6) / 1.2), { font: FONT.gothic, size: 34, weight: 300, align: "center", alpha: ea, spread: 0.7, shadow: 14 });
+    }
+  };
+}
+
+// src/scenes/life.js
+var SW = 960;
+var SH = 540;
+var STEPS = 12;
+var SEED = HEADER + COMMON + `
+in vec2 vUv; out vec4 o;
+uniform vec2 res; uniform vec3 view;
+void main(){
+  // 前章の最終画面と同じ画角で、マンデルブロ集合の内側を種にする
+  vec2 px = (gl_FragCoord.xy/res)*vec2(1920.,1080.) - vec2(960.,540.);
+  vec2 c = view.xy + px*(2.0*view.z/1080.);
+  vec2 z = vec2(0); int n;
+  for(n=0;n<60;n++){ z = vec2(z.x*z.x-z.y*z.y, 2.*z.x*z.y) + c; if(dot(z,z)>4.) break; }
+  float inside = (n==60 && c.x > -1.32) ? 1.0 : 0.0;   // アンテナ上の小さな粒は除く
+  float r = hash21(gl_FragCoord.xy);
+  o = inside > 0.5 ? vec4(0.5, 0.25 + 0.06*r, 0., 1.) : vec4(1.0, 0.0, 0., 1.);
+}`;
+var STEP = HEADER + COMMON + `
+in vec2 vUv; out vec4 o;
+uniform sampler2D s; uniform vec2 res; uniform float now;
+uniform vec2 fk;
+void main(){
+  ivec2 p = ivec2(gl_FragCoord.xy);
+  ivec2 R = ivec2(res) - 1;
+  #define S(dx,dy) texelFetch(s, clamp(p+ivec2(dx,dy), ivec2(0), R), 0)
+  vec4 c = S(0,0);
+  // 3×3 のラプラシアン（中央 -1, 上下左右 0.2, 斜め 0.05）
+  vec2 lap = -c.xy + 0.2*(S(1,0).xy+S(-1,0).xy+S(0,1).xy+S(0,-1).xy) + 0.05*(S(1,1).xy+S(-1,1).xy+S(1,-1).xy+S(-1,-1).xy);
+  float u = c.x, v = c.y;
+  float uvv = u*v*v;
+  float du = 1.0*lap.x - uvv + fk.x*(1.0-u);
+  float dv = 0.5*lap.y + uvv - (fk.x+fk.y)*v;
+  float born = c.z;                                   // その場所に生命が生まれた時刻
+  if (born <= 0.0 && v > 0.22) born = now;
+  o = vec4(clamp(u+du, 0., 1.), clamp(v+dv, 0., 1.), born, 1.);
+}`;
+var SHOW = HEADER + COMMON + `
+in vec2 vUv; out vec4 o;
+uniform sampler2D s; uniform vec2 res, simRes, jitter; uniform float zoom, lt, pulse;
+vec4 T(vec2 uv){ return texture(s, uv); }
+void main(){
+  vec2 frag = gl_FragCoord.xy + jitter;
+  vec2 uv = ((frag - res*0.5)/zoom + res*0.5)/res;
+  vec2 e = 1.0/simRes;
+  vec4 c = T(uv);
+  float v = c.y;
+  float vx = T(uv+vec2(e.x,0)).y - T(uv-vec2(e.x,0)).y;
+  float vy = T(uv+vec2(0,e.y)).y - T(uv-vec2(0,e.y)).y;
+  vec3 n = normalize(vec3(-vx*7.0, -vy*7.0, 1.0));
+  vec3 L = normalize(vec3(-0.45, 0.6, 0.8));
+  float diff = max(dot(n,L), 0.0);
+  float spec = pow(max(dot(reflect(-L,n), vec3(0,0,1)), 0.0), 60.0);
+  float h = smoothstep(0.06, 0.34, v);
+  // 生まれた順に色が変わる：古い細胞は深い藍、新しい細胞は明るい翠と金
+  float age = c.z > 0.0 ? lt - c.z : 0.0;
+  vec3 young = vec3(1.0, 0.78, 0.35);
+  vec3 mid   = vec3(0.12, 0.95, 0.80);
+  vec3 old   = vec3(0.10, 0.30, 0.95);
+  vec3 body = mix(young, mid, smoothstep(0.0, 1.6, age));
+  body = mix(body, old, smoothstep(2.5, 9.0, age));
+  vec3 deep = vec3(0.003, 0.008, 0.022);
+  // 背景：深い水中のような、かすかな揺らぎ
+  vec2 q = frag/res;
+  deep += vec3(0.0,0.02,0.035)*(0.6 + 0.4*noise(q*vec2(6.0,3.4) + lt*0.08));
+  vec3 col = mix(deep, body*(0.30 + 0.85*diff), h);
+  float edge = smoothstep(0.04, 0.16, v)*(1.0 - smoothstep(0.16, 0.3, v));
+  col += body*edge*0.9;
+  col += vec3(1.0,0.97,0.92)*spec*h*0.8;
+  float glow = 0.0;
+  for(int i=0;i<8;i++){ float a = float(i)*0.785398 + 0.3; glow += T(uv + vec2(cos(a),sin(a))*e*5.0).y; }
+  col += body*glow/8.0*0.55;
+  col *= 1.0 + pulse*0.35;
+  o = vec4(col, 1);
+}`;
+function life(ctx) {
+  const { gl, W: W2, H: H2 } = ctx;
+  const S = SECTIONS.life;
+  let seed, step, show, sim, steps = -1;
+  const CORAL = [0.0545, 0.062], MITOSIS = [0.0367, 0.0649];
+  const params = (st) => {
+    const m = smooth(1.2, 3, st);
+    return [lerp(CORAL[0], MITOSIS[0], m), lerp(CORAL[1], MITOSIS[1], m)];
+  };
+  function reseed() {
+    sim.write.bind();
+    seed.use({ res: [SW, SH], view: [MANDEL_VIEW.cx, MANDEL_VIEW.cy, MANDEL_VIEW.half] });
+    gl.fullscreen();
+    sim.swap();
+    steps = 0;
+  }
+  function advance(target, lt) {
+    gl.disable(gl.BLEND);
+    while (steps < target) {
+      sim.write.bind();
+      const st = steps / STEPS / FPS;
+      step.use({ s: sim.read.tex, res: [SW, SH], now: st + 0.001, fk: params(st) });
+      gl.fullscreen();
+      sim.swap();
+      steps++;
+    }
+  }
+  return {
+    name: "life",
+    start: S.start,
+    end: S.end,
+    fadeIn: 1.2,
+    grade: { exposure: 1, bloom: 0.08, contrast: 1.12, saturation: 1.1, vignette: 0.5, grain: 0.035, aberration: 0.8 },
+    init() {
+      seed = program(gl, SEED, undefined, "rd-seed");
+      step = program(gl, STEP, undefined, "rd-step");
+      show = program(gl, SHOW, undefined, "rd-show");
+      sim = pingpong(gl, SW, SH, { internal: gl.RGBA32F, filter: gl.LINEAR });
+    },
+    update(lt) {
+      const target = Math.max(0, Math.round(lt * FPS)) * STEPS;
+      if (steps < 0 || target < steps)
+        reseed();
+      advance(target, lt);
+    },
+    render(lt, t, sub) {
+      const zoom = lerp(1, 1.32, smooth(0, 16, lt));
+      const beat = lt % 0.5 / 0.5;
+      show.use({ s: sim.read.tex, res: [W2, H2], simRes: [SW, SH], jitter: sub.jitter, zoom, lt, pulse: 0 });
+      sub.target.bind();
+      gl.fullscreen();
+    },
+    text(T, lt) {
+      T.chapter({ num: "03", kanji: "生命", en: "LIFE", formula: "∂v/∂t = Dᵥ∇²v + uv² − (F+k)v", desc: "反応して、広がる。それだけのルールから、生き物のような模様が育つ。" }, lt - 0.6, 5.4);
+      T.label("03", "生命", "LIFE", lt - 0.6, 15.6);
+      const a = smooth(2.6, 3.4, lt) * (1 - smooth(15.2, 15.8, lt));
+      if (a > 0) {
+        const [F, k] = params(lt);
+        T.text("反応拡散シミュレーション", W2 - 128, H2 - 158, { font: FONT.gothic, size: 20, weight: 600, align: "right", alpha: a * 0.7, spacing: 6, color: ACCENT });
+        T.text(`F ${F.toFixed(4)}   k ${k.toFixed(4)}   step ${Math.max(0, steps).toLocaleString("en-US")}`, W2 - 128, H2 - 104, { font: FONT.mono, size: 26, align: "right", alpha: a * 0.95, shadow: 12 });
+      }
+    }
+  };
+}
+
+// src/scenes/earth.js
+var FS4 = HEADER + COMMON + `
+in vec2 vUv; out vec4 o;
+uniform vec2 res, jitter; uniform float lt;
+
+const mat2 m2 = mat2(0.8,-0.6,0.6,0.8);
+const vec3 SUN = normalize(vec3(-0.42, 0.10, 1.0));
+const float WATER = -95.0;
+
+// 高さ（m）。傾き（微分）が大きい所ほど細部の寄与を減らす＝浸食の近似
+float terrain(vec2 x, int oct){
+  vec2 p = x*0.0011;
+  float a = 0.0, b = 1.0;
+  vec2 d = vec2(0.0);
+  for (int i=0; i<16; i++){
+    if (i >= oct) break;
+    vec3 n = noised(p);
+    d += n.yz;
+    a += b*n.x/(1.0 + dot(d,d));
+    b *= 0.5;
+    p = m2*p*2.0;
+  }
+  return 470.0*a + 60.0;
+}
+
+// カメラの通り道（谷をたどる曲線）
+vec3 path(float s){ return vec3(520.0*sin(s*0.0012) + 260.0*sin(s*0.0029 + 1.3), 0.0, s); }
+float clearance(float t){ return mix(55.0, 520.0, smoothstep(7.0, 12.5, t)); }
+vec3 camAt(float t){
+  float s = t*165.0 + 1800.0;
+  vec3 p = path(s);
+  float h = -1e9;
+  for (int i=0;i<6;i++){ float k = float(i)*55.0; h = max(h, terrain(path(s+k).xz, 7)); }
+  p.y = max(h, WATER) + clearance(t);
+  return p;
+}
+
+vec3 sky(vec3 rd){
+  float sd = max(dot(rd, SUN), 0.0);
+  float y = max(rd.y, 0.0);
+  vec3 col = mix(vec3(1.05,0.72,0.48), vec3(0.20,0.36,0.70), pow(y, 0.42));
+  col = mix(col, vec3(0.08,0.14,0.32), smoothstep(0.35, 1.0, y));
+  col += vec3(1.0,0.55,0.25)*0.55*pow(sd, 5.0);
+  col += vec3(1.0,0.72,0.42)*1.1*pow(sd, 42.0);
+  col += vec3(1.0,0.92,0.75)*60.0*smoothstep(0.99955, 0.9998, sd);
+  // 高い空のすじ雲：夕日に下から照らされる
+  if (rd.y > 0.0){
+    vec2 cp = rd.xz/(rd.y + 0.06)*1.1 + vec2(lt*0.02, 0.0);
+    float c = 0.0, a = 0.5; vec2 q = cp*1.2;
+    for (int i=0;i<5;i++){ c += a*noise(q); q = m2*q*2.1; a *= 0.5; }
+    c = smoothstep(0.05, 0.75, c*0.9 + 0.12) * smoothstep(0.0, 0.18, rd.y);
+    vec3 cc = mix(vec3(1.0,0.62,0.42), vec3(1.4,0.9,0.6), pow(sd,3.0)) * (0.55 + 0.9*pow(sd, 2.0));
+    col = mix(col, cc, c*0.85);
+  }
+  return col;
+}
+
+float raymarch(vec3 ro, vec3 rd, float tmin, float tmax){
+  float t = tmin;
+  for (int i=0; i<360; i++){
+    vec3 p = ro + t*rd;
+    float h = p.y - terrain(p.xz, 9);
+    if (abs(h) < 0.0012*t || t > tmax) break;
+    t += 0.45*h;
+  }
+  return t;
+}
+vec3 normalAt(vec3 p, float t){
+  vec2 e = vec2(0.0015*t, 0.0);
+  return normalize(vec3(terrain(p.xz-e.xy,16) - terrain(p.xz+e.xy,16), 2.0*e.x, terrain(p.xz-e.yx,16) - terrain(p.xz+e.yx,16)));
+}
+float shadow(vec3 ro, vec3 rd){
+  float r = 1.0, t = 2.0;
+  for (int i=0; i<80; i++){
+    vec3 p = ro + t*rd;
+    float h = p.y - terrain(p.xz, 8);
+    r = min(r, 14.0*h/t);
+    t += clamp(h, 3.0 + t*0.015, 160.0);
+    if (r < 0.001 || p.y > 1400.0) break;
+  }
+  return smoothstep(0.0, 1.0, r);
+}
+
+vec3 shade(vec3 ro, vec3 rd, float t){
+  vec3 p = ro + t*rd;
+  vec3 n = normalAt(p, t);
+  float h = p.y;
+  // 材質：岩・草・雪
+  float r = noise(p.xz*0.02);
+  vec3 rock = mix(vec3(0.09,0.075,0.065), vec3(0.16,0.12,0.09), 0.5+0.5*r);
+  vec3 grass = mix(vec3(0.045,0.07,0.02), vec3(0.11,0.10,0.03), 0.5+0.5*noise(p.xz*0.007));
+  float g = smoothstep(0.62, 0.85, n.y)*smoothstep(330.0, 120.0, h + r*60.0);
+  vec3 col = mix(rock, grass, g);
+  float snow = smoothstep(260.0, 340.0, h + 70.0*noise(p.xz*0.01))*smoothstep(0.45, 0.8, n.y + 0.2*r);
+  col = mix(col, vec3(0.62,0.66,0.72), snow);
+  // 光：太陽（影つき）＋空の光＋照り返し
+  float dif = max(dot(n, SUN), 0.0);
+  float sh = dif > 0.001 ? shadow(p + n*1.5, SUN) : 0.0;
+  float amb = clamp(0.5 + 0.5*n.y, 0.0, 1.0);
+  float bac = clamp(0.2 + 0.8*dot(normalize(vec3(-SUN.x,0.0,-SUN.z)), n), 0.0, 1.0);
+  vec3 lin = dif*sh*vec3(9.0,5.4,2.9)
+           + amb*vec3(0.20,0.32,0.62)*1.0
+           + bac*vec3(0.30,0.22,0.16)*0.4;
+  col *= lin;
+  // 雪の鏡面
+  vec3 hal = normalize(SUN - rd);
+  col += snow*sh*vec3(1.0,0.8,0.6)*pow(max(dot(n,hal),0.0), 24.0)*0.6;
+  return col;
+}
+
+vec3 fog(vec3 col, vec3 ro, vec3 rd, float t){
+  float sd = max(dot(rd, SUN), 0.0);
+  vec3 fc = mix(vec3(0.30,0.42,0.68), vec3(1.15,0.70,0.40), pow(sd, 4.0));
+  fc += vec3(1.0,0.55,0.25)*0.6*pow(sd, 16.0);
+  // 距離の霞（空気遠近法）＋谷に溜まる霧（高さで指数的に濃くなる）
+  float d = 1.0 - exp(-t*0.000052);
+  float b = 0.006;
+  float hf = 0.9*exp(-(ro.y + 40.0)*b)*(1.0 - exp(-t*rd.y*b))/max(abs(rd.y), 2e-3)*0.0016;
+  hf = clamp(hf, 0.0, 0.85);
+  float f = clamp(d + hf*(1.0-d), 0.0, 1.0);
+  return mix(col, fc, f);
+}
+
+void main(){
+  vec2 frag = gl_FragCoord.xy + jitter;
+  vec2 q = (2.0*frag - res)/res.y;
+  float T = lt;
+  vec3 ro = camAt(T);
+  vec3 ahead = camAt(T + 0.5);
+  vec3 dir = normalize(vec3(ahead.x - ro.x, 0.0, ahead.z - ro.z));
+  // 前半はやや右を向き、夕日を斜めから受ける山肌を見せる
+  float yaw = 0.42*(1.0 - smoothstep(4.0, 10.0, T));
+  dir = normalize(vec3(dir.x*cos(yaw) + dir.z*sin(yaw), 0.0, -dir.x*sin(yaw) + dir.z*cos(yaw)));
+  // 前半は谷を見下ろし、上昇とともに地平線へ
+  float pitch = mix(-0.13, -0.035, smoothstep(5.5, 11.5, T));
+  vec3 fwd0 = normalize(dir + vec3(0.0, pitch, 0.0));
+  vec3 toSun = normalize(vec3(SUN.x, 0.05, SUN.z));
+  vec3 fwd = normalize(mix(fwd0, toSun, smoothstep(11.0, 15.5, T)*0.9));
+  float roll = 0.16*sin(T*0.55 + 0.6) * (1.0 - smoothstep(9.0, 13.0, T));
+  vec3 up0 = vec3(sin(roll), cos(roll), 0.0);
+  vec3 rgt = normalize(cross(fwd, up0));
+  vec3 up = cross(rgt, fwd);
+  vec3 rd = normalize(q.x*rgt + q.y*up + 1.75*fwd);
+
+  vec3 col;
+  float tmax = 9000.0;
+  // 水面との交点
+  float tw = rd.y < 0.0 ? (WATER - ro.y)/rd.y : 1e9;
+  float t = raymarch(ro, rd, 1.0, min(tmax, tw));
+  bool hitT = t < min(tmax, tw);
+  if (hitT){
+    col = shade(ro, rd, t);
+    col = fog(col, ro, rd, t);
+  } else if (tw < tmax){
+    // 湖：空と夕日を映す
+    vec3 p = ro + tw*rd;
+    vec2 w = vec2(noise(p.xz*0.05 + lt*0.6), noise(p.xz*0.05 - lt*0.5 + 7.1));
+    float wf = 0.05*exp(-tw*0.0012);
+    vec3 n = normalize(vec3(w.x*wf, 1.0, w.y*wf));
+    vec3 rr = reflect(rd, n);
+    float fr = 0.02 + 0.98*pow(1.0 - max(dot(-rd, n), 0.0), 5.0);
+    vec3 refl = sky(rr);
+    float tr = raymarch(p + n*0.5, rr, 2.0, 2500.0);
+    if (tr < 2500.0) refl = fog(shade(p, rr, tr), p, rr, tr);
+    col = mix(vec3(0.004,0.012,0.016), refl, fr);
+    col = fog(col, ro, rd, tw);
+  } else {
+    col = sky(rd);
+  }
+  // 太陽のレンズの光
+  float sd = max(dot(rd, SUN), 0.0);
+  col += vec3(1.0,0.6,0.32)*0.18*pow(sd, 3.0);
+  o = vec4(col, 1);
+}`;
+function earth(ctx) {
+  const { gl, W: W2, H: H2 } = ctx;
+  const S = SECTIONS.earth;
+  let prog;
+  return {
+    name: "earth",
+    start: S.start,
+    end: S.end,
+    grade: (lt) => ({
+      exposure: 0.85,
+      bloom: 0.07,
+      contrast: 1.22,
+      saturation: 1.12,
+      vignette: 0.42,
+      grain: 0.03,
+      aberration: 0.8,
+      flash: 3 * Math.exp(-lt * 7) + 12 * smooth(14.8, 16, lt)
+    }),
+    init() {
+      prog = program(gl, FS4, undefined, "terrain");
+    },
+    render(lt, t, sub) {
+      prog.use({ res: [W2, H2], jitter: sub.jitter, lt });
+      gl.enable(gl.SCISSOR_TEST);
+      for (let b = 0;b < 4; b++) {
+        gl.scissor(0, H2 * b / 4, W2, H2 / 4);
+        gl.fullscreen();
+        gl.flush();
+      }
+      gl.disable(gl.SCISSOR_TEST);
+    },
+    text(T, lt) {
+      T.chapter({ num: "04", kanji: "大地", en: "EARTH", formula: "h(p) = Σ 2⁻ⁱ · noise(2ⁱ p)", desc: "山も、霧も、夕日も。進むたびに、地形をその場で計算している。" }, lt - 0.7, 5.6);
+      T.label("04", "大地", "EARTH", lt - 0.7, 14.4);
+    }
+  };
+}
+
+// src/scenes/light.js
+var FS5 = HEADER + COMMON + `
+in vec2 vUv; out vec4 o;
+uniform vec2 res, jitter; uniform float lt, morphA, morphB, pulse, spin;
+
+#define FLOOR -1.55
+float sdRoundBox(vec3 p, vec3 b, float r){ vec3 q = abs(p) - b + r; return length(max(q,0.0)) + min(max(q.x,max(q.y,q.z)),0.0) - r; }
+float sdTorus(vec3 p, vec2 t){ vec2 q = vec2(length(p.xz)-t.x, p.y); return length(q)-t.y; }
+float sdOcta(vec3 p, float s){ p = abs(p); return (p.x+p.y+p.z-s)*0.57735027; }
+float smin(float a, float b, float k){ float h = clamp(0.5+0.5*(b-a)/k, 0.0, 1.0); return mix(b, a, h) - k*h*(1.0-h); }
+
+// ガラスの彫刻：立方体 → ねじれた輪 → 波打つ球 → 八面体 を小節ごとに変形
+float glass(vec3 p){
+  p.xz *= rot(spin); p.xy *= rot(spin*0.6);
+  float a = sdRoundBox(p, vec3(0.82), 0.22);
+  vec3 q = p; q.xz *= rot(q.y*1.2);
+  float b = sdTorus(q.xzy, vec2(0.86, 0.36));
+  float g = dot(sin(p*5.2), cos(p.yzx*5.2));
+  float c = length(p) - 1.0 + 0.05*g;
+  float d = sdOcta(p, 1.35) - 0.08;
+  float sh[4] = float[4](a, b, c, d);
+  int i0 = int(morphA) & 3, i1 = (int(morphA)+1) & 3;
+  return mix(sh[i0], sh[i1], morphB);
+}
+float core(vec3 p){ return length(p) - 0.19 - 0.035*pulse; }
+vec3 orbPos(int i){
+  float fi = float(i);
+  float a = lt*0.55 + fi*TAU/4.0;
+  return vec3(cos(a)*2.25, 0.25*sin(lt*1.1 + fi*1.7) - 0.15, sin(a)*2.25);
+}
+float orbs(vec3 p){ float d = 1e9; for(int i=0;i<4;i++) d = min(d, length(p - orbPos(i)) - 0.36); return d; }
+
+// 0: 床, 1: ガラス, 2: クローム
+vec2 scene(vec3 p){
+  vec2 r = vec2(p.y - FLOOR, 0.0);
+  float g = glass(p); if (g < r.x) r = vec2(g, 1.0);
+  float c = orbs(p);  if (c < r.x) r = vec2(c, 2.0);
+  return r;
+}
+vec2 march(vec3 ro, vec3 rd, float tmax){
+  float t = 0.0;
+  for (int i=0;i<160;i++){
+    vec2 h = scene(ro + rd*t);
+    if (h.x < 0.0004*t + 0.0002) return vec2(t, h.y);
+    t += h.x*0.9;
+    if (t > tmax) break;
+  }
+  return vec2(-1.0, -1.0);
+}
+vec3 nrm(vec3 p){
+  vec2 e = vec2(0.0007, -0.0007);
+  return normalize(e.xyy*scene(p+e.xyy).x + e.yyx*scene(p+e.yyx).x + e.yxy*scene(p+e.yxy).x + e.xxx*scene(p+e.xxx).x);
+}
+vec3 nrmGlass(vec3 p){
+  vec2 e = vec2(0.0007, -0.0007);
+  return normalize(e.xyy*glass(p+e.xyy) + e.yyx*glass(p+e.yyx) + e.yxy*glass(p+e.yxy) + e.xxx*glass(p+e.xxx));
+}
+
+// 撮影スタジオの光：長い面光源が3本
+float rectLight(vec3 ro, vec3 rd, vec3 c, vec3 n, vec3 u, vec2 size){
+  float dn = dot(rd, n);
+  if (dn > -1e-4) return 0.0;
+  float t = dot(c - ro, n)/dn;
+  if (t < 0.0) return 0.0;
+  vec3 p = ro + rd*t - c;
+  vec3 v = cross(n, u);
+  vec2 q = vec2(dot(p,u), dot(p,v))/size;
+  vec2 e = smoothstep(1.0, 0.86, abs(q));
+  return e.x*e.y;
+}
+vec3 env(vec3 ro, vec3 rd){
+  vec3 col = mix(vec3(0.0), vec3(0.010,0.014,0.03), smoothstep(-0.2, 0.8, rd.y));
+  // ホリゾントの帯光：ガラスとクロームに長いハイライトを描かせる
+  col += vec3(0.30,0.36,0.50)*exp(-rd.y*rd.y*60.0)*0.55*smoothstep(-0.3, 0.05, rd.y);
+  col += vec3(1.0,0.66,0.42)*exp(-(rd.y-0.22)*(rd.y-0.22)*1400.0)*0.5*(0.5+0.5*sin(atan(rd.z,rd.x)*3.0));
+  col += vec3(1.0,0.97,0.92)*7.0*rectLight(ro, rd, vec3(0.0,6.0,0.0), vec3(0,-1,0), vec3(1,0,0), vec2(4.2,0.55));
+  col += vec3(1.0,0.55,0.28)*6.0*rectLight(ro, rd, vec3(-6.5,1.6,1.5), normalize(vec3(1,0,-0.2)), vec3(0,1,0), vec2(2.6,0.35));
+  col += vec3(0.35,0.62,1.0)*6.0*rectLight(ro, rd, vec3(5.5,2.2,-4.0), normalize(vec3(-0.8,0,0.6)), vec3(0,1,0), vec2(3.0,0.35));
+  // 遠くの光の粒（ボケ）
+  vec2 sp = vec2(atan(rd.z, rd.x), rd.y)*vec2(10.0, 14.0);
+  vec2 id = floor(sp); vec2 f = fract(sp) - 0.5;
+  float h = hash21(id);
+  col += vec3(1.0,0.75,0.5)*step(0.93, h)*smoothstep(0.12, 0.0, length(f))*0.6*smoothstep(-0.1,0.3,rd.y);
+  return col;
+}
+
+float softShadow(vec3 ro, vec3 rd){
+  float r = 1.0, t = 0.02;
+  for (int i=0;i<40;i++){
+    float h = min(glass(ro + rd*t)*1.6 + 0.04, orbs(ro + rd*t));
+    r = min(r, 5.0*h/t);
+    t += clamp(h, 0.02, 0.4);
+    if (r < 0.002 || t > 8.0) break;
+  }
+  return clamp(r, 0.0, 1.0);
+}
+
+// 二次反射：床・球・空間（ガラスは近似）
+vec3 secondary(vec3 ro, vec3 rd){
+  vec2 h = march(ro, rd, 30.0);
+  if (h.x < 0.0) return env(ro, rd);
+  vec3 p = ro + rd*h.x;
+  if (h.y < 0.5){
+    float sh = softShadow(p + vec3(0,0.01,0), normalize(vec3(0.0,6.0,0.0) - p));
+    return vec3(0.012)*sh*2.0 + env(p, reflect(rd, vec3(0,1,0)))*0.06;
+  }
+  vec3 n = nrm(p);
+  if (h.y < 1.5){   // ガラス（二次反射では簡略化：反射＋素通しの屈折）
+    float fr = 0.04 + 0.96*pow(1.0 - max(dot(-rd, n), 0.0), 5.0);
+    vec3 tr = vec3(0.012,0.016,0.022) + vec3(1.0,0.5,0.2)*0.03*(0.5+pulse);
+    return mix(tr, env(p, reflect(rd, n)), 0.15 + 0.85*fr);
+  }
+  return env(p, reflect(rd, n))*vec3(0.95,0.92,0.88);
+}
+
+// ガラスの中を通る光：屈折して入り、内側を進み、屈折して出る（色ごとに屈折率が違う）
+vec3 throughGlass(vec3 p, vec3 rd, vec3 n, float ior){
+  vec3 rdIn = refract(rd, n, 1.0/ior);
+  vec3 q = p - n*0.003;
+  float t = 0.0;
+  vec3 glow = vec3(0.0);
+  for (int i=0;i<64;i++){
+    vec3 x = q + rdIn*t;
+    float d = -glass(x);
+    float c = core(x);
+    glow += vec3(1.0,0.48,0.18)*exp(-c*c*60.0)*0.035*(0.5 + 1.5*pulse);
+    if (c < 0.001) return vec3(1.0,0.55,0.25)*(5.0 + 7.0*pulse);
+    if (d < 0.0006) break;
+    t += max(min(d, c)*0.9, 0.004);
+  }
+  vec3 x = q + rdIn*t;
+  vec3 n2 = -nrmGlass(x);
+  vec3 rdOut = refract(rdIn, n2, ior);
+  vec3 absorb = exp(-t*vec3(0.32,0.12,0.05));
+  if (dot(rdOut, rdOut) < 0.01) {   // 全反射
+    rdOut = reflect(rdIn, n2);
+    return env(x, rdOut)*absorb*0.8 + glow;
+  }
+  return secondary(x + rdOut*0.004, rdOut)*absorb + glow;
+}
+
+void main(){
+  vec2 frag = gl_FragCoord.xy + jitter;
+  vec2 q = (2.0*frag - res)/res.y;
+  float ang = 0.55 + lt*0.18;
+  float dist = mix(6.2, 4.7, smoothstep(0.0, 16.0, lt));
+  vec3 ro = vec3(cos(ang)*dist, 0.25 + 0.3*sin(lt*0.3), sin(ang)*dist);
+  vec3 ta = vec3(0.0, -0.05, 0.0);
+  vec3 fw = normalize(ta - ro), rt = normalize(cross(fw, vec3(0,1,0))), up = cross(rt, fw);
+  vec3 rd = normalize(q.x*rt + q.y*up + 2.1*fw);
+
+  vec3 col;
+  vec2 h = march(ro, rd, 40.0);
+  if (h.x < 0.0){
+    col = env(ro, rd);
+  } else {
+    vec3 p = ro + rd*h.x;
+    if (h.y < 0.5){
+      // 床：黒く磨かれた石。映り込みと柔らかい影
+      vec3 n = vec3(0,1,0);
+      n.xz += 0.012*vec2(noise(p.xz*3.0), noise(p.xz*3.0 + 9.1));
+      n = normalize(n);
+      float fr = 0.04 + 0.96*pow(1.0 - max(dot(-rd, n), 0.0), 5.0);
+      vec3 rr = reflect(rd, n);
+      vec3 refl = secondary(p + n*0.002, rr);
+      float sh = softShadow(p + n*0.01, normalize(vec3(0.0,6.0,0.0) - p));
+      float spot = exp(-dot(p.xz, p.xz)*0.04);
+      vec3 base = vec3(0.006,0.0058,0.0055)*spot*(0.35 + 0.65*sh)*3.0;
+      // 光の核が床をほのかに照らす
+      base += vec3(1.0,0.45,0.15)*0.012*(0.5 + 1.5*pulse)/(1.0 + dot(p,p)*0.8);
+      col = base + refl*mix(0.35, 1.0, fr);
+    } else if (h.y < 1.5){
+      vec3 n = nrmGlass(p);
+      float fr = 0.04 + 0.96*pow(1.0 - max(dot(-rd, n), 0.0), 5.0);
+      vec3 refl = env(p, reflect(rd, n));
+      vec3 tr;
+      tr.r = throughGlass(p, rd, n, 1.47).r;
+      tr.g = throughGlass(p, rd, n, 1.505).g;
+      tr.b = throughGlass(p, rd, n, 1.545).b;
+      col = mix(tr, refl, fr) + refl*0.08;
+    } else {
+      vec3 n = nrm(p);
+      vec3 rr = reflect(rd, n);
+      col = secondary(p + n*0.002, rr)*vec3(0.96,0.93,0.9);
+    }
+    // 遠景は闇に沈める
+    col *= exp(-max(h.x - 9.0, 0.0)*0.15);
+  }
+  o = vec4(col, 1);
+}`;
+function light(ctx) {
+  const { gl, W: W2, H: H2 } = ctx;
+  const S = SECTIONS.light;
+  let prog;
+  return {
+    name: "light",
+    start: S.start,
+    end: S.end,
+    grade: (lt) => ({
+      exposure: 1,
+      bloom: 0.085,
+      contrast: 1.16,
+      saturation: 1.12,
+      vignette: 0.5,
+      grain: 0.03,
+      aberration: 1,
+      flash: 12 * Math.exp(-lt * 3.6)
+    }),
+    init() {
+      prog = program(gl, FS5, undefined, "light");
+    },
+    render(lt, t, sub) {
+      const bar2 = lt / BAR;
+      const k = Math.floor(bar2);
+      const f = bar2 - k;
+      const morphB = smooth(0, 0.42, f);
+      const beat = lt % BEAT / BEAT;
+      const pulse = Math.exp(-beat * 5);
+      prog.use({ res: [W2, H2], jitter: sub.jitter, lt, morphA: k % 4, morphB, pulse, spin: lt * 0.35 + 0.6 * smooth(0, 0.4, f) + k * 0.6 });
+      gl.enable(gl.SCISSOR_TEST);
+      for (let b = 0;b < 4; b++) {
+        gl.scissor(0, H2 * b / 4, W2, H2 / 4);
+        gl.fullscreen();
+        gl.flush();
+      }
+      gl.disable(gl.SCISSOR_TEST);
+    },
+    text(T, lt) {
+      T.chapter({ num: "05", kanji: "光", en: "LIGHT", formula: "n₁ sin θ₁ = n₂ sin θ₂", desc: "1ピクセルごとに、光が跳ね返り、曲がる道すじを追いかける。" }, lt - 0.9, 5.6);
+      T.label("05", "光", "LIGHT", lt - 0.9, 15.6);
+    }
+  };
+}
+
+// src/scenes/cosmos.js
+var NSTAR = 420000;
+var NGAS = 14000;
+var NDUST = 26000;
+var NBG = 14000;
+var NELL = 26;
+var SEG = 256;
+function perspective(fovy, aspect, near, far) {
+  const f = 1 / Math.tan(fovy / 2), nf = 1 / (near - far);
+  return [f / aspect, 0, 0, 0, 0, f, 0, 0, 0, 0, (far + near) * nf, -1, 0, 0, 2 * far * near * nf, 0];
+}
+function lookAt(e, c, u) {
+  const sub = (a, b) => [a[0] - b[0], a[1] - b[1], a[2] - b[2]];
+  const norm = (a) => {
+    const l = Math.hypot(...a);
+    return a.map((x2) => x2 / l);
+  };
+  const cross = (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
+  const dot = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+  const z = norm(sub(e, c)), x = norm(cross(u, z)), y = cross(z, x);
+  return [x[0], y[0], z[0], 0, x[1], y[1], z[1], 0, x[2], y[2], z[2], 0, -dot(x, e), -dot(y, e), -dot(z, e), 1];
+}
+function mul(a, b) {
+  const o = new Array(16).fill(0);
+  for (let i = 0;i < 4; i++)
+    for (let j = 0;j < 4; j++)
+      for (let k = 0;k < 4; k++)
+        o[j * 4 + i] += a[k * 4 + i] * b[j * 4 + k];
+  return o;
+}
+var ORBIT = `
+uniform float time, twist;
+float ARM;   // 軌道上の混み合う場所（短軸の両端）＝渦巻きの腕にいるかどうか
+// 楕円軌道：長半径 a、向き θ(a) = twist·k·a、角速度は平坦な回転曲線（v 一定 → ω ∝ 1/a）
+vec3 orbit(float a, float ph0, float sc, float zo, float lag){
+  float e = 0.40;
+  float th = twist*4.6*a + time*0.035;
+  float ph = ph0 + time*0.22/(a + 0.06);
+  ARM = pow(abs(sin(ph + lag)), 10.0);
+  vec2 p = vec2(a*cos(ph), a*(1.0-e)*sin(ph));
+  p = rot(th)*p;
+  vec2 j = vec2(fract(sin(sc*91.7)*4375.5), fract(sin(sc*37.3)*1753.1)) - 0.5;
+  p += j*a*0.06;
+  return vec3(p.x, zo, p.y);
+}
+`;
+var VS_STAR = HEADER + COMMON + ORBIT + `
+layout(location=0) in vec4 aA;   // a, 初期位相, 種, 縦方向
+layout(location=1) in vec4 aB;   // 温度, 明るさ, 種類(0:円盤 1:バルジ 2:ガス 3:塵 4:背景), 大きさ
+uniform mat4 VP; uniform vec3 cam; uniform vec2 res, jitter; uniform float alpha, sizeK, kind;
+out vec3 vCol; out float vSoft;
+void main(){
+  if (abs(aB.z - kind) > 0.5 && !(kind < 0.5 && aB.z > 0.5 && aB.z < 1.5)) { gl_Position = vec4(2,2,2,1); return; }
+  vec3 P;
+  float arm = 0.0;
+  if (aB.z > 3.5){                       // 遠くの星空
+    P = normalize(aA.xyz - 0.5)*60.0;
+  } else if (aB.z > 0.5 && aB.z < 1.5){  // バルジ：中心の古い星の集まり
+    vec3 d = normalize(vec3(sin(aA.y*7.1)*cos(aA.z*13.3), sin(aA.z*13.3)*0.55, cos(aA.y*7.1)*cos(aA.z*13.3)));
+    float r = aA.x;
+    P = d*r;
+    P.xz *= rot(time*0.25/(r+0.08));
+  } else {
+    float a = aA.x;
+    float th = 1.0 - smoothstep(0.0, 1.0, a);
+    P = orbit(a, aA.y, aA.z, aA.w*(0.010 + 0.045*th*th), aB.z > 2.5 ? -0.22 : 0.0);
+    arm = ARM;
+  }
+  vec4 c = VP*vec4(P, 1.0);
+  c.xy += jitter*2.0/res*c.w;
+  gl_Position = c;
+  float dist = length(P - cam);
+  bool soft = aB.z > 1.5 && aB.z < 3.5;
+  vSoft = soft ? 1.0 : 0.0;
+  float bright = aB.y;
+  bool hot = aB.x > 9000.0 && aB.z < 0.5;
+  if (hot) bright *= 0.2 + 4.2*arm;      // 若い青い星は腕の中で生まれ、すぐに消える
+  if (aB.z > 1.5 && aB.z < 2.5) bright *= arm*3.2;
+  if (aB.z > 2.5 && aB.z < 3.5) bright *= 0.25 + arm*1.4;
+  if (soft){
+    gl_PointSize = clamp(aB.w*res.y/(dist*900.0), 1.0, 300.0);
+  } else {
+    gl_PointSize = aB.z > 3.5 ? 1.3 : clamp(1.1 + 0.9*aB.w*clamp(0.9/dist, 0.6, 2.2), 1.0, 3.6);
+    bright *= aB.z > 3.5 ? 1.0 : clamp(1.4/dist, 0.55, 2.6);
+  }
+  vec3 col = aB.z < 1.5 || aB.z > 3.5 ? blackbody(aB.x) : (aB.z < 2.5 ? mix(vec3(1.0,0.28,0.42), vec3(0.4,0.55,1.0), step(0.7, fract(aA.z*7.3))) : vec3(0.55,0.75,1.0));
+  vCol = col*bright*alpha;
+}`;
+var FS_STAR = HEADER + `
+in vec3 vCol; in float vSoft; out vec4 o;
+void main(){
+  vec2 q = gl_PointCoord*2.0-1.0;
+  float r2 = dot(q,q);
+  float a = vSoft > 0.5 ? exp(-r2*4.0)*smoothstep(1.0, 0.6, r2) : exp(-r2*3.2);
+  o = vec4(vCol*a, 1.0);
+}`;
+var VS_ELL = HEADER + COMMON + ORBIT + `
+layout(location=0) in float aI;
+uniform mat4 VP; uniform vec2 res, jitter; uniform float nEll, seg, grow, width;
+out float vD;
+vec2 proj(vec3 P){ vec4 c = VP*vec4(P,1.0); return (c.xy/c.w*0.5+0.5)*res; }
+vec3 ell(float a, float u){
+  float e = 0.40;
+  float th = twist*4.6*a + time*0.035;
+  vec2 p = vec2(a*cos(u*TAU), a*(1.0-e)*sin(u*TAU));
+  p = rot(th)*p;
+  return vec3(p.x, 0.0, p.y);
+}
+void main(){
+  int vid = gl_VertexID % 6;
+  float ei = floor(aI/seg), si = mod(aI, seg);
+  float a = 0.12 + 0.88*(ei+0.5)/nEll;
+  float u0 = si/seg, u1 = (si+1.0)/seg;
+  if (u0 > grow) { gl_Position = vec4(2,2,2,1); return; }
+  vec2 p0 = proj(ell(a,u0)), p1 = proj(ell(a,u1));
+  vec2 d = p1-p0; float L = max(length(d), 1e-4); vec2 t = d/L, n = vec2(-t.y, t.x);
+  vec2 cn[6] = vec2[6](vec2(0,-1), vec2(1,-1), vec2(1,1), vec2(0,-1), vec2(1,1), vec2(0,1));
+  vec2 c = cn[vid];
+  vec2 pos = mix(p0, p1, c.x) + n*c.y*width*3.0 + jitter;
+  vD = c.y*3.0;
+  gl_Position = vec4(pos/res*2.0-1.0, 0, 1);
+}`;
+var FS_ELL = HEADER + `
+in float vD; out vec4 o; uniform float alpha;
+void main(){ float d = abs(vD); o = vec4(vec3(0.55,0.75,1.0)*alpha*(exp(-d*d*2.0) + 0.15*exp(-d)), 1.0); }`;
+var CORE = HEADER + COMMON + `
+in vec2 vUv; out vec4 o;
+uniform vec2 res, center, jitter; uniform float size, amt;
+void main(){
+  vec2 p = (gl_FragCoord.xy + jitter - center)/size;
+  float r = length(p);
+  vec3 col = vec3(1.0,0.78,0.5)*(exp(-r*r*6.0)*3.0 + exp(-r*2.2)*0.5) + vec3(1.0,0.9,0.8)*exp(-r*r*120.0)*6.0;
+  o = vec4(col*amt, 1.0);
+}`;
+function cosmos(ctx) {
+  const { gl, W: W2, H: H2 } = ctx;
+  const S = SECTIONS.cosmos;
+  let star, ell, core, vao, ellVao, total = 0;
+  function camera(lt) {
+    const tilt = lerp(Math.PI / 2 - 0.02, 0.62, easeInOut(smooth(4, 9, lt))) + 0.38 * smooth(11, 14.5, lt) * 0;
+    const az = 0.4 + lt * 0.11 + 1.3 * easeInOut(smooth(7.5, 12.5, lt));
+    let dist = lerp(2.55, 1.6, smooth(4, 8, lt));
+    dist = lerp(dist, 0.55, Math.sin(Math.PI * smooth(8, 12.6, lt)) * 0.9);
+    dist = lerp(dist, 2.6, smooth(12.6, 16, lt));
+    dist = dist * Math.exp(Math.log(30) * easeInOut(smooth(15.6, 19.6, lt)));
+    const e = [Math.cos(az) * Math.cos(tilt) * dist, Math.sin(tilt) * dist, Math.sin(az) * Math.cos(tilt) * dist];
+    const target = [0, 0, 0];
+    const dive = Math.sin(Math.PI * smooth(8, 12.6, lt));
+    target[0] = Math.cos(az + 2.2) * 0.35 * dive;
+    target[2] = Math.sin(az + 2.2) * 0.35 * dive;
+    const up = Math.abs(Math.sin(tilt)) > 0.98 ? [-Math.cos(az), 0, -Math.sin(az)] : [0, 1, 0];
+    const fov = 0.9;
+    const VP = mul(perspective(fov, W2 / H2, 0.01, 200), lookAt(e, target, up));
+    return { VP, cam: e };
+  }
+  return {
+    name: "cosmos",
+    start: S.start,
+    end: S.end,
+    grade: (lt) => ({ exposure: 1, bloom: 0.1, contrast: 1.12, saturation: 1.15, vignette: 0.45, grain: 0.03, aberration: 0.8, fade: smooth(0, 0.5, lt) }),
+    init() {
+      star = program(gl, FS_STAR, VS_STAR, "stars");
+      ell = program(gl, FS_ELL, VS_ELL, "ellipses");
+      core = program(gl, CORE, undefined, "galaxy-core");
+      let s = 12345;
+      const rnd = () => (s = s * 16807 % 2147483647) / 2147483647;
+      const gauss = () => Math.sqrt(-2 * Math.log(rnd() + 0.000000001)) * Math.cos(2 * Math.PI * rnd());
+      const N = NSTAR + NGAS + NDUST + NBG;
+      const A = new Float32Array(N * 4), B = new Float32Array(N * 4);
+      let i = 0;
+      const push = (a, b2) => {
+        A.set(a, i * 4);
+        B.set(b2, i * 4);
+        i++;
+      };
+      for (let k = 0;k < NSTAR; k++) {
+        if (rnd() < 0.16) {
+          const r = Math.abs(gauss()) * 0.09;
+          push([r, rnd() * 10, rnd() * 10, 0], [3200 + rnd() * 1800, 0.12 + rnd() * 0.25, 1, 0.3 + rnd() * 0.6]);
+        } else {
+          const a = 0.06 + Math.pow(rnd(), 0.85) * 0.95;
+          const hot = rnd() < 0.22;
+          push([a, rnd() * Math.PI * 2, rnd() * 100, gauss()], [hot ? 11000 + rnd() * 18000 : 3400 + rnd() * 2800, (hot ? 0.5 : 0.1) + rnd() * (hot ? 0.6 : 0.25), 0, 0.3 + rnd() * 0.8]);
+        }
+      }
+      const clusters = [];
+      for (let k = 0;k < 700; k++)
+        clusters.push([0.14 + Math.pow(rnd(), 0.8) * 0.82, rnd() * Math.PI * 2]);
+      for (let k = 0;k < NGAS; k++) {
+        const cl = clusters[k % clusters.length];
+        push([cl[0] + gauss() * 0.008, cl[1] + gauss() * 0.035, rnd() * 100, gauss() * 0.3], [0, 0.03 + rnd() * 0.05, 2, 5 + rnd() * 10]);
+      }
+      for (let k = 0;k < NDUST; k++) {
+        const a = 0.1 + Math.pow(rnd(), 0.9) * 0.8;
+        push([a, rnd() * Math.PI * 2, rnd() * 100, gauss() * 0.25], [0, 0.05 + rnd() * 0.05, 3, 10 + rnd() * 20]);
+      }
+      for (let k = 0;k < NBG; k++)
+        push([rnd(), rnd(), rnd(), 0], [3000 + rnd() * 9000, 0.25 + rnd() * 0.6, 4, 1]);
+      total = i;
+      vao = gl.createVertexArray();
+      gl.bindVertexArray(vao);
+      for (const [loc, data] of [[0, A], [1, B]]) {
+        const b2 = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, b2);
+        gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
+        gl.enableVertexAttribArray(loc);
+        gl.vertexAttribPointer(loc, 4, gl.FLOAT, false, 0, 0);
+      }
+      ellVao = gl.createVertexArray();
+      gl.bindVertexArray(ellVao);
+      const ids = new Float32Array(NELL * SEG * 6);
+      for (let k = 0;k < NELL * SEG; k++)
+        for (let v = 0;v < 6; v++)
+          ids[k * 6 + v] = k;
+      const b = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, b);
+      gl.bufferData(gl.ARRAY_BUFFER, ids, gl.STATIC_DRAW);
+      gl.enableVertexAttribArray(0);
+      gl.vertexAttribPointer(0, 1, gl.FLOAT, false, 0, 0);
+      gl.bindVertexArray(null);
+    },
+    render(lt, t, sub) {
+      const { VP, cam } = camera(lt);
+      const twist = easeInOut(smooth(0.6, 3.2, lt));
+      const time = lt + 0;
+      const common = { VP, cam, res: [W2, H2], jitter: sub.jitter, time, twist };
+      gl.enable(gl.BLEND);
+      gl.blendFunc(gl.ONE, gl.ONE);
+      gl.bindVertexArray(vao);
+      star.use({ ...common, alpha: 0.5 * smooth(0, 2, lt), sizeK: 1, kind: 4 });
+      gl.drawArrays(gl.POINTS, 0, total);
+      const starA = smooth(2.6, 5, lt);
+      if (starA > 0) {
+        star.use({ ...common, alpha: 1.25 * starA, sizeK: 1, kind: 0 });
+        gl.drawArrays(gl.POINTS, 0, total);
+      }
+      const dustA = smooth(4, 6.5, lt);
+      if (dustA > 0) {
+        gl.blendFunc(gl.ZERO, gl.ONE_MINUS_SRC_COLOR);
+        star.use({ ...common, alpha: dustA * 0.9, sizeK: 1, kind: 3 });
+        gl.drawArrays(gl.POINTS, 0, total);
+        gl.blendFunc(gl.ONE, gl.ONE);
+      }
+      const gasA = smooth(4, 6.5, lt);
+      if (gasA > 0) {
+        star.use({ ...common, alpha: gasA * 1, sizeK: 1, kind: 2 });
+        gl.drawArrays(gl.POINTS, 0, total);
+      }
+      gl.bindVertexArray(null);
+      const c = VP;
+      const w = c[15];
+      const cx = (c[12] / w * 0.5 + 0.5) * W2, cy = (c[13] / w * 0.5 + 0.5) * H2;
+      const dist = Math.hypot(...cam);
+      core.use({ res: [W2, H2], center: [cx, cy], jitter: sub.jitter, size: 190 / dist, amt: smooth(2.8, 5, lt) * 0.45 });
+      gl.fullscreen();
+      const ea = smooth(0.1, 0.6, lt) * (1 - smooth(3.6, 5.2, lt));
+      if (ea > 0) {
+        gl.bindVertexArray(ellVao);
+        ell.use({ ...common, nEll: NELL, seg: SEG, grow: smooth(0.05, 0.9, lt), width: 1.1, alpha: ea * 1.4 });
+        gl.drawArrays(gl.TRIANGLES, 0, NELL * SEG * 6);
+        gl.bindVertexArray(null);
+      }
+      gl.disable(gl.BLEND);
+    },
+    text(T, lt) {
+      T.chapter({ num: "06", kanji: "宇宙", en: "COSMOS", formula: "θ(r) = k · r", desc: "楕円の軌道を、半径に比例して少しずつ傾ける。それだけで、渦巻銀河が生まれる。" }, lt - 0.2, 5.6);
+      T.label("06", "宇宙", "COSMOS", lt - 0.2, 15.4);
+      const a = smooth(5.5, 6.3, lt) * (1 - smooth(14.6, 15.4, lt));
+      if (a > 0) {
+        T.text("星の数", W2 - 128, H2 - 158, { font: FONT.gothic, size: 20, weight: 600, align: "right", alpha: a * 0.7, spacing: 8, color: ACCENT });
+        T.text(NSTAR.toLocaleString("en-US"), W2 - 128, H2 - 96, { font: FONT.mono, size: 44, align: "right", alpha: a, shadow: 14 });
+      }
+    }
+  };
+}
+
+// src/scenes/finale.js
+var SPARK2 = HEADER + COMMON + `
+in vec2 vUv; out vec4 o;
+uniform vec2 res, pos, jitter; uniform float amt;
+void main(){
+  vec2 p = gl_FragCoord.xy + jitter - pos;
+  float r = length(p);
+  vec3 col = vec3(1.0,0.55,0.25)*(amt*7.0*exp(-r*r/14.0) + amt*0.5*exp(-r/20.0));
+  o = vec4(col,1);
+}`;
+function finale(ctx) {
+  const { gl, W: W2, H: H2 } = ctx;
+  const S = SECTIONS.finale;
+  let spark, lines = [], stats = { lines: 0, chars: 0, bytes: 0 };
+  return {
+    name: "finale",
+    start: S.start,
+    end: S.end + 2,
+    fadeIn: 4,
+    grade: (lt) => ({ exposure: 1, bloom: 0.09, contrast: 1.1, saturation: 1.05, vignette: 0.4, grain: 0.035, aberration: 0.5, fade: 1 - smooth(18.6, 20, lt) }),
+    init() {
+      spark = program(gl, SPARK2, undefined, "finale-spark");
+      const src = ctx.source || "";
+      lines = src.split(`
+`).map((l) => l.replace(/\t/g, "  ").replace(/\s+$/, ""));
+      stats = { lines: src.endsWith(`
+`) ? lines.length - 1 : lines.length, chars: [...src].length, bytes: new TextEncoder().encode(src).length };
+    },
+    render(lt, t, sub) {
+      const amt = smooth(1.5, 3.6, lt) * (1 - smooth(4, 4.6, lt));
+      if (amt > 0) {
+        gl.enable(gl.BLEND);
+        gl.blendFunc(gl.ONE, gl.ONE);
+        spark.use({ res: [W2, H2], pos: [W2 / 2, H2 / 2], jitter: sub.jitter, amt });
+        gl.fullscreen();
+        gl.disable(gl.BLEND);
+      }
+    },
+    text(T, lt) {
+      const c = T.ctx;
+      const wf = smooth(4.2, 4.9, lt) * (1 - smooth(10.6, 11.4, lt));
+      if (wf > 0 && lines.length) {
+        const cols = 4, colW = (W2 - 160) / cols, lh = 15, size = 12.5;
+        const rows = Math.ceil(H2 / lh) + 2;
+        c.save();
+        c.font = `400 ${size}px ${FONT.mono}`;
+        c.textBaseline = "alphabetic";
+        const speed = 18 + 160 * easeInOut(smooth(4.4, 10.4, lt));
+        const scrolled = (lt - 4.2) * (18 + 60 * smooth(4.4, 10.4, lt)) + Math.pow(Math.max(0, lt - 6.5), 2.2) * 40;
+        for (let k = 0;k < cols; k++) {
+          const offset = Math.floor(lines.length * k / cols);
+          const pos = scrolled * (1 + k * 0.18) + offset;
+          const base = Math.floor(pos);
+          const frac = pos - base;
+          for (let r = 0;r < rows; r++) {
+            const li = (base + r) % lines.length;
+            const y = r * lh - frac * lh + 24;
+            const line = lines[li];
+            if (!line)
+              continue;
+            const yy = y / H2;
+            const band = Math.exp(-Math.pow((yy - 0.5) / 0.32, 2));
+            const reveal = clamp((lt - 4.2) * 3 - yy * 1.2);
+            const a = wf * reveal * (0.18 + 0.62 * band);
+            if (a <= 0.01)
+              continue;
+            c.globalAlpha = a;
+            c.fillStyle = /^\s*(\/\/|#|\*)/.test(line) ? ACCENT : k % 2 ? "#d9d2c7" : "#efe9df";
+            c.fillText(line.slice(0, 88), 80 + k * colW, y);
+          }
+        }
+        c.restore();
+        const sa = smooth(6, 6.8, lt) * (1 - smooth(10.6, 11.4, lt));
+        if (sa > 0) {
+          const p = easeOut(clamp((lt - 6) / 3.2));
+          T.rect(0, H2 / 2 - 120, W2, 240, "rgba(0,0,0,0.72)", sa);
+          T.text("この動画のすべて", W2 / 2, H2 / 2 - 52, { font: FONT.gothic, size: 26, weight: 600, align: "center", color: ACCENT, alpha: sa, spacing: 10 });
+          const s = `1 ファイル　${Math.round(stats.lines * p).toLocaleString("en-US")} 行　${(stats.bytes * p / 1024).toFixed(1)} KB`;
+          T.text(s, W2 / 2, H2 / 2 + 22, { font: FONT.gothic, size: 52, weight: 300, align: "center", alpha: sa, shadow: 12 });
+          T.text("画像・映像・音声素材　0　｜　外部ライブラリ　0", W2 / 2, H2 / 2 + 84, { font: FONT.gothic, size: 24, weight: 300, align: "center", alpha: sa * smooth(7.6, 8.4, lt) * 0.85, spacing: 3 });
+        }
+      }
+      if (lt > 3.9 && lt < 4.9) {
+        const k = smooth(3.9, 4.5, lt);
+        T.cursor(W2 / 2 - 3, H2 / 2 + 20, 40 * k + 4, 1 - smooth(4.6, 4.9, lt), ACCENT);
+      }
+      const ma = smooth(11.6, 12, lt) * (1 - smooth(15.4, 15.9, lt));
+      if (ma > 0) {
+        T.reveal("この動画の映像と音は、", W2 / 2, H2 / 2 - 30, clamp((lt - 11.6) / 1), { font: FONT.gothic, size: 50, weight: 300, align: "center", alpha: ma, spread: 0.6, shadow: 10 });
+        T.reveal("すべて、このコードが計算しました。", W2 / 2, H2 / 2 + 52, clamp((lt - 12.6) / 1.2), { font: FONT.gothic, size: 50, weight: 300, align: "center", alpha: ma, spread: 0.6, shadow: 10 });
+      }
+      const ea = smooth(16, 16.6, lt);
+      if (ea > 0) {
+        T.text("PROMPT", W2 / 2, H2 / 2 - 150, { font: FONT.latin, size: 16, weight: 600, align: "center", color: ACCENT, alpha: ea * 0.85, spacing: 8 });
+        T.text(`「${PROMPT}」`, W2 / 2, H2 / 2 - 112, { font: FONT.gothic, size: 24, weight: 300, align: "center", alpha: ea * 0.7 });
+        T.reveal("Claude Opus 5.5", W2 / 2, H2 / 2 + 10, clamp((lt - 16.2) / 1), { font: FONT.latin, size: 92, weight: 500, align: "center", spacing: 6, alpha: ea, blurAmt: 16, rise: 8, shadow: 20 });
+        const msg = "次は、何をつくりましょうか。";
+        const n = Math.floor(clamp((lt - 17.3) / 1) * [...msg].length);
+        const mw = T.measure(msg, { font: FONT.gothic, size: 34, weight: 300 });
+        const x0 = W2 / 2 - mw / 2;
+        const xe = T.type(msg, x0, H2 / 2 + 110, n, { font: FONT.gothic, size: 34, weight: 300, color: ACCENT, alpha: ea });
+        if (lt > 17.1)
+          T.cursor(xe, H2 / 2 + 110, 34, ea * (lt % 0.9 < 0.5 || n < [...msg].length ? 1 : 0), ACCENT);
+      }
+    }
+  };
+}
+
+// src/main.js
+var ACCUM = HEADER + `
+in vec2 vUv; out vec4 o;
+uniform sampler2D a, b; uniform float wa, wb;
+void main(){ o = vec4(texture(a,vUv).rgb*wa + texture(b,vUv).rgb*wb, 1.); }`;
+var halton = (i, b) => {
+  let f = 1, r = 0;
+  while (i > 0) {
+    f /= b;
+    r += f * (i % b);
+    i = Math.floor(i / b);
+  }
+  return r;
+};
+async function boot(canvas, opts = {}) {
+  const gl = createGL(canvas);
+  const post = createPost(gl, W, H);
+  const text = createText(gl, W, H);
+  const ctx = { gl, W, H, text, opts, source: opts.source || "" };
+  const scenes = [intro, sound, infinity, life, earth, light, cosmos, finale].map((f) => f(ctx));
+  for (const s of scenes) {
+    await s.init?.();
+  }
+  const sceneBuf = [fbo(gl, W, H), fbo(gl, W, H)];
+  const accum = fbo(gl, W, H, { internal: gl.RGBA32F });
+  const accumProg = program(gl, ACCUM, undefined, "accum");
+  scenes.forEach((s, i) => {
+    const n = scenes[i + 1];
+    s.visEnd = s.end + (n?.fadeIn || 0);
+  });
+  function activeAt(t) {
+    const act = [];
+    for (const s of scenes)
+      if (t >= s.start && t < s.visEnd)
+        act.push(s);
+    return act.slice(-2);
+  }
+  function weightOf(s, t) {
+    return s.fadeIn ? smooth(s.start, s.start + s.fadeIn, t) : 1;
+  }
+  function gradeAt(t, act) {
+    const gs = act.map((s) => (typeof s.grade === "function" ? s.grade(t - s.start) : s.grade) || {});
+    if (gs.length === 1)
+      return { ...gs[0] };
+    const w = weightOf(act[1], t), A = gs[0], B = gs[1], g = {};
+    const keys = new Set([...Object.keys(A), ...Object.keys(B)]);
+    const def = { exposure: 1, bloom: 0.06, contrast: 1.15, saturation: 1.1, vignette: 0.35, grain: 0.035, aberration: 1, flash: 0, fade: 1 };
+    for (const k of keys) {
+      const a = A[k] ?? def[k], b = B[k] ?? def[k];
+      g[k] = Array.isArray(a) ? a.map((v, i) => lerp(v, b[i], w)) : lerp(a, b, w);
+    }
+    return g;
+  }
+  let lastFrame = -1;
+  function renderFrame(frame, K = 1, shutter = 0.5) {
+    const t = frame / FPS;
+    const act = activeAt(t);
+    for (const s of act)
+      s.update?.(t - s.start, t);
+    gl.disable(gl.BLEND);
+    accum.clear(0, 0, 0, 1);
+    for (let k = 0;k < K; k++) {
+      const tk = K > 1 ? t + ((k + 0.5) / K - 0.5) * shutter / FPS : t;
+      const jitter = K > 1 ? [halton(k + 1, 2) - 0.5, halton(k + 1, 3) - 0.5] : [0, 0];
+      act.forEach((s, i) => {
+        sceneBuf[i].bind();
+        gl.clearColor(0, 0, 0, 1);
+        gl.clear(gl.COLOR_BUFFER_BIT);
+        s.render(tk - s.start, tk, { jitter, k, K, target: sceneBuf[i] });
+      });
+      accum.bind();
+      gl.enable(gl.BLEND);
+      gl.blendFunc(gl.ONE, gl.ONE);
+      const wB = act.length > 1 ? weightOf(act[1], t) : 0;
+      accumProg.use({ a: sceneBuf[0].tex, b: sceneBuf[act.length > 1 ? 1 : 0].tex, wa: (1 - wB) / K, wb: wB / K });
+      gl.fullscreen();
+      gl.disable(gl.BLEND);
+    }
+    text.begin();
+    for (const s of act)
+      s.text?.(text, t - s.start, t);
+    text.upload();
+    const g = gradeAt(t, act);
+    post.composite(accum.tex, text.tex, g, frame, canvas.width, canvas.height);
+    lastFrame = frame;
+  }
+  return { gl, renderFrame, scenes, DURATION, FPS, W, H };
+}
+
+// src/audio/synth.js
+var SR = 48000;
+function makeBus(n) {
+  return { L: new Float32Array(n), R: new Float32Array(n) };
+}
+var mtof = (m) => 440 * Math.pow(2, (m - 69) / 12);
+var NAMES = { C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11 };
+function n2m(s) {
+  const m = /^([A-G])(#|b)?(-?\d)$/.exec(s);
+  if (!m)
+    throw new Error("bad note " + s);
+  return NAMES[m[1]] + (m[2] === "#" ? 1 : m[2] === "b" ? -1 : 0) + (parseInt(m[3]) + 1) * 12;
+}
+var hz = (s) => mtof(typeof s === "number" ? s : n2m(s));
+function rng(seed = 1) {
+  let s = seed >>> 0 || 1;
+  return () => {
+    s ^= s << 13;
+    s >>>= 0;
+    s ^= s >>> 17;
+    s ^= s << 5;
+    s >>>= 0;
+    return s / 4294967296;
+  };
+}
+function blep(t, dt) {
+  if (t < dt) {
+    t /= dt;
+    return t + t - t * t - 1;
+  }
+  if (t > 1 - dt) {
+    t = (t - 1) / dt;
+    return t * t + t + t + 1;
+  }
+  return 0;
+}
+
+class SVF {
+  constructor() {
+    this.ic1 = 0;
+    this.ic2 = 0;
+  }
+  run(x, fc, q) {
+    const g = Math.tan(Math.PI * Math.min(fc, SR * 0.45) / SR), k = 1 / q;
+    const a1 = 1 / (1 + g * (g + k)), a2 = g * a1, a3 = g * a2;
+    const v3 = x - this.ic2, v1 = a1 * this.ic1 + a2 * v3, v2 = this.ic2 + a2 * this.ic1 + a3 * v3;
+    this.ic1 = 2 * v1 - this.ic1;
+    this.ic2 = 2 * v2 - this.ic2;
+    this.lp = v2;
+    this.bp = v1;
+    this.hp = x - k * v1 - v2;
+    return v2;
+  }
+}
+
+class HP1 {
+  constructor(fc) {
+    this.a = Math.exp(-2 * Math.PI * fc / SR);
+    this.x1 = 0;
+    this.y1 = 0;
+  }
+  run(x) {
+    const y = this.a * (this.y1 + x - this.x1);
+    this.x1 = x;
+    this.y1 = y;
+    return y;
+  }
+}
+function adsr(t, dur, a, d, s, r) {
+  if (t < 0)
+    return 0;
+  let v;
+  if (t < a)
+    v = t / a;
+  else if (t < a + d)
+    v = 1 - (1 - s) * ((t - a) / d);
+  else
+    v = s;
+  if (t > dur) {
+    const k = (t - dur) / r;
+    v = (dur < a ? dur / a : dur < a + d ? 1 - (1 - s) * ((dur - a) / d) : s) * Math.max(0, 1 - k);
+    v *= v > 0 ? 1 : 0;
+  }
+  return v;
+}
+var panL = (p) => Math.cos((p + 1) * Math.PI / 4);
+var panR = (p) => Math.sin((p + 1) * Math.PI / 4);
+function supersaw(bus, t0, dur, f, o = {}) {
+  const { gain = 0.1, voices = 7, detune = 0.16, a = 0.02, d = 0.3, s = 0.7, r = 0.4, cut = 3000, cutEnv = 0, cutDecay = 0.3, q = 0.8, spread = 0.85, vib = 0, seed = 1, cutLfo = 0 } = o;
+  const R2 = rng(seed + Math.floor(f * 100));
+  const n = Math.floor((dur + r) * SR), i0 = Math.floor(t0 * SR);
+  const ph = [], df = [], pl = [], pr = [];
+  for (let v = 0;v < voices; v++) {
+    const x = voices > 1 ? v / (voices - 1) * 2 - 1 : 0;
+    ph.push(R2());
+    df.push(f * Math.pow(2, x * detune / 12) / SR);
+    const p = x * spread;
+    pl.push(panL(p));
+    pr.push(panR(p));
+  }
+  const fl = new SVF, fr = new SVF;
+  const { L, R: Rr } = bus, N = L.length;
+  for (let i = 0;i < n; i++) {
+    const idx = i0 + i;
+    if (idx >= N)
+      break;
+    if (idx < 0)
+      continue;
+    const t = i / SR;
+    const env = adsr(t, dur, a, d, s, r);
+    if (env <= 0 && t > dur)
+      break;
+    const vm = vib ? 1 + vib * Math.sin(2 * Math.PI * 5.2 * t) * Math.min(1, t / 0.4) : 1;
+    let sl = 0, sr = 0;
+    for (let v = 0;v < voices; v++) {
+      const dt = df[v] * vm;
+      let p = ph[v] + dt;
+      if (p >= 1)
+        p -= 1;
+      ph[v] = p;
+      const sm = 2 * p - 1 - blep(p, dt);
+      sl += sm * pl[v];
+      sr += sm * pr[v];
+    }
+    const c = cut * (1 + cutEnv * Math.exp(-t / cutDecay)) * (1 + cutLfo * Math.sin(2 * Math.PI * 0.11 * (t0 + t)));
+    const g = gain * env / Math.sqrt(voices);
+    L[idx] += fl.run(sl, c, q) * g;
+    Rr[idx] += fr.run(sr, c, q) * g;
+  }
+}
+function sine(bus, t0, dur, f, o = {}) {
+  const { gain = 0.2, a = 0.05, r = 0.3, pan = 0, ph0 = 0 } = o;
+  const n = Math.floor((dur + r) * SR), i0 = Math.floor(t0 * SR);
+  const gl = panL(pan), gr = panR(pan), w = 2 * Math.PI * f / SR;
+  for (let i = 0;i < n; i++) {
+    const idx = i0 + i;
+    if (idx >= bus.L.length)
+      break;
+    if (idx < 0)
+      continue;
+    const t = i / SR;
+    let env = Math.min(1, t / a);
+    if (t > dur)
+      env *= Math.max(0, 1 - (t - dur) / r);
+    env = env * env * (3 - 2 * env);
+    const v = Math.sin(w * i + ph0 + 2 * Math.PI * f * (i0 / SR)) * gain * env;
+    bus.L[idx] += v * gl;
+    bus.R[idx] += v * gr;
+  }
+}
+function pluck(bus, t0, f, o = {}) {
+  const { gain = 0.2, decay = 0.996, bright = 0.5, pan = 0, len = 2.5, seed = 3 } = o;
+  const R2 = rng(seed + Math.floor(f * 1000 + t0 * 777));
+  const P = Math.max(2, Math.round(SR / f));
+  const line = new Float32Array(P);
+  let lp = 0;
+  for (let i = 0;i < P; i++) {
+    const x = R2() * 2 - 1;
+    lp += (x - lp) * (0.25 + bright * 0.7);
+    line[i] = lp;
+  }
+  const n = Math.floor(len * SR), i0 = Math.floor(t0 * SR);
+  const gl = panL(pan), gr = panR(pan);
+  let k = 0, prev = 0;
+  for (let i = 0;i < n; i++) {
+    const idx = i0 + i;
+    if (idx >= bus.L.length)
+      break;
+    const cur = line[k];
+    const nxt = line[(k + 1) % P];
+    line[k] = decay * (0.5 * (cur + nxt) * (0.6 + 0.4 * bright) + prev * (0.4 - 0.4 * bright));
+    prev = cur;
+    k = (k + 1) % P;
+    const env = Math.min(1, i / 48) * (i > n - 2400 ? (n - i) / 2400 : 1);
+    const v = cur * gain * env;
+    if (idx >= 0) {
+      bus.L[idx] += v * gl;
+      bus.R[idx] += v * gr;
+    }
+  }
+}
+function fm(bus, t0, f, o = {}) {
+  const { gain = 0.12, ratio = 3.5, index = 4, idxDecay = 0.25, decay = 1.2, a = 0.002, pan = 0, len = 3, ratio2 = 0, index2 = 0, idx2Decay = 0.05 } = o;
+  const n = Math.floor(len * SR), i0 = Math.floor(t0 * SR);
+  const gl = panL(pan), gr = panR(pan);
+  const wc = 2 * Math.PI * f / SR, wm = wc * ratio, wm2 = wc * ratio2;
+  for (let i = 0;i < n; i++) {
+    const idx = i0 + i;
+    if (idx >= bus.L.length)
+      break;
+    if (idx < 0)
+      continue;
+    const t = i / SR;
+    const I = index * Math.exp(-t / idxDecay);
+    const I2 = index2 * Math.exp(-t / idx2Decay);
+    const env = Math.min(1, t / a) * Math.exp(-t / decay) * (i > n - 1200 ? (n - i) / 1200 : 1);
+    const v = Math.sin(wc * i + I * Math.sin(wm * i) + I2 * Math.sin(wm2 * i)) * gain * env;
+    bus.L[idx] += v * gl;
+    bus.R[idx] += v * gr;
+  }
+}
+function bass(bus, t0, dur, f, o = {}) {
+  const { gain = 0.25, cut = 420, cutEnv = 3, sub = 0.8, saw = 0.5, r = 0.06 } = o;
+  const n = Math.floor((dur + r) * SR), i0 = Math.floor(t0 * SR);
+  const flt = new SVF;
+  let p = 0;
+  const dt = f / SR;
+  for (let i = 0;i < n; i++) {
+    const idx = i0 + i;
+    if (idx >= bus.L.length)
+      break;
+    if (idx < 0)
+      continue;
+    const t = i / SR;
+    let env = Math.min(1, t / 0.004);
+    if (t > dur)
+      env *= Math.max(0, 1 - (t - dur) / r);
+    p += dt;
+    if (p >= 1)
+      p -= 1;
+    const sw = 2 * p - 1 - blep(p, dt);
+    const c = cut * (1 + cutEnv * Math.exp(-t / 0.08));
+    const v = (Math.sin(2 * Math.PI * p) * sub + flt.run(sw, c, 0.9) * saw) * gain * env;
+    const y = Math.tanh(v * 1.3) / 1.3;
+    bus.L[idx] += y;
+    bus.R[idx] += y;
+  }
+}
+function kick(bus, t0, o = {}) {
+  const { gain = 0.8, decay = 0.38, pitch = 48 } = o;
+  const n = Math.floor(0.7 * SR), i0 = Math.floor(t0 * SR);
+  const R2 = rng(99 + i0);
+  let ph = 0;
+  const hp = new HP1(1500);
+  for (let i = 0;i < n; i++) {
+    const idx = i0 + i;
+    if (idx >= bus.L.length)
+      break;
+    if (idx < 0)
+      continue;
+    const t = i / SR;
+    const f = pitch + 135 * Math.exp(-t / 0.028) + 40 * Math.exp(-t / 0.2);
+    ph += 2 * Math.PI * f / SR;
+    const body = Math.sin(ph) * Math.exp(-t / decay) * Math.min(1, t / 0.0015);
+    const click = hp.run(R2() * 2 - 1) * Math.exp(-t / 0.003) * 0.5;
+    const v = Math.tanh((body + click) * 1.6) * gain;
+    bus.L[idx] += v;
+    bus.R[idx] += v;
+  }
+}
+function snare(bus, t0, o = {}) {
+  const { gain = 0.4, decay = 0.17, tone = 0.5, pan = 0 } = o;
+  const n = Math.floor(0.5 * SR), i0 = Math.floor(t0 * SR);
+  const R2 = rng(7 + i0);
+  const bp = new SVF;
+  const hp = new HP1(400);
+  let ph = 0;
+  for (let i = 0;i < n; i++) {
+    const idx = i0 + i;
+    if (idx >= bus.L.length)
+      break;
+    if (idx < 0)
+      continue;
+    const t = i / SR;
+    ph += 2 * Math.PI * (175 + 60 * Math.exp(-t / 0.02)) / SR;
+    const body = Math.sin(ph) * Math.exp(-t / 0.07) * tone;
+    bp.run(R2() * 2 - 1, 2400, 0.6);
+    const nz = hp.run(bp.bp) * Math.exp(-t / decay) * 1.6;
+    const v = (body + nz) * gain * Math.min(1, t / 0.001);
+    bus.L[idx] += v * panL(pan);
+    bus.R[idx] += v * panR(pan);
+  }
+}
+function clap(bus, t0, o = {}) {
+  const { gain = 0.35 } = o;
+  const n = Math.floor(0.4 * SR), i0 = Math.floor(t0 * SR);
+  const R2 = rng(13 + i0);
+  const bp = new SVF;
+  for (let i = 0;i < n; i++) {
+    const idx = i0 + i;
+    if (idx >= bus.L.length)
+      break;
+    if (idx < 0)
+      continue;
+    const t = i / SR;
+    let env = 0;
+    for (const o2 of [0, 0.011, 0.023])
+      if (t >= o2)
+        env = Math.max(env, Math.exp(-(t - o2) / 0.006));
+    if (t >= 0.034)
+      env = Math.max(env, Math.exp(-(t - 0.034) / 0.13));
+    bp.run(R2() * 2 - 1, 1250, 0.9);
+    const v = bp.bp * env * gain * 2.2;
+    bus.L[idx] += v * 0.92;
+    bus.R[idx] += v;
+  }
+}
+var HAT_F = [205.3, 304.4, 369.6, 522.7, 540, 800].map((x) => x * 1.72);
+function hat(bus, t0, o = {}) {
+  const { gain = 0.12, decay = 0.045, pan = 0.2 } = o;
+  const n = Math.floor(Math.min(0.6, decay * 7) * SR), i0 = Math.floor(t0 * SR);
+  const bp = new SVF, hp = new SVF;
+  const ph = HAT_F.map(() => 0);
+  for (let i = 0;i < n; i++) {
+    const idx = i0 + i;
+    if (idx >= bus.L.length)
+      break;
+    if (idx < 0)
+      continue;
+    const t = i / SR;
+    let x = 0;
+    for (let k = 0;k < 6; k++) {
+      ph[k] += HAT_F[k] / SR;
+      if (ph[k] >= 1)
+        ph[k] -= 1;
+      x += ph[k] < 0.5 ? 1 : -1;
+    }
+    bp.run(x, 1e4, 1.2);
+    hp.run(bp.bp, 7500, 0.7);
+    const v = hp.hp * Math.exp(-t / decay) * gain;
+    bus.L[idx] += v * panL(pan);
+    bus.R[idx] += v * panR(pan);
+  }
+}
+function noiseHit(bus, t0, o = {}) {
+  const { gain = 0.1, decay = 0.03, fc = 6000, q = 0.7, pan = 0, len = 0.3, hpf = true } = o;
+  const n = Math.floor(len * SR), i0 = Math.floor(t0 * SR);
+  const R2 = rng(5 + i0);
+  const f = new SVF;
+  for (let i = 0;i < n; i++) {
+    const idx = i0 + i;
+    if (idx >= bus.L.length)
+      break;
+    if (idx < 0)
+      continue;
+    const t = i / SR;
+    f.run(R2() * 2 - 1, fc, q);
+    const v = (hpf ? f.hp : f.bp) * Math.exp(-t / decay) * gain * Math.min(1, t / 0.0008);
+    bus.L[idx] += v * panL(pan);
+    bus.R[idx] += v * panR(pan);
+  }
+}
+function riser(bus, t0, dur, o = {}) {
+  const { gain = 0.12, f0 = 300, f1 = 9000, q = 1.2, curve = 2 } = o;
+  const n = Math.floor(dur * SR), i0 = Math.floor(t0 * SR);
+  const R2 = rng(21 + i0);
+  const fl = new SVF, fr = new SVF;
+  for (let i = 0;i < n; i++) {
+    const idx = i0 + i;
+    if (idx >= bus.L.length)
+      break;
+    if (idx < 0)
+      continue;
+    const u = i / n;
+    const fc = f0 * Math.pow(f1 / f0, Math.pow(u, 1.2));
+    fl.run(R2() * 2 - 1, fc, q);
+    fr.run(R2() * 2 - 1, fc * 1.03, q);
+    const env = Math.pow(u, curve) * gain * (i > n - 240 ? (n - i) / 240 : 1);
+    bus.L[idx] += fl.bp * env;
+    bus.R[idx] += fr.bp * env;
+  }
+}
+function impact(bus, t0, o = {}) {
+  const { gain = 0.6, len = 3 } = o;
+  const n = Math.floor(len * SR), i0 = Math.floor(t0 * SR);
+  const R2 = rng(31 + i0);
+  const lp = new SVF;
+  let ph = 0;
+  for (let i = 0;i < n; i++) {
+    const idx = i0 + i;
+    if (idx >= bus.L.length)
+      break;
+    if (idx < 0)
+      continue;
+    const t = i / SR;
+    ph += 2 * Math.PI * (32 + 40 * Math.exp(-t / 0.25)) / SR;
+    const boom = Math.sin(ph) * Math.exp(-t / 0.9);
+    lp.run(R2() * 2 - 1, 900 + 4000 * Math.exp(-t / 0.08), 0.7);
+    const nz = lp.lp * Math.exp(-t / 0.35) * 0.8;
+    const v = Math.tanh((boom + nz) * 1.4) * gain * Math.min(1, t / 0.001);
+    bus.L[idx] += v;
+    bus.R[idx] += v;
+  }
+}
+function reverb(inp, out, { room = 0.86, damp = 0.32, wet = 1, predelay = 0.02 } = {}) {
+  const sc = SR / 44100;
+  const CT = [1116, 1188, 1277, 1356, 1422, 1491, 1557, 1617].map((x) => Math.round(x * sc));
+  const AT = [556, 441, 341, 225].map((x) => Math.round(x * sc));
+  const SP = Math.round(23 * sc);
+  const N = inp.L.length;
+  const pd = Math.round(predelay * SR);
+  for (const [chIn, chOut, off] of [[inp.L, out.L, 0], [inp.R, out.R, SP]]) {
+    const combs = CT.map((l) => ({ b: new Float32Array(l + off), i: 0, f: 0 }));
+    const aps = AT.map((l) => ({ b: new Float32Array(l + off), i: 0 }));
+    for (let n = 0;n < N; n++) {
+      const x = (n >= pd ? chIn[n - pd] : 0) * 0.015;
+      let y = 0;
+      for (let c = 0;c < 8; c++) {
+        const cb = combs[c];
+        const o = cb.b[cb.i];
+        cb.f = o * (1 - damp) + cb.f * damp;
+        cb.b[cb.i] = x + cb.f * room;
+        if (++cb.i >= cb.b.length)
+          cb.i = 0;
+        y += o;
+      }
+      for (let a = 0;a < 4; a++) {
+        const ap = aps[a];
+        const o = ap.b[ap.i];
+        ap.b[ap.i] = y + o * 0.5;
+        y = o - y;
+        if (++ap.i >= ap.b.length)
+          ap.i = 0;
+      }
+      chOut[n] += y * wet;
+    }
+  }
+}
+function delay(inp, out, { time = 0.375, fb = 0.38, wet = 0.5, lp = 4500 } = {}) {
+  const D = Math.round(time * SR), N = inp.L.length;
+  const bl = new Float32Array(D), br = new Float32Array(D);
+  const fL = new SVF, fR = new SVF;
+  let k = 0;
+  for (let n = 0;n < N; n++) {
+    const yl = bl[k], yr = br[k];
+    bl[k] = inp.L[n] * 0.7 + fR.run(yr, lp, 0.6) * fb;
+    br[k] = inp.R[n] * 0.3 + fL.run(yl, lp, 0.6) * fb;
+    out.L[n] += yl * wet;
+    out.R[n] += yr * wet;
+    if (++k >= D)
+      k = 0;
+  }
+}
+
+// src/audio/song.js
+var b = (bar2, beat = 0) => bar2 * BAR + beat * BEAT;
+var tr = (note, semi) => mtof(n2m(note) + semi);
+var F = (x) => typeof x === "number" ? x : hz(x);
+var CH = {
+  Dm: ["D3", "F3", "A3", "D4"],
+  Bb: ["Bb2", "D3", "F3", "Bb3"],
+  F: ["F2", "A2", "C3", "F3"],
+  C: ["C3", "E3", "G3", "C4"],
+  Gm: ["G2", "Bb2", "D3", "G3"],
+  A: ["A2", "C#3", "E3", "A3"],
+  Em: ["E3", "G3", "B3", "E4"],
+  G: ["G2", "B2", "D3", "G3"],
+  D: ["D3", "F#3", "A3", "D4"],
+  Bm: ["B2", "D3", "F#3", "B3"],
+  Em7: ["E3", "G3", "B3", "D4"],
+  AC: ["C#3", "E3", "A3", "C#4"],
+  DF: ["F#2", "A2", "D3", "F#3"]
+};
+var HI = {
+  Bb: ["D4", "F4", "Bb4", "D5"],
+  F: ["C4", "F4", "A4", "C5"],
+  C: ["C4", "E4", "G4", "C5"],
+  Dm: ["D4", "F4", "A4", "D5"],
+  A: ["C#4", "E4", "A4", "C#5"],
+  Gm: ["D4", "G4", "Bb4", "D5"],
+  G: ["D4", "G4", "B4", "D5"],
+  D: ["D4", "F#4", "A4", "D5"],
+  Em: ["E4", "G4", "B4", "E5"]
+};
+var ROOT = { Dm: "D2", Bb: "Bb1", F: "F2", C: "C2", Gm: "G1", A: "A1", Em: "E2", G: "G1", D: "D2", Bm: "B1", Em7: "E2", AC: "A1", DF: "D2" };
+var THEME_A = [
+  [[0, "D5", 1.5], [1.5, "C5", 0.5], [2, "D5", 1], [3, "F5", 1]],
+  [[0, "A5", 2], [2, "G5", 1], [3, "F5", 1]],
+  [[0, "E5", 1.5], [1.5, "F5", 0.5], [2, "G5", 1], [3, "E5", 1]],
+  [[0, "D5", 3], [3, "A4", 1]],
+  [[0, "D5", 1.5], [1.5, "C5", 0.5], [2, "D5", 1], [3, "F5", 1]],
+  [[0, "A5", 1], [1, "C6", 1], [2, "A5", 0.5], [2.5, "G5", 0.5], [3, "F5", 1]],
+  [[0, "G5", 2], [2, "E5", 1], [3, "C5", 1]],
+  [[0, "C#5", 2], [2, "E5", 1], [3, "A5", 1]]
+];
+var THEME_B = [
+  [[0, "Bb4", 1], [1, "D5", 1], [2, "G5", 1], [3, "F5", 1]],
+  [[0, "F5", 2], [2, "D5", 1], [3, "C5", 1]],
+  [[0, "A4", 1], [1, "C5", 1], [2, "F5", 1], [3, "E5", 1]],
+  [[0, "E5", 2], [2, "G5", 1], [3, "E5", 1]],
+  [[0, "D5", 1], [1, "G5", 1], [2, "Bb5", 1], [3, "A5", 1]],
+  [[0, "A5", 2], [2, "F5", 1], [3, "D5", 1]],
+  [[0, "F5", 1], [1, "E5", 1], [2, "D5", 1], [3, "A5", 1]],
+  [[0, "G5", 2], [2, "E5", 1], [3, "C5", 1]]
+];
+var THEME_END = [
+  [[0, "A5", 3], [3, "F#5", 1]],
+  [[0, "D5", 4]],
+  [[0, "E5", 1.5], [1.5, "F#5", 0.5], [2, "G5", 1], [3, "E5", 1]],
+  [[0, "D5", 2], [2, "F#5", 2]],
+  [[0, "B5", 2], [2, "A5", 1], [3, "G5", 1]],
+  [[0, "F#5", 2], [2, "A5", 2]],
+  [[0, "G5", 2], [2, "E5", 2]],
+  [[0, "E5", 2], [2, "C#5", 1], [3, "E5", 1]],
+  [[0, "D5", 4]]
+];
+function renderSong(onProgress = () => {}) {
+  const N = Math.ceil(DURATION * SR);
+  const dry = makeBus(N), duck = makeBus(N), verb = makeBus(N), dly = makeBus(N);
+  const kicks = [];
+  function play(len, t0, sends, fn) {
+    const n = Math.ceil(len * SR);
+    const tmp = makeBus(n);
+    fn(tmp);
+    const i0 = Math.round(t0 * SR);
+    for (const [bus, g] of sends) {
+      if (!g)
+        continue;
+      const { L, R: R3 } = bus;
+      for (let i = 0;i < n; i++) {
+        const j = i0 + i;
+        if (j < 0 || j >= N)
+          continue;
+        L[j] += tmp.L[i] * g;
+        R3[j] += tmp.R[i] * g;
+      }
+    }
+  }
+  const K = (t, o = {}) => {
+    kicks.push(t);
+    play(0.7, t, [[dry, 1]], (x) => kick(x, 0, o));
+  };
+  const SN = (t, o = {}, v = 0.12) => play(0.5, t, [[dry, 1], [verb, v]], (x) => snare(x, 0, o));
+  const CL = (t, o = {}) => play(0.4, t, [[dry, 1], [verb, 0.18]], (x) => clap(x, 0, o));
+  const HH = (t, o = {}) => play(0.7, t, [[dry, 1], [verb, 0.03]], (x) => hat(x, 0, o));
+  const CRASH = (t, g = 0.09) => play(2.6, t, [[dry, 1], [verb, 0.35]], (x) => noiseHit(x, 0, { gain: g, decay: 0.9, fc: 5200, q: 0.5, len: 2.6 }));
+  const PAD = (t, dur, notes, o = {}, s = [0.8, 0.55]) => {
+    for (const nt of notes)
+      play(dur + (o.r ?? 0.8) + 0.05, t, [[o.duck ? duck : dry, s[0]], [verb, s[1]]], (x) => supersaw(x, 0, dur, F(nt), { r: 0.8, ...o }));
+  };
+  const LEAD = (bar2, phrase, semi = 0, o = {}, s = [0.9, 0.28, 0.3]) => phrase.forEach(([bt, nt, d]) => {
+    const t = b(bar2, bt), dur = d * BEAT - 0.03;
+    play(dur + 0.35, t, [[dry, s[0]], [verb, s[1]], [dly, s[2]]], (x) => supersaw(x, 0, dur, tr(nt, semi), { gain: 0.15, voices: 5, detune: 0.11, a: 0.006, d: 0.15, s: 0.8, r: 0.25, cut: 4200, cutEnv: 0.8, cutDecay: 0.15, q: 0.9, spread: 0.4, vib: 0.0035, ...o }));
+  });
+  const BASSN = (t, dur, nt, o = {}) => play(dur + (o.r ?? 0.06) + 0.05, t, [[duck, 1]], (x) => bass(x, 0, dur, F(nt), o));
+  PAD(0.3, 7.6, ["D3", "A3", "E4", "F4", "A4"], { gain: 0.05, a: 2.5, d: 1, s: 1, cut: 650, cutLfo: 0.25, detune: 0.12 }, [0.7, 0.7]);
+  play(9, 0.5, [[dry, 1]], (x) => sine(x, 0, 7.5, hz("D2"), { gain: 0.05, a: 2, r: 1 }));
+  const R2 = (() => {
+    let s = 77;
+    return () => (s = s * 16807 % 2147483647) / 2147483647;
+  })();
+  for (const t of PROMPT_TIMES) {
+    play(0.1, t, [[dry, 1], [verb, 0.12]], (x) => {
+      noiseHit(x, 0, { gain: 0.09, decay: 0.0045, fc: 2600 + R2() * 1200, q: 0.8, len: 0.06, pan: (R2() - 0.5) * 0.4 });
+      fm(x, 0, 420 + R2() * 80, { gain: 0.05, ratio: 1.5, index: 2, idxDecay: 0.004, decay: 0.012, len: 0.06 });
+    });
+  }
+  const PENTA = ["D6", "E6", "F#6", "A6", "B6", "D7", "B6", "A6"];
+  REPLY_TIMES.forEach((t, i) => play(0.5, t, [[dry, 0.8], [verb, 0.3], [dly, 0.25]], (x) => fm(x, 0, hz(PENTA[i % PENTA.length]), { gain: 0.035, ratio: 2, index: 1.2, idxDecay: 0.05, decay: 0.09, len: 0.5, pan: Math.sin(i) * 0.5 })));
+  play(2, DISSOLVE_START, [[dry, 1], [verb, 0.5]], (x) => riser(x, 0, 8 - DISSOLVE_START, { gain: 0.09, f0: 300, f1: 7000, curve: 2.2 }));
+  play(17, b(4), [[dry, 1], [verb, 0.18]], (x) => sine(x, 0, b(12) - b(4) - 0.6, ROOT_HZ + LISSAJOUS_DETUNE, { gain: 0.12, a: 0.9, r: 1.2, pan: 1, ph0: 0 }));
+  INTERVALS.forEach((iv, i) => {
+    const t = b(4 + i) - (i ? 0.18 : 0), dur = BAR + (i ? 0.18 : 0) + (i === 7 ? -0.6 : 0);
+    const f = ROOT_HZ * iv.a / iv.b;
+    play(dur + 0.5, t, [[dry, 1], [verb, 0.18]], (x) => sine(x, 0, dur, f, { gain: 0.12, a: i ? 0.36 : 0.9, r: i === 7 ? 1.2 : 0.36, pan: -1, ph0: 2 * Math.PI * f * t }));
+  });
+  PAD(b(4), 16 - 0.5, ["D3", "A3", "D4"], { gain: 0.03, a: 3, s: 1, cut: 900, detune: 0.1 }, [0.6, 0.6]);
+  for (let br = 6;br < 12; br++)
+    K(b(br), { gain: 0.22, decay: 0.3 });
+  play(2.4, b(11), [[dry, 1], [verb, 0.4]], (x) => riser(x, 0, 2, { gain: 0.05, f0: 500, f1: 6000 }));
+  const P2 = ["Dm", "Bb", "F", "C", "Dm", "Bb", "Gm", "A"];
+  const ARP = { Dm: ["D4", "F4", "A4", "D5", "F5", "A5"], Bb: ["Bb3", "D4", "F4", "Bb4", "D5", "F5"], F: ["F4", "A4", "C5", "F5", "A5", "C6"], C: ["C4", "E4", "G4", "C5", "E5", "G5"], Gm: ["G3", "Bb3", "D4", "G4", "Bb4", "D5"], A: ["A3", "C#4", "E4", "A4", "C#5", "E5"], Em: ["E4", "G4", "B4", "E5", "G5", "B5"], G: ["G3", "B3", "D4", "G4", "B4", "D5"], D: ["D4", "F#4", "A4", "D5", "F#5", "A5"] };
+  const UPDOWN = [0, 1, 2, 3, 4, 5, 4, 3, 1, 2, 3, 4, 5, 4, 3, 2];
+  const arp = (bar2, chord, o = {}, s = [0.75, 0.3, 0.35], step = 0.25) => {
+    for (let k = 0;k < 4 / step; k++) {
+      const nt = ARP[chord][UPDOWN[k % 16]];
+      play(o.len ?? 2.2, b(bar2, k * step), [[dry, s[0]], [verb, s[1]], [dly, s[2]]], (x) => pluck(x, 0, hz(nt), { gain: 0.1, bright: 0.45, decay: 0.994, pan: k % 2 ? 0.35 : -0.35, len: 2, ...o }));
+    }
+  };
+  P2.forEach((c, i) => {
+    const bar2 = 12 + i;
+    arp(bar2, c, { bright: 0.25 + 0.07 * i, gain: 0.085 + 0.004 * i });
+    PAD(b(bar2), BAR - 0.05, CH[c], { gain: 0.04, a: 0.4, s: 0.9, cut: 700 + 260 * i, detune: 0.14 }, [0.7, 0.5]);
+    BASSN(b(bar2), BAR - 0.08, ROOT[c], { gain: 0.15, saw: 0.18, cut: 300 });
+    if (bar2 >= 16) {
+      K(b(bar2), { gain: 0.6 });
+      K(b(bar2, 2), { gain: 0.6 });
+      for (let s8 = 0;s8 < 8; s8++)
+        HH(b(bar2, s8 * 0.5 + 0.5), { gain: 0.04, decay: 0.035 });
+    }
+    if (bar2 >= 14 && bar2 < 16)
+      for (let s8 = 0;s8 < 4; s8++)
+        HH(b(bar2, s8 + 0.5), { gain: 0.03, decay: 0.03 });
+  });
+  play(2.4, b(19), [[dry, 1], [verb, 0.4]], (x) => riser(x, 0, 2, { gain: 0.07, f0: 400, f1: 8000 }));
+  CRASH(b(20), 0.06);
+  const P3 = ["Gm", "Bb", "F", "C", "Gm", "Bb", "Dm", "A"];
+  const MAL = [0, 1.5, 3, 4.5, 6, 7];
+  P3.forEach((c, i) => {
+    const bar2 = 20 + i;
+    const build = bar2 >= 26;
+    PAD(b(bar2), BAR - 0.05, CH[c], { gain: build ? 0.05 : 0.042, a: 0.2, s: 0.9, cut: build ? 1600 + (bar2 - 26) * 2400 : 1500, detune: 0.15 }, [0.7, 0.5]);
+    MAL.forEach((e, k) => {
+      const nt = ARP[c][[0, 2, 4, 3, 5, 1][k]];
+      play(1.4, b(bar2, e * 0.5), [[dry, 0.8], [verb, 0.25], [dly, 0.25]], (x) => fm(x, 0, hz(nt), { gain: 0.07, ratio: 4, index: 2.4, idxDecay: 0.04, decay: 0.35, len: 1.4, pan: k % 2 ? 0.4 : -0.4 }));
+    });
+    if (!build) {
+      K(b(bar2), { gain: 0.62 });
+      K(b(bar2, 2.5), { gain: 0.55 });
+      SN(b(bar2, 2), { gain: 0.22, decay: 0.09, tone: 0.3 }, 0.15);
+      for (let s16 = 0;s16 < 16; s16++)
+        play(0.1, b(bar2, s16 * 0.25 + (s16 % 2 ? 0.03 : 0)), [[dry, 1]], (x) => noiseHit(x, 0, { gain: s16 % 4 === 2 ? 0.05 : 0.028, decay: 0.018, fc: 6500, q: 0.7, len: 0.09, pan: 0.3 }));
+      [[0, 0], [1.5, 0], [2.5, 7], [3.5, 12]].forEach(([bt, semi]) => BASSN(b(bar2, bt), 0.42, mtof(n2m(ROOT[c]) + 12 + semi), { gain: 0.17, saw: 0.5, cut: 380 }));
+    } else {
+      BASSN(b(bar2), BAR - 0.1, ROOT[c], { gain: 0.15, saw: 0.35, cut: 300 + (bar2 - 26) * 400 });
+    }
+  });
+  for (let k = 0;k < 8; k++)
+    SN(b(26, k * 0.5), { gain: 0.14 + k * 0.012, decay: 0.08 }, 0.1);
+  for (let k = 0;k < 8; k++)
+    SN(b(27, k * 0.25), { gain: 0.22 + k * 0.01, decay: 0.07 }, 0.1);
+  for (let k = 0;k < 6; k++)
+    SN(b(27, 2 + k * 0.125), { gain: 0.3 + k * 0.012, decay: 0.06 }, 0.1);
+  play(4.2, b(26), [[dry, 1], [verb, 0.3]], (x) => riser(x, 0, b(27, 3) - b(26), { gain: 0.13, f0: 350, f1: 11000, curve: 2.5 }));
+  const drop = (bar0, prog, theme, semi, o = {}) => {
+    prog.forEach((c, i) => {
+      const bar2 = bar0 + i;
+      const last = i === prog.length - 1;
+      for (let q = 0;q < 4; q++)
+        K(b(bar2, q), { gain: 0.82 });
+      CL(b(bar2, 1));
+      CL(b(bar2, 3));
+      for (let s16 = 0;s16 < 16; s16++)
+        HH(b(bar2, s16 * 0.25), { gain: s16 % 2 ? 0.05 : 0.03, decay: 0.03, pan: 0.25 });
+      for (let q = 0;q < 4; q++)
+        HH(b(bar2, q + 0.5), { gain: 0.055, decay: 0.16, pan: -0.2 });
+      PAD(b(bar2), BAR - 0.06, HI[c].map((nn) => mtof(n2m(nn) + semi)), { gain: 0.08, a: 0.01, d: 0.4, s: 0.75, r: 0.3, cut: 2600, cutEnv: 0.6, cutDecay: 0.25, detune: 0.2, duck: true }, [1, 0.25]);
+      for (let s16 = 0;s16 < 16; s16++)
+        if (s16 % 4)
+          BASSN(b(bar2, s16 * 0.25), 0.11, mtof(n2m(ROOT[c]) + 12 + semi), { gain: 0.14, saw: 0.7, cut: 520, cutEnv: 4 });
+      BASSN(b(bar2), BAR - 0.05, mtof(n2m(ROOT[c]) + semi), { gain: 0.07, saw: 0, sub: 1 });
+      arp(bar2, c, { gain: 0.04, bright: 0.7 }, [0.6, 0.25, 0.3]);
+      if (last && o.fill !== false)
+        for (let k = 0;k < 8; k++)
+          SN(b(bar2, 2 + k * 0.25), { gain: 0.16 + k * 0.02, decay: 0.07 }, 0.12);
+    });
+    theme.forEach((ph, i) => LEAD(bar0 + i, ph, semi));
+  };
+  play(3.2, b(28), [[dry, 1], [verb, 0.35]], (x) => impact(x, 0, { gain: 0.55 }));
+  CRASH(b(28), 0.1);
+  drop(28, ["Bb", "F", "C", "Dm", "Bb", "F", "C", "A"], THEME_A, 0);
+  THEME_A.slice(4).forEach((ph, i) => LEAD(32 + i, ph, 12, { gain: 0.05 }, [0.8, 0.3, 0.25]));
+  play(2.4, b(35), [[dry, 1], [verb, 0.4]], (x) => riser(x, 0, 2, { gain: 0.08, f0: 600, f1: 9000 }));
+  play(3.2, b(36), [[dry, 1], [verb, 0.4]], (x) => impact(x, 0, { gain: 0.5 }));
+  CRASH(b(36), 0.1);
+  const P5 = ["Gm", "Bb", "F", "C", "Gm", "Bb", "Dm", "C"];
+  P5.forEach((c, i) => {
+    const bar2 = 36 + i;
+    K(b(bar2));
+    K(b(bar2, 1.5));
+    K(b(bar2, 2.5));
+    SN(b(bar2, 1), { gain: 0.3, decay: 0.15 }, 0.16);
+    SN(b(bar2, 3), { gain: 0.3, decay: 0.15 }, 0.16);
+    SN(b(bar2, 3.75), { gain: 0.07, decay: 0.05 }, 0.05);
+    for (let s16 = 0;s16 < 16; s16++)
+      HH(b(bar2, s16 * 0.25), { gain: s16 % 2 ? 0.045 : 0.025, decay: 0.028, pan: 0.3 });
+    PAD(b(bar2), BAR - 0.06, HI[c], { gain: 0.05, a: 0.05, s: 0.85, r: 0.5, cut: 2000, detune: 0.18, duck: true }, [1, 0.35]);
+    for (let e = 0;e < 8; e++)
+      BASSN(b(bar2, e * 0.5), 0.2, mtof(n2m(ROOT[c]) + (e % 2 ? 12 : 0)), { gain: 0.15, saw: 0.55, cut: 450 });
+    for (let s16 = 0;s16 < 16; s16++) {
+      const tones = ARP[c];
+      const oct = Math.floor(s16 / 6) * 12 - 12;
+      const fb = mtof(n2m(tones[s16 % 6]) + oct);
+      play(1.8, b(bar2, s16 * 0.25), [[dry, 0.7], [verb, 0.4], [dly, 0.35]], (x) => fm(x, 0, fb, { gain: 0.055, ratio: 3.5, index: 3.2 * Math.min(1, 700 / fb), idxDecay: 0.12, decay: 0.45, len: 1.8, pan: Math.sin(s16 * 1.3) * 0.6 }));
+    }
+  });
+  THEME_B.forEach((ph, i) => LEAD(36 + i, ph, 0, { gain: 0.12, cut: 3200 }, [0.85, 0.32, 0.32]));
+  THEME_B.forEach((ph, i) => ph.forEach(([bt, nt, d]) => play(2.5, b(36 + i, bt), [[dry, 0.6], [verb, 0.4]], (x) => fm(x, 0, hz(nt) * 2, { gain: 0.04, ratio: 2, index: 1.5, idxDecay: 0.3, decay: 0.9, len: 2.5 }))));
+  for (let k = 0;k < 8; k++)
+    SN(b(43, 2 + k * 0.25), { gain: 0.14 + k * 0.02, decay: 0.07 }, 0.12);
+  play(3.2, b(44), [[dry, 1], [verb, 0.5]], (x) => impact(x, 0, { gain: 0.4 }));
+  PAD(b(44), BAR * 2 - 0.1, ["C3", "G3", "C4", "E4", "G4"], { gain: 0.06, a: 1.2, s: 1, cut: 900, cutLfo: 0.3, vib: 0.003, detune: 0.2 }, [0.7, 0.7]);
+  PAD(b(45), BAR - 0.05, ["D3", "A3", "D4", "F#4", "A4"], { gain: 0.05, a: 0.8, s: 1, cut: 1400, vib: 0.003, detune: 0.2 }, [0.7, 0.6]);
+  arp(44, "C", { gain: 0.06, bright: 0.4 });
+  arp(45, "D", { gain: 0.07, bright: 0.55 });
+  for (let k = 0;k < 8; k++)
+    SN(b(45, k * 0.5), { gain: 0.1 + k * 0.012, decay: 0.08 }, 0.12);
+  for (let k = 0;k < 8; k++)
+    SN(b(45, 2 + k * 0.25), { gain: 0.18 + k * 0.015, decay: 0.07 }, 0.12);
+  play(4.2, b(44), [[dry, 1], [verb, 0.3]], (x) => riser(x, 0, BAR * 2 - 0.1, { gain: 0.12, f0: 300, f1: 12000, curve: 2.6 }));
+  play(3.2, b(46), [[dry, 1], [verb, 0.45]], (x) => impact(x, 0, { gain: 0.6 }));
+  CRASH(b(46), 0.11);
+  const P6 = ["C", "G", "D", "Em", "C", "G"];
+  const toE = { C: "Bb", G: "F", D: "C", Em: "Dm" };
+  P6.forEach((c, i) => {
+    const bar2 = 46 + i;
+    const last = bar2 === 51;
+    if (!last) {
+      for (let q = 0;q < 4; q++)
+        K(b(bar2, q), { gain: 0.84 });
+      CL(b(bar2, 1));
+      CL(b(bar2, 3));
+      for (let s16 = 0;s16 < 16; s16++)
+        HH(b(bar2, s16 * 0.25), { gain: s16 % 2 ? 0.05 : 0.03, decay: 0.03, pan: 0.25 });
+      for (let q = 0;q < 4; q++)
+        HH(b(bar2, q + 0.5), { gain: 0.06, decay: 0.16, pan: -0.2 });
+      for (let s16 = 0;s16 < 16; s16++)
+        if (s16 % 4)
+          BASSN(b(bar2, s16 * 0.25), 0.11, mtof(n2m(ROOT[toE[c]]) + 14), { gain: 0.14, saw: 0.7, cut: 540, cutEnv: 4 });
+      BASSN(b(bar2), BAR - 0.05, mtof(n2m(ROOT[toE[c]]) + 2), { gain: 0.07, saw: 0, sub: 1 });
+    } else {
+      CRASH(b(bar2), 0.08);
+      BASSN(b(bar2), BAR * 1.5, mtof(n2m(ROOT[toE[c]]) + 2), { gain: 0.13, saw: 0.1, sub: 1, r: 1 });
+    }
+    PAD(b(bar2), (last ? 2.5 : 1) * BAR - 0.06, HI[toE[c]].map((nn) => mtof(n2m(nn) + 2)), { gain: 0.085, a: 0.01, d: 0.4, s: 0.78, r: last ? 1.5 : 0.3, cut: 2900, cutEnv: 0.6, cutDecay: 0.25, detune: 0.22, duck: !last }, [1, 0.3]);
+    PAD(b(bar2), (last ? 2.5 : 1) * BAR - 0.06, CH[toE[c]].map((nn) => mtof(n2m(nn) + 14)), { gain: 0.035, a: 0.3, s: 1, r: 1, cut: 3500, vib: 0.004, detune: 0.1 }, [0.6, 0.6]);
+    arp(bar2, c, { gain: 0.045, bright: 0.75 }, [0.6, 0.25, 0.3]);
+  });
+  THEME_A.slice(0, 6).forEach((ph, i) => {
+    LEAD(46 + i, ph, 2, { gain: 0.15 });
+    LEAD(46 + i, ph, 14, { gain: 0.06 }, [0.7, 0.35, 0.3]);
+  });
+  play(3.2, b(52), [[dry, 0.8], [verb, 0.5]], (x) => impact(x, 0, { gain: 0.25 }));
+  play(9.5, b(52), [[dry, 1], [verb, 0.25]], (x) => sine(x, 0, 8, ROOT_HZ * 1.5, { gain: 0.11, a: 1.5, r: 1.5, pan: -1 }));
+  play(9.5, b(52), [[dry, 1], [verb, 0.25]], (x) => sine(x, 0, 8, ROOT_HZ + LISSAJOUS_DETUNE, { gain: 0.11, a: 1.5, r: 1.5, pan: 1 }));
+  const PF = ["D", "D", "AC", "Bm", "G", "DF", "Em7", "A", "D", "D"];
+  PF.forEach((c, i) => {
+    const bar2 = 52 + i;
+    const end = bar2 >= 60;
+    PAD(b(bar2), (end ? 2 : 1) * BAR - 0.05, CH[c], { gain: 0.04, a: 0.6, s: 1, r: end ? 2.5 : 0.8, cut: 1100, detune: 0.12 }, [0.7, 0.6]);
+    if (bar2 === 61)
+      return;
+    const notes = CH[c];
+    [0, 1, 2, 3, 2, 1, 3, 2].forEach((k, e) => {
+      if (end && e > 0)
+        return;
+      play(3.2, b(bar2, e * 0.5), [[dry, 0.8], [verb, 0.45]], (x) => fm(x, 0, hz(notes[k]) * 2, { gain: 0.045, ratio: 1, index: 1.6, idxDecay: 0.4, decay: 1.4, len: 3.2, ratio2: 14, index2: 0.4, idx2Decay: 0.02, pan: e % 2 ? 0.25 : -0.25 }));
+    });
+    if (THEME_END[i])
+      THEME_END[i].forEach(([bt, nt, d]) => play(4, b(bar2, bt), [[dry, 0.85], [verb, 0.5], [dly, 0.15]], (x) => fm(x, 0, hz(nt), { gain: 0.075, ratio: 1, index: 1.8, idxDecay: 0.5, decay: 1.8, len: 4, ratio2: 14, index2: 0.6, idx2Decay: 0.02 })));
+    BASSN(b(bar2), BAR - 0.1, ROOT[c], { gain: 0.1, saw: 0.05, sub: 1 });
+    if (bar2 >= 54 && bar2 < 58) {
+      for (let q = 0;q < 4; q++)
+        K(b(bar2, q), { gain: 0.32, decay: 0.3 });
+      for (let q = 0;q < 4; q++)
+        HH(b(bar2, q + 0.5), { gain: 0.025, decay: 0.03 });
+    }
+  });
+  ["D5", "F#5", "A5", "D6"].forEach((nt, k) => play(5, b(60, 0.4) + k * 0.06, [[dry, 0.7], [verb, 0.6], [dly, 0.2]], (x) => fm(x, 0, hz(nt), { gain: 0.04, ratio: 3.5, index: 2, idxDecay: 0.4, decay: 2.2, len: 5, pan: (k - 1.5) * 0.3 })));
+  for (let k = 1;k <= 14; k++)
+    play(0.5, b(52) + 17.3 + k / 14, [[dry, 0.7], [verb, 0.3], [dly, 0.2]], (x) => fm(x, 0, hz(PENTA[k % PENTA.length]), { gain: 0.022, ratio: 2, index: 1, idxDecay: 0.05, decay: 0.08, len: 0.5 }));
+  onProgress(0.6);
+  kicks.sort((a, c) => a - c);
+  const duckEnv = new Float32Array(N).fill(1);
+  for (const kt of kicks) {
+    const i0 = Math.round(kt * SR), n = Math.round(0.45 * SR);
+    for (let i = 0;i < n; i++) {
+      const j = i0 + i;
+      if (j >= N)
+        break;
+      const t = i / SR;
+      const g = 1 - 0.62 * Math.min(1, t / 0.004) * Math.exp(-t / 0.13);
+      if (g < duckEnv[j])
+        duckEnv[j] = g;
+    }
+  }
+  const out = makeBus(N);
+  for (let i = 0;i < N; i++) {
+    out.L[i] = dry.L[i] + duck.L[i] * duckEnv[i];
+    out.R[i] = dry.R[i] + duck.R[i] * duckEnv[i];
+  }
+  onProgress(0.7);
+  delay(dly, out, { time: BEAT * 0.75, fb: 0.36, wet: 0.5, lp: 4200 });
+  delay(dly, verb, { time: BEAT * 0.75, fb: 0.2, wet: 0.2, lp: 3000 });
+  onProgress(0.78);
+  reverb(verb, out, { room: 0.87, damp: 0.35, wet: 1, predelay: 0.025 });
+  onProgress(0.9);
+  master(out);
+  onProgress(1);
+  return { L: out.L, R: out.R, sr: SR };
+}
+function master(bus) {
+  const N = bus.L.length;
+  const hl = new HP1(28), hr = new HP1(28);
+  for (let i = 0;i < N; i++) {
+    bus.L[i] = hl.run(bus.L[i]);
+    bus.R[i] = hr.run(bus.R[i]);
+  }
+  let env = 0;
+  const att = Math.exp(-1 / (0.01 * SR)), rel = Math.exp(-1 / (0.2 * SR));
+  const thr = Math.pow(10, -16 / 20);
+  for (let i = 0;i < N; i++) {
+    const x = Math.max(Math.abs(bus.L[i]), Math.abs(bus.R[i]));
+    const e2 = x * x;
+    env = e2 > env ? att * env + (1 - att) * e2 : rel * env + (1 - rel) * e2;
+    const lvl = Math.sqrt(env);
+    const g = lvl > thr ? Math.pow(lvl / thr, 1 / 2 - 1) : 1;
+    bus.L[i] *= g;
+    bus.R[i] *= g;
+  }
+  const blk = SR * 0.4;
+  const pw = [];
+  for (let s = 0;s + blk < N; s += blk) {
+    let a = 0;
+    for (let i = s;i < s + blk; i++)
+      a += bus.L[i] * bus.L[i] + bus.R[i] * bus.R[i];
+    pw.push(a / (2 * blk));
+  }
+  const gated = pw.filter((p) => p > 0.00001);
+  const mean = gated.reduce((a, c) => a + c, 0) / Math.max(1, gated.length);
+  const target = Math.pow(10, -15.5 / 10);
+  const gain = Math.sqrt(target / mean);
+  const ceil = Math.pow(10, -1.2 / 20), look = Math.round(0.002 * SR);
+  let gr = 1;
+  const relL = Math.exp(-1 / (0.08 * SR));
+  const peak = new Float32Array(N);
+  for (let i = 0;i < N; i++)
+    peak[i] = Math.max(Math.abs(bus.L[i]), Math.abs(bus.R[i])) * gain;
+  const L = new Float32Array(bus.L), R2 = new Float32Array(bus.R);
+  for (let i = 0;i < N; i++) {
+    let p = 0;
+    for (let k = 0;k <= look; k += 8) {
+      const j2 = i + k;
+      if (j2 < N && peak[j2] > p)
+        p = peak[j2];
+    }
+    const want = p > ceil ? ceil / p : 1;
+    gr = want < gr ? want : relL * gr + (1 - relL) * want;
+    const j = i;
+    bus.L[j] = Math.tanh(L[j] * gain * gr / ceil * 0.98) * ceil;
+    bus.R[j] = Math.tanh(R2[j] * gain * gr / ceil * 0.98) * ceil;
+  }
+}
+
+// src/player.js
+function player(app, canvas, params) {
+  const ui = document.createElement("div");
+  ui.style.cssText = 'position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;color:#f3efe8;font:300 18px "Hiragino Sans",sans-serif;background:rgba(0,0,0,.82);cursor:pointer;z-index:2;letter-spacing:.08em';
+  ui.innerHTML = `<div style="font:500 44px 'Avenir Next',sans-serif;letter-spacing:.2em">▶</div><div>クリックで再生</div><div style="font-size:13px;opacity:.6">映像も音も、このページがいま計算します（素材ファイルなし）</div>`;
+  document.body.appendChild(ui);
+  const startAt = parseFloat(params.get("t") || "0");
+  app.renderFrame(Math.round(startAt * FPS), 1);
+  ui.addEventListener("click", async () => {
+    ui.innerHTML = '<div>音楽を計算しています…</div><div style="font-size:13px;opacity:.6">約50万個の音符の波形を、1サンプルずつ合成中</div>';
+    await new Promise((r) => setTimeout(r, 60));
+    const ac = new AudioContext({ sampleRate: 48000 });
+    const song = renderSong();
+    const buf = ac.createBuffer(2, song.L.length, song.sr);
+    buf.copyToChannel(song.L, 0);
+    buf.copyToChannel(song.R, 1);
+    const src = ac.createBufferSource();
+    src.buffer = buf;
+    src.connect(ac.destination);
+    const t0 = ac.currentTime + 0.15;
+    src.start(t0, startAt);
+    ui.remove();
+    const loop = () => {
+      const lat = (ac.outputLatency || 0) + (ac.baseLatency || 0);
+      const t = Math.max(0, ac.currentTime - t0 - lat) + startAt;
+      if (t < DURATION) {
+        app.renderFrame(Math.floor(t * FPS), 1);
+        requestAnimationFrame(loop);
+      } else {
+        document.body.appendChild(ui);
+        ui.innerHTML = `<div style="font:500 30px 'Avenir Next',sans-serif;letter-spacing:.2em">↻</div><div>もう一度</div>`;
+        ui.onclick = () => location.reload();
+      }
+    };
+    requestAnimationFrame(loop);
+  }, { once: true });
+}
+
+// src/app.js
+var params = new URLSearchParams(location.search);
+var canvas = document.getElementById("c");
+async function readSource() {
+  if (document.getElementById("src-main")) {
+    try {
+      const r = await fetch(location.href.split("?")[0]);
+      if (r.ok)
+        return await r.text();
+    } catch (e) {}
+    return `<!doctype html>
+` + document.documentElement.outerHTML;
+  }
+  const files = [
+    "index.html",
+    "app.js",
+    "main.js",
+    "timeline.js",
+    "player.js",
+    "core/gl.js",
+    "core/glsl.js",
+    "core/post.js",
+    "core/text.js",
+    "core/curve.js",
+    "scenes/intro.js",
+    "scenes/sound.js",
+    "scenes/infinity.js",
+    "scenes/life.js",
+    "scenes/earth.js",
+    "scenes/light.js",
+    "scenes/cosmos.js",
+    "scenes/finale.js",
+    "audio/synth.js",
+    "audio/song.js"
+  ];
+  const parts = await Promise.all(files.map((f) => fetch(f).then((r) => r.ok ? r.text() : "").catch(() => "")));
+  return parts.join(`
+`);
+}
+(async () => {
+  const source = await readSource();
+  const app = await boot(canvas, { capture: params.has("capture"), source });
+  window.__app = app;
+  if (params.has("capture")) {
+    window.__still = (t, K = 4) => {
+      app.renderFrame(Math.round(t * FPS), K);
+      return canvas.toDataURL("image/png");
+    };
+    window.__capture = async ({ from, to, K, port }) => {
+      const ws = new WebSocket(`ws://localhost:${port}`);
+      ws.binaryType = "arraybuffer";
+      await new Promise((r) => ws.onopen = r);
+      const bufs = [new Uint8Array(W * H * 4), new Uint8Array(W * H * 4)];
+      let acked = from - 1;
+      const waiters = [];
+      ws.onmessage = () => {
+        acked++;
+        const w = waiters.shift();
+        w && w();
+      };
+      const gl = app.gl;
+      const t0 = performance.now();
+      for (let f = from;f < to; f++) {
+        while (f - acked > 2)
+          await new Promise((r) => waiters.push(r));
+        app.renderFrame(f, K);
+        const b2 = bufs[f & 1];
+        gl.readPixels(0, 0, W, H, gl.RGBA, gl.UNSIGNED_BYTE, b2);
+        ws.send(b2);
+        if ((f - from) % 120 === 0)
+          console.log(`frame ${f}/${to}  ${((performance.now() - t0) / (f - from + 1)).toFixed(1)} ms/f`);
+      }
+      while (acked < to - 1)
+        await new Promise((r) => waiters.push(r));
+      ws.close();
+      return (performance.now() - t0) / 1000;
+    };
+    window.__ready = true;
+  } else {
+    player(app, canvas, params);
+  }
+})().catch((e) => {
+  console.error(e);
+  window.__error = String(e && e.stack || e);
+});
+
+</script>
+</body>
+</html>

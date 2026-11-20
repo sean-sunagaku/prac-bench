@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#f8f4e8" />
+    <title>軽トラ限界引っ越し</title>
+    <link rel="icon" href="assets/truck-mark.png" type="image/png" />
+    <link rel="stylesheet" href="style.css" />
+    <script defer src="physics.js"></script>
+    <script defer src="scene.js"></script>
+    <script defer src="game.js"></script>
+  </head>
+  <body>
+    <div class="game-shell">
+      <header class="masthead">
+        <div class="brand">
+          <span class="brand-mark"><img src="assets/truck-mark.png" alt="" /></span>
+          <h1>軽トラ限界引っ越し</h1>
+        </div>
+        <div class="utilities">
+          <button
+            type="button"
+            id="sound"
+            class="square-button"
+            aria-label="音を消す"
+            aria-pressed="true"
+            title="音を消す"
+          >
+            <span data-icon="sound"></span>
+          </button>
+          <button type="button" id="help" class="paper-button help-button">
+            <span data-icon="help"></span><span>遊び方</span>
+          </button>
+        </div>
+      </header>
+
+      <main>
+        <div class="journey">
+          <ol class="steps" aria-label="ゲームの進行">
+            <li class="step current" aria-current="step"><span class="step-no">01</span>積み込み</li>
+            <li class="step"><span class="step-no">02</span>走行</li>
+            <li class="step"><span class="step-no">03</span>精算</li>
+          </ol>
+          <div class="route">
+            <span data-icon="pin"></span><span>桜町</span><span data-icon="arrow"></span
+            ><span>ひなた団地</span>
+          </div>
+        </div>
+
+        <div class="game-grid">
+          <section class="panel arena" aria-labelledby="arena-title">
+            <div class="panel-head">
+              <h2>
+                <span data-icon="yard" id="arena-icon"></span><span id="arena-title">積み込みヤード</span>
+              </h2>
+              <span id="phase-light" class="lamp"><i></i><span>待機中</span></span>
+            </div>
+            <div id="stage" class="stage">
+              <canvas
+                id="scene"
+                width="960"
+                height="510"
+                aria-label="桜町の引っ越しヤードに停車した軽トラック"
+              ></canvas>
+              <div
+                id="bed-controls"
+                class="bed-controls"
+                role="group"
+                aria-label="荷台。荷物を選び、置きたい列を押してください。"
+              ></div>
+              <div id="scene-notice" class="scene-notice" aria-hidden="true"></div>
+              <button
+                type="button"
+                id="pause"
+                class="scene-pause"
+                aria-label="走行を一時停止"
+                title="一時停止"
+                hidden
+              >
+                <span data-icon="pause"></span>
+              </button>
+              <div class="pause-shade" id="pause-shade" hidden>
+                <div class="pause-card">
+                  <h3>一時停止</h3>
+                  <button type="button" id="resume" class="primary-button compact">
+                    <span data-icon="play"></span>走行を再開
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div id="load-meters" class="meter-band">
+              <div class="meter-group weight-group">
+                <span class="meter-icon" data-icon="weight"></span>
+                <div class="meter-body">
+                  <div class="meter-caption">積載重量</div>
+                  <div class="meter-numbers">
+                    <strong id="weight">0</strong><span class="fraction">/ 350 <small>kg</small></span>
+                  </div>
+                </div>
+                <div id="weight-track" class="weight-track" aria-hidden="true"><i></i></div>
+              </div>
+              <div class="meter-group stability-group">
+                <span class="meter-icon" data-icon="balance"></span>
+                <div class="meter-body">
+                  <div class="meter-caption">荷物の安定度</div>
+                  <strong id="stability" class="stability-value">—</strong>
+                </div>
+              </div>
+            </div>
+            <div id="drive-meters" class="drive-band" hidden>
+              <div class="speed-group">
+                <span data-icon="gauge"></span>
+                <div>
+                  <small>走行速度</small>
+                  <div><strong id="speed">0</strong> <span class="unit">km/h</span></div>
+                </div>
+              </div>
+              <div class="progress-group">
+                <div class="progress-label">
+                  <span>走行距離</span><span><b id="distance">0</b> / 320 m</span>
+                </div>
+                <div class="progress-track"><i id="progress-fill"></i></div>
+                <small id="obstacle">アクセルを長押しして発進</small>
+              </div>
+            </div>
+
+            <div id="receipt" class="receipt" hidden>
+              <div class="arrival-art" aria-hidden="true">
+                <img src="assets/finish-flag.png" alt="" /><img src="assets/truck.png" alt="" />
+              </div>
+              <div class="receipt-body">
+                <div class="receipt-title">
+                  <div>
+                    <h3>引っ越しの精算</h3>
+                    <p id="receipt-count"></p>
+                  </div>
+                  <span class="stamp" aria-hidden="true">配達済</span>
+                </div>
+                <dl class="bill">
+                  <div>
+                    <dt>積み込んだ荷物の運送料</dt>
+                    <dd id="gross"></dd>
+                  </div>
+                  <div>
+                    <dt>破損による差し引き <small>半額</small></dt>
+                    <dd id="broken-fee"></dd>
+                  </div>
+                  <div>
+                    <dt>落下による差し引き <small>全額</small></dt>
+                    <dd id="lost-fee"></dd>
+                  </div>
+                </dl>
+                <div class="payout"><span>受取金額</span><strong id="payout"></strong></div>
+              </div>
+            </div>
+          </section>
+
+          <aside class="panel manifest" aria-labelledby="manifest-title">
+            <div class="panel-head">
+              <h2><span data-icon="package"></span><span id="manifest-title">荷物リスト</span></h2>
+              <span class="item-count" id="item-count" aria-label="積み込み済み 0個、全6個"
+                ><b>0</b><span>/</span>6</span
+              >
+            </div>
+            <div class="inventory" id="inventory" aria-label="積み込める荷物"></div>
+            <div id="condition-list" class="condition-list" hidden></div>
+          </aside>
+        </div>
+
+        <div class="action-bar" id="actions">
+          <div class="hint">
+            <span id="hint-icon" data-icon="pointer"></span>
+            <p id="hint">荷物を選んで、荷台に置こう。</p>
+          </div>
+          <div class="action-buttons" id="load-actions">
+            <button type="button" class="paper-button remove-button" id="remove" hidden>
+              <span data-icon="down"></span>降ろす
+            </button>
+            <button type="button" class="paper-button reset-button" id="reset">
+              <span data-icon="reset"></span>積み直す
+            </button>
+            <button type="button" class="primary-button" id="depart">
+              出発する<span data-icon="arrow"></span>
+            </button>
+          </div>
+          <div class="action-buttons pedals" id="drive-actions" hidden>
+            <button type="button" class="paper-button" id="brake" aria-label="ブレーキ、長押し">
+              <kbd>←</kbd>ブレーキ
+            </button>
+            <button type="button" class="primary-button" id="gas" aria-label="アクセル、長押し">
+              <kbd>→</kbd>アクセル
+            </button>
+          </div>
+          <div class="action-buttons result-actions" id="result-actions" hidden>
+            <button type="button" class="paper-button" id="rerun">
+              <span data-icon="repeat"></span>同じ荷物で再走
+            </button>
+            <button type="button" class="primary-button" id="again">
+              <span data-icon="reset"></span>積み直して再挑戦
+            </button>
+          </div>
+        </div>
+        <span id="announcement" class="sr-only" role="status" aria-live="polite"></span>
+      </main>
+    </div>
+    <dialog id="guide" aria-labelledby="guide-title">
+      <div class="panel-head">
+        <h2><span data-icon="help"></span><span id="guide-title">遊び方</span></h2>
+        <button type="button" class="close-button" aria-label="遊び方を閉じる">
+          <span data-icon="close"></span>
+        </button>
+      </div>
+      <div class="guide-body">
+        <section>
+          <span class="guide-num">01</span>
+          <div>
+            <h3>荷台に積む</h3>
+            <p>
+              荷物を選んで荷台の好きな列を押すと、下から順に積み上がります。ドラッグでも移動できます。配置済みの荷物はリストで選び直して移動や荷降ろしができます。
+            </p>
+            <p>重い荷物は低く、左右の重さは均等に。食器やテレビは衝撃に弱いので慎重に運びましょう。</p>
+          </div>
+        </section>
+        <section>
+          <span class="guide-num">02</span>
+          <div>
+            <h3>段差を越えて運ぶ</h3>
+            <p>
+              画面のアクセル・ブレーキを長押しして運転します。キーボードは <kbd>→</kbd> で加速、<kbd
+                >←</kbd
+              >
+              で減速、<kbd>Space</kbd> で一時停止。段差の手前で速度を落とすと荷物が跳ねにくくなります。
+            </p>
+          </div>
+        </section>
+        <section>
+          <span class="guide-num">03</span>
+          <div>
+            <h3>ゴールで精算</h3>
+            <p>
+              無傷で届いた荷物は運送料を満額受け取れます。破損した荷物は半額、落下した荷物や積まなかった荷物は0円です。
+            </p>
+          </div>
+        </section>
+        <button type="button" class="primary-button guide-ok">
+          わかった<span data-icon="check"></span>
+        </button>
+      </div>
+    </dialog>
+    <noscript>プレイするにはブラウザの JavaScript を有効にしてください。</noscript>
+  </body>
+</html>

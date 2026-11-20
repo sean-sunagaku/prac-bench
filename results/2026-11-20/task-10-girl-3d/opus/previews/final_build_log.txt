@@ -1,0 +1,15 @@
+[build] base mesh: {'upper_body_vertices': 6093, 'upper_body_faces_in_crop': 6044, 'combined_vertices': 9517, 'combined_faces': 9494, 'max_distance_upper_body_to_combined': 0.0}
+[build] sculpt + eyelids done
+[build] body done
+[build] eyes, lashes, brows done
+[build] sweater done: 69393 verts
+[build] hair: main 18706 strands (front 5920, tuck 7541)
+[build] hair: face-framing 735 strands
+[build] hair: bangs 1125 strands
+[build] hair grown in 13.3s
+Info: No new files have been packed
+Info: Saved as "character.blend"
+[build] saved /Users/babashunsuke/AiWorkspace/ai-verification/prac-bench/results/2026-11-20/task-10-girl-3d/opus/character.blend in 16.6s; stats {'build_seconds': 16.6, 'base_mesh_vertices': 103180, 'evaluated_mesh_vertices_render_levels': None, 'evaluated_mesh_vertices_viewport': 125098, 'hair_curve_points': 640052, 'hair': {'Hair_Long': {'strands': 18706, 'points': 598592}, 'Hair_FaceFraming': {'strands': 735, 'points': 19110}, 'Hair_Bangs': {'strands': 1125, 'points': 15750}}, 'character_bounds': {'min': [-0.26662251353263855, -0.47383251786231995, 0.8971042037010193], 'max': [0.352395236492157, 0.2353878915309906, 1.6490583419799805]}, 'base_info': {'upper_body_vertices': 6093, 'upper_body_faces_in_crop': 6044, 'combined_vertices': 9517, 'combined_faces': 9494, 'max_distance_upper_body_to_combined': 0.0}, 'fast': False, 'camera': {'location': [-0.013013511797036546, -0.45922571862846395, 1.5714906172628582], 'look_at': [-0.03801351179703655, -0.08422571862846398, 1.4114906172628583], 'lens': 25.5, 'fstop': 2.2}}
+Blender 5.1.1 (hash b70da489d7f4 built 2026-04-14 01:46:23)
+
+Blender quit

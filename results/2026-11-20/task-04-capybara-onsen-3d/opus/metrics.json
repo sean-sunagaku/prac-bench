@@ -1,0 +1,130 @@
+{
+  "ground_tris": 12800,
+  "capybara_tris": 15999,
+  "immersion": {
+    "water_surface_z": 0.35,
+    "back_top_below_water_mm": 8.0,
+    "eye_above_water_mm": 135.7,
+    "crown_above_water_mm": 192.9,
+    "chin_above_water_mm": -18.8,
+    "submerged_vertex_ratio": 0.645,
+    "floor_contact_gap_mm": -1.9
+  },
+  "yuzu_contact": {
+    "min_sdf_mm": -2.31,
+    "contact_vertices_within_1mm": 16,
+    "penetration_mm": 2.31,
+    "gap_mm": 0.0,
+    "yuzu_diameter_mm": 92.4,
+    "leaf_min_clearance_mm": 74.6
+  },
+  "waterline_loop_perimeter_m": 0.727,
+  "spout": {
+    "mouth": [
+      -0.31,
+      0.232,
+      0.497
+    ],
+    "landing": [
+      -0.251,
+      0.168,
+      0.327
+    ],
+    "exposed_length_m": 0.266
+  },
+  "bucket": {
+    "support_top_z": 0.4031,
+    "bucket_bottom_z": 0.4016,
+    "embed_mm": 1.5,
+    "support_height_range_mm": 1.06
+  },
+  "towel": {
+    "on_rock": "Rock_Rim_07",
+    "embed_mm": 0.4,
+    "max_hang_mm": 35.7
+  },
+  "fence_tris": 11768,
+  "lantern": {
+    "foot_z": 0.3727,
+    "snow_surface_at_feet": [
+      0.4027,
+      0.404,
+      0.4136
+    ],
+    "feet_embed_mm": [
+      30.0,
+      31.3,
+      40.9
+    ],
+    "top_z": 0.899,
+    "firebox_z": [
+      0.596,
+      0.701
+    ]
+  },
+  "sign": {
+    "post_embed_mm": 50.0
+  },
+  "ao_mean_occlusion_by_group": {
+    "rocks": 0.274,
+    "snow": 0.421,
+    "base": 0.28,
+    "bucket": 0.323,
+    "extras": 0.183,
+    "fence": 0.436,
+    "lantern": 0.494
+  },
+  "triangles_total": 97733,
+  "triangles_by_group": {
+    "rocks": 16896,
+    "snow": 10782,
+    "base": 20352,
+    "capybara": 16791,
+    "yuzu": 1548,
+    "water": 4736,
+    "spout": 2088,
+    "bucket": 2064,
+    "extras": 5768,
+    "fence": 11768,
+    "lantern": 2348,
+    "steam": 2592
+  },
+  "bbox_gltf_yup": {
+    "min": [
+      -0.935,
+      0.0,
+      -0.935
+    ],
+    "max": [
+      0.935,
+      1.015,
+      0.935
+    ],
+    "size": [
+      1.87,
+      1.015,
+      1.87
+    ]
+  },
+  "objects": 129,
+  "top_objects_by_tris": {
+    "Capybara": 15999,
+    "Ground_SnowAndTub": 12800,
+    "Base_SoilCrossSection": 4480,
+    "BambooFence_Snow": 4248,
+    "Onsen_Steam": 2592,
+    "BambooFence_Back_Slats": 2420,
+    "StoneLantern_Yukimi": 2328,
+    "Nandina_Berries": 1920,
+    "Base_WalnutBoard": 1792,
+    "BambooFence_Left_Slats": 1496,
+    "StoneLantern_RoofSnow": 1440,
+    "Rock_FlatSlab": 1280
+  },
+  "lantern_glow_center_gltf": [
+    0.5,
+    0.6482292474985185,
+    -0.4
+  ],
+  "file_size_bytes": 2672904
+}

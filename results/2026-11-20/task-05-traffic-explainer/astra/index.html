@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#fbfaf7">
+  <meta name="description" content="1台にブレーキをかけて、自然渋滞が後ろへ伝わる仕組みを発見する交通シミュレーション。">
+  <title>自然渋滞は、なぜ生まれる？ ｜ Flow Lab 交通の実験室</title>
+  <link rel="icon" href="assets/flow-mark.png" type="image/png">
+  <link rel="preload" href="assets/circuit.webp" as="image">
+  <link rel="stylesheet" href="styles.css">
+  <script src="traffic-model.js" defer></script>
+  <script src="visualization.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body id="top">
+  <svg class="icon-library" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <defs>
+      <symbol id="icon-track" viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="6"/><path d="M8 12h3m3 0h2"/></symbol>
+      <symbol id="icon-sliders" viewBox="0 0 24 24"><path d="M3 7h6m5 0h7M3 17h11m5 0h2"/><circle cx="11.5" cy="7" r="2.5"/><circle cx="16.5" cy="17" r="2.5"/></symbol>
+      <symbol id="icon-pause" viewBox="0 0 24 24"><path d="M7.5 5.5v13m9-13v13" stroke-width="3.2"/></symbol>
+      <symbol id="icon-play" viewBox="0 0 24 24"><path d="m7 4.5 12 7.5-12 7.5z" fill="currentColor" stroke-width="1"/></symbol>
+      <symbol id="icon-reset" viewBox="0 0 24 24"><path d="M4 10a8 8 0 1 1 .8 7.1M4 4.8V10h5.2"/></symbol>
+      <symbol id="icon-brake" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.7"/><circle cx="12" cy="12" r="3"/><path d="M12 5.8h.01m4.4 1.8h.01m1.8 4.4h.01m-6.2 6.2h.01m-4.4-1.8h.01M5.8 12h.01" stroke-width="2.1"/><path d="m14.8 2.7 4.4 1.8 2.1 4.2"/></symbol>
+      <symbol id="icon-notebook" viewBox="0 0 24 24"><path d="M5 5.2A2.2 2.2 0 0 1 7.2 3H19v18H7.2A2.2 2.2 0 0 1 5 18.8zM3 8h4M3 12h4M3 16h4M10 8h5"/></symbol>
+      <symbol id="icon-book" viewBox="0 0 24 24"><path d="M12 6.3C9.4 4.3 6.2 4 2.5 4.7v14.7c3.8-.7 6.6-.4 9.5 1.3 2.9-1.7 5.7-2 9.5-1.3V4.7c-3.7-.7-6.9-.4-9.5 1.6Zm0 0v14.4"/></symbol>
+      <symbol id="icon-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+      <symbol id="icon-arrow" viewBox="0 0 24 24"><path d="M4 12h15m-5-5 5 5-5 5"/></symbol>
+      <symbol id="icon-external" viewBox="0 0 24 24"><path d="M8 5h11v11m0-11L6 18"/></symbol>
+      <symbol id="icon-gauge" viewBox="0 0 24 24"><path d="M3.6 17.5a9.5 9.5 0 1 1 16.8 0M12 14l4.2-5.2"/><circle cx="12" cy="14" r="1.2" fill="currentColor"/></symbol>
+      <symbol id="icon-wave" viewBox="0 0 24 24"><path d="M2 13h4l3-6 5 11 3-6h5"/></symbol>
+      <symbol id="icon-clockwise" viewBox="0 0 24 24"><path d="M5.5 17.2a8 8 0 1 1 13.8-7.6M20.3 4.5v5.6h-5.5"/></symbol>
+    </defs>
+  </svg>
+  <a class="skip-link" href="#experiment">実験の操作へ</a>
+  <header class="masthead">
+    <div class="shell masthead-inner">
+      <a class="brand" href="#top" aria-label="Flow Lab ページの先頭へ">
+        <img src="assets/flow-mark.png" width="41" height="19" alt="">
+        <span lang="en">Flow Lab</span>
+      </a>
+      <span class="brand-description">交通の実験室</span>
+      <nav aria-label="ページ内メニュー">
+        <a href="#experiment">シミュレーション</a>
+        <a href="#mechanism" id="guide-link">渋滞のしくみ</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="shell">
+    <section class="introduction" aria-labelledby="title">
+      <div class="intro-copy">
+        <h1 id="title"><em>自然渋滞</em>は、なぜ生まれる<span class="question-mark">？</span></h1>
+        <p>事故も工事もない高速道路。1台にブレーキをかけてみよう。<br>
+          車は前へ進むのに、減速する場所はどちらへ動くだろう？</p>
+      </div>
+      <img class="intro-art" src="assets/flow-lines.webp" alt="" width="1080" height="134">
+    </section>
+
+    <div class="workspace" id="experiment">
+      <section class="panel simulator" aria-labelledby="simulator-title">
+        <div class="panel-heading simulator-heading">
+          <h2 id="simulator-title"><svg class="icon" aria-hidden="true"><use href="#icon-track"/></svg><span>周回道路<span class="simulation-term">シミュレーション</span></span></h2>
+          <span class="running-status" id="run-status"><i aria-hidden="true"></i><span>走行中</span></span>
+        </div>
+        <div class="scene" id="scene">
+          <img class="terrain" src="assets/circuit.webp" alt="" width="1931" height="814">
+          <canvas id="road-canvas" role="img" aria-label="24台の車が時計回りに走る周回道路。車をタップすると注目車を変更できます。"></canvas>
+          <div class="infield" id="infield">
+            <div id="reach-meter" hidden>
+              <div class="meter-title"><svg class="icon" aria-hidden="true"><use href="#icon-wave"/></svg>減速が届いたのは</div>
+              <div class="meter-reading"><strong id="followers-reached">0</strong><span>台後ろ</span></div>
+            </div>
+            <div class="average-meter">
+              <div class="meter-title"><svg class="icon" aria-hidden="true"><use href="#icon-gauge"/></svg>平均速度</div>
+              <div class="meter-reading"><strong id="average-speed">45</strong><span>km/h</span></div>
+            </div>
+            <div class="directions">
+              <span class="flow-direction"><svg class="icon" aria-hidden="true"><use href="#icon-clockwise"/></svg>車は時計回り</span>
+              <span class="wave-direction" id="wave-direction" hidden><svg class="icon" aria-hidden="true"><use href="#icon-clockwise"/></svg>波は反時計回り</span>
+            </div>
+          </div>
+          <span id="brake-pin" class="brake-pin" hidden><i></i>ブレーキ地点</span>
+        </div>
+        <div class="time-controls" id="time-controls" hidden>
+          <label for="experiment-time" id="time-caption">時間を動かす</label>
+          <input class="range-input" type="range" id="experiment-time" min="0" max="20" step="0.2" value="0"
+                 aria-label="ブレーキ後の時間" aria-describedby="time-hint">
+          <button type="button" class="light-button" id="revisit" hidden>
+            <svg class="icon" aria-hidden="true"><use href="#icon-reset"/></svg>最初の20秒を見返す
+          </button>
+          <output for="experiment-time" class="time-reading" aria-live="off"><span id="time-prefix" hidden>経過 </span><b id="time-value">0.0</b><span id="time-limit"> / 20</span> 秒</output>
+          <span class="sr-only" id="time-hint">つまみを動かすと、その時刻の道路と速度グラフで一時停止します。再生すると、そこから観察を続けられます。</span>
+        </div>
+        <div class="map-footer">
+          <ul class="map-legend" aria-label="車の色の見方">
+            <li><span class="swatch normal"></span>通常走行</li>
+            <li><span class="swatch slow"></span>減速・低速</li>
+            <li><span class="swatch focus"></span>注目車</li>
+          </ul>
+          <div class="transport">
+            <button id="toggle-run" class="light-button" type="button">
+              <svg class="icon" aria-hidden="true"><use href="#icon-pause"/></svg><span>一時停止</span>
+            </button>
+            <button id="reset" class="light-button" type="button" title="この台数で等間隔の状態に戻す">
+              <svg class="icon" aria-hidden="true"><use href="#icon-reset"/></svg><span>リセット</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel controls" aria-labelledby="controls-title">
+        <div class="panel-heading">
+          <h2 id="controls-title"><svg class="icon" aria-hidden="true"><use href="#icon-sliders"/></svg>実験の操作</h2>
+        </div>
+        <div class="settings">
+          <div class="parameters">
+            <div class="density-setting">
+              <div class="field-line">
+                <label class="field-label" for="density">車の台数</label>
+                <output for="density" class="car-count"><strong id="car-count">24</strong><span>台</span></output>
+              </div>
+              <input class="range-input" type="range" min="10" max="36" step="1" value="24" id="density" aria-describedby="restart-hint" aria-valuetext="24台">
+              <div class="range-ends"><span>少ない</span><span>多い</span></div>
+              <p class="spacing-reading">出発時の車間 <strong id="start-gap">13</strong><span>m</span></p>
+            </div>
+            <fieldset class="speed-setting">
+              <legend class="field-label">再生速度</legend>
+              <div class="speed-options">
+                <label><input type="radio" name="playback" value="0.5" aria-label="0.5倍速"><span>0.5×</span></label>
+                <label><input type="radio" name="playback" value="1" checked aria-label="1倍速"><span>1×</span></label>
+                <label><input type="radio" name="playback" value="2" aria-label="2倍速"><span>2×</span></label>
+              </div>
+            </fieldset>
+          </div>
+          <div class="brake-setting">
+            <div class="field-line">
+              <label class="target-label" for="target"><img src="assets/car-gold.webp" width="29" height="16" alt="">注目車</label>
+              <div class="select-wrap">
+                <select id="target" aria-describedby="restart-hint"><option value="0">01号車</option></select>
+                <svg class="icon" aria-hidden="true"><use href="#icon-down"/></svg>
+              </div>
+            </div>
+            <p class="target-help" id="target-help">道路の車をタップして選べます。</p>
+            <button id="brake" type="button" class="brake-button">
+              <svg class="icon" aria-hidden="true"><use href="#icon-brake"/></svg><span>1台にブレーキ</span>
+            </button>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <section class="panel observations" aria-labelledby="notes-title">
+      <div class="note">
+        <h2 id="notes-title"><svg class="icon" aria-hidden="true"><use href="#icon-notebook"/></svg>観察ノート</h2>
+        <div class="note-content">
+          <h3 id="note-title">黄色い車のすぐ後ろに注目。</h3>
+          <p id="note-body">いまは3台とも同じ速さです。黄色い車にブレーキをかけると、1台後ろ、2台後ろの速度はいつ下がるでしょう？</p>
+        </div>
+        <p class="note-key" id="trail-key" hidden><span aria-hidden="true"></span>赤い点は、出発時より15％遅くなった地点</p>
+      </div>
+      <figure class="graph" aria-labelledby="graph-title" aria-describedby="chart-description">
+        <div class="graph-heading">
+          <h3 id="graph-title">3台の速度</h3>
+          <span class="recording-label" id="recording-label">走行開始から</span>
+        </div>
+        <canvas id="speed-chart" role="slider" tabindex="0" aria-label="3台の速度を読み取る時刻" aria-describedby="chart-description" aria-valuemin="0" aria-valuemax="20" aria-valuenow="0"></canvas>
+        <figcaption class="chart-legend">
+          <span><i class="series-key series-target"></i>注目車</span>
+          <span><i class="series-key series-first"></i>1台後ろ</span>
+          <span><i class="series-key series-second"></i>2台後ろ</span>
+        </figcaption>
+        <p class="sr-only" id="chart-description"></p>
+      </figure>
+      <div class="compare">
+        <div>
+          <h3 id="compare-title">車間を変えて比べてみよう</h3>
+          <p>同じ地点で2.4秒だけブレーキ。台数を変えると、減速は何台後ろまで届く？</p>
+        </div>
+        <div class="compare-actions" role="group" aria-labelledby="compare-title">
+          <button type="button" class="light-button preset" data-count="12">12台で試す<svg class="icon" aria-hidden="true"><use href="#icon-arrow"/></svg></button>
+          <button type="button" class="light-button preset" data-count="30">30台で試す<svg class="icon" aria-hidden="true"><use href="#icon-arrow"/></svg></button>
+        </div>
+      </div>
+    </section>
+
+    <details id="mechanism" class="guide">
+      <summary>
+        <span><svg class="icon" aria-hidden="true"><use href="#icon-book"/></svg>渋滞のしくみ</span>
+        <svg class="icon guide-chevron" aria-hidden="true"><use href="#icon-down"/></svg>
+      </summary>
+      <div class="guide-body">
+        <div class="guide-steps">
+          <section>
+            <h3>1台が減速すると、車間が縮まる</h3>
+            <p>前の車が少し速度を落としても、すぐ後ろの車はしばらく元の速さで進みます。その間に、2台の距離が縮まります。</p>
+          </section>
+          <section>
+            <h3>後ろの車も、少し遅れて減速する</h3>
+            <p>後ろの車は、詰まった車間を取り戻すために速度を落とします。車間が短いと、前の車より強くブレーキをかけることもあります。この時間差が次の車にも重なります。</p>
+          </section>
+          <section>
+            <h3>混雑する場所が、後ろへ移る</h3>
+            <p>先頭の車は加速して抜けていきます。その間に、車列の後ろから別の車が混雑に加わります。この入れ替わりで、低速の車が集まる場所が進行方向と逆に動きます。</p>
+          </section>
+        </div>
+        <div class="model-notes">
+          <p id="restart-hint"><strong>実験の条件</strong>　高速道路の1車線を、一周420 mの輪にした模型です。全車が等間隔で出発し、0.6秒前の車間と前の車の速度に応じて加減速します。出発時より速度が15％落ちた地点に赤い点を残します。台数や注目車を選び直すと等間隔に戻ります。</p>
+          <p><strong>実車での観察</strong>　一周230 mの円形道路を22台が走った実験でも、低速の車のかたまりが後ろへ移りました。<a href="https://ir.library.osaka-u.ac.jp/repo/ouka/all/93262/NewJPhys_10_033001.pdf" target="_blank" rel="noreferrer">杉山雄規ほか（2008）<svg class="icon" aria-hidden="true"><use href="#icon-external"/></svg></a></p>
+          <p>高速道路では、上り坂に変わる場所でのわずかな速度低下もきっかけになります。<a href="https://www.driveplaza.com/traffic/roadinfo/cause/" target="_blank" rel="noreferrer">NEXCO東日本による解説<svg class="icon" aria-hidden="true"><use href="#icon-external"/></svg></a></p>
+        </div>
+      </div>
+    </details>
+    <noscript><p class="noscript">実験を動かすには、ブラウザのJavaScriptを有効にしてください。「渋滞のしくみ」を開くと解説を読めます。</p></noscript>
+    <div id="announcer" role="status" aria-live="polite" class="sr-only"></div>
+  </main>
+</body>
+</html>

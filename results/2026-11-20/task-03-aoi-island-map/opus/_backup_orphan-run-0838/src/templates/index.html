@@ -1,0 +1,579 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>あおい島 観光マップ</title>
+<meta name="description" content="蒼玉県の離島・あおい島の観光マップ。見どころ14か所、周回線バス（あおい港から時計回り・一周約70分）の停留所、登山道、モデルコース、本土の蒼玉港からのアクセスをまとめています。">
+<meta name="theme-color" content="#164f7a">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23164f7a'/%3E%3Cellipse cx='32' cy='34' rx='24' ry='15' fill='%237fc47a'/%3E%3Cpath d='M22 36 L32 20 L42 36 Z' fill='%23d9c9a0'/%3E%3Cellipse cx='32' cy='34' rx='24' ry='15' fill='none' stroke='%23e8fbff' stroke-width='2.5'/%3E%3C/svg%3E">
+<style>
+/*@FONTS@*/
+:root{
+  --sea:#164f7a; --sea-deep:#0f3a5c; --shallow:#8fd9d4; --mist:#edf4f2; --paper:#ffffff;
+  --ink:#183447; --sub:#4a6370; --line:#d3e2e4; --bus:#1f4f9e; --trail:#8a4a1f;
+  --sunrise:#f5a623; --dusk:#ef6a50; --course:#e2457a;
+  --c-nature:#1d8a5c; --c-food:#ec8113; --c-culture:#c4413a;
+  --maru:AoiMaru,'Zen Maru Gothic','Hiragino Maru Gothic ProN','Hiragino Sans','Yu Gothic',sans-serif;
+  --mincho:AoiMincho,'Shippori Mincho B1','Hiragino Mincho ProN','Yu Mincho',serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--mist);color:var(--ink);font-family:var(--maru);font-size:16px;line-height:1.85;font-weight:500;-webkit-font-smoothing:antialiased}
+img,svg{max-width:100%}
+a{color:var(--bus)}
+button{font-family:inherit}
+:focus-visible{outline:3px solid #ffbf3c;outline-offset:2px;border-radius:6px}
+.sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.skip{position:absolute;left:12px;top:-60px;z-index:50;background:#fff;color:var(--ink);padding:8px 14px;border-radius:10px;font-weight:700;text-decoration:none}
+.skip:focus{top:12px}
+
+/* ---------- 地図（ヒーロー） ---------- */
+.hero{background:radial-gradient(120% 95% at 52% 45%,#2f8fbf 0%,#1b5f8f 55%,#0f3a5c 100%);color:#fff}
+.map-stage{position:relative;max-width:1600px;margin:0 auto}
+.map-viewport{position:relative;overflow:hidden;aspect-ratio:1600/1050;background:#1b5f8f}
+.map-viewport>svg{display:block;width:100%;height:100%;touch-action:pan-y;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+.map-viewport.is-zoomed>svg{touch-action:none;cursor:grab}
+.map-viewport.is-dragging>svg{cursor:grabbing}
+.zoom{position:absolute;right:14px;top:16.5%;display:flex;flex-direction:column;gap:6px;z-index:3}
+.zoom button{width:42px;height:42px;border-radius:12px;border:1px solid rgba(15,58,92,.12);background:rgba(255,255,255,.95);color:var(--ink);font:900 20px/1 var(--maru);box-shadow:0 3px 10px rgba(8,36,58,.28);cursor:pointer;display:grid;place-items:center}
+.zoom button:hover{background:#fff}
+.zoom button[data-zoom="reset"]{font-size:12px;letter-spacing:.02em}
+.map-hint{position:absolute;left:50%;bottom:12px;transform:translateX(-50%);background:rgba(15,58,92,.78);color:#fff;font-size:13px;font-weight:700;padding:6px 14px;border-radius:999px;pointer-events:none;opacity:0;transition:opacity .3s;white-space:nowrap}
+.map-hint.show{opacity:1}
+.course-chip{position:absolute;left:50%;bottom:16px;transform:translateX(-50%);display:none;align-items:center;gap:10px;background:#fff;color:var(--ink);padding:8px 8px 8px 16px;border-radius:999px;box-shadow:0 6px 18px rgba(8,36,58,.3);font-size:14px;font-weight:700;z-index:3;max-width:calc(100% - 24px)}
+.course-chip.show{display:flex}
+.course-chip b{color:var(--course)}
+.course-chip button{border:0;background:var(--ink);color:#fff;border-radius:999px;padding:6px 14px;font-weight:800;font-size:13px;cursor:pointer}
+
+/* 地図内の操作の見た目 */
+.aoi-map .spot{cursor:pointer}
+.aoi-map .spot .pin{transform-box:fill-box;transform-origin:center;transition:transform .15s ease}
+.aoi-map .spot:hover .pin,.aoi-map .spot.is-active .pin{transform:scale(1.2)}
+.aoi-map .spot:focus{outline:none}
+.aoi-map .spot:focus-visible .pin,.aoi-map .spot.is-active .pin{stroke:#ffcf3f;stroke-width:4.2}
+.aoi-map .spot,.aoi-map .stop{transition:opacity .2s}
+.aoi-map[data-filter="nature"] .spot:not([data-group="nature"]),
+.aoi-map[data-filter="food"] .spot:not([data-group="food"]),
+.aoi-map[data-filter="culture"] .spot:not([data-group="culture"]){opacity:.16}
+.aoi-map .course{display:none}
+.aoi-map[data-course="A"] .cp-A,.aoi-map[data-course="A"] .cs-A,
+.aoi-map[data-course="B"] .cp-B,.aoi-map[data-course="B"] .cs-B,
+.aoi-map[data-course="C"] .cp-C,.aoi-map[data-course="C"] .cs-C,
+.aoi-map[data-course="D"] .cp-D,.aoi-map[data-course="D"] .cs-D{display:inline}
+.aoi-map[data-course] .spot{opacity:.22}
+.aoi-map[data-course="A"] .spot[data-courses~="A"],.aoi-map[data-course="B"] .spot[data-courses~="B"],
+.aoi-map[data-course="C"] .spot[data-courses~="C"],.aoi-map[data-course="D"] .spot[data-courses~="D"]{opacity:1}
+.aoi-map .course-road{fill:none;stroke:var(--course);stroke-opacity:.42;stroke-width:20;stroke-linejoin:round}
+.aoi-map .course-walk{fill:none;stroke:var(--course);stroke-opacity:.5;stroke-width:12;stroke-linecap:round;stroke-linejoin:round}
+.aoi-map.hide-bus .layer-bus,.aoi-map.hide-bus .layer-stops,.aoi-map.hide-bus .bus-note{display:none}
+.aoi-map.hide-trails .layer-trails{display:none}
+.aoi-map .stop{cursor:default}
+.aoi-map .stop.is-active circle{stroke:#ffcf3f;stroke-width:5}
+.aoi-map .stop.is-active rect{fill:#0f3a5c}
+
+/* ---------- 地図の下の帯 ---------- */
+.toolbar{max-width:1600px;margin:0 auto;padding:22px clamp(16px,3vw,40px) 30px;display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:18px 48px;align-items:start}
+.lead{margin:0;font-size:15.5px;line-height:1.95;color:#eaf6fb;max-width:44em}
+.lead strong{color:#fff;font-weight:800}
+.controls{display:flex;flex-direction:column;gap:14px}
+.ctl-label{font-size:12.5px;font-weight:800;color:#bfe3ef;margin:0 0 6px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{display:inline-flex;align-items:center;gap:7px;border:1.5px solid rgba(255,255,255,.55);background:transparent;color:#fff;border-radius:999px;padding:6px 14px 6px 11px;font-size:14px;font-weight:800;cursor:pointer;line-height:1.3}
+.chip i{width:12px;height:12px;border-radius:50%;background:var(--c,#fff);box-shadow:0 0 0 2px #fff}
+.chip[aria-pressed="true"]{background:#fff;color:var(--ink);border-color:#fff}
+.toggles{display:flex;flex-wrap:wrap;gap:8px 22px}
+.switch{display:inline-flex;align-items:center;gap:9px;font-size:14px;font-weight:800;cursor:pointer;color:#fff}
+.switch input{appearance:none;-webkit-appearance:none;width:40px;height:23px;border-radius:999px;background:rgba(255,255,255,.28);position:relative;margin:0;cursor:pointer;transition:background .2s}
+.switch input::after{content:"";position:absolute;left:3px;top:3px;width:17px;height:17px;border-radius:50%;background:#fff;transition:transform .2s}
+.switch input:checked{background:#5fd0b4}
+.switch input:checked::after{transform:translateX(17px)}
+.zoom-inline{display:none;gap:8px}
+.zoom-inline button{border:1.5px solid rgba(255,255,255,.6);background:transparent;color:#fff;border-radius:10px;padding:6px 14px;font-weight:800;font-size:14px;cursor:pointer}
+
+/* ---------- スポットの詳細パネル ---------- */
+.spot-panel{position:absolute;right:68px;top:16.5%;width:min(360px,calc(100% - 96px));background:#fff;color:var(--ink);border-radius:20px;box-shadow:0 14px 40px rgba(6,30,48,.35);padding:20px 22px 18px;z-index:4}
+.spot-panel[hidden]{display:none}
+.sp-close{position:absolute;right:10px;top:10px;width:34px;height:34px;border-radius:50%;border:0;background:#eef3f4;color:var(--ink);font-size:20px;line-height:1;cursor:pointer}
+.sp-head{display:flex;gap:12px;align-items:center;padding-right:34px}
+.sp-no{flex:none;width:40px;height:40px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:900;font-size:18px;background:var(--c)}
+.sp-cat{margin:0;font-size:12.5px;font-weight:800;color:var(--c)}
+.sp-name{margin:0;font-family:var(--mincho);font-weight:800;font-size:22px;line-height:1.35}
+.sp-desc{margin:12px 0 10px;font-size:15px;line-height:1.85}
+.meta{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;margin:0;font-size:14px;line-height:1.6}
+.meta dt{color:var(--sub);font-weight:700}
+.meta dd{margin:0;font-weight:700}
+.sp-foot{margin-top:12px;display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:13.5px}
+.sp-foot a{font-weight:800}
+
+/* ---------- 本文 ---------- */
+main{max-width:1240px;margin:0 auto;padding:0 clamp(16px,3vw,32px)}
+section{padding:64px 0 8px}
+.sec-head{margin:0 0 26px;max-width:46em}
+.sec-head h2{margin:0;font-family:var(--mincho);font-weight:800;font-size:clamp(26px,3.4vw,34px);line-height:1.35;color:var(--sea-deep);letter-spacing:.02em}
+.sec-head p{margin:10px 0 0;color:var(--sub);font-size:15.5px}
+
+/* 路線図 */
+.route-panel{background:#fff;border-radius:26px;padding:30px clamp(16px,3vw,34px) 26px;box-shadow:0 1px 0 var(--line)}
+.route-facts{display:flex;flex-wrap:wrap;gap:10px 26px;margin:0 0 10px;padding:0;list-style:none;font-weight:800;font-size:15px}
+.route-facts li{display:flex;align-items:center;gap:8px}
+.route-facts svg{flex:none}
+.near{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:5px}
+.near li{padding:0}
+.near-btn{display:inline-flex;align-items:flex-start;gap:6px;border:0;background:#f2f6f7;border-radius:10px;padding:5px 9px 5px 6px;font-size:13px;font-weight:800;line-height:1.35;color:var(--ink);cursor:pointer;text-align:left}
+.near-btn:hover{background:#e6eef0}
+.near-btn .n{flex:none;width:20px;height:20px;border-radius:50%;background:var(--c);color:#fff;font-size:11px;font-weight:900;display:grid;place-items:center;margin-top:0}
+.near-btn small{display:block;font-size:11.5px;color:var(--sub);font-weight:700}
+.near-note{font-size:12px;color:var(--sub);font-weight:700;line-height:1.45}
+.name em,.route .name em{font-style:normal;font-size:11px;font-weight:900;background:var(--bus);color:#fff;border-radius:999px;padding:1px 8px;margin-left:6px;vertical-align:2px;white-space:nowrap}
+/* PC：周回ループ（上＝北、右＝東、下＝南、左＝西） */
+.loop{position:relative;height:650px;margin:0 auto;max-width:1100px}
+.loop-ring{position:absolute;left:16%;right:16%;top:168px;height:236px;border:9px solid var(--bus);border-radius:64px}
+.loop-center{position:absolute;left:16%;right:16%;top:168px;height:236px;display:grid;place-items:center;text-align:center}
+.loop-center p{margin:0}
+.loop-center .t{font-family:var(--mincho);font-weight:800;font-size:26px;color:var(--sea-deep);line-height:1.3}
+.loop-center .s{font-size:14px;font-weight:800;color:var(--sub);line-height:1.6}
+.ls{position:absolute;width:0;height:0;z-index:1}
+.ls.on-top{left:var(--p);top:172.5px}
+.ls.on-bottom{left:var(--p);top:399.5px}
+.ls.on-left{left:calc(16% + 4.5px);top:286px}
+.ls.on-right{left:calc(84% - 4.5px);top:286px}
+.ls .dot{position:absolute;left:-18px;top:-18px;width:36px;height:36px;border-radius:50%;background:#fff;border:5px solid var(--bus);color:var(--bus);font:900 14px/1 var(--maru);display:grid;place-items:center;cursor:pointer;padding:0}
+.ls.start .dot{background:var(--bus);color:#fff;box-shadow:0 0 0 5px #cfe0f5}
+.ls .dot:hover{background:#eaf1fb}
+.ls.start .dot:hover{background:#163f80}
+.ls .lab{position:absolute;width:184px;display:flex;flex-direction:column;gap:6px}
+.ls.on-top .lab{left:-92px;bottom:26px;flex-direction:column-reverse;align-items:center}
+.ls.on-bottom .lab{left:-92px;top:26px;align-items:center}
+.ls.on-left .lab{right:30px;top:50%;transform:translateY(-50%);align-items:flex-end;width:170px}
+.ls.on-right .lab{left:30px;top:50%;transform:translateY(-50%);align-items:flex-start;width:170px}
+.ls .name{background:none;border:0;padding:0;font:900 16px/1.35 var(--maru);color:var(--bus);cursor:pointer;white-space:nowrap}
+.ls.on-top .near{flex-direction:column-reverse;align-items:center}
+.ls.on-bottom .near{align-items:center}
+.ls.on-left .near{align-items:flex-end}
+.ls.on-right .near{align-items:flex-start}
+.ls.on-left .near-note{text-align:right}
+.ls.on-top .near-note,.ls.on-bottom .near-note{text-align:center}
+.la{position:absolute;width:0;height:0;border:7px solid transparent;z-index:1}
+.la.on-top{left:var(--p);top:172.5px;transform:translate(-50%,-50%)}
+.la.on-bottom{left:var(--p);top:399.5px;transform:translate(-50%,-50%)}
+.la.on-right{left:calc(84% - 4.5px);top:var(--y);transform:translate(-50%,-50%)}
+.la.on-left{left:calc(16% + 4.5px);top:var(--y);transform:translate(-50%,-50%)}
+.la-r{border-left:10px solid #fff;border-right:0}
+.la-l{border-right:10px solid #fff;border-left:0}
+.la-d{border-top:10px solid #fff;border-bottom:0}
+.la-u{border-bottom:10px solid #fff;border-top:0}
+/* スマホ：縦の一覧 */
+.route{display:none;list-style:none;margin:0;padding:0;position:relative}
+.route::before{content:"";position:absolute;left:15px;top:10px;bottom:10px;width:8px;background:var(--bus);border-radius:4px}
+.route>li{position:relative;display:grid;grid-template-columns:40px 1fr;column-gap:12px;padding:0 0 18px}
+.route .dot{position:relative;z-index:1;width:38px;height:38px;border-radius:50%;background:#fff;border:5px solid var(--bus);display:grid;place-items:center;font-size:13px;font-weight:900;color:var(--bus);cursor:pointer;padding:0}
+.route>li.start .dot{background:var(--bus);color:#fff}
+.route .arrow{position:absolute;left:12px;bottom:4px;width:0;height:0;border-left:7px solid transparent;border-right:7px solid transparent;border-top:10px solid #fff;z-index:1}
+.route .name{display:block;margin:5px 0 6px;font-weight:900;font-size:16px;line-height:1.35;color:var(--bus);cursor:pointer;background:none;border:0;padding:0;text-align:left}
+.route .near{grid-column:2;align-items:flex-start}
+.route .near-note{grid-column:2;margin:6px 0 0}
+.route>li.return .dot{border-style:dashed;font-size:16px}
+.route>li.return .dot svg{width:18px;height:18px}
+.route>li.return .name{color:var(--sub)}
+.route-foot{margin:14px 0 0;font-size:14px;color:var(--sub)}
+
+/* 見どころ */
+.group{margin:0 0 34px}
+.group-head{display:flex;align-items:center;gap:10px;margin:0 0 14px;font-size:19px;font-weight:900}
+.group-head i{width:16px;height:16px;border-radius:50%;background:var(--c)}
+.group-head span{font-size:14px;color:var(--sub);font-weight:700}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(262px,1fr));gap:14px}
+.card{background:#fff;border-radius:16px;padding:18px 18px 14px;border-top:5px solid var(--c);display:flex;flex-direction:column;scroll-margin-top:24px}
+.card.is-active{box-shadow:0 0 0 3px #ffcf3f}
+.card-head{display:flex;align-items:center;gap:11px}
+.card-no{flex:none;width:32px;height:32px;border-radius:50%;background:var(--c);color:#fff;display:grid;place-items:center;font-weight:900;font-size:15px}
+.card h3{margin:0;font-size:18px;line-height:1.4;font-weight:900}
+.card .cat{margin:0;font-size:12.5px;color:var(--c);font-weight:800;line-height:1.3}
+.card p.desc{margin:10px 0 12px;font-size:15px;line-height:1.85}
+.card .meta{font-size:13.5px;margin-top:auto}
+.tag{display:inline-block;font-size:12px;font-weight:800;border-radius:6px;padding:0 7px;margin-left:4px;vertical-align:1px}
+.tag.am{background:#fff1d6;color:#9a5a00}
+.tag.pm{background:#ffe3dc;color:#a83a22}
+.to-map{align-self:flex-start;margin-top:12px;border:1.5px solid var(--line);background:#fff;color:var(--bus);border-radius:999px;padding:5px 14px;font-size:13.5px;font-weight:800;cursor:pointer}
+.to-map:hover{border-color:var(--bus)}
+
+/* モデルコース */
+.time-notes{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin:0 0 22px;padding:0;list-style:none}
+.time-notes li{background:#fff;border-radius:14px;padding:13px 16px;font-size:14.5px;line-height:1.7;border-left:6px solid var(--k,#9fb7bf)}
+.time-notes b{display:block;font-size:15px}
+.courses{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,520px),1fr));gap:18px}
+.course{background:#fff;border-radius:22px;padding:22px 22px 18px;display:flex;flex-direction:column}
+.course-head{display:flex;gap:14px;align-items:flex-start}
+.course-id{flex:none;width:44px;height:44px;border-radius:14px;background:var(--course);color:#fff;font:900 22px/44px var(--maru);text-align:center}
+.course h3{margin:0;font-family:var(--mincho);font-size:22px;line-height:1.35;font-weight:800}
+.course .how{margin:3px 0 0;font-size:14px;font-weight:800;color:var(--sub)}
+.course .why{margin:12px 0 4px;font-size:14.5px}
+.steps{list-style:none;margin:10px 0 0;padding:0;position:relative}
+.steps li{position:relative;padding:0 0 12px 34px;font-size:14.5px;line-height:1.6}
+.steps li::before{content:"";position:absolute;left:11px;top:22px;bottom:-2px;width:2px;background:#e3eaec}
+.steps li:last-child::before{display:none}
+.steps .mk{position:absolute;left:0;top:1px;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:900;color:#fff;background:var(--c,#9fb7bf)}
+.steps .mv .mk{background:#fff;border:2px solid #b9c9ce;color:var(--sub)}
+.steps .mv{color:var(--sub);font-weight:700;font-size:13.5px}
+.steps .mv .mk svg{width:14px;height:14px}
+.steps b{font-weight:900}
+.steps .st{font-size:13px;color:var(--sub);font-weight:700;margin-left:6px}
+.course-foot{margin-top:auto;padding-top:10px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;border-top:1px dashed var(--line)}
+.course-foot p{margin:0;font-size:13px;color:var(--sub);flex:1 1 220px}
+.show-course{border:0;background:var(--course);color:#fff;border-radius:999px;padding:8px 18px;font-weight:800;font-size:14px;cursor:pointer}
+
+/* アクセス */
+.access{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,470px);gap:22px;align-items:start}
+.box{background:#fff;border-radius:22px;padding:22px 24px}
+.box h3{margin:0 0 10px;font-size:18px;font-weight:900}
+.box+.box{margin-top:16px}
+.ferry{width:100%;border-collapse:collapse;font-size:15px}
+.ferry th,.ferry td{text-align:left;padding:9px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+.ferry thead th{font-size:13px;color:var(--sub);font-weight:800}
+.ferry tbody th{font-weight:900;color:var(--bus);white-space:nowrap}
+.note{font-size:13.5px;color:var(--sub);margin:10px 0 0}
+.movers{display:grid;gap:12px}
+.mover{display:grid;grid-template-columns:44px 1fr;gap:12px;align-items:start}
+.mover .ic{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;background:#eef3f8;color:var(--bus)}
+.mover h4{margin:0;font-size:16px;font-weight:900}
+.mover p{margin:2px 0 0;font-size:14.5px;line-height:1.75}
+.inset-card{background:#fff;border-radius:22px;padding:16px 16px 12px;position:sticky;top:16px}
+.inset-card h3{margin:2px 6px 10px;font-size:17px;font-weight:900}
+.inset-card svg{display:block;width:100%;height:auto;border-radius:14px}
+.inset-card p{margin:8px 6px 2px;font-size:13px;color:var(--sub)}
+
+/* 名物 */
+.foods{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}
+.food{background:#fff;border-radius:18px;padding:18px}
+.food svg{width:46px;height:46px}
+.food h3{margin:8px 0 4px;font-size:17px;font-weight:900}
+.food p{margin:0;font-size:14.5px;line-height:1.75}
+.food .where{margin-top:8px;font-size:13px;color:var(--sub);font-weight:700}
+
+footer{margin-top:72px;background:var(--sea-deep);color:#cfe6ef;font-size:13.5px}
+.foot-inner{max-width:1240px;margin:0 auto;padding:30px clamp(16px,3vw,32px) 40px;display:flex;flex-wrap:wrap;gap:8px 32px;justify-content:space-between}
+.foot-inner p{margin:0}
+.foot-inner a{color:#fff}
+
+@media (max-width:1100px){
+  .toolbar{grid-template-columns:1fr}
+  .access{grid-template-columns:1fr}
+  .inset-card{position:static;max-width:520px}
+}
+@media (max-width:900px){
+  .zoom{display:none}
+  .zoom-inline{display:flex}
+  .loop{display:none}
+  .route{display:block}
+  .spot-panel{position:fixed;left:10px;right:10px;bottom:10px;top:auto;width:auto;max-height:62vh;overflow:auto;border-radius:20px}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *{transition:none!important}
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#spots">見どころ一覧へ移動</a>
+<header class="hero">
+  <h1 class="sr-only">あおい島 観光マップ</h1>
+  <div class="map-stage" id="map">
+    <div class="map-viewport" id="mapViewport">
+<!--@MAP@-->
+    </div>
+    <div class="zoom" role="group" aria-label="地図の拡大と縮小">
+      <button type="button" data-zoom="in" aria-label="拡大">＋</button>
+      <button type="button" data-zoom="out" aria-label="縮小">－</button>
+      <button type="button" data-zoom="reset" aria-label="島全体を表示">全体</button>
+    </div>
+    <div class="map-hint" id="mapHint">ドラッグで移動、ピンチや＋ボタンで拡大できます</div>
+    <div class="course-chip" id="courseChip" role="status"><span id="courseChipText"></span><button type="button" id="courseClear">表示をやめる</button></div>
+    <aside class="spot-panel" id="spotPanel" aria-labelledby="spName" hidden>
+      <button type="button" class="sp-close" id="spClose" aria-label="詳細を閉じる">×</button>
+      <div id="spBody"></div>
+    </aside>
+  </div>
+  <div class="toolbar">
+    <p class="lead"><!--@LEAD@--></p>
+    <div class="controls">
+      <div>
+        <p class="ctl-label" id="flt">地図に出す見どころ</p>
+        <div class="chips" role="group" aria-labelledby="flt">
+          <button type="button" class="chip" data-filter="all" aria-pressed="true">すべて（14）</button>
+          <button type="button" class="chip" data-filter="nature" aria-pressed="false" style="--c:var(--c-nature)"><i></i>自然・展望</button>
+          <button type="button" class="chip" data-filter="food" aria-pressed="false" style="--c:var(--c-food)"><i></i>食・買い物・体験</button>
+          <button type="button" class="chip" data-filter="culture" aria-pressed="false" style="--c:var(--c-culture)"><i></i>温泉・神社・文化</button>
+        </div>
+      </div>
+      <div class="toggles">
+        <label class="switch"><input type="checkbox" data-layer="bus" checked>周回線バスと停留所</label>
+        <label class="switch"><input type="checkbox" data-layer="trails" checked>登山道・徒歩の道</label>
+        <div class="zoom-inline" role="group" aria-label="地図の拡大と縮小">
+          <button type="button" data-zoom="in">拡大</button>
+          <button type="button" data-zoom="out">縮小</button>
+          <button type="button" data-zoom="reset">全体</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section id="bus" aria-labelledby="bus-h">
+    <div class="sec-head">
+      <h2 id="bus-h">周回線バスの停留所</h2>
+      <p>あおい島バス「周回線」は、あおい港を出て周回道路（あおいライン）を時計回りに一周し、あおい港へ戻ります。停留所の名前を押すと、地図でその場所を表示します。</p>
+    </div>
+    <div class="route-panel">
+<!--@ROUTE@-->
+    </div>
+  </section>
+
+  <section id="spots" aria-labelledby="spots-h">
+    <div class="sec-head">
+      <h2 id="spots-h">見どころ 14か所</h2>
+      <p>番号は地図の番号と同じです。「地図で見る」を押すと、地図でその場所を表示します。</p>
+    </div>
+<!--@SPOTS@-->
+  </section>
+
+  <section id="courses" aria-labelledby="courses-h">
+    <div class="sec-head">
+      <h2 id="courses-h">モデルコース</h2>
+      <p>所要時間は、各スポットの滞在目安と移動の目安を足したものです。バスは1日6便なので、乗り継ぎの待ち時間は含めていません。出発前に時刻を確かめてください。</p>
+    </div>
+<!--@TIMENOTES@-->
+    <div class="courses">
+<!--@COURSES@-->
+    </div>
+  </section>
+
+  <section id="access" aria-labelledby="access-h">
+    <div class="sec-head">
+      <h2 id="access-h">島への行き方と島内の移動</h2>
+      <p>本土の蒼玉港とあおい港を、フェリーと高速船が結んでいます。島の中は周回線バスかレンタサイクルが便利です。</p>
+    </div>
+<!--@ACCESS@-->
+  </section>
+
+  <section id="food" aria-labelledby="food-h">
+    <div class="sec-head">
+      <h2 id="food-h">島の味とおみやげ</h2>
+    </div>
+<!--@FOODS@-->
+  </section>
+</main>
+
+<footer>
+  <div class="foot-inner">
+    <p>あおい島 観光マップ ／ 地名・施設名はすべて架空のものです。島データ <!--@DATE@--> 版をもとに作成。</p>
+    <p>船・バスの時刻は季節により変わります。地図の航路の向きは模式的に描いています。</p>
+  </div>
+</footer>
+
+<script>
+const SPOTS = /*@SPOTS_JSON@*/;
+const STOPS = /*@STOPS_JSON@*/;
+const COURSES = /*@COURSES_JSON@*/;
+(() => {
+  const W = 1600, H = 1050, MIN_W = 380;
+  const svg = document.querySelector('svg.aoi-map');
+  const vp = document.getElementById('mapViewport');
+  const stage = document.getElementById('map');
+  const panel = document.getElementById('spotPanel');
+  const spBody = document.getElementById('spBody');
+  const hint = document.getElementById('mapHint');
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let vb = { x: 0, y: 0, w: W, h: H };
+
+  // ---------- 表示範囲（viewBox）の操作 ----------
+  const clamp = v => {
+    const w = Math.min(W, Math.max(MIN_W, v.w)), h = w * H / W;
+    return { x: Math.min(W - w, Math.max(0, v.x)), y: Math.min(H - h, Math.max(0, v.y)), w, h };
+  };
+  const apply = () => {
+    svg.setAttribute('viewBox', `${vb.x.toFixed(1)} ${vb.y.toFixed(1)} ${vb.w.toFixed(1)} ${vb.h.toFixed(1)}`);
+    vp.classList.toggle('is-zoomed', vb.w < W - 1);
+  };
+  const toSvg = (cx, cy) => {
+    const r = svg.getBoundingClientRect();
+    return { x: vb.x + (cx - r.left) / r.width * vb.w, y: vb.y + (cy - r.top) / r.height * vb.h };
+  };
+  let raf = 0;
+  const flyTo = (target, ms = 620) => {
+    cancelAnimationFrame(raf);
+    const to = clamp(target), from = { ...vb };
+    if (reduce) { vb = to; apply(); return; }
+    const t0 = performance.now();
+    const step = now => {
+      const t = Math.min(1, (now - t0) / ms), e = t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+      vb = { x: from.x + (to.x - from.x) * e, y: from.y + (to.y - from.y) * e, w: from.w + (to.w - from.w) * e, h: from.h + (to.h - from.h) * e };
+      apply();
+      if (t < 1) raf = requestAnimationFrame(step);
+    };
+    raf = requestAnimationFrame(step);
+  };
+  const zoomBy = (f, cx = vb.x + vb.w / 2, cy = vb.y + vb.h / 2, animate = true) => {
+    const w = Math.min(W, Math.max(MIN_W, vb.w / f)), k = w / vb.w;
+    const t = { x: cx - (cx - vb.x) * k, y: cy - (cy - vb.y) * k, w, h: w * H / W };
+    if (animate) flyTo(t, 360); else { vb = clamp(t); apply(); }
+  };
+  const focusOn = (x, y, w = 720) => {
+    // パネルが右に出ているときは、少し左に寄せて見せる
+    const shift = (!panel.hidden && innerWidth > 900) ? w * 0.16 : 0;
+    flyTo({ x: x - w / 2 + shift, y: y - (w * H / W) / 2, w, h: w * H / W });
+  };
+  document.querySelectorAll('[data-zoom]').forEach(b => b.addEventListener('click', () => {
+    const k = b.dataset.zoom;
+    if (k === 'in') zoomBy(1.6); else if (k === 'out') zoomBy(1 / 1.6); else flyTo({ x: 0, y: 0, w: W, h: H });
+  }));
+
+  // ドラッグとピンチ
+  const pts = new Map();
+  let last = null, pinch = null, moved = false, downAt = null;
+  svg.addEventListener('pointerdown', e => {
+    if (e.pointerType === 'mouse' && e.button !== 0) return;
+    pts.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (pts.size === 1) { last = { x: e.clientX, y: e.clientY }; downAt = { ...last }; moved = false; }
+    if (pts.size === 2) {
+      const [a, b] = [...pts.values()];
+      pinch = { d: Math.hypot(a.x - b.x, a.y - b.y), w: vb.w, c: toSvg((a.x + b.x) / 2, (a.y + b.y) / 2) };
+      moved = true;
+    }
+  });
+  svg.addEventListener('pointermove', e => {
+    if (!pts.has(e.pointerId)) return;
+    pts.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (pts.size === 2 && pinch) {
+      const [a, b] = [...pts.values()];
+      const d = Math.max(10, Math.hypot(a.x - b.x, a.y - b.y));
+      const w = Math.min(W, Math.max(MIN_W, pinch.w * pinch.d / d));
+      const r = svg.getBoundingClientRect();
+      const mx = ((a.x + b.x) / 2 - r.left) / r.width, my = ((a.y + b.y) / 2 - r.top) / r.height;
+      vb = clamp({ x: pinch.c.x - mx * w, y: pinch.c.y - my * (w * H / W), w, h: w * H / W });
+      apply();
+    } else if (pts.size === 1 && last) {
+      if (!moved && Math.hypot(e.clientX - downAt.x, e.clientY - downAt.y) > 4) {
+        moved = true;
+        if (vb.w < W - 1) { svg.setPointerCapture(e.pointerId); vp.classList.add('is-dragging'); }
+      }
+      if (moved && vb.w < W - 1) {
+        const r = svg.getBoundingClientRect();
+        vb = clamp({ x: vb.x - (e.clientX - last.x) / r.width * vb.w, y: vb.y - (e.clientY - last.y) / r.height * vb.h, w: vb.w, h: vb.h });
+        apply();
+      }
+      last = { x: e.clientX, y: e.clientY };
+    }
+  });
+  const up = e => {
+    pts.delete(e.pointerId);
+    if (pts.size < 2) pinch = null;
+    if (pts.size === 1) last = { ...[...pts.values()][0] };
+    if (pts.size === 0) { last = null; vp.classList.remove('is-dragging'); }
+  };
+  ['pointerup', 'pointercancel', 'lostpointercapture'].forEach(t => svg.addEventListener(t, up));
+  svg.addEventListener('wheel', e => {
+    if (!e.ctrlKey && !e.metaKey) {
+      hint.classList.add('show'); clearTimeout(hint._t); hint._t = setTimeout(() => hint.classList.remove('show'), 1400);
+      return;
+    }
+    e.preventDefault();
+    const p = toSvg(e.clientX, e.clientY);
+    zoomBy(Math.exp(-e.deltaY * 0.01), p.x, p.y, false);
+  }, { passive: false });
+  svg.addEventListener('dblclick', e => { const p = toSvg(e.clientX, e.clientY); zoomBy(1.8, p.x, p.y); });
+
+  // ---------- スポットの詳細 ----------
+  const groupColor = { nature: 'var(--c-nature)', food: 'var(--c-food)', culture: 'var(--c-culture)' };
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  let activeNo = null;
+  const pinOf = no => svg.querySelector(`#spot-${no} .pin`);
+  const openSpot = (no, { fly = true, focus = false } = {}) => {
+    const s = SPOTS[no];
+    if (!s) return;
+    activeNo = no;
+    svg.querySelectorAll('.spot.is-active').forEach(el => el.classList.remove('is-active'));
+    svg.querySelector(`#spot-${no}`).classList.add('is-active');
+    document.querySelectorAll('.card.is-active').forEach(el => el.classList.remove('is-active'));
+    const card = document.getElementById(`card-${no}`);
+    if (card) card.classList.add('is-active');
+    panel.style.setProperty('--c', groupColor[s.group]);
+    spBody.innerHTML = `
+      <div class="sp-head"><span class="sp-no">${no}</span><div><p class="sp-cat">${esc(s.cat)}</p><h2 class="sp-name" id="spName" tabindex="-1">${esc(s.name)}</h2></div></div>
+      <p class="sp-desc">${esc(s.desc)}</p>
+      <dl class="meta">${s.meta.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join('')}</dl>
+      <div class="sp-foot"><a href="#card-${no}">一覧で見る</a><span>${esc(s.group_label)}</span></div>`;
+    panel.hidden = false;
+    if (fly) { const p = pinOf(no); focusOn(+p.getAttribute('cx'), +p.getAttribute('cy'), innerWidth < 700 ? 560 : 760); }
+    if (focus) document.getElementById('spName').focus({ preventScroll: true });
+  };
+  const closeSpot = () => {
+    panel.hidden = true;
+    svg.querySelectorAll('.spot.is-active').forEach(el => el.classList.remove('is-active'));
+    document.querySelectorAll('.card.is-active').forEach(el => el.classList.remove('is-active'));
+    if (activeNo) { const el = svg.querySelector(`#spot-${activeNo}`); activeNo = null; return el; }
+  };
+  document.getElementById('spClose').addEventListener('click', () => { const el = closeSpot(); if (el) el.focus(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && !panel.hidden) { const el = closeSpot(); if (el) el.focus(); } });
+  svg.querySelectorAll('.spot').forEach(el => {
+    el.addEventListener('click', () => { if (!moved) openSpot(+el.dataset.no); });
+    el.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openSpot(+el.dataset.no, { focus: true }); } });
+  });
+  const goMap = cb => {
+    stage.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+    setTimeout(cb, reduce ? 0 : 380);
+  };
+  document.querySelectorAll('[data-spot]').forEach(b => b.addEventListener('click', () => {
+    const no = +b.dataset.spot;
+    goMap(() => openSpot(no, { focus: true }));
+  }));
+
+  // 停留所
+  document.querySelectorAll('[data-stop-go]').forEach(b => b.addEventListener('click', () => {
+    const id = b.dataset.stopGo;
+    goMap(() => {
+      svg.querySelectorAll('.stop.is-active').forEach(el => el.classList.remove('is-active'));
+      const g = svg.querySelector(`#stop-${id}`);
+      g.classList.add('is-active');
+      const c = g.querySelector('circle');
+      closeSpot();
+      focusOn(+c.getAttribute('cx'), +c.getAttribute('cy'), innerWidth < 700 ? 560 : 820);
+    });
+  }));
+
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(es => {
+      es.forEach(en => { if (!en.isIntersecting && innerWidth <= 900 && !panel.hidden) closeSpot(); });
+    }, { threshold: 0 }).observe(vp);
+  }
+
+  // ---------- 絞り込み・表示切り替え ----------
+  document.querySelectorAll('.chip[data-filter]').forEach(b => b.addEventListener('click', () => {
+    document.querySelectorAll('.chip[data-filter]').forEach(x => x.setAttribute('aria-pressed', x === b ? 'true' : 'false'));
+    if (b.dataset.filter === 'all') delete svg.dataset.filter; else svg.dataset.filter = b.dataset.filter;
+  }));
+  document.querySelectorAll('input[data-layer]').forEach(inp => inp.addEventListener('change', () => {
+    svg.classList.toggle(`hide-${inp.dataset.layer}`, !inp.checked);
+  }));
+
+  // ---------- モデルコース ----------
+  const chip = document.getElementById('courseChip');
+  const chipText = document.getElementById('courseChipText');
+  const clearCourse = () => { delete svg.dataset.course; chip.classList.remove('show'); };
+  document.getElementById('courseClear').addEventListener('click', clearCourse);
+  document.querySelectorAll('[data-show-course]').forEach(b => b.addEventListener('click', () => {
+    const id = b.dataset.showCourse;
+    goMap(() => {
+      closeSpot();
+      svg.querySelectorAll('.stop.is-active').forEach(el => el.classList.remove('is-active'));
+      svg.dataset.course = id;
+      chipText.innerHTML = `モデルコース <b>${id}</b>「${esc(COURSES[id])}」を表示中`;
+      chip.classList.add('show');
+      flyTo({ x: 0, y: 0, w: W, h: H });
+    });
+  }));
+})();
+</script>
+</body>
+</html>

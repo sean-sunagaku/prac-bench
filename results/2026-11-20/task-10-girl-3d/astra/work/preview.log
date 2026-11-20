@@ -1,0 +1,15 @@
+00:00.291  blend            | Read blend: "/Users/babashunsuke/AiWorkspace/ai-verification/prac-bench/results/2026-11-20/task-10-girl-3d/astra/character.blend"
+Add-on not loaded: "blender_mcp", cause: No module named 'blender_mcp'
+RENDER back /Users/babashunsuke/AiWorkspace/ai-verification/prac-bench/results/2026-11-20/task-10-girl-3d/astra/work/back-preview.png
+00:02.757  render           | Saved: '/Users/babashunsuke/AiWorkspace/ai-verification/prac-bench/results/2026-11-20/task-10-girl-3d/astra/work/back-preview.png'
+RENDER side /Users/babashunsuke/AiWorkspace/ai-verification/prac-bench/results/2026-11-20/task-10-girl-3d/astra/work/side-preview.png
+00:04.824  render           | Saved: '/Users/babashunsuke/AiWorkspace/ai-verification/prac-bench/results/2026-11-20/task-10-girl-3d/astra/work/side-preview.png'
+RENDER beauty /Users/babashunsuke/AiWorkspace/ai-verification/prac-bench/results/2026-11-20/task-10-girl-3d/astra/work/beauty-preview.png
+00:08.429  render           | Saved: '/Users/babashunsuke/AiWorkspace/ai-verification/prac-bench/results/2026-11-20/task-10-girl-3d/astra/work/beauty-preview.png'
+RENDER three-quarter /Users/babashunsuke/AiWorkspace/ai-verification/prac-bench/results/2026-11-20/task-10-girl-3d/astra/work/three-quarter-preview.png
+00:10.498  render           | Saved: '/Users/babashunsuke/AiWorkspace/ai-verification/prac-bench/results/2026-11-20/task-10-girl-3d/astra/work/three-quarter-preview.png'
+RENDER front /Users/babashunsuke/AiWorkspace/ai-verification/prac-bench/results/2026-11-20/task-10-girl-3d/astra/work/front-preview.png
+00:12.665  render           | Saved: '/Users/babashunsuke/AiWorkspace/ai-verification/prac-bench/results/2026-11-20/task-10-girl-3d/astra/work/front-preview.png'
+Blender 5.1.1 (hash b70da489d7f4 built 2026-04-14 01:46:23)
+
+Blender quit

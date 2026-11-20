@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" class="viz" width="820" height="300" viewBox="0 0 820 300" role="img" aria-label="駅前店の月別売上と店舗名の表記ゆれ">
+<style>
+  .viz text { font-family: system-ui, -apple-system, "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Yu Gothic", sans-serif; }
+  .bg { fill: #fcfcfb; }
+  .t1 { fill: #0b0b0b; font-size: 16px; font-weight: 600; }
+  .t2 { fill: #52514e; font-size: 12.5px; }
+  .lab { fill: #0b0b0b; font-size: 13px; }
+  .sub { fill: #898781; font-size: 11px; }
+  .val { fill: #0b0b0b; font-size: 12.5px; font-variant-numeric: tabular-nums; }
+  .in  { fill: #ffffff; font-size: 11.5px; font-variant-numeric: tabular-nums; }
+  .note { fill: #52514e; font-size: 11.5px; }
+  .base { stroke: #c3c2b7; stroke-width: 1; }
+  .grid { stroke: #e1e0d9; stroke-width: 1; }
+  .s1 { fill: #2a78d6; } .s2 { fill: #eb6834; } .s3 { fill: #1baf7a; } .gray { fill: #b9b7ae; }
+  .hit:hover { opacity: .85; }
+  @media (prefers-color-scheme: dark) {
+    .bg { fill: #1a1a19; }
+    .t1, .lab, .val { fill: #f0efec; }
+    .t2, .note { fill: #c3c2b7; }
+    .base { stroke: #383835; } .grid { stroke: #2c2c2a; }
+    .s1 { fill: #3987e5; } .s2 { fill: #d95926; } .s3 { fill: #199e70; } .gray { fill: #5d5c57; }
+  }
+</style>
+<rect class="bg" width="820" height="300"/>
+<text class="t1" x="24" y="32">駅前店の売上（店頭POS・税込・補正後）：10月の約半分が別表記で記録されていた</text>
+<text class="t2" x="24" y="54">「駅前店」と完全に一致する行だけ数えると10月は9月の約半分（−46.2%）。表記をそろえて数えると −4.1%。</text>
+<rect class="s1" x="24" y="70" width="12" height="12" rx="2"/><text class="t2" x="42" y="80.5">「駅前店」（正しい表記）</text>
+<rect class="s2" x="218.0" y="70" width="12" height="12" rx="2"/><text class="t2" x="236.0" y="80.5">「駅前店 」（末尾に半角スペース）</text>
+<rect class="s3" x="469.25" y="70" width="12" height="12" rx="2"/><text class="t2" x="487.25" y="80.5">「ｴｷﾏｴ店」（半角カナ）</text>
+<text class="lab" x="24" y="135">9月</text>
+<g class="hit"><title>9月 「駅前店」（正しい表記）：177,600円（87.9%）</title><path class="s1" d="M80.0,118.0 h455.0 v24.0 h-455.0 Z"/>
+<text class="in" x="87.0" y="134">177,600</text>
+</g>
+<g class="hit"><title>9月 「駅前店 」（末尾に半角スペース）：13,200円（6.5%）</title><path class="s2" d="M537.0,118.0 h32.0 v24.0 h-32.0 Z"/>
+</g>
+<g class="hit"><title>9月 「ｴｷﾏｴ店」（半角カナ）：11,290円（5.6%）</title><path class="s3" d="M570.9,118.0 h25.1 a4,4 0 0 1 4,4 v16.0 a4,4 0 0 1 -4,4 h-25.1 Z"/>
+</g>
+<text class="val" x="610.0" y="135">計 202,090円</text>
+<text class="sub" x="80" y="158">「駅前店 」と「ｴｷﾏｴ店」の合計 24,490円（12%）</text>
+<text class="lab" x="24" y="205">10月</text>
+<g class="hit"><title>10月 「駅前店」（正しい表記）：95,522円（49.3%）</title><path class="s1" d="M80.0,188.0 h243.8 v24.0 h-243.8 Z"/>
+<text class="in" x="87.0" y="204">95,522</text>
+</g>
+<g class="hit"><title>10月 「駅前店 」（末尾に半角スペース）：64,042円（33.1%）</title><path class="s2" d="M325.8,188.0 h162.8 v24.0 h-162.8 Z"/>
+<text class="in" x="332.8" y="204">64,042</text>
+</g>
+<g class="hit"><title>10月 「ｴｷﾏｴ店」（半角カナ）：34,190円（17.6%）</title><path class="s3" d="M490.6,188.0 h84.0 a4,4 0 0 1 4,4 v16.0 a4,4 0 0 1 -4,4 h-84.0 Z"/>
+<text class="in" x="497.6" y="204">34,190</text>
+</g>
+<text class="val" x="588.6" y="205">計 193,754円</text>
+<text class="sub" x="80" y="228">「駅前店 」と「ｴｷﾏｴ店」の合計 98,232円（51%）</text>
+<line class="base" x1="80" x2="80" y1="110" y2="216"/>
+<text class="note" x="24" y="266">9月は二重登録2件（4,400円）を除いた値。10/5・10/6は改装休業で売上記録なし。</text>
+<text class="note" x="24" y="284">比較：同じ期間の他店は 本店 −11.7%、郊外店 +25.4%、空港店 +13.5%。駅前店の −4.1% は特に悪い数字ではない。</text>
+</svg>

@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" class="viz" width="820" height="534" viewBox="0 0 820 534" role="img" aria-label="単純集計と補正後の差の内訳">
+<style>
+  .viz text { font-family: system-ui, -apple-system, "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Yu Gothic", sans-serif; }
+  .bg { fill: #fcfcfb; }
+  .t1 { fill: #0b0b0b; font-size: 16px; font-weight: 600; }
+  .t2 { fill: #52514e; font-size: 12.5px; }
+  .lab { fill: #0b0b0b; font-size: 13px; }
+  .sub { fill: #898781; font-size: 11px; }
+  .val { fill: #0b0b0b; font-size: 12.5px; font-variant-numeric: tabular-nums; }
+  .in  { fill: #ffffff; font-size: 11.5px; font-variant-numeric: tabular-nums; }
+  .note { fill: #52514e; font-size: 11.5px; }
+  .base { stroke: #c3c2b7; stroke-width: 1; }
+  .grid { stroke: #e1e0d9; stroke-width: 1; }
+  .s1 { fill: #2a78d6; } .s2 { fill: #eb6834; } .s3 { fill: #1baf7a; } .gray { fill: #b9b7ae; }
+  .hit:hover { opacity: .85; }
+  @media (prefers-color-scheme: dark) {
+    .bg { fill: #1a1a19; }
+    .t1, .lab, .val { fill: #f0efec; }
+    .t2, .note { fill: #c3c2b7; }
+    .base { stroke: #383835; } .grid { stroke: #2c2c2a; }
+    .s1 { fill: #3987e5; } .s2 { fill: #d95926; } .s3 { fill: #199e70; } .gray { fill: #5d5c57; }
+  }
+</style>
+<rect class="bg" width="820" height="534"/>
+<text class="t1" x="24" y="32">単純集計が正しい値より多くなった理由（9〜10月の2か月計）</text>
+<text class="t2" x="24" y="54">単純集計 12,446,758円 − 誤り 1,423,388円 = 補正後 11,023,370円（記録金額ベース）</text>
+<text class="t2" x="24" y="73">さらに税抜にそろえると 10,875,250円（下の灰色の棒）</text>
+<line class="base" x1="330" x2="330" y1="90" y2="408"/>
+<g class="hit"><title>卸：訂正前と訂正後の伝票を二重計上：740,000円（W-2041・W-2042・W-2043）</title><rect x="24" y="92" width="772" height="40" fill="transparent"/><text class="lab" x="24" y="107">卸：訂正前と訂正後の伝票を二重計上</text><text class="sub" x="24" y="123">W-2041・W-2042・W-2043</text><path class="s1" d="M330.0,96.0 h356.0 a4,4 0 0 1 4,4 v8.0 a4,4 0 0 1 -4,4 h-356.0 Z"/><text class="val" x="698.0" y="108.5">740,000円</text></g>
+<g class="hit"><title>卸：取消済みの伝票を計上：552,000円（W-2044・W-2045（通常行と取消行の両方））</title><rect x="24" y="138" width="772" height="40" fill="transparent"/><text class="lab" x="24" y="153">卸：取消済みの伝票を計上</text><text class="sub" x="24" y="169">W-2044・W-2045（通常行と取消行の両方）</text><path class="s1" d="M330.0,142.0 h264.5 a4,4 0 0 1 4,4 v8.0 a4,4 0 0 1 -4,4 h-264.5 Z"/><text class="val" x="606.5" y="154.5">552,000円</text></g>
+<g class="hit"><title>POS：数量の打ち間違い：71,280円（郊外店 10/14 ハンドタオル 12個→120個）</title><rect x="24" y="184" width="772" height="40" fill="transparent"/><text class="lab" x="24" y="199">POS：数量の打ち間違い</text><text class="sub" x="24" y="215">郊外店 10/14 ハンドタオル 12個→120個</text><path class="s1" d="M330.0,188.0 h30.7 a4,4 0 0 1 4,4 v8.0 a4,4 0 0 1 -4,4 h-30.7 Z"/><text class="val" x="372.7" y="200.5">71,280円</text></g>
+<g class="hit"><title>存在しない日付（9月31日）：49,242円（POS・EC・卸の各1件。計上を保留）</title><rect x="24" y="230" width="772" height="40" fill="transparent"/><text class="lab" x="24" y="245">存在しない日付（9月31日）</text><text class="sub" x="24" y="261">POS・EC・卸の各1件。計上を保留</text><path class="s1" d="M330.0,234.0 h20.0 a4,4 0 0 1 4,4 v8.0 a4,4 0 0 1 -4,4 h-20.0 Z"/><text class="val" x="362.0" y="246.5">49,242円</text></g>
+<g class="hit"><title>POS：同じ明細の二重登録：7,892円（9/1〜9/9 の4件）</title><rect x="24" y="276" width="772" height="40" fill="transparent"/><text class="lab" x="24" y="291">POS：同じ明細の二重登録</text><text class="sub" x="24" y="307">9/1〜9/9 の4件</text><path class="s1" d="M330.0,280.0 h0.0 a3.8393513513513513,3.8393513513513513 0 0 1 3.8393513513513513,3.8393513513513513 v8.3 a3.8393513513513513,3.8393513513513513 0 0 1 -3.8393513513513513,3.8393513513513513 h-0.0 Z"/><text class="val" x="341.8" y="292.5">7,892円</text></g>
+<g class="hit"><title>EC：UTCのまま月を判定：2,970円（日本時間で11/1になる2件が10月に混入）</title><rect x="24" y="322" width="772" height="40" fill="transparent"/><text class="lab" x="24" y="337">EC：UTCのまま月を判定</text><text class="sub" x="24" y="353">日本時間で11/1になる2件が10月に混入</text><path class="s1" d="M330.0,326.0 h0.0 a1.4448648648648648,1.4448648648648648 0 0 1 1.4448648648648648,1.4448648648648648 v13.1 a1.4448648648648648,1.4448648648648648 0 0 1 -1.4448648648648648,1.4448648648648648 h-0.0 Z"/><text class="val" x="339.4" y="338.5">2,970円</text></g>
+<g class="hit"><title>テストデータ：4円（金額1円 × 4件）</title><rect x="24" y="368" width="772" height="40" fill="transparent"/><text class="lab" x="24" y="383">テストデータ</text><text class="sub" x="24" y="399">金額1円 × 4件</text><path class="s1" d="M330.0,372.0 h0.0 a0.0019459459459459458,0.0019459459459459458 0 0 1 0.0019459459459459458,0.0019459459459459458 v16.0 a0.0019459459459459458,0.0019459459459459458 0 0 1 -0.0019459459459459458,0.0019459459459459458 h-0.0 Z"/><text class="val" x="338.0" y="384.5">4円</text></g>
+<line class="grid" x1="24" x2="796" y1="420" y2="420"/>
+<g class="hit"><title>税区分の統一：148,120円</title><text class="lab" x="24" y="443">参考：税区分の統一（誤りではない）</text><text class="sub" x="24" y="459">店頭・ECは税込、卸は税抜で記録 → 店頭・ECの消費税分を除く</text><line class="base" x1="330" x2="330" y1="428" y2="454"/><path class="gray" d="M330.0,432.0 h68.1 a4,4 0 0 1 4,4 v8.0 a4,4 0 0 1 -4,4 h-68.1 Z"/><text class="val" x="410.1" y="444.5">148,120円</text></g>
+<text class="note" x="24" y="516">棒はすべて「単純集計から差し引いた額」。月をまたいで移るだけの分（EC 9/30深夜の2件 3,780円）は2か月計では相殺。</text>
+</svg>

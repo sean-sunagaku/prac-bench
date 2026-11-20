@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>軽トラ限界引っ越し</title>
+  <meta name="description" content="軽トラの荷台に引っ越しの荷物を積み、段差だらけの道を走って届ける物理ゲーム。落とした・壊した分は精算で弁償。">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=Dela+Gothic+One&family=DotGothic16&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app">
+  <canvas id="game" aria-label="ゲーム画面"></canvas>
+
+  <!-- タイトル -->
+  <section id="scr-title" class="screen">
+    <div class="title-card">
+      <h1 class="logo" aria-label="軽トラ限界引っ越し">
+        <span class="tape tape-1">軽トラ</span>
+        <span class="tape tape-2">限界</span>
+        <span class="tape tape-3">引っ越し</span>
+      </h1>
+      <p class="tagline">積んで、走って、精算する。</p>
+      <div class="title-actions">
+        <button class="plate-btn" id="btn-start">依頼を見る</button>
+        <button class="ink-btn" id="btn-howto">あそびかた</button>
+      </div>
+      <p class="title-note">マウス・キーボード推奨（タッチ操作にも対応）</p>
+    </div>
+  </section>
+
+  <!-- 依頼一覧 -->
+  <section id="scr-stages" class="screen hidden">
+    <div class="board">
+      <header class="board-head">
+        <h2>本日の依頼</h2>
+        <button class="ink-btn small" id="btn-stages-back">タイトルへ</button>
+      </header>
+      <div class="slips" id="slips"></div>
+    </div>
+  </section>
+
+  <!-- 積み込み -->
+  <section id="scr-load" class="screen hidden">
+    <aside class="tray" id="tray" aria-label="荷物置き場">
+      <div class="tray-head">
+        <h3>荷物置き場</h3>
+        <span class="tray-count" id="tray-count"></span>
+      </div>
+      <p class="tray-help">上から順に積むのがおすすめ</p>
+      <div class="tray-list" id="tray-list"></div>
+    </aside>
+    <div class="load-bar">
+      <div class="gauge" id="gauge">
+        <span class="gauge-label">積載量</span>
+        <span class="gauge-track"><span class="gauge-fill" id="gauge-fill"></span><span class="gauge-limit"></span></span>
+        <span class="gauge-num"><b id="load-kg">0</b> / 350kg</span>
+      </div>
+      <button class="tool-btn" id="btn-rope" aria-pressed="false">
+        <span class="rope-icon" aria-hidden="true"></span>ロープ <b id="rope-left">0</b>
+      </button>
+      <button class="tool-btn" id="btn-unload">全部おろす</button>
+      <button class="plate-btn small" id="btn-depart">出発する</button>
+    </div>
+    <div class="load-hint" id="load-hint"></div>
+    <div class="memo" id="memo"></div>
+    <div class="rotate-pad" aria-label="回転">
+      <button class="round-btn" id="btn-rot-l" aria-label="左に回す">↺</button>
+      <button class="round-btn" id="btn-rot-r" aria-label="右に回す">↻</button>
+    </div>
+  </section>
+
+  <!-- 走行 -->
+  <section id="scr-drive" class="screen hidden">
+    <div class="route">
+      <span class="route-end">旧居</span>
+      <span class="route-track"><span class="route-truck" id="route-truck"></span></span>
+      <span class="route-end">新居</span>
+      <span class="route-left" id="route-left"></span>
+    </div>
+    <div class="clock">
+      <span class="clock-now" id="clock-now">0:00.0</span>
+      <span class="clock-target" id="clock-target"></span>
+    </div>
+    <div class="cargo" id="cargo">
+      <div class="cargo-head">積み荷 <span id="loss" class="loss"></span></div>
+      <ul id="cargo-list"></ul>
+    </div>
+    <div class="speedo"><b id="speed">0</b><span>km/h</span></div>
+    <div class="drive-hint" id="drive-hint">→ アクセル　← ブレーキ（止まってから押し直すとバック）　Esc 一時停止</div>
+    <button class="plate-btn small rescue" id="btn-rescue">ロードサービスを呼ぶ（−¥10,000）</button>
+    <div class="pedals">
+      <button class="pedal brake" id="pedal-brake">ブレーキ</button>
+      <button class="pedal gas" id="pedal-gas">アクセル</button>
+    </div>
+    <button class="ink-btn small pause-btn" id="btn-pause">一時停止</button>
+    <div class="banner" id="banner"></div>
+  </section>
+
+  <!-- 精算 -->
+  <section id="scr-result" class="screen hidden">
+    <div class="result-wrap">
+      <div class="receipt-holder">
+        <div class="receipt" id="receipt"></div>
+        <div class="stamp" id="stamp"></div>
+      </div>
+      <div class="result-side">
+        <div class="voice" id="voice"></div>
+        <div class="rank-line" id="rank-line"></div>
+        <p class="tip" id="tip"></p>
+        <div class="result-actions">
+          <button class="plate-btn" id="btn-next">次の依頼へ</button>
+          <button class="ink-btn" id="btn-retry">この依頼をやり直す</button>
+          <button class="ink-btn" id="btn-list">依頼一覧へ</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ダイアログ：出発前チェック -->
+  <div class="dialog hidden" id="dlg-depart" role="dialog" aria-modal="true" aria-labelledby="dlg-depart-title">
+    <div class="slip-card">
+      <h3 id="dlg-depart-title">出発前チェック</h3>
+      <div id="depart-body"></div>
+      <div class="dialog-actions">
+        <button class="plate-btn small" id="btn-go">この積み方で出発</button>
+        <button class="ink-btn small" id="btn-back-load">積み直す</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ダイアログ：一時停止 -->
+  <div class="dialog hidden" id="dlg-pause" role="dialog" aria-modal="true" aria-labelledby="dlg-pause-title">
+    <div class="slip-card narrow">
+      <h3 id="dlg-pause-title">一時停止中</h3>
+      <div class="dialog-actions column">
+        <button class="plate-btn small" id="btn-resume">走行にもどる</button>
+        <button class="ink-btn small" id="btn-reload">積み込みからやり直す</button>
+        <button class="ink-btn small" id="btn-quit">依頼一覧へ</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ダイアログ：あそびかた -->
+  <div class="dialog hidden" id="dlg-howto" role="dialog" aria-modal="true" aria-labelledby="dlg-howto-title">
+    <div class="slip-card wide">
+      <h3 id="dlg-howto-title">あそびかた</h3>
+      <ol class="howto-steps">
+        <li>
+          <b>積む</b>
+          <p>荷札を荷台へドラッグ。置いた荷物もつかんで動かせます。<br>
+          回転：ホイール / Q・E（細かく）、右クリック / R（90°）<br>
+          ロープ：ロープを選び、黄色いフックから荷物へドラッグ。ロープは荷物の上を通って反対側のフックにも掛かり、荷物を押さえます。結んだロープをクリックで外せます。<br>
+          荷物置き場は「積むおすすめ順」に並んでいます。上から順に積むと安定しやすい。</p>
+        </li>
+        <li>
+          <b>走る</b>
+          <p>→ / D でアクセル、← / A でブレーキ。止まってから ← を押し直すとバック。H でクラクション。<br>
+          段差の前で減速。急ブレーキや急発進は荷崩れのもと。荷物がこぼれ落ちる瞬間はスローモーションになります。</p>
+        </li>
+        <li>
+          <b>精算</b>
+          <p>引越し料金から、壊した・落とした荷物の弁償、積み残しの手配料、過積載の反則金を差し引きます。早く着けばボーナス。<br>
+          依頼ごとの「★お願い」の荷物を無事に届けると、お客様から心付けがもらえます。</p>
+        </li>
+      </ol>
+      <ul class="howto-rules">
+        <li><i class="st fragile">ワレモノ</i>衝撃に弱い。布団に触れていると衝撃がやわらぐ</li>
+        <li><i class="st heavy">重い</i>下の荷物を押しつぶす。下に置くのが基本</li>
+        <li><i class="st tenchi">天地無用</i>逆さまで運ぶと減額</li>
+        <li><i class="st notilt">横倒し厳禁</i>寝かせて運ぶと減額</li>
+        <li><i class="st rolls">転がる</i>丸いので転がる。壁ぎわかロープで止める</li>
+        <li><i class="st cushion">クッション</i>触れている荷物を守る</li>
+      </ul>
+      <p class="howto-note">軽トラの最大積載量は350kg。こえると反則金。地面に落ちた荷物は「落下」として全額弁償です。<br>
+      物理演算：Planck.js（MIT ライセンス）／音はすべてブラウザ内で合成しています。</p>
+      <div class="dialog-actions">
+        <button class="plate-btn small" id="btn-howto-close">わかった</button>
+      </div>
+    </div>
+  </div>
+
+  <button class="mute-btn" id="btn-mute" aria-label="音を切る" title="音のオン・オフ（M）">音</button>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</div>
+
+<script src="vendor/planck.min.js"></script>
+<script src="js/core.js"></script>
+<script src="js/gfx.js"></script>
+<script src="js/items.js"></script>
+<script src="js/truck.js"></script>
+<script src="js/course.js"></script>
+<script src="js/sim.js"></script>
+<script src="js/render.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/game.js"></script>
+</body>
+</html>

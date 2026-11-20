@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#131312">
+  <meta name="description" content="回して時間を決め、押してはじめる。SOU DESIGN LABの無画面集中タイマー KOKU-01。タイマー体験と先行予約シミュレーター。">
+  <title>KOKU-01 | SOU DESIGN LAB</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body id="top">
+  <a class="skip-link" href="#main">本文へ移動</a>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="wordmark" href="#top" aria-label="SOU DESIGN LAB ページの先頭へ">SOU<span>DESIGN LAB</span></a>
+      <nav aria-label="ページ内ナビゲーション">
+        <a class="desktop-nav" href="#product">製品について</a>
+        <a href="#timer">タイマー体験</a>
+        <a class="desktop-nav" href="#specs">仕様</a>
+        <a class="nav-reserve" href="#reserve">先行予約</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero" aria-labelledby="product-name">
+      <picture class="hero-media">
+        <source media="(max-width: 700px)" srcset="assets/hero-mobile.webp">
+        <img src="assets/hero.webp" alt="琥珀色のLEDが灯るアルマイトシルバーのKOKU-01" width="1774" height="887" fetchpriority="high">
+      </picture>
+
+      <div class="wrap hero-inner">
+        <div class="hero-copy">
+          <h1 id="product-name">KOKU-01</h1>
+          <p class="hero-tagline">集中を、手のひらに。</p>
+          <p class="hero-description">回して時間を決め、押してはじめる。<br>画面のない、デスクのための集中タイマー。</p>
+          <div class="hero-actions">
+            <a class="button button-accent" href="#reserve">先行予約を見る <span class="arrow" aria-hidden="true">↗</span></a>
+            <a class="button button-outline" href="#timer">タイマーを体験 <span class="arrow" aria-hidden="true">↓</span></a>
+          </div>
+          <p class="hero-offer"><span>先行予約 <strong>¥14,800</strong>（税込）</span><span>2027年3月順次発送</span></p>
+        </div>
+      </div>
+    </section>
+
+    <ul class="feature-strip" aria-label="KOKU-01の主な特徴" role="list">
+      <li><strong>24灯</strong><span>LEDリング</span></li>
+      <li><strong>36ステップ</strong><span>磁気ラチェット</span></li>
+      <li><strong>最大30日</strong><span>USB-C充電</span></li>
+    </ul>
+
+    <section class="wrap story" id="product" aria-labelledby="story-title">
+      <img class="story-photo" src="assets/machined-detail.webp" alt="KOKU-01の円形の天面と、細かな溝が刻まれたアルミニウム側面" width="1200" height="900" loading="lazy" decoding="async">
+      <div class="story-copy">
+        <h2 id="story-title">回す。押す。<br>集中する。</h2>
+        <p class="story-intro">目の前のことに集中する時間をつくる、無画面のタイマーです。</p>
+        <dl class="operation-list">
+          <div>
+            <dt lang="en">TURN</dt>
+            <dd><strong>回して、時間を決める。</strong><p>36ステップの磁気ラチェットが、クリックを指先に伝えます。</p></dd>
+          </div>
+          <div>
+            <dt lang="en">PRESS</dt>
+            <dd><strong>押して、集中を始める。</strong><p>天面を押すとスタート。外周の24灯が、残り時間を示します。</p></dd>
+          </div>
+        </dl>
+        <p class="sound-detail">内蔵スピーカーで、無音・雨音・ホワイトノイズの3つのモードを選べます。</p>
+      </div>
+    </section>
+
+    <section class="wrap timer-section" id="timer" aria-labelledby="timer-title">
+      <div class="section-heading">
+        <h2 id="timer-title">タイマーを体験</h2>
+        <p>ダイヤルを回し、天面を押してスタート。</p>
+      </div>
+
+      <div class="timer-panel" data-phase="ready">
+        <div class="dial-stage">
+          <button class="dial" id="dial" type="button" aria-label="天面を押してスタート" aria-describedby="dial-hint">
+            <span class="dial-disc" aria-hidden="true">
+              <img src="assets/dial.webp" alt="" width="880" height="880" loading="lazy" decoding="async" draggable="false">
+              <span id="dial-ring" class="dial-ring"></span>
+            </span>
+          </button>
+          <p id="dial-hint">ドラッグで回す <span aria-hidden="true">·</span> 天面を押す<span class="visually-hidden">。矢印キーで時間を調整できます。</span></p>
+        </div>
+
+        <div class="timer-console">
+          <div class="readout-meta">
+            <span id="remaining-label">残り時間</span>
+            <span class="timer-state" id="timer-state" role="status">設定中</span>
+          </div>
+          <output class="time-readout" id="time-readout" role="timer" aria-labelledby="remaining-label" aria-live="off">25:00</output>
+
+          <div class="timer-settings">
+            <div class="time-stepper" role="group" aria-label="集中時間の設定">
+              <button id="minute-down" type="button" aria-label="1分短くする">−</button>
+              <label class="minute-value" for="minutes"><span class="visually-hidden">集中時間（分）</span><input id="minutes" type="number" value="25" min="1" max="60" step="1" inputmode="numeric"><span aria-hidden="true">分</span></label>
+              <button id="minute-up" type="button" aria-label="1分長くする">+</button>
+            </div>
+            <button type="button" class="quick-button" id="quick-mode" aria-pressed="false">10秒で試す</button>
+          </div>
+
+          <fieldset class="sound-settings" aria-describedby="sound-hint">
+            <legend>環境音</legend>
+            <span class="visually-hidden" id="sound-hint">タイマーが動いている間、選んだ音が流れます。</span>
+            <div class="sound-options">
+              <label><input class="visually-hidden" type="radio" name="sound" value="silent" checked><span>無音</span></label>
+              <label><input class="visually-hidden" type="radio" name="sound" value="rain"><span>雨音</span></label>
+              <label><input class="visually-hidden" type="radio" name="sound" value="white"><span>ホワイトノイズ</span></label>
+            </div>
+          </fieldset>
+          <p class="audio-feedback" id="audio-feedback" role="status" hidden></p>
+
+          <div class="timer-actions">
+            <button class="button button-accent start-button" id="timer-toggle" type="button"><span class="start-icon" aria-hidden="true"></span><span id="timer-toggle-label">スタート</span></button>
+            <button class="reset-button" id="timer-reset" type="button"><span aria-hidden="true">↺</span>リセット</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="wrap specs" id="specs" aria-labelledby="specs-title">
+      <h2 id="specs-title">製品仕様</h2>
+      <dl class="spec-list">
+        <div><dt>製品</dt><dd>KOKU-01</dd></div>
+        <div><dt>サイズ・重量</dt><dd>直径78 mm × 高さ26 mm <span class="spec-divider">/</span> 210 g</dd></div>
+        <div><dt>筐体</dt><dd>CNC削り出しアルミニウム</dd></div>
+        <div><dt>操作・表示</dt><dd>36ステップ磁気ラチェット、天面プッシュ、24灯LEDリング</dd></div>
+        <div><dt>充電・稼働</dt><dd>USB-C充電、最大30日稼働</dd></div>
+        <div><dt>環境音</dt><dd>内蔵スピーカー（無音・雨音・ホワイトノイズ）</dd></div>
+        <div><dt>スマホアプリ連携</dt><dd>非対応</dd></div>
+        <div><dt>保証</dt><dd>1年</dd></div>
+      </dl>
+    </section>
+
+    <section class="reservation" id="reserve" aria-labelledby="reserve-title">
+      <div class="wrap">
+        <div class="section-heading">
+          <h2 id="reserve-title">先行予約</h2>
+          <p>色・プラン・オプションで価格を試算。</p>
+        </div>
+
+        <div class="reserve-grid">
+          <figure class="finish-preview">
+            <div class="finish-frame">
+              <img class="finish-image" data-preview="silver" src="assets/silver.webp" width="1040" height="780" alt="アルマイトシルバーのKOKU-01" loading="lazy" decoding="async">
+              <img class="finish-image" data-preview="brass" src="assets/brass.webp" width="1040" height="780" alt="真鍮リミテッドのKOKU-01" loading="lazy" decoding="async" hidden>
+            </div>
+            <figcaption><strong id="finish-name">アルマイトシルバー</strong><span>2027年3月順次発送</span></figcaption>
+          </figure>
+
+          <form class="configurator" id="configurator" aria-describedby="simulation-note">
+            <fieldset class="config-group">
+              <legend>カラー</legend>
+              <div class="finish-options">
+                <label class="finish-option">
+                  <input class="visually-hidden" type="radio" name="finish" value="silver" checked>
+                  <span class="finish-card"><span class="swatch swatch-silver" aria-hidden="true"></span><span class="finish-choice">アルマイト<span class="finish-break">シルバー</span></span></span>
+                </label>
+                <label class="finish-option">
+                  <input class="visually-hidden" type="radio" name="finish" value="black" disabled>
+                  <span class="finish-card"><span class="swatch swatch-black" aria-hidden="true"></span><span class="finish-choice">マット<span class="finish-break">ブラック</span><small>在庫切れ</small></span></span>
+                </label>
+                <label class="finish-option">
+                  <input class="visually-hidden" type="radio" name="finish" value="brass">
+                  <span class="finish-card"><span class="swatch swatch-brass" aria-hidden="true"></span><span class="finish-choice">真鍮<span class="finish-break">リミテッド</span><small>+¥3,000</small></span></span>
+                </label>
+              </div>
+            </fieldset>
+
+            <fieldset class="config-group">
+              <legend>プラン</legend>
+              <div class="plan-options">
+                <label class="plan-option">
+                  <input class="visually-hidden" type="radio" name="plan" value="early" checked>
+                  <span class="plan-row"><span class="radio-mark" aria-hidden="true"></span><span class="plan-name">先行予約早割 <small>20% OFF</small></span><span class="plan-price">¥14,800</span></span>
+                </label>
+                <label class="plan-option">
+                  <input class="visually-hidden" type="radio" name="plan" value="standard">
+                  <span class="plan-row"><span class="radio-mark" aria-hidden="true"></span><span class="plan-name">一般販売（参考）</span><span class="plan-price">¥18,500</span></span>
+                </label>
+              </div>
+            </fieldset>
+
+            <label class="addon-option">
+              <input class="visually-hidden" type="checkbox" name="mat">
+              <span class="addon-row"><span class="check-mark" aria-hidden="true"></span><span>専用フェルトデスクマット</span><span class="addon-price">+¥2,400</span></span>
+            </label>
+
+            <div class="reserve-total"><span id="total-label">合計（税込）</span><output id="total" aria-labelledby="total-label" aria-live="polite">¥14,800</output></div>
+            <button class="button button-dark" type="submit"><span id="review-label">予約内容を確認</span><span class="arrow" aria-hidden="true">→</span></button>
+            <p class="simulation-note" id="simulation-note">購入シミュレーターです。在庫はデモ用の表示です。</p>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <span class="footer-wordmark">SOU DESIGN LAB</span>
+      <a href="#top">ページの先頭へ <span class="arrow" aria-hidden="true">↑</span></a>
+    </div>
+  </footer>
+
+  <dialog class="review-dialog" id="review-dialog" aria-labelledby="review-title">
+    <div class="dialog-inner">
+      <form method="dialog" class="dialog-close-form">
+        <button class="dialog-close" type="submit" aria-label="閉じる">×</button>
+      </form>
+      <h2 id="review-title" tabindex="-1">予約内容を確認</h2>
+      <p id="review-description">KOKU-01の購入シミュレーション</p>
+      <dl class="review-list">
+        <div><dt>カラー</dt><dd id="review-finish"></dd></div>
+        <div><dt>プラン</dt><dd id="review-plan"></dd></div>
+        <div><dt>オプション</dt><dd id="review-option"></dd></div>
+        <div><dt>合計（税込）</dt><dd id="review-total"></dd></div>
+      </dl>
+      <div class="dialog-actions">
+        <button class="button button-dark" id="complete-demo" type="button">シミュレーションを完了</button>
+        <form method="dialog" class="dialog-back-form"><button class="button" type="submit" id="review-back">選択に戻る</button></form>
+      </div>
+    </div>
+  </dialog>
+</body>
+</html>

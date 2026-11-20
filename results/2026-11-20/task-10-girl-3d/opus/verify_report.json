@@ -1,0 +1,305 @@
+{
+  "file": "/Users/babashunsuke/AiWorkspace/ai-verification/prac-bench/results/2026-11-20/task-10-girl-3d/opus/character.blend",
+  "blender_version": "5.1.1",
+  "scene": "Portrait",
+  "active_camera": "Camera_Beauty",
+  "render_engine": "CYCLES",
+  "cycles_device": "CPU",
+  "samples": 32,
+  "resolution": [
+    960,
+    1040
+  ],
+  "collections": {
+    "Cafe_Set": [
+      "Cafe_Floor",
+      "Cafe_BackWall",
+      "Cafe_LeftWall",
+      "Cafe_WindowLight",
+      "Cafe_SideWindowLight",
+      "Cafe_Mullion_-2.33",
+      "Cafe_Mullion_-1.55",
+      "Cafe_Mullion_-0.77",
+      "Cafe_SideMullion_-0.20",
+      "Cafe_SideMullion_+0.90",
+      "Cafe_SideMullion_+2.00",
+      "Cafe_WindowSill",
+      "Cafe_PlantPot_0",
+      "Cafe_PlantStem_0",
+      "Cafe_PlantLeaves_0",
+      "Cafe_PlantPot_1",
+      "Cafe_PlantStem_1",
+      "Cafe_PlantLeaves_1",
+      "Cafe_PlantPot_2",
+      "Cafe_PlantStem_2",
+      "Cafe_PlantLeaves_2",
+      "Cafe_ShelfBack",
+      "Cafe_Shelf_1.05",
+      "Cafe_Shelf_1.50",
+      "Cafe_Shelf_1.95",
+      "Cafe_Shelf_2.40",
+      "Cafe_Jar_00",
+      "Cafe_JarContent_00",
+      "Cafe_Jar_01",
+      "Cafe_Jar_02",
+      "Cafe_Jar_03",
+      "Cafe_Jar_04",
+      "Cafe_Jar_05",
+      "Cafe_JarContent_05",
+      "Cafe_Jar_06",
+      "Cafe_Jar_07",
+      "Cafe_Jar_08",
+      "Cafe_Jar_09",
+      "Cafe_Jar_10",
+      "Cafe_JarContent_10",
+      "Cafe_Jar_11",
+      "Cafe_Jar_12",
+      "Cafe_Jar_13",
+      "Cafe_Jar_14",
+      "Cafe_Jar_15",
+      "Cafe_JarContent_15",
+      "Cafe_Jar_16",
+      "Cafe_Jar_17",
+      "Cafe_Jar_18",
+      "Cafe_Jar_19",
+      "Cafe_Jar_20",
+      "Cafe_JarContent_20",
+      "Cafe_Jar_21",
+      "Cafe_Jar_22",
+      "Cafe_Jar_23",
+      "Cafe_Jar_24",
+      "Cafe_Jar_25",
+      "Cafe_JarContent_25",
+      "Cafe_Jar_26",
+      "Cafe_Jar_27",
+      "Cafe_Jar_28",
+      "Cafe_Jar_29",
+      "Cafe_Counter",
+      "Cafe_CounterTop",
+      "Cafe_Machine",
+      "Cafe_ChairBack",
+      "Cafe_ChairPost_-0.80",
+      "Cafe_ChairPost_-0.44",
+      "Cafe_ChairSeat",
+      "Cafe_Chair2Back",
+      "Cafe_Chair2Post_-0.23",
+      "Cafe_Chair2Post_+0.13",
+      "Cafe_Chair2Seat",
+      "Cafe_TableRight",
+      "Cafe_TableRightLeg",
+      "Cafe_Vase",
+      "Cafe_FlowerStem_0",
+      "Cafe_FlowerStem_1",
+      "Cafe_FlowerStem_2",
+      "Cafe_FlowerStem_3",
+      "Cafe_FlowerStem_4",
+      "Cafe_FlowerStem_5",
+      "Cafe_FlowerStem_6",
+      "Cafe_FlowerStem_7",
+      "Cafe_FlowerStem_8",
+      "Cafe_FlowerStem_9",
+      "Cafe_FlowerStem_10",
+      "Cafe_FlowerStem_11",
+      "Cafe_FlowerStem_12",
+      "Cafe_FlowerStem_13",
+      "Cafe_Flowers",
+      "Cafe_TableFront",
+      "Cafe_TableFrontLeg",
+      "Cafe_Cup"
+    ],
+    "Cameras": [
+      "Camera_Beauty",
+      "Focus_Eyes",
+      "Camera_Front",
+      "Camera_ThreeQuarter",
+      "Camera_Side",
+      "Camera_Back"
+    ],
+    "Character": [],
+    "Character_Body": [
+      "Body"
+    ],
+    "Character_Eyes": [
+      "Eye_L_Shell",
+      "Eye_L_Iris",
+      "Eye_R_Shell",
+      "Eye_R_Iris"
+    ],
+    "Character_Hair": [
+      "Lashes_Upper_L",
+      "Lashes_Lower_L",
+      "Lashes_Upper_R",
+      "Lashes_Lower_R",
+      "Brow_L",
+      "Brow_R",
+      "Hair_Long",
+      "Hair_FaceFraming",
+      "Hair_Bangs"
+    ],
+    "Character_Sweater": [
+      "Sweater_Body",
+      "Sweater_Collar",
+      "Sweater_Hem",
+      "Sweater_Cuff_L",
+      "Sweater_Cuff_R"
+    ],
+    "Lights_Beauty": [
+      "Light_PhoneScreen",
+      "Light_Window_Back",
+      "Light_Key_Soft",
+      "Light_Fill_Front",
+      "Light_Rim_Right"
+    ],
+    "Lights_Studio": [
+      "StudioRig",
+      "Studio_Key",
+      "Studio_Fill",
+      "Studio_Rim",
+      "Studio_Top"
+    ]
+  },
+  "materials": [
+    "Cafe_Beans_0",
+    "Cafe_Beans_10",
+    "Cafe_Beans_15",
+    "Cafe_Beans_20",
+    "Cafe_Beans_25",
+    "Cafe_Beans_5",
+    "Cafe_Ceramic",
+    "Cafe_DarkMetal",
+    "Cafe_Floor",
+    "Cafe_Flower",
+    "Cafe_Glass",
+    "Cafe_Leaf",
+    "Cafe_Metal",
+    "Cafe_Outside",
+    "Cafe_Pot",
+    "Cafe_Stem",
+    "Cafe_Wall",
+    "Cafe_Wood_Light",
+    "Cafe_Wood_Shelf",
+    "Eye_Iris",
+    "Eye_Shell",
+    "Hair",
+    "Hair_Brows",
+    "Hair_Lashes",
+    "Knit_Rib",
+    "Knit_Sweater",
+    "Skin"
+  ],
+  "images": [
+    {
+      "name": "KnitRib_Height",
+      "size": [
+        512,
+        512
+      ],
+      "packed": true,
+      "source": "FILE"
+    },
+    {
+      "name": "KnitStockinette_Height",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true,
+      "source": "FILE"
+    }
+  ],
+  "unpacked_external_files": [],
+  "body_modifiers": [
+    "MASK:HideUnderSweater",
+    "SUBSURF:Subdivision"
+  ],
+  "curves_objects": {
+    "Brow_L": {
+      "curves": 380,
+      "points": 1900,
+      "material": "Hair_Brows"
+    },
+    "Brow_R": {
+      "curves": 380,
+      "points": 1900,
+      "material": "Hair_Brows"
+    },
+    "Hair_Bangs": {
+      "curves": 1125,
+      "points": 15750,
+      "material": "Hair"
+    },
+    "Hair_FaceFraming": {
+      "curves": 735,
+      "points": 19110,
+      "material": "Hair"
+    },
+    "Hair_Long": {
+      "curves": 18706,
+      "points": 598592,
+      "material": "Hair"
+    },
+    "Lashes_Lower_L": {
+      "curves": 60,
+      "points": 420,
+      "material": "Hair_Lashes"
+    },
+    "Lashes_Lower_R": {
+      "curves": 60,
+      "points": 420,
+      "material": "Hair_Lashes"
+    },
+    "Lashes_Upper_L": {
+      "curves": 140,
+      "points": 980,
+      "material": "Hair_Lashes"
+    },
+    "Lashes_Upper_R": {
+      "curves": 140,
+      "points": 980,
+      "material": "Hair_Lashes"
+    }
+  },
+  "cameras": {
+    "Camera_Back": {
+      "lens": 70.0,
+      "location": [
+        0.042886361479759216,
+        1.8729770183563232,
+        1.2730813026428223
+      ]
+    },
+    "Camera_Beauty": {
+      "lens": 25.5,
+      "location": [
+        -0.013013511896133423,
+        -0.45922571420669556,
+        1.5714906454086304
+      ]
+    },
+    "Camera_Front": {
+      "lens": 70.0,
+      "location": [
+        0.042886361479759216,
+        -2.111421585083008,
+        1.2730813026428223
+      ]
+    },
+    "Camera_Side": {
+      "lens": 70.0,
+      "location": [
+        1.9899842739105225,
+        -0.11922231316566467,
+        1.2730813026428223
+      ]
+    },
+    "Camera_ThreeQuarter": {
+      "lens": 70.0,
+      "location": [
+        1.8212496042251587,
+        -1.8975856304168701,
+        1.2730813026428223
+      ]
+    }
+  },
+  "all_images_packed": true
+}

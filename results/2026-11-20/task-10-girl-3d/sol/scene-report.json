@@ -1,0 +1,398 @@
+{
+  "title": "Window seat",
+  "scene": "character.blend",
+  "saved_scene_sha256": "35df3e041eedff16f61eb7de9c612fc960d615a02569aebe3c029033b4402bfe",
+  "reopened_and_checked": true,
+  "blender_version": "5.1.1",
+  "blender_build_hash": "b70da489d7f4",
+  "render_engine": "CYCLES",
+  "render_device": "CPU",
+  "render_threads": 3,
+  "samples_per_pixel_max": 32,
+  "adaptive_sampling": true,
+  "adaptive_threshold": 0.04800000041723251,
+  "denoising": "OPENIMAGEDENOISE",
+  "denoising_uses_gpu": false,
+  "beauty_camera": "Beauty • cafe selfie",
+  "source_topology": {
+    "name": "MakeHuman hm08 upper body and hands",
+    "license": "CC0",
+    "commit": "a8bc2d54ff0ac92e78ff71431b1023eda42bf482",
+    "source": "https://raw.githubusercontent.com/makehumancommunity/makehuman/a8bc2d54ff0ac92e78ff71431b1023eda42bf482/makehuman/data/3dobjs/base.obj"
+  },
+  "reference": {
+    "file": "input/reference.png",
+    "decoded_photo_seen": true,
+    "used_as_scene_image": false,
+    "resolution_px": [
+      1205,
+      1306
+    ]
+  },
+  "character_bounds": {
+    "axes": "meters, XYZ, Z up",
+    "min": [
+      -0.286911,
+      -0.631445,
+      1.006652
+    ],
+    "max": [
+      0.298751,
+      0.111466,
+      1.678548
+    ],
+    "size": [
+      0.585662,
+      0.74291,
+      0.671896
+    ]
+  },
+  "geometry_counts": {
+    "supplied_upper_body_vertices": 6093,
+    "supplied_upper_body_faces": 6044,
+    "character_base_mesh_vertices": 132143,
+    "character_base_mesh_faces": 128542,
+    "character_evaluated_mesh_vertices": 414017,
+    "character_evaluated_mesh_faces": 412830,
+    "character_strands_including_lashes_and_brows": 20331,
+    "character_evaluated_curve_control_points": 579127,
+    "character_evaluated_mesh_vertices_plus_curve_control_points": 993144,
+    "scene_evaluated_mesh_vertices_including_both_sets": 447659,
+    "cycles_curve_intersection_primitive_count": null
+  },
+  "important_objects": [
+    {
+      "name": "Brows • individually laid hairs",
+      "type": "CURVES",
+      "strands": 960,
+      "evaluated_control_points": 5760
+    },
+    {
+      "name": "Eye.L • brown iris and pupil",
+      "type": "MESH",
+      "base_vertices": 1345,
+      "base_faces": 1344,
+      "evaluated_vertices": 1345,
+      "evaluated_faces": 1344
+    },
+    {
+      "name": "Eye.L • scleral globe",
+      "type": "MESH",
+      "base_vertices": 1986,
+      "base_faces": 2048,
+      "evaluated_vertices": 1986,
+      "evaluated_faces": 2048
+    },
+    {
+      "name": "Eye.L • tear duct",
+      "type": "MESH",
+      "base_vertices": 362,
+      "base_faces": 384,
+      "evaluated_vertices": 362,
+      "evaluated_faces": 384
+    },
+    {
+      "name": "Eye.L • transparent corneal cap",
+      "type": "MESH",
+      "base_vertices": 1537,
+      "base_faces": 1536,
+      "evaluated_vertices": 1537,
+      "evaluated_faces": 1536
+    },
+    {
+      "name": "Eye.R • brown iris and pupil",
+      "type": "MESH",
+      "base_vertices": 1345,
+      "base_faces": 1344,
+      "evaluated_vertices": 1345,
+      "evaluated_faces": 1344
+    },
+    {
+      "name": "Eye.R • scleral globe",
+      "type": "MESH",
+      "base_vertices": 1986,
+      "base_faces": 2048,
+      "evaluated_vertices": 1986,
+      "evaluated_faces": 2048
+    },
+    {
+      "name": "Eye.R • tear duct",
+      "type": "MESH",
+      "base_vertices": 362,
+      "base_faces": 384,
+      "evaluated_vertices": 362,
+      "evaluated_faces": 384
+    },
+    {
+      "name": "Eye.R • transparent corneal cap",
+      "type": "MESH",
+      "base_vertices": 1537,
+      "base_faces": 1536,
+      "evaluated_vertices": 1537,
+      "evaluated_faces": 1536
+    },
+    {
+      "name": "Eyes • lower tear menisci",
+      "type": "CURVES",
+      "strands": 2,
+      "evaluated_control_points": 62
+    },
+    {
+      "name": "Eyes • upper lash roots",
+      "type": "CURVES",
+      "strands": 2,
+      "evaluated_control_points": 94
+    },
+    {
+      "name": "Face, ears and neck • sculpted hm08",
+      "type": "MESH",
+      "base_vertices": 4528,
+      "base_faces": 4496,
+      "evaluated_vertices": 72061,
+      "evaluated_faces": 71936
+    },
+    {
+      "name": "Hair • fine flyaways at the hairline",
+      "type": "CURVES",
+      "strands": 169,
+      "evaluated_control_points": 4901
+    },
+    {
+      "name": "Hair • fine strands lifted from the crown",
+      "type": "CURVES",
+      "strands": 245,
+      "evaluated_control_points": 7595
+    },
+    {
+      "name": "Hair • fitted crown and nape underlayer",
+      "type": "MESH",
+      "base_vertices": 8000,
+      "base_faces": 7841,
+      "evaluated_vertices": 8000,
+      "evaluated_faces": 7841
+    },
+    {
+      "name": "Hair • long back waves • individual strands",
+      "type": "CURVES",
+      "strands": 4026,
+      "evaluated_control_points": 128832
+    },
+    {
+      "name": "Hair • long back waves • styling volumes",
+      "type": "MESH",
+      "base_vertices": 19320,
+      "base_faces": 18998,
+      "evaluated_vertices": 19320,
+      "evaluated_faces": 18998
+    },
+    {
+      "name": "Hair • part, crown and nape strands",
+      "type": "CURVES",
+      "strands": 6420,
+      "evaluated_control_points": 159220
+    },
+    {
+      "name": "Hair • swept and tucked temple • individual strands",
+      "type": "CURVES",
+      "strands": 3112,
+      "evaluated_control_points": 99584
+    },
+    {
+      "name": "Hair • swept and tucked temple • styling volumes",
+      "type": "MESH",
+      "base_vertices": 13440,
+      "base_faces": 13216,
+      "evaluated_vertices": 13440,
+      "evaluated_faces": 13216
+    },
+    {
+      "name": "Hair • translucent side-swept fringe",
+      "type": "CURVES",
+      "strands": 942,
+      "evaluated_control_points": 34283
+    },
+    {
+      "name": "Hair • waves draped over the raised shoulder • individual strands",
+      "type": "CURVES",
+      "strands": 4305,
+      "evaluated_control_points": 137760
+    },
+    {
+      "name": "Hair • waves draped over the raised shoulder • styling volumes",
+      "type": "MESH",
+      "base_vertices": 18480,
+      "base_faces": 18172,
+      "evaluated_vertices": 18480,
+      "evaluated_faces": 18172
+    },
+    {
+      "name": "Hand.L • relaxed reach",
+      "type": "MESH",
+      "base_vertices": 1654,
+      "base_faces": 1642,
+      "evaluated_vertices": 26317,
+      "evaluated_faces": 26272
+    },
+    {
+      "name": "Hand.R • relaxed reach",
+      "type": "MESH",
+      "base_vertices": 1654,
+      "base_faces": 1642,
+      "evaluated_vertices": 26317,
+      "evaluated_faces": 26272
+    },
+    {
+      "name": "Lashes • upper and lower margin",
+      "type": "CURVES",
+      "strands": 148,
+      "evaluated_control_points": 1036
+    },
+    {
+      "name": "Pullover • joined torso and forward sleeves",
+      "type": "MESH",
+      "base_vertices": 18562,
+      "base_faces": 18352,
+      "evaluated_vertices": 147660,
+      "evaluated_faces": 147664
+    },
+    {
+      "name": "Pullover • rib cuff.L",
+      "type": "MESH",
+      "base_vertices": 6300,
+      "base_faces": 5880,
+      "evaluated_vertices": 12600,
+      "evaluated_faces": 12600
+    },
+    {
+      "name": "Pullover • rib cuff.R",
+      "type": "MESH",
+      "base_vertices": 6300,
+      "base_faces": 5880,
+      "evaluated_vertices": 12600,
+      "evaluated_faces": 12600
+    },
+    {
+      "name": "Pullover • ribbed lower hem",
+      "type": "MESH",
+      "base_vertices": 12012,
+      "base_faces": 11088,
+      "evaluated_vertices": 24024,
+      "evaluated_faces": 24024
+    },
+    {
+      "name": "Pullover • rolled ribbed crew neck",
+      "type": "MESH",
+      "base_vertices": 11305,
+      "base_faces": 10710,
+      "evaluated_vertices": 22610,
+      "evaluated_faces": 22610
+    },
+    {
+      "name": "Pullover • tucked fabric at waist",
+      "type": "MESH",
+      "base_vertices": 128,
+      "base_faces": 1,
+      "evaluated_vertices": 128,
+      "evaluated_faces": 1
+    }
+  ],
+  "generated_textures": [
+    {
+      "name": "Iris • radial collagen and umber pigment • 640",
+      "size_px": [
+        640,
+        640
+      ],
+      "packed": true,
+      "colorspace": "Non-Color",
+      "description": "Analytic radial bundles, amber-brown stroma, limbal shading and pupil."
+    },
+    {
+      "name": "Face • procedural lid shading and tiny freckles • 1024",
+      "size_px": [
+        1024,
+        1024
+      ],
+      "packed": true,
+      "colorspace": "Non-Color",
+      "description": "Rest-coordinate eyelid and brow pigment fields with sparse cheek freckles."
+    },
+    {
+      "name": "Sweater • repeating 4×4 stockinette yarn swatch • 512",
+      "size_px": [
+        512,
+        512
+      ],
+      "packed": true,
+      "colorspace": "Non-Color",
+      "description": "Swept stitch and two-ply yarn height, color and fiber channels."
+    }
+  ],
+  "renders": [
+    {
+      "file": "renders/beauty.png",
+      "resolution_px": [
+        960,
+        1040
+      ],
+      "bytes": 1369357,
+      "sha256": "4eab556467ebefae1bc94d09bb2ce9c64729d2a9a29ff2e0b99f8c2a642e966e",
+      "camera": "Beauty • cafe selfie",
+      "orbit_azimuth_degrees": null
+    },
+    {
+      "file": "renders/front.png",
+      "resolution_px": [
+        768,
+        768
+      ],
+      "bytes": 668364,
+      "sha256": "ccc1903562a48818b455ac7c84816010fec0a6cbcef26e4ea4831450dd0e7aa7",
+      "camera": "Turntable • front",
+      "orbit_azimuth_degrees": 0
+    },
+    {
+      "file": "renders/three-quarter.png",
+      "resolution_px": [
+        768,
+        768
+      ],
+      "bytes": 665065,
+      "sha256": "47c7ec4f9b02012b24de1c0e4307b74b5cdd564cdbd6094e96803517b16cd91b",
+      "camera": "Turntable • three-quarter",
+      "orbit_azimuth_degrees": 45
+    },
+    {
+      "file": "renders/side.png",
+      "resolution_px": [
+        768,
+        768
+      ],
+      "bytes": 646426,
+      "sha256": "97d0239856374957e892eca3fb17cde3777dd6b6fe863810ed8f3fd109f78e23",
+      "camera": "Turntable • side",
+      "orbit_azimuth_degrees": 90
+    },
+    {
+      "file": "renders/back.png",
+      "resolution_px": [
+        768,
+        768
+      ],
+      "bytes": 669469,
+      "sha256": "ffa60d398bd260dc08cdef1a6d88cdd2cf1f61a1f34f15c27a53db21d4880722",
+      "camera": "Turntable • back",
+      "orbit_azimuth_degrees": 180
+    }
+  ],
+  "size_bytes_excluding_this_report": 24070914,
+  "remaining_limitations": [
+    "Hand-authored interpretation from one photograph. Facial proportions, expression, and individual hair placement are approximated.",
+    "The profile, rear skull and hairstyle, neck transition, hidden sweater surfaces, wrists and extended hand pose were inferred.",
+    "Face color is procedural with restrained microdetail. Fine asymmetry, photographic skin variation and individual facial anatomy are simplified.",
+    "Hair has styled volume meshes with real fibers. Large locks remain more regular than natural hair, especially near the crown and on the back.",
+    "Stockinette loops use packed bump and color maps on the fabric surface. Collar, cuffs, hem, sleeves and main drape have editable geometry.",
+    "The café is a small constructed set with approximate furnishings and window lighting.",
+    "Baked reach and head tilt. A production rig, facial animation controls and the lower body are outside this portrait."
+  ]
+}
