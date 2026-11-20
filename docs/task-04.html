@@ -149,4 +149,190 @@ astra と同型。生成スクリプト+scene.glb+プレビュー画像で完成
 最も完全。検証レポート付き GLB、Web ビューア、多角度プレビュー20枚超、ターンテーブル動画まで付属。モデル自身が RUN.md と metrics.json も作成した。</div>
 <p><a href='https://github.com/sean-sunagaku/prac-bench/tree/main/results/2026-11-20/task-04-capybara-onsen-3d/opus' target='_blank' rel='noopener'>このモデルの全ファイルを GitHub で見る</a> ／ <a href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-04-capybara-onsen-3d/opus/RUN.md' target='_blank' rel='noopener'>RUN.md</a></p>
 </section>
-</main><footer>Prac-Bench 実施結果レポート（2026-11-20）／ 数値・判定・所見の出典：リポジトリ内 results/2026-11-20/comparison.md および各 RUN.md</footer></body></html>
+</main><footer>Prac-Bench 実施結果レポート（2026-11-20）／ 数値・判定・所見の出典：リポジトリ内 results/2026-11-20/comparison.md および各 RUN.md</footer><section><h2>テキスト成果物（全文）</h2><p>各モデルの文書系テキスト成果物と運営の実施記録（RUN.md）を全文収録する。コードやバイナリはリポジトリと outputs/ を参照。</p>
+<h3>neon</h3>
+<details><summary>RUN.md（運営の実施記録）</summary><pre style="white-space:pre-wrap;word-break:break-word"># RUN — task-04-capybara-onsen-3d / neon
+
+- 実施日: 2026-11-20（10:51:43–11:21:48 JST）
+- 実装時間: 30分05秒
+- 終了状態: agy の30分印刷タイムアウトで打ち切り（成果物は打ち切り時点のもの）
+- トークン使用量: 取得不可（Antigravity CLI の会話記録にトークン内訳が残らない形式のため）
+- コスト推定: 取得不可（トークン不明のため）
+- 成果物ファイル数: 16（ランナー生成物・node_modules・支給 input を除く）
+
+## 主な成果物
+- dist/assets/index-BSMdTOVG.js
+- dist/assets/index-CfjII_KM.css
+- dist/index.html
+- index.html
+- package-lock.json
+- package.json
+- src/atmosphere.js
+- src/capybara.js
+- src/environment.js
+- src/garden.js
+- src/main.js
+- src/onsen.js
+- src/textures.js
+- src/ui.js
+- style.css
+
+## 検証結果
+完成。Vite+Three.js の Web 3D アプリ（ビルド済み dist 付き、JS 8モジュール）。
+</pre></details>
+<h3>carbon</h3>
+<details><summary>RUN.md（運営の実施記録）</summary><pre style="white-space:pre-wrap;word-break:break-word"># RUN — task-04-capybara-onsen-3d / carbon
+
+- 実施日: 2026-11-20（11:13:14–11:14:17 JST）
+- 実装時間: 1分03秒
+- 終了状態: モデルの確認質問で停止（成果物なし）
+- トークン使用量: 取得不可（Antigravity CLI の会話記録にトークン内訳が残らない形式のため）
+- コスト推定: 取得不可（トークン不明のため）
+- 成果物ファイル数: 0（ランナー生成物・node_modules・支給 input を除く）
+
+## 主な成果物
+
+## 検証結果
+成果物なし。成果物の形式やチェックリストの確認を求める返信をして停止した。条件を揃えるため運営からは回答せず、この応答自体を結果として記録する（再実行なし）。
+
+## 備考
+モデルが確認質問を返して停止したケース。条件統一のため再実行していない。
+</pre></details>
+<h3>astra</h3>
+<details><summary>RUN.md（運営の実施記録）</summary><pre style="white-space:pre-wrap;word-break:break-word"># RUN — task-04-capybara-onsen-3d / astra
+
+- 実施日: 2026-11-20（12:01:36–12:13:45 JST）
+- 実装時間: 12分09秒
+- 終了状態: 自然終了
+- トークン使用量: 入力 10,940,651（うちキャッシュ 10,771,456） / 出力 99,035
+- コスト推定: $9.20（API単価前提による換算。単価の前提は ../comparison.md 参照。実際の課金形態とは異なる）
+- 成果物ファイル数: 4（ランナー生成物・node_modules・支給 input を除く）
+
+## 主な成果物
+- RUN.md
+- generate_scene.py
+- preview.png
+- scene.glb
+
+## 検証結果
+最小構成で完成。生成スクリプト+scene.glb+プレビュー画像の4ファイル。
+</pre></details>
+<h3>sol</h3>
+<details><summary>RUN.md（運営の実施記録）</summary><pre style="white-space:pre-wrap;word-break:break-word"># RUN — task-04-capybara-onsen-3d / sol
+
+- 実施日: 2026-11-20（12:02:22–12:08:59 JST）
+- 実装時間: 6分37秒
+- 終了状態: 自然終了
+- トークン使用量: 入力 4,184,631（うちキャッシュ 4,050,304） / 出力 61,597
+- コスト推定: $4.54（API単価前提による換算。単価の前提は ../comparison.md 参照。実際の課金形態とは異なる）
+- 成果物ファイル数: 4（ランナー生成物・node_modules・支給 input を除く）
+
+## 主な成果物
+- RUN.md
+- build_scene.py
+- scene.glb
+- snowbound-yuzu-bath.png
+
+## 検証結果
+astra と同型。生成スクリプト+scene.glb+プレビュー画像で完成。
+</pre></details>
+<h3>opus</h3>
+<details><summary>RUN.md（運営の実施記録）</summary><pre style="white-space:pre-wrap;word-break:break-word"># RUN — task-04-capybara-onsen-3d / opus
+
+- 実施日: 2026-11-20（11:40:17–12:43:49 JST）
+- 実装時間: 63分32秒
+- 終了状態: 自然終了
+- トークン使用量: 入力 754 / キャッシュ作成 1,572,758 / キャッシュ読込 103,770,164 / 出力 1,001,026
+- コスト推定: $260.23（API単価前提による換算。単価の前提は ../comparison.md 参照。実際の課金形態とは異なる）
+- 成果物ファイル数: 46（ランナー生成物・node_modules・支給 input を除く）
+
+## 主な成果物
+- CHECKLIST.md
+- RUN.md
+- gen/build_scene.py
+- gen/capybara.py
+- gen/lib.py
+- gen/render_previews.py
+- gen/render_util.py
+- gen/test_capy.py
+- index.html
+- metrics.json
+- previews/close_bucket.png
+- previews/close_capybara_face.png
+- previews/close_fence_back.png
+- previews/close_lantern.png
+- previews/close_spout.png
+
+## 検証結果
+最も完全。検証レポート付き GLB、Web ビューア、多角度プレビュー20枚超、ターンテーブル動画まで付属。モデル自身が RUN.md と metrics.json も作成した。
+</pre></details>
+<details><summary>CHECKLIST.md</summary><pre style="white-space:pre-wrap;word-break:break-word"># 自己チェック表 — 3D造形「カピバラの雪見露天風呂」（Opus）
+
+チェック項目の資料は受け取れていません。代わりに、リポジトリ内の `spec/task-instructions.md`（枠4）の次の3つを暫定のチェック項目として使い、その全項目を満たすように作りました。
+
+- 題材の必須要素6点
+- 規格
+- 想定されるミス
+
+正式なチェックリストが届いたら、この表をそちらの項目で付け直してください。
+
+- 数値の出典：`metrics.json`（生成スクリプトが自動で計測）と `previews/gltf_validator_report.json`
+- 画像の出典：`previews/`。どれも `scene.glb` を空のシーンに読み込み直して撮影しています。
+
+## 1. 必須要素6点
+
+| # | 要素 | 自己評価 | どう作ったか・根拠 |
+|---|---|---|---|
+| ① | ジオラマ台座（雪の地面と岩場） | できている | 角を丸めた土台ブロック（1.80m四方）です。&lt;br&gt;・上面：起伏と吹き溜まりのある雪面&lt;br&gt;・側面：雪の層と、4層の地層の断面（小石入り）&lt;br&gt;・最下部：クルミ色の飾り台&lt;br&gt;・岩場：岩33個（縁石29・景石4）、平石1枚、飛び石3枚&lt;br&gt;`Ground_SnowAndTub` / `Base_SoilCrossSection` / `Base_WalnutBoard` / `Rock_*` |
+| ② | 石組みの露天風呂と、半透明のお湯の水面 | できている | 縁石は大17個・小12個です。手前は低く、奥は高く大きく組みました。&lt;br&gt;・縁石の湯に近い側は「濡れた岩」のマテリアル（暗い色＋クリアコート）&lt;br&gt;・水面 `Onsen_WaterSurface`：alphaMode BLEND、不透明度0.33、IOR 1.333&lt;br&gt;・湯船の底：青緑で塗っているので、澄んだ湯越しに温泉らしい色に見えます&lt;br&gt;・水中のカピバラの胴体が透けて見えます（`studio_top.png` / `close_waterline.png`） |
+| ③ | 肩まで浸かったカピバラ1頭（耳・目・鼻が分かる）と、頭にぴったり乗った黄色い柚子1個 | できている | カピバラらしさを出した点：&lt;br&gt;・四角く大きな頭、平らな頭頂、深い鼻づら&lt;br&gt;・高い位置の目（半分閉じた「いい湯だな」顔）&lt;br&gt;・頭頂の後ろの小さな丸耳、鼻づら上面のスリット状の鼻孔、人中&lt;br&gt;浸かり具合：&lt;br&gt;・背中の最高点が水面の **8mm 下**（肩まで浸かる）&lt;br&gt;・目は水面の **136mm 上**、体は湯船の底に接地（-1.9mm）&lt;br&gt;柚子（直径92mm、油胞の凹凸・へた・軸・葉つき）：&lt;br&gt;・頭頂の最も高い点に置き、SDF で計測した食い込みは **2.3mm**&lt;br&gt;・接触している頂点は16個なので、浮きもめり込みもありません（`close_yuzu_side.png`） |
+| ④ | 竹の湯口と木製の湯桶 | できている | 湯口 `Bamboo_Spout`：青竹で、節・斜めの切り口・内側の暗がり・切り口の白い断面まで作り、湯口石に黒縄で固定。&lt;br&gt;・放物線を描いて落ちる湯の流れと、着水点の泡・波紋つき&lt;br&gt;湯桶 `Wooden_Bucket_Yuoke`：檜の板18枚の色むら、銅のたが2本、中にお湯。&lt;br&gt;・平石の上に正立しており、接地の食い込みは1.5mm、支持面の高低差は1.06mm |
+| ⑤ | 背面〜側面の竹垣と、岩や竹垣に積もった雪 | できている | 建仁寺垣を背面・左・右の3面に立てました。&lt;br&gt;・割竹の立子（節の色帯つき）、押縁、黒いシュロ縄の結び、玉縁、親柱&lt;br&gt;・裏側にも押縁があります（`close_fence_back.png`）&lt;br&gt;積雪：&lt;br&gt;・玉縁、押縁、柱頭、岩（上を向いた面だけ）、灯籠の笠に積もらせています&lt;br&gt;・湯に面した岩の内側は、温泉の熱で雪が溶けた表現にしました |
+| ⑥ | 火袋が暖色に自己発光している石灯籠1基 | できている | 雪見灯籠です。&lt;br&gt;・3本の反った脚、六角の中台、火袋、反りのある六角の笠、蕨手、宝珠&lt;br&gt;・発光部 `Lantern_Firebox_Glow`：emissive #ff7e22、KHR_materials_emissive_strength 3.2（中立照明のトーンマップでも白飛びせず、橙色に光って見える強さに調整）&lt;br&gt;・笠と中台に雪が積もっています（`close_lantern.png`） |
+
+## 2. 空間整合性・接地（想定ミスへの対策）
+
+| 確認点 | 結果 | 根拠（`metrics.json`） |
+|---|---|---|
+| 柚子が浮いていない・めり込んでいない | OK | `yuzu_contact.min_sdf_mm = -2.31`（2.3mm だけ毛に沈む）、`gap_mm = 0` |
+| カピバラの浸かり深さが自然か | OK | 背中が水面の8mm 下、目が136mm 上、頭頂が193mm 上。体の頂点のうち水面下にあるのは64% |
+| お湯が濃すぎて胴体が隠れていないか | OK | 不透明度0.33の暗い青緑。上から見ても胴体の形が分かります（`studio_top.png`） |
+| カピバラが宙に浮いていないか | OK | `immersion.floor_contact_gap_mm = -1.9`（湯船の底に接地） |
+| 湯桶が浮いていない・倒れていない | OK | `bucket.embed_mm = 1.5`。平石の上面にレイキャストして置いています |
+| 灯籠が浮いていない・倒れていない | OK | 脚3本が雪面に30〜41mm 埋まっています（`lantern.feet_embed_mm`） |
+| 湯口・竹垣・立て札が浮いていない | OK | 湯口の根元は湯口石の中、竹垣の柱は土の中、立て札の柱は雪の中に50mm 埋めています |
+| Z-up → Y-up の軸変換ミス | OK | GLB を読み直して撮影しても正しく立っています。外接箱の Y が高さ（0〜1.015m） |
+
+## 3. 規格
+
+| 項目 | 規格 | 結果 |
+|---|---|---|
+| 形式 | glTF 2.0 バイナリ単一ファイル | `scene.glb`（2.67MB） |
+| 座標系 | Y-up、+Z が正面、台座底面の中心が原点 | OK（Blender の -Y 正面 → glTF の +Z 正面） |
+| 外寸 | 2.0m × 2.0m × 2.0m 以内 | 1.870 × 1.015 × 1.870m（X: ±0.935、Y: 0〜1.015、Z: ±0.935） |
+| ポリゴン数 | 10万三角形以下 | 97,733 三角形（gltf-validator の集計） |
+| ファイルサイズ | 20MB 以下 | 2.67MB |
+| 外部アセット・テクスチャ | 禁止 | 不使用（GLB 内に画像0枚。色はすべて頂点カラーとマテリアル係数） |
+| 生成方法 | プロシージャルのみ | Blender 5.1 のヘッドレス実行と numpy（`gen/*.py`） |
+| gltf-validator | — | エラー0・警告0・情報0・ヒント0 |
+| 使っている拡張 | — | KHR_materials_clearcoat / emissive_strength / specular / ior / sheen。必須（required）の拡張はないので、拡張に対応していないビューアでも表示できます |
+
+## 4. 添景（必須ではない追加要素）
+
+情景を伝えるために、次のものを足しています。
+
+- 湯気：3枚を交差させたリボンで、頂点アルファでふわっと消える
+- 首まわりの水際の泡と波紋：カピバラの実際の断面から輪郭を計算
+- 雪うさぎ（南天の実の目、葉の耳）
+- 赤い実の南天
+- 縁石の上の手ぬぐい（白地に藍の縞）
+- ♨マークの立て札（小屋根に雪）
+
+柚子は「1個」という条件があるので、湯に浮かべる柚子は足していません。
+</pre></details>
+<details><summary>viewer/README.md</summary><pre style="white-space:pre-wrap;word-break:break-word"># ビューア（index.html）のビルドと撮影
+- ビルド: ルートで `node viewer/build.mjs`（最新の scene.glb / metrics.json を埋め込んだ自己完結 index.html を出力。依存は /tmp/capy-work/viewer-build、無ければ自動で npm install。別ディレクトリからは `node &lt;root&gt;/viewer/build.mjs &lt;root&gt;`）
+- 撮影: `node viewer/shoot.mjs [--turntable N] [--ui]` → previews/web_*.png（1280x960、コンソールの error/warning も集計）、`--turntable N` は /tmp/capy-work/tt_web/frame_###.png
+</pre></details>
+</section>
+</body></html>

@@ -132,4 +132,282 @@ footer{max-width:1180px;margin:0 auto;padding:0 20px 40px;color:var(--sub);font-
 検証Pass。プラン×カラーの組み合わせ単位で在庫状態を管理し、価格はアニメーション付きで更新。タイマーは rAF+watchdog の本格実装で最重量。</div>
 <p><a href='https://github.com/sean-sunagaku/prac-bench/tree/main/results/2026-11-20/task-01-koku01-lp/opus' target='_blank' rel='noopener'>このモデルの全ファイルを GitHub で見る</a> ／ <a href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-01-koku01-lp/opus/RUN.md' target='_blank' rel='noopener'>RUN.md</a></p>
 </section>
-</main><footer>Prac-Bench 実施結果レポート（2026-11-20）／ 数値・判定・所見の出典：リポジトリ内 results/2026-11-20/comparison.md および各 RUN.md</footer></body></html>
+</main><footer>Prac-Bench 実施結果レポート（2026-11-20）／ 数値・判定・所見の出典：リポジトリ内 results/2026-11-20/comparison.md および各 RUN.md</footer><section><h2>テキスト成果物（全文）</h2><p>各モデルの文書系テキスト成果物と運営の実施記録（RUN.md）を全文収録する。コードやバイナリはリポジトリと outputs/ を参照。</p>
+<h3>neon</h3>
+<details><summary>RUN.md（運営の実施記録）</summary><pre style="white-space:pre-wrap;word-break:break-word"># RUN — task-01-koku01-lp / neon
+
+- 実施日: 2026-11-20（08:49:34–09:03:41 JST）
+- 実装時間: 14分07秒
+- 終了状態: 自然終了
+- トークン使用量: 取得不可（Antigravity CLI の会話記録にトークン内訳が残らない形式のため）
+- コスト推定: 取得不可（トークン不明のため）
+- 成果物ファイル数: 10（ランナー生成物・node_modules・支給 input を除く）
+
+## 主な成果物
+- app.js
+- assets/detail-macro.jpg
+- assets/finish-black.jpg
+- assets/finish-brass.jpg
+- assets/finish-silver.jpg
+- assets/hero-koku01.jpg
+- assets/lifestyle-desk.jpg
+- index.html
+- koku01-product-facts.md
+- styles.css
+
+## 検証結果
+検証Pass。rAF+setInterval+performance.now()のタイマー、選択に応じた価格再計算、在庫切れの disabled+aria 無効化を確認。指定4価格はすべて正確。
+</pre></details>
+<details><summary>koku01-product-facts.md</summary><pre style="white-space:pre-wrap;word-break:break-word"># 製品情報：KOKU-01
+
+- 製品：SOU DESIGN LAB の無画面デスクトップ集中タイマー＆環境音ダイヤル『KOKU-01』。回して時間を決め、天面を押して開始し、外周の24灯LEDリングが残り時間を示す。
+- 仕様：直径78mm×高さ26mm／210g／CNC削り出しアルミニウム筐体／36ステップ磁気ラチェットクリック機構／USB-C充電（最大30日稼働）／内蔵スピーカーの環境音モード（無音・雨音・ホワイトノイズ）。スマホアプリ連携は非対応。保証1年。
+- カラー：アルマイトシルバー（基本価格）／マットブラック（基本価格）／真鍮リミテッド（+¥3,000）。
+- 価格：先行予約早割 ¥14,800（税込・20%OFF、一般予定価格 ¥18,500）／専用フェルトデスクマット +¥2,400／2027年3月順次発送。
+
+（Prac-Bench 枠1の支給資料。作成日：2026-11-20）
+</pre></details>
+<h3>carbon</h3>
+<details><summary>RUN.md（運営の実施記録）</summary><pre style="white-space:pre-wrap;word-break:break-word"># RUN — task-01-koku01-lp / carbon
+
+- 実施日: 2026-11-20（08:49:34–09:08:55 JST）
+- 実装時間: 19分21秒
+- 終了状態: 自然終了
+- トークン使用量: 取得不可（Antigravity CLI の会話記録にトークン内訳が残らない形式のため）
+- コスト推定: 取得不可（トークン不明のため）
+- 成果物ファイル数: 7（ランナー生成物・node_modules・支給 input を除く）
+
+## 主な成果物
+- app.js
+- assets/hand-dial.jpg
+- assets/hero-desk.jpg
+- assets/three-finishes.jpg
+- index.html
+- koku01-product-facts.md
+- styles.css
+
+## 検証結果
+検証Pass。価格再計算と在庫切れ無効化を確認。ただし支給事実にない独自プラン「超早割 ¥13,875」と「ケーブル ¥1,800」を追加している（指定価格自体は正確）。
+</pre></details>
+<details><summary>koku01-product-facts.md</summary><pre style="white-space:pre-wrap;word-break:break-word"># 製品情報：KOKU-01
+
+- 製品：SOU DESIGN LAB の無画面デスクトップ集中タイマー＆環境音ダイヤル『KOKU-01』。回して時間を決め、天面を押して開始し、外周の24灯LEDリングが残り時間を示す。
+- 仕様：直径78mm×高さ26mm／210g／CNC削り出しアルミニウム筐体／36ステップ磁気ラチェットクリック機構／USB-C充電（最大30日稼働）／内蔵スピーカーの環境音モード（無音・雨音・ホワイトノイズ）。スマホアプリ連携は非対応。保証1年。
+- カラー：アルマイトシルバー（基本価格）／マットブラック（基本価格）／真鍮リミテッド（+¥3,000）。
+- 価格：先行予約早割 ¥14,800（税込・20%OFF、一般予定価格 ¥18,500）／専用フェルトデスクマット +¥2,400／2027年3月順次発送。
+
+（Prac-Bench 枠1の支給資料。作成日：2026-11-20）
+</pre></details>
+<h3>astra</h3>
+<details><summary>RUN.md（運営の実施記録）</summary><pre style="white-space:pre-wrap;word-break:break-word"># RUN — task-01-koku01-lp / astra
+
+- 実施日: 2026-11-20（11:52:20–12:04:00 JST）
+- 実装時間: 11分40秒
+- 終了状態: 自然終了
+- 試行回数: 2回（本記録は最終試行）
+- トークン使用量: 入力 6,256,895（うちキャッシュ 6,078,976） / 出力 61,837
+- コスト推定: $5.78（API単価前提による換算。単価の前提は ../comparison.md 参照。実際の課金形態とは異なる）
+- 成果物ファイル数: 12（ランナー生成物・node_modules・支給 input を除く）
+
+## 主な成果物
+- assets/fonts/OFL-Barlow-Condensed.txt
+- assets/fonts/barlow-condensed-bold.ttf
+- assets/fonts/barlow-condensed-extrabold.ttf
+- assets/koku-brass.webp
+- assets/koku-dial.webp
+- assets/koku-hero.webp
+- assets/koku-silver.webp
+- index.html
+- koku01-product-facts.md
+- reservation.js
+- styles.css
+- timer.js
+
+## 検証結果
+検証Pass。Date.now()+125ms tick の実カウントダウン、data-price 属性の合算、disabled 選択肢の自動切替。5件で最も軽量な構成。
+
+## 備考
+試行2回。1回目はプロンプトが未送信のまま残るハーネスの不具合で無効となり、記録は修正後の再実行分。
+</pre></details>
+<details><summary>koku01-product-facts.md</summary><pre style="white-space:pre-wrap;word-break:break-word"># 製品情報：KOKU-01
+
+- 製品：SOU DESIGN LAB の無画面デスクトップ集中タイマー＆環境音ダイヤル『KOKU-01』。回して時間を決め、天面を押して開始し、外周の24灯LEDリングが残り時間を示す。
+- 仕様：直径78mm×高さ26mm／210g／CNC削り出しアルミニウム筐体／36ステップ磁気ラチェットクリック機構／USB-C充電（最大30日稼働）／内蔵スピーカーの環境音モード（無音・雨音・ホワイトノイズ）。スマホアプリ連携は非対応。保証1年。
+- カラー：アルマイトシルバー（基本価格）／マットブラック（基本価格）／真鍮リミテッド（+¥3,000）。
+- 価格：先行予約早割 ¥14,800（税込・20%OFF、一般予定価格 ¥18,500）／専用フェルトデスクマット +¥2,400／2027年3月順次発送。
+
+（Prac-Bench 枠1の支給資料。作成日：2026-11-20）
+</pre></details>
+<details><summary>assets/fonts/OFL-Barlow-Condensed.txt</summary><pre style="white-space:pre-wrap;word-break:break-word">Copyright 2017 The Barlow Project Authors (https://github.com/jpt/barlow)
+
+This Font Software is licensed under the SIL Open Font License, Version 1.1.
+This license is copied below, and is also available with a FAQ at:
+http://scripts.sil.org/OFL
+
+
+-----------------------------------------------------------
+SIL OPEN FONT LICENSE Version 1.1 - 26 February 2007
+-----------------------------------------------------------
+
+PREAMBLE
+The goals of the Open Font License (OFL) are to stimulate worldwide
+development of collaborative font projects, to support the font creation
+efforts of academic and linguistic communities, and to provide a free and
+open framework in which fonts may be shared and improved in partnership
+with others.
+
+The OFL allows the licensed fonts to be used, studied, modified and
+redistributed freely as long as they are not sold by themselves. The
+fonts, including any derivative works, can be bundled, embedded, 
+redistributed and/or sold with any software provided that any reserved
+names are not used by derivative works. The fonts and derivatives,
+however, cannot be released under any other type of license. The
+requirement for fonts to remain under this license does not apply
+to any document created using the fonts or their derivatives.
+
+DEFINITIONS
+"Font Software" refers to the set of files released by the Copyright
+Holder(s) under this license and clearly marked as such. This may
+include source files, build scripts and documentation.
+
+"Reserved Font Name" refers to any names specified as such after the
+copyright statement(s).
+
+"Original Version" refers to the collection of Font Software components as
+distributed by the Copyright Holder(s).
+
+"Modified Version" refers to any derivative made by adding to, deleting,
+or substituting -- in part or in whole -- any of the components of the
+Original Version, by changing formats or by porting the Font Software to a
+new environment.
+
+"Author" refers to any designer, engineer, programmer, technical
+writer or other person who contributed to the Font Software.
+
+PERMISSION &amp; CONDITIONS
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of the Font Software, to use, study, copy, merge, embed, modify,
+redistribute, and sell modified and unmodified copies of the Font
+Software, subject to the following conditions:
+
+1) Neither the Font Software nor any of its individual components,
+in Original or Modified Versions, may be sold by itself.
+
+2) Original or Modified Versions of the Font Software may be bundled,
+redistributed and/or sold with any software, provided that each copy
+contains the above copyright notice and this license. These can be
+included either as stand-alone text files, human-readable headers or
+in the appropriate machine-readable metadata fields within text or
+binary files as long as those fields can be easily viewed by the user.
+
+3) No Modified Version of the Font Software may use the Reserved Font
+Name(s) unless explicit written permission is granted by the corresponding
+Copyright Holder. This restriction only applies to the primary font name as
+presented to the users.
+
+4) The name(s) of the Copyright Holder(s) or the Author(s) of the Font
+Software shall not be used to promote, endorse or advertise any
+Modified Version, except to acknowledge the contribution(s) of the
+Copyright Holder(s) and the Author(s) or with their explicit written
+permission.
+
+5) The Font Software, modified or unmodified, in part or in whole,
+must be distributed entirely under this license, and must not be
+distributed under any other license. The requirement for fonts to
+remain under this license does not apply to any document created
+using the Font Software.
+
+TERMINATION
+This license becomes null and void if any of the above conditions are
+not met.
+
+DISCLAIMER
+THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT
+OF COPYRIGHT, PATENT, TRADEMARK, OR OTHER RIGHT. IN NO EVENT SHALL THE
+COPYRIGHT HOLDER BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+INCLUDING ANY GENERAL, SPECIAL, INDIRECT, INCIDENTAL, OR CONSEQUENTIAL
+DAMAGES, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+FROM, OUT OF THE USE OR INABILITY TO USE THE FONT SOFTWARE OR FROM
+OTHER DEALINGS IN THE FONT SOFTWARE.
+</pre></details>
+<h3>sol</h3>
+<details><summary>RUN.md（運営の実施記録）</summary><pre style="white-space:pre-wrap;word-break:break-word"># RUN — task-01-koku01-lp / sol
+
+- 実施日: 2026-11-20（11:52:20–12:02:59 JST）
+- 実装時間: 10分39秒
+- 終了状態: 自然終了
+- 試行回数: 2回（本記録は最終試行）
+- トークン使用量: 入力 4,671,641（うちキャッシュ 4,382,464） / 出力 53,054
+- コスト推定: $5.23（API単価前提による換算。単価の前提は ../comparison.md 参照。実際の課金形態とは異なる）
+- 成果物ファイル数: 10（ランナー生成物・node_modules・支給 input を除く）
+
+## 主な成果物
+- app.js
+- assets/brass.webp
+- assets/dial.webp
+- assets/hero-mobile.webp
+- assets/hero.webp
+- assets/machined-detail.webp
+- assets/silver.webp
+- index.html
+- koku01-product-facts.md
+- styles.css
+
+## 検証結果
+検証Pass。PLANS 定数に早割14,800/一般18,500、加算3,000/2,400を明記し合計計算を確認。最小構成だが固定3点を充足。
+
+## 備考
+試行2回。1回目はプロンプトが未送信のまま残るハーネスの不具合で無効となり、記録は修正後の再実行分。
+</pre></details>
+<details><summary>koku01-product-facts.md</summary><pre style="white-space:pre-wrap;word-break:break-word"># 製品情報：KOKU-01
+
+- 製品：SOU DESIGN LAB の無画面デスクトップ集中タイマー＆環境音ダイヤル『KOKU-01』。回して時間を決め、天面を押して開始し、外周の24灯LEDリングが残り時間を示す。
+- 仕様：直径78mm×高さ26mm／210g／CNC削り出しアルミニウム筐体／36ステップ磁気ラチェットクリック機構／USB-C充電（最大30日稼働）／内蔵スピーカーの環境音モード（無音・雨音・ホワイトノイズ）。スマホアプリ連携は非対応。保証1年。
+- カラー：アルマイトシルバー（基本価格）／マットブラック（基本価格）／真鍮リミテッド（+¥3,000）。
+- 価格：先行予約早割 ¥14,800（税込・20%OFF、一般予定価格 ¥18,500）／専用フェルトデスクマット +¥2,400／2027年3月順次発送。
+
+（Prac-Bench 枠1の支給資料。作成日：2026-11-20）
+</pre></details>
+<h3>opus</h3>
+<details><summary>RUN.md（運営の実施記録）</summary><pre style="white-space:pre-wrap;word-break:break-word"># RUN — task-01-koku01-lp / opus
+
+- 実施日: 2026-11-20（08:49:34–10:20:29 JST）
+- 実装時間: 90分55秒
+- 終了状態: 自然終了
+- トークン使用量: 入力 1,244 / キャッシュ作成 2,638,320 / キャッシュ読込 158,477,502 / 出力 1,520,283
+- コスト推定: $401.22（API単価前提による換算。単価の前提は ../comparison.md 参照。実際の課金形態とは異なる）
+- 成果物ファイル数: 18（ランナー生成物・node_modules・支給 input を除く）
+
+## 主な成果物
+- RUN.md
+- _backup_orphan-run-0838/README.md
+- _backup_orphan-run-0838/assets/css/style.css
+- _backup_orphan-run-0838/assets/favicon.svg
+- _backup_orphan-run-0838/assets/js/audio.js
+- _backup_orphan-run-0838/assets/js/main.js
+- _backup_orphan-run-0838/assets/js/render.js
+- _backup_orphan-run-0838/assets/js/simulator.js
+- _backup_orphan-run-0838/assets/js/timer-demo.js
+- _backup_orphan-run-0838/index.html
+- assets/css/style.css
+- assets/js/configurator.js
+- assets/js/demo-timer.js
+- assets/js/main.js
+- assets/js/puck.js
+
+## 検証結果
+検証Pass。プラン×カラーの組み合わせ単位で在庫状態を管理し、価格はアニメーション付きで更新。タイマーは rAF+watchdog の本格実装で最重量。
+</pre></details>
+<details><summary>koku01-product-facts.md</summary><pre style="white-space:pre-wrap;word-break:break-word"># 製品情報：KOKU-01
+
+- 製品：SOU DESIGN LAB の無画面デスクトップ集中タイマー＆環境音ダイヤル『KOKU-01』。回して時間を決め、天面を押して開始し、外周の24灯LEDリングが残り時間を示す。
+- 仕様：直径78mm×高さ26mm／210g／CNC削り出しアルミニウム筐体／36ステップ磁気ラチェットクリック機構／USB-C充電（最大30日稼働）／内蔵スピーカーの環境音モード（無音・雨音・ホワイトノイズ）。スマホアプリ連携は非対応。保証1年。
+- カラー：アルマイトシルバー（基本価格）／マットブラック（基本価格）／真鍮リミテッド（+¥3,000）。
+- 価格：先行予約早割 ¥14,800（税込・20%OFF、一般予定価格 ¥18,500）／専用フェルトデスクマット +¥2,400／2027年3月順次発送。
+
+（Prac-Bench 枠1の支給資料。作成日：2026-11-20）
+</pre></details>
+</section>
+</body></html>

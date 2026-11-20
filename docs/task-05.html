@@ -148,4 +148,237 @@ footer{max-width:1180px;margin:0 auto;padding:0 20px 40px;color:var(--sub);font-
 検証Pass。単一HTML 141KB にシミュレーション内蔵。スライダー12本・ボタン54個と操作系が最多で、検証用スクリーンショットと調整ツール付き。</div>
 <p><a href='https://github.com/sean-sunagaku/prac-bench/tree/main/results/2026-11-20/task-05-traffic-explainer/opus' target='_blank' rel='noopener'>このモデルの全ファイルを GitHub で見る</a> ／ <a href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-05-traffic-explainer/opus/RUN.md' target='_blank' rel='noopener'>RUN.md</a></p>
 </section>
-</main><footer>Prac-Bench 実施結果レポート（2026-11-20）／ 数値・判定・所見の出典：リポジトリ内 results/2026-11-20/comparison.md および各 RUN.md</footer></body></html>
+</main><footer>Prac-Bench 実施結果レポート（2026-11-20）／ 数値・判定・所見の出典：リポジトリ内 results/2026-11-20/comparison.md および各 RUN.md</footer><section><h2>テキスト成果物（全文）</h2><p>各モデルの文書系テキスト成果物と運営の実施記録（RUN.md）を全文収録する。コードやバイナリはリポジトリと outputs/ を参照。</p>
+<h3>neon</h3>
+<details><summary>RUN.md（運営の実施記録）</summary><pre style="white-space:pre-wrap;word-break:break-word"># RUN — task-05-traffic-explainer / neon
+
+- 実施日: 2026-11-20（12:04:07–12:23:56 JST）
+- 実装時間: 19分49秒
+- 終了状態: 自然終了
+- 試行回数: 2回（本記録は最終試行）
+- トークン使用量: 取得不可（Antigravity CLI の会話記録にトークン内訳が残らない形式のため）
+- コスト推定: 取得不可（トークン不明のため）
+- 成果物ファイル数: 4（ランナー生成物・node_modules・支給 input を除く）
+
+## 主な成果物
+- app.js
+- index.html
+- simulation.js
+- styles.css
+
+## 検証結果
+検証Pass。Canvas+rAF のシミュレーション、スライダー4本・ボタン24個、自然渋滞とサグの解説あり。
+
+## 備考
+試行2回（1回目は当日の初回バッチ分）。本記録は再実行分。
+</pre></details>
+<h3>carbon</h3>
+<details><summary>RUN.md（運営の実施記録）</summary><pre style="white-space:pre-wrap;word-break:break-word"># RUN — task-05-traffic-explainer / carbon
+
+- 実施日: 2026-11-20（12:06:52–12:25:44 JST）
+- 実装時間: 18分52秒
+- 終了状態: 自然終了
+- 試行回数: 2回（本記録は最終試行）
+- トークン使用量: 取得不可（Antigravity CLI の会話記録にトークン内訳が残らない形式のため）
+- コスト推定: 取得不可（トークン不明のため）
+- 成果物ファイル数: 3（ランナー生成物・node_modules・支給 input を除く）
+
+## 主な成果物
+- index.html
+- simulation.js
+- styles.css
+
+## 検証結果
+検証Pass。simulation.js 79.7KB が中核。スライダー4本・ボタン28個、ファントム渋滞への言及あり。
+
+## 備考
+試行2回（1回目は当日の初回バッチ分）。本記録は再実行分。
+</pre></details>
+<h3>astra</h3>
+<details><summary>RUN.md（運営の実施記録）</summary><pre style="white-space:pre-wrap;word-break:break-word"># RUN — task-05-traffic-explainer / astra
+
+- 実施日: 2026-11-20（12:03:07–12:08:43 JST）
+- 実装時間: 5分36秒
+- 終了状態: 自然終了
+- 試行回数: 2回（本記録は最終試行）
+- トークン使用量: 入力 4,742,612（うちキャッシュ 4,575,360） / 出力 71,433
+- コスト推定: $5.27（API単価前提による換算。単価の前提は ../comparison.md 参照。実際の課金形態とは異なる）
+- 成果物ファイル数: 15（ランナー生成物・node_modules・支給 input を除く）
+
+## 主な成果物
+- app.js
+- assets/car-coral.webp
+- assets/car-gold.webp
+- assets/car-teal.webp
+- assets/circuit.webp
+- assets/dm-sans-license.txt
+- assets/dm-sans.woff2
+- assets/flow-lines.webp
+- assets/flow-mark.png
+- build-standalone.py
+- flow-lab.html
+- index.html
+- styles.css
+- traffic-model.js
+- visualization.js
+
+## 検証結果
+検証Pass。全長420mの周回路で車間時間・反応遅れを扱う追従モデルが本格的。ボタン操作中心（スライダーなし）。
+
+## 備考
+試行2回（1回目は当日の初回バッチ分）。本記録は再実行分。
+</pre></details>
+<details><summary>assets/dm-sans-license.txt</summary><pre style="white-space:pre-wrap;word-break:break-word">Copyright 2014 The DM Sans Project Authors (https://github.com/googlefonts/dm-fonts)
+
+This Font Software is licensed under the SIL Open Font License, Version 1.1.
+This license is copied below, and is also available with a FAQ at:
+https://scripts.sil.org/OFL
+
+
+-----------------------------------------------------------
+SIL OPEN FONT LICENSE Version 1.1 - 26 February 2007
+-----------------------------------------------------------
+
+PREAMBLE
+The goals of the Open Font License (OFL) are to stimulate worldwide
+development of collaborative font projects, to support the font creation
+efforts of academic and linguistic communities, and to provide a free and
+open framework in which fonts may be shared and improved in partnership
+with others.
+
+The OFL allows the licensed fonts to be used, studied, modified and
+redistributed freely as long as they are not sold by themselves. The
+fonts, including any derivative works, can be bundled, embedded, 
+redistributed and/or sold with any software provided that any reserved
+names are not used by derivative works. The fonts and derivatives,
+however, cannot be released under any other type of license. The
+requirement for fonts to remain under this license does not apply
+to any document created using the fonts or their derivatives.
+
+DEFINITIONS
+"Font Software" refers to the set of files released by the Copyright
+Holder(s) under this license and clearly marked as such. This may
+include source files, build scripts and documentation.
+
+"Reserved Font Name" refers to any names specified as such after the
+copyright statement(s).
+
+"Original Version" refers to the collection of Font Software components as
+distributed by the Copyright Holder(s).
+
+"Modified Version" refers to any derivative made by adding to, deleting,
+or substituting -- in part or in whole -- any of the components of the
+Original Version, by changing formats or by porting the Font Software to a
+new environment.
+
+"Author" refers to any designer, engineer, programmer, technical
+writer or other person who contributed to the Font Software.
+
+PERMISSION &amp; CONDITIONS
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of the Font Software, to use, study, copy, merge, embed, modify,
+redistribute, and sell modified and unmodified copies of the Font
+Software, subject to the following conditions:
+
+1) Neither the Font Software nor any of its individual components,
+in Original or Modified Versions, may be sold by itself.
+
+2) Original or Modified Versions of the Font Software may be bundled,
+redistributed and/or sold with any software, provided that each copy
+contains the above copyright notice and this license. These can be
+included either as stand-alone text files, human-readable headers or
+in the appropriate machine-readable metadata fields within text or
+binary files as long as those fields can be easily viewed by the user.
+
+3) No Modified Version of the Font Software may use the Reserved Font
+Name(s) unless explicit written permission is granted by the corresponding
+Copyright Holder. This restriction only applies to the primary font name as
+presented to the users.
+
+4) The name(s) of the Copyright Holder(s) or the Author(s) of the Font
+Software shall not be used to promote, endorse or advertise any
+Modified Version, except to acknowledge the contribution(s) of the
+Copyright Holder(s) and the Author(s) or with their explicit written
+permission.
+
+5) The Font Software, modified or unmodified, in part or in whole,
+must be distributed entirely under this license, and must not be
+distributed under any other license. The requirement for fonts to
+remain under this license does not apply to any document created
+using the Font Software.
+
+TERMINATION
+This license becomes null and void if any of the above conditions are
+not met.
+
+DISCLAIMER
+THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT
+OF COPYRIGHT, PATENT, TRADEMARK, OR OTHER RIGHT. IN NO EVENT SHALL THE
+COPYRIGHT HOLDER BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+INCLUDING ANY GENERAL, SPECIAL, INDIRECT, INCIDENTAL, OR CONSEQUENTIAL
+DAMAGES, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+FROM, OUT OF THE USE OR INABILITY TO USE THE FONT SOFTWARE OR FROM
+OTHER DEALINGS IN THE FONT SOFTWARE.
+</pre></details>
+<h3>sol</h3>
+<details><summary>RUN.md（運営の実施記録）</summary><pre style="white-space:pre-wrap;word-break:break-word"># RUN — task-05-traffic-explainer / sol
+
+- 実施日: 2026-11-20（12:03:07–12:06:43 JST）
+- 実装時間: 3分36秒
+- 終了状態: 自然終了
+- 試行回数: 2回（本記録は最終試行）
+- トークン使用量: 入力 3,991,977（うちキャッシュ 3,826,560） / 出力 61,320
+- コスト推定: $4.58（API単価前提による換算。単価の前提は ../comparison.md 参照。実際の課金形態とは異なる）
+- 成果物ファイル数: 9（ランナー生成物・node_modules・支給 input を除く）
+
+## 主な成果物
+- RUN.md
+- assets/highway.webp
+- build.mjs
+- drawing.js
+- explainer.js
+- index.html
+- styles.css
+- traffic-explainer.html
+- traffic.js
+
+## 検証結果
+検証Pass。Canvas 描画+rAF、スライダー2本。自作 RUN.md 付き。
+
+## 備考
+試行2回（1回目は当日の初回バッチ分）。本記録は再実行分。
+</pre></details>
+<h3>opus</h3>
+<details><summary>RUN.md（運営の実施記録）</summary><pre style="white-space:pre-wrap;word-break:break-word"># RUN — task-05-traffic-explainer / opus
+
+- 実施日: 2026-11-20（12:08:52–13:52:12 JST）
+- 実装時間: 103分20秒
+- 終了状態: 自然終了
+- トークン使用量: 入力 1,528 / キャッシュ作成 2,467,083 / キャッシュ読込 181,686,933 / 出力 1,016,684
+- コスト推定: $395.06（API単価前提による換算。単価の前提は ../comparison.md 参照。実際の課金形態とは異なる）
+- 成果物ファイル数: 67（ランナー生成物・node_modules・支給 input を除く）
+
+## 主な成果物
+- RUN.md
+- _backup_orphan-run-0838/README.md
+- _backup_orphan-run-0838/RUN.md
+- _backup_orphan-run-0838/dev/build.js
+- _backup_orphan-run-0838/dev/check.js
+- _backup_orphan-run-0838/dev/engine.js
+- _backup_orphan-run-0838/dev/shots/01-hero.png
+- _backup_orphan-run-0838/dev/shots/02-hero.png
+- _backup_orphan-run-0838/dev/shots/03-hero-jam.png
+- _backup_orphan-run-0838/dev/shots/03a-hero-braking.png
+- _backup_orphan-run-0838/dev/shots/03b-hero-jam.png
+- _backup_orphan-run-0838/dev/shots/10-fig-chain.png
+- _backup_orphan-run-0838/dev/shots/10-fig-density.png
+- _backup_orphan-run-0838/dev/shots/10-fig-fix.png
+- _backup_orphan-run-0838/dev/shots/10-fig-wave.png
+
+## 検証結果
+検証Pass。単一HTML 141KB にシミュレーション内蔵。スライダー12本・ボタン54個と操作系が最多で、検証用スクリーンショットと調整ツール付き。
+</pre></details>
+</section>
+</body></html>

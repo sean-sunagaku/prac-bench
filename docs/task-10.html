@@ -156,4 +156,1393 @@ footer{max-width:1180px;margin:0 auto;padding:0 20px 40px;color:var(--sub);font-
 チェックリスト全項目を充足。独立検証レポート（verify_report.json）付きで 104分かけて実施。</div>
 <p><a href='https://github.com/sean-sunagaku/prac-bench/tree/main/results/2026-11-20/task-10-girl-3d/opus' target='_blank' rel='noopener'>このモデルの全ファイルを GitHub で見る</a> ／ <a href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-10-girl-3d/opus/RUN.md' target='_blank' rel='noopener'>RUN.md</a></p>
 </section>
-</main><footer>Prac-Bench 実施結果レポート（2026-11-20）／ 数値・判定・所見の出典：リポジトリ内 results/2026-11-20/comparison.md および各 RUN.md</footer></body></html>
+</main><footer>Prac-Bench 実施結果レポート（2026-11-20）／ 数値・判定・所見の出典：リポジトリ内 results/2026-11-20/comparison.md および各 RUN.md</footer><section><h2>テキスト成果物（全文）</h2><p>各モデルの文書系テキスト成果物と運営の実施記録（RUN.md）を全文収録する。コードやバイナリはリポジトリと outputs/ を参照。</p>
+<h3>neon</h3>
+<details><summary>RUN.md（運営の実施記録）</summary><pre style="white-space:pre-wrap;word-break:break-word"># RUN — task-10-girl-3d / neon
+
+- 実施日: 2026-11-20（13:52:15–14:22:21 JST）
+- 実装時間: 30分06秒
+- 終了状態: agy の30分印刷タイムアウトで打ち切り（成果物は打ち切り時点のもの）
+- トークン使用量: 取得不可（Antigravity CLI の会話記録にトークン内訳が残らない形式のため）
+- コスト推定: 取得不可（トークン不明のため）
+- 成果物ファイル数: 30（ランナー生成物・node_modules・支給 input を除く）
+
+## 主な成果物
+- build.py
+- character.blend
+- character.blend1
+- hair_gen.py
+- materials.py
+- mesh_sculpt.py
+- renders/beauty.png
+- scene_setup.py
+- scratch/preview/back.png
+- scratch/preview/beauty.png
+- scratch/preview/front.png
+- scratch/preview/side.png
+- scratch/preview/three-quarter.png
+- scratch/testA.png
+- scratch/testB.png
+
+## 検証結果
+部分的。build.py と character.blend はあるが、レンダーは beauty（960×1040）のみで4方向が欠落、README と scene-report.json もない（30分打ち切り時点の状態）。
+</pre></details>
+<h3>carbon</h3>
+<details><summary>RUN.md（運営の実施記録）</summary><pre style="white-space:pre-wrap;word-break:break-word"># RUN — task-10-girl-3d / carbon
+
+- 実施日: 2026-11-20（13:56:15–14:26:20 JST）
+- 実装時間: 30分05秒
+- 終了状態: agy の30分印刷タイムアウトで打ち切り（成果物は打ち切り時点のもの）
+- トークン使用量: 取得不可（Antigravity CLI の会話記録にトークン内訳が残らない形式のため）
+- コスト推定: 取得不可（トークン不明のため）
+- 成果物ファイル数: 20（ランナー生成物・node_modules・支給 input を除く）
+
+## 主な成果物
+- build.py
+- cafe_scene.py
+- character.blend
+- character.blend1
+- character_anatomy.py
+- character_hair.py
+- character_materials.py
+- character_sweater.py
+- renders_preview/back.png
+- renders_preview/beauty.png
+- renders_preview/front.png
+- renders_preview/side.png
+- renders_preview/three-quarter.png
+- textures/Iris_ChestnutBrown_1K.png
+- textures/Skin_BaseColor_2K.png
+
+## 検証結果
+最も不足。build.py と character.blend のみで、レンダーは0枚、README・scene-report.json もない（30分打ち切り時点の状態）。
+</pre></details>
+<h3>astra</h3>
+<details><summary>RUN.md（運営の実施記録）</summary><pre style="white-space:pre-wrap;word-break:break-word"># RUN — task-10-girl-3d / astra
+
+- 実施日: 2026-11-20（13:21:43–13:41:22 JST）
+- 実装時間: 19分39秒
+- 終了状態: 自然終了
+- トークン使用量: 入力 19,608,243（うちキャッシュ 19,193,728） / 出力 127,833
+- コスト推定: $15.50（API単価前提による換算。単価の前提は ../comparison.md 参照。実際の課金形態とは異なる）
+- 成果物ファイル数: 30（ランナー生成物・node_modules・支給 input を除く）
+
+## 主な成果物
+- README.md
+- atelier.py
+- build.py
+- character.blend
+- groom.py
+- portrait_surface.py
+- render.py
+- renders/back.png
+- renders/beauty.png
+- renders/front.png
+- renders/side.png
+- renders/three-quarter.png
+- scene-report.json
+- studio.py
+- wardrobe.py
+
+## 検証結果
+チェックリスト全項目を充足（build.py / character.blend / レンダー5枚すべて寸法一致 / README / 有効な scene-report.json）。約20分で完了。
+</pre></details>
+<details><summary>README.md</summary><pre style="white-space:pre-wrap;word-break:break-word"># Window seat
+
+An editable upper-body portrait in Blender 5.1.1. Open `character.blend` for the posed character, café, lighting and beauty camera. The second scene, **Turntable | neutral studio**, links the same character and lights. Its four orthographic cameras show the complete bust, including the hands.
+
+## Reference
+
+I actually saw the decoded 1205 × 1306 photograph in `input/reference.png` before modeling. The rising eye line, off-center part, long wave across the viewer’s left shoulder, glimpse of the opposite ear and sleeves extending into the foreground guided the composition. I read the supplied environment and asset license. The photograph is absent from the Blender file. All seven image textures in the scene come from numerical pigment or yarn patterns in the build scripts.
+
+## Rebuild and render
+
+Run these commands from this directory on the supplied Mac. Keep the supplied inputs and the helper modules alongside `build.py`. The first command constructs and saves the scene. The second starts a fresh Blender process, reopens the saved file, renders the five PNGs and measures the geometry for `scene-report.json`.
+
+```sh
+BLENDER=/Applications/Blender.app/Contents/MacOS/Blender
+"$BLENDER" --background --factory-startup --threads 3 --python build.py
+"$BLENDER" --background character.blend --threads 3 --python-exit-code 1 --python render.py
+```
+
+For a quick inspection, the following command writes six-sample renders at 43 percent resolution into `work/`. Any subset of the five view names works. The final images use Cycles on the CPU, 32 samples per pixel and CPU OpenImageDenoise. Each PNG comes directly from its Blender camera with AgX color management.
+
+```sh
+"$BLENDER" --background character.blend --threads 3 --python render.py -- --preview beauty front three-quarter side back
+```
+
+## Editing the portrait
+
+- **Face and neck.** The continuous MakeHuman surface carries the lids, nostrils, lips, ears and neck. Two shape keys reshape the cheeks, bridge, jaw and mouth corners and produce the head tilt. The skin shader combines a packed complexion chart, pore relief, localized sheen and subsurface scattering. The lip border follows the original mesh coordinates.
+- **Eyes and expression.** The eyelids enclose ellipsoidal globes with recessed brown irises, pupils, convex corneas and modeled tear ducts. Separate native curves follow the upper and lower lid margins and the brows. The highlights come from scene lights.
+- **Hair.** The chestnut groom combines a fitted root bed, parted crown, overlapping shaded locks, native strand curves, a swept fringe and flyaways. Posterior guides drape over the evaluated sweater. The shoulder layers follow their own S-shaped paths. Select the named curve objects in collection 03 to edit the strands.
+- **Sweater and arms.** A single patterned mesh joins the body, set-in sleeves, collar, cuffs and folded hem. Its cross sections model the fabric ease and compression folds. The repeating charts describe interlocking yarn loops and their relief. The collar also has raised wool curves, and the garment has a short fiber nap.
+- **Café.** The window, potted ficus, chair, oak shelves, dishes and glass jars are modeled objects. Camera depth of field softens the background. The character materials, generated charts, collections, cameras and lights are stored in the blend.
+
+The eye and hair objects occupy the final posed coordinates. A new head pose requires moving those objects along with the head surface.
+
+## Self-review
+
+The head tilt, over-the-shoulder chestnut wave, closed smile and pink sweater carry the reference pose and palette. The skin is smoother and the crown and descending waves form more regular groups than in the photograph. The resemblance is approximate. The single view leaves the cranium in depth, ear profile, rear hair, sweater back, sleeve construction, torso and hands to inference. The lower body is outside the asset.
+
+I inspected small beauty and turntable renders and a larger face crop. I adjusted the eye reflections, fringe, ear exposure, hair over the shoulders and camera framing from those renders. At full size I also checked the neckline and fitted the cuff openings to the posed wrist sections.
+
+## Base mesh attribution
+
+MakeHuman hm08 is a CC0 asset. The source header credits Data Collection AB, Joel Palmius and Jonas Hauquier. I used the supplied cropped upper-body topology for the face and neck, and the supplied original body topology for the portions of the hands emerging from the cuffs. The garment, hair, optics, surface charts and café were constructed for this portrait. The common input is pinned to commit `a8bc2d54ff0ac92e78ff71431b1023eda42bf482`. [Supplied asset license](input/ASSET-LICENSE.md) · [Pinned MakeHuman source](https://raw.githubusercontent.com/makehumancommunity/makehuman/a8bc2d54ff0ac92e78ff71431b1023eda42bf482/makehuman/data/3dobjs/base.obj)
+</pre></details>
+<details><summary>scene-report.json</summary><pre style="white-space:pre-wrap;word-break:break-word">{
+  "blender_version": "5.1.1",
+  "blender_build": "b70da489d7f4",
+  "render_engine": "CYCLES",
+  "render_device": "CPU",
+  "blender_threads": 3,
+  "max_samples": 32,
+  "adaptive_sampling": false,
+  "denoising": "OpenImageDenoise, CPU",
+  "color_management": {
+    "transform": "AgX",
+    "look": "AgX - Medium High Contrast",
+    "exposure": -0.47999998927116394
+  },
+  "compositor_enabled": false,
+  "reopened_file": "character.blend",
+  "important_objects": [
+    "Portrait | continuous sculpted face, ears and neck",
+    "Hand R | relaxed reach from cuff",
+    "Hand L | relaxed reach from cuff",
+    "Eye R | globe, recessed iris and pupil",
+    "Eye R | convex corneal surface",
+    "R | medial tear duct and plica",
+    "R | upper lash line",
+    "R | tear meniscus",
+    "Eye L | globe, recessed iris and pupil",
+    "Eye L | convex corneal surface",
+    "L | medial tear duct and plica",
+    "L | upper lash line",
+    "L | tear meniscus",
+    "Upper eyelashes | individually curled",
+    "Lower eyelashes | individually tapered",
+    "Eyebrows | directional hairs",
+    "Narrow scalp part | asymmetric root line",
+    "Scalp | fitted root bed and temple hairline",
+    "Temple hairline | emerging roots and loose fine groups",
+    "Right bank | layered underlocks",
+    "Right | long wavy chestnut strands",
+    "Right | fine halo and flyaways",
+    "Left bank | layered underlocks",
+    "Left | long wavy chestnut strands",
+    "Left | fine halo and flyaways",
+    "Back hair | fibers following the occipital flow",
+    "Crown | scattered roots and short crossing hairs",
+    "Fringe | soft tapered wisps",
+    "Light bangs | fine swept forehead strands",
+    "Over the shoulder | graduated S-wave underlocks",
+    "Face-framing layers | shoulder waves and tucked-ear wisps",
+    "Loose temple layers | fibers draped over the shoulder",
+    "Sweater | continuous set-in sleeves, ribbed crew neck and cuffs",
+    "Crew neck | individual raised rib wales",
+    "Sweater | fine wool nap",
+    "Beauty | window-seat selfie",
+    "Front | 000°",
+    "Three-quarter | 045°",
+    "Side | 090°",
+    "Back | 180°"
+  ],
+  "packed_generated_textures": [
+    {
+      "name": "Complexion • original pigment field",
+      "size": [
+        1152,
+        1536
+      ],
+      "packed": true,
+      "description": "Parametric skin pigment, local blush, freckles and lip tint"
+    },
+    {
+      "name": "Iris • radial amber stroma",
+      "size": [
+        512,
+        512
+      ],
+      "packed": true,
+      "description": "Polar amber stromal fibers, collarette and outer limbal rim"
+    },
+    {
+      "name": "Rib • dyed wool ply",
+      "size": [
+        448,
+        448
+      ],
+      "packed": true,
+      "description": "Alternating raised and recessed columns of twisted wool"
+    },
+    {
+      "name": "Rib • interlocking yarn relief",
+      "size": [
+        448,
+        448
+      ],
+      "packed": true,
+      "description": "Alternating raised and recessed columns of twisted wool"
+    },
+    {
+      "name": "Stockinette • dyed wool ply",
+      "size": [
+        448,
+        448
+      ],
+      "packed": true,
+      "description": "Periodic field of overlapping four-column, six-course yarn loops"
+    },
+    {
+      "name": "Stockinette • interlocking yarn relief",
+      "size": [
+        448,
+        448
+      ],
+      "packed": true,
+      "description": "Periodic field of overlapping four-column, six-course yarn loops"
+    },
+    {
+      "name": "Vermilion • painted border",
+      "size": [
+        1152,
+        1536
+      ],
+      "packed": true,
+      "description": "Soft mask of the anatomical lip boundary"
+    }
+  ],
+  "rendered_files": [
+    "renders/beauty.png",
+    "renders/front.png",
+    "renders/three-quarter.png",
+    "renders/side.png",
+    "renders/back.png"
+  ],
+  "limitations": [
+    "Single frontal reference. Cranium, ears in depth, neck, hands, garment cut and rear hairstyle are inferred.",
+    "Facial proportions, iris pigmentation and smile are sculpted approximations. The skin and lip transitions are smoother than the photograph.",
+    "Hair is a fixed groom with native curves over supporting locks. The crown and long waves group into more regular sections than real hair.",
+    "Wool is a modeled garment with tiled yarn color and relief. Individual sweater stitches are shaded.",
+    "No production rig, cloth simulation or lower body. Head shape keys and separate posed eyes, hair and garments require coordinated edits for a new pose.",
+    "Café and lighting are reconstructed suggestions."
+  ],
+  "beauty_scene_evaluated_mesh_vertices": 295694,
+  "beauty_scene_evaluated_mesh_faces": 283828,
+  "beauty_scene_mesh_vertices_plus_native_curve_keys": 907089,
+  "character_bounds_m": {
+    "min_xyz": [
+      -0.245226,
+      -0.601184,
+      1.048219
+    ],
+    "max_xyz": [
+      0.254094,
+      0.14209,
+      1.661007
+    ],
+    "measurement": "Evaluated surfaces and native curve centerlines, world space."
+  },
+  "base_mesh_vertices": 91321,
+  "base_mesh_faces": 81961,
+  "evaluated_mesh_vertices": 277191,
+  "evaluated_mesh_faces": 267576,
+  "native_curve_strands": 20553,
+  "native_curve_control_points": 611395,
+  "mesh_vertices_plus_native_curve_keys": 888586,
+  "geometry_by_collection": {
+    "01  Face, neck and hands": {
+      "base_mesh_vertices": 7818,
+      "evaluated_mesh_vertices": 124383,
+      "native_curve_control_points": 0
+    },
+    "02  Eyes and fine facial hair": {
+      "base_mesh_vertices": 5816,
+      "evaluated_mesh_vertices": 5816,
+      "native_curve_control_points": 5768
+    },
+    "03  Chestnut hair": {
+      "base_mesh_vertices": 54449,
+      "evaluated_mesh_vertices": 54449,
+      "native_curve_control_points": 593265
+    },
+    "04  Rose knitwear": {
+      "base_mesh_vertices": 23238,
+      "evaluated_mesh_vertices": 92543,
+      "native_curve_control_points": 12362
+    }
+  },
+  "render_details": {
+    "beauty": {
+      "filename": "renders/beauty.png",
+      "width": 960,
+      "height": 1040,
+      "camera": "Beauty | window-seat selfie",
+      "scene": "Window seat | Portrait",
+      "sha256": "91bbbc2459b5e7396b97932129ade444d9c8c6d1d9dfbaa2459d2f47ad1c52a4"
+    },
+    "front": {
+      "filename": "renders/front.png",
+      "width": 768,
+      "height": 768,
+      "camera": "Front | 000°",
+      "scene": "Turntable | neutral studio",
+      "sha256": "66bbddc1f73656439e513e2bab48ef18f92b0b6af0d9a7c9df06018c620eff47"
+    },
+    "three-quarter": {
+      "filename": "renders/three-quarter.png",
+      "width": 768,
+      "height": 768,
+      "camera": "Three-quarter | 045°",
+      "scene": "Turntable | neutral studio",
+      "sha256": "51b1955573aa70875a7f6d0e548e4611c5f6926a1f2c7d9ec60160a83502975e"
+    },
+    "side": {
+      "filename": "renders/side.png",
+      "width": 768,
+      "height": 768,
+      "camera": "Side | 090°",
+      "scene": "Turntable | neutral studio",
+      "sha256": "6683cc0dd141316a13c7169cfd5d49830a859f4d489cf67ed7a5a0dd147ec1a0"
+    },
+    "back": {
+      "filename": "renders/back.png",
+      "width": 768,
+      "height": 768,
+      "camera": "Back | 180°",
+      "scene": "Turntable | neutral studio",
+      "sha256": "54e1dfd2822333361633db327996b296a56746d5e9b6aa6942cbc85d7aef1763"
+    }
+  },
+  "reference_access": {
+    "decoded_and_visually_inspected": true,
+    "width": 1205,
+    "height": 1306,
+    "used_by_scene": false
+  },
+  "base_asset": {
+    "project": "MakeHuman hm08",
+    "license": "CC0",
+    "prepared": "input/upper-body.obj",
+    "hand_topology_source": "input/base.obj",
+    "source_sha256": "8e761e6624b8f54536409135d1636da63b32486a90d4897f84e121d144f6fb4c"
+  },
+  "curve_shader_tessellation_vertices": null,
+  "largest_packed_image_dimension_px": 1536,
+  "character_model_in_diagnostic_scenes": "Both scenes link the same four character collections and lights."
+}
+</pre></details>
+<h3>sol</h3>
+<details><summary>RUN.md（運営の実施記録）</summary><pre style="white-space:pre-wrap;word-break:break-word"># RUN — task-10-girl-3d / sol
+
+- 実施日: 2026-11-20（13:41:29–13:56:07 JST）
+- 実装時間: 14分38秒
+- 終了状態: 自然終了
+- トークン使用量: 入力 12,118,678（うちキャッシュ 11,770,496） / 出力 102,170
+- コスト推定: $10.69（API単価前提による換算。単価の前提は ../comparison.md 参照。実際の課金形態とは異なる）
+- 成果物ファイル数: 16（ランナー生成物・node_modules・支給 input を除く）
+
+## 主な成果物
+- README.md
+- build.py
+- character.blend
+- groom.py
+- portrait_core.py
+- portrait_face.py
+- render_scene.py
+- renders/back.png
+- renders/beauty.png
+- renders/front.png
+- renders/side.png
+- renders/three-quarter.png
+- scene-report.json
+- stage.py
+- verify_scene.py
+
+## 検証結果
+チェックリスト全項目を充足（レンダー5枚すべて寸法一致、report は有効な JSON）。約15分で完了。
+</pre></details>
+<details><summary>README.md</summary><pre style="white-space:pre-wrap;word-break:break-word"># Window seat
+
+Open [character.blend](character.blend) in Blender 5.1.1. It opens on the selfie camera. The **01 • PORTRAIT** collection contains the editable skin, eyes, groom, sweater and hands. The four turntable cameras and both lighting setups are saved in the same file.
+
+## Rebuild and render
+
+Run these commands in this directory. The build saves the scene before a separate Blender process opens it and writes the renders.
+
+```sh
+BLENDER_BIN=/Applications/Blender.app/Contents/MacOS/Blender
+"$BLENDER_BIN" --background --factory-startup --threads 3 --python build.py
+"$BLENDER_BIN" --background --factory-startup --threads 3 character.blend --python render_scene.py
+"$BLENDER_BIN" --background --factory-startup --threads 3 character.blend --python verify_scene.py
+```
+
+Append `-- --preview beauty side` to the render command for half-resolution previews in `.work/`. With no arguments, the script writes the 960 × 1040 beauty render and the four 768 × 768 diagnostics. The diagnostic azimuths are 0°, 45°, 90° and 180° around +Z from the character's −Y front. All five use the saved character geometry and materials. The turntable uses separate studio lighting and a plain sweep. The PNGs are direct Cycles CPU renders with a 32-sample maximum, adaptive sampling, and CPU denoising.
+
+## Reference and construction
+
+I viewed the decoded 1205 × 1306 photograph with an image-reading tool before building. The image guided the tilt, expression, eye color, sweeping bangs, chestnut waves, rose crew neck, forward sleeves and window-lit composition. The photograph stays in `input/`. The scene uses three packed, procedurally generated image maps and editable geometry and shader nodes.
+
+- The head and neck are a continuous sculpted hm08 cage with subdivision, integrated lids and lips, soft tissue scatter, and local pigment and roughness variation. Curved iris surfaces, clear corneal caps, a softly tinted sclera, and individually laid brow and lash curves form the eyes.
+- The groom uses fitted scalp and styling meshes with layered native strand curves. Flow varies across the part, fringe, shoulder drape and back. The sweater has joined torso and sleeve topology, patterned knit relief, and ribbed geometry at the collar, cuffs and hem.
+- Physical lights, a window, plants, timber furniture and shelving form the cafe. Depth of field softens the foreground sleeve and background furnishings.
+
+## Self-review
+
+I inspected successive Blender previews at the selfie, front, oblique, side and rear angles. I adjusted the overly pale initial hair, refined the eye shading, seated the collar and cuffs, softened the hair ends, and raised the camera-left shoulder and forward sleeves. The result captures the color palette, pose, expression and silhouette as a hand-authored portrait. The skin is smoother than the photograph, the hair groups are more orderly, and the facial likeness is approximate. The profile, back of the head, hair drape behind the shoulders, covered clothing and off-frame hands are inferred from the single view. The head tilt and reach are baked into editable meshes and curves.
+
+The sculpt and hands adapt MakeHuman's **hm08** CC0 base mesh at commit `a8bc2d54ff0ac92e78ff71431b1023eda42bf482`. The supplied crop and coordinate conversion are documented with the asset. [License notes](input/ASSET-LICENSE.md) · [CC0 source OBJ](https://raw.githubusercontent.com/makehumancommunity/makehuman/a8bc2d54ff0ac92e78ff71431b1023eda42bf482/makehuman/data/3dobjs/base.obj)
+
+[Beauty](renders/beauty.png) · [Front](renders/front.png) · [Three-quarter](renders/three-quarter.png) · [Side](renders/side.png) · [Back](renders/back.png) · [Scene report](scene-report.json)
+</pre></details>
+<details><summary>scene-report.json</summary><pre style="white-space:pre-wrap;word-break:break-word">{
+  "title": "Window seat",
+  "scene": "character.blend",
+  "saved_scene_sha256": "35df3e041eedff16f61eb7de9c612fc960d615a02569aebe3c029033b4402bfe",
+  "reopened_and_checked": true,
+  "blender_version": "5.1.1",
+  "blender_build_hash": "b70da489d7f4",
+  "render_engine": "CYCLES",
+  "render_device": "CPU",
+  "render_threads": 3,
+  "samples_per_pixel_max": 32,
+  "adaptive_sampling": true,
+  "adaptive_threshold": 0.04800000041723251,
+  "denoising": "OPENIMAGEDENOISE",
+  "denoising_uses_gpu": false,
+  "beauty_camera": "Beauty • cafe selfie",
+  "source_topology": {
+    "name": "MakeHuman hm08 upper body and hands",
+    "license": "CC0",
+    "commit": "a8bc2d54ff0ac92e78ff71431b1023eda42bf482",
+    "source": "https://raw.githubusercontent.com/makehumancommunity/makehuman/a8bc2d54ff0ac92e78ff71431b1023eda42bf482/makehuman/data/3dobjs/base.obj"
+  },
+  "reference": {
+    "file": "input/reference.png",
+    "decoded_photo_seen": true,
+    "used_as_scene_image": false,
+    "resolution_px": [
+      1205,
+      1306
+    ]
+  },
+  "character_bounds": {
+    "axes": "meters, XYZ, Z up",
+    "min": [
+      -0.286911,
+      -0.631445,
+      1.006652
+    ],
+    "max": [
+      0.298751,
+      0.111466,
+      1.678548
+    ],
+    "size": [
+      0.585662,
+      0.74291,
+      0.671896
+    ]
+  },
+  "geometry_counts": {
+    "supplied_upper_body_vertices": 6093,
+    "supplied_upper_body_faces": 6044,
+    "character_base_mesh_vertices": 132143,
+    "character_base_mesh_faces": 128542,
+    "character_evaluated_mesh_vertices": 414017,
+    "character_evaluated_mesh_faces": 412830,
+    "character_strands_including_lashes_and_brows": 20331,
+    "character_evaluated_curve_control_points": 579127,
+    "character_evaluated_mesh_vertices_plus_curve_control_points": 993144,
+    "scene_evaluated_mesh_vertices_including_both_sets": 447659,
+    "cycles_curve_intersection_primitive_count": null
+  },
+  "important_objects": [
+    {
+      "name": "Brows • individually laid hairs",
+      "type": "CURVES",
+      "strands": 960,
+      "evaluated_control_points": 5760
+    },
+    {
+      "name": "Eye.L • brown iris and pupil",
+      "type": "MESH",
+      "base_vertices": 1345,
+      "base_faces": 1344,
+      "evaluated_vertices": 1345,
+      "evaluated_faces": 1344
+    },
+    {
+      "name": "Eye.L • scleral globe",
+      "type": "MESH",
+      "base_vertices": 1986,
+      "base_faces": 2048,
+      "evaluated_vertices": 1986,
+      "evaluated_faces": 2048
+    },
+    {
+      "name": "Eye.L • tear duct",
+      "type": "MESH",
+      "base_vertices": 362,
+      "base_faces": 384,
+      "evaluated_vertices": 362,
+      "evaluated_faces": 384
+    },
+    {
+      "name": "Eye.L • transparent corneal cap",
+      "type": "MESH",
+      "base_vertices": 1537,
+      "base_faces": 1536,
+      "evaluated_vertices": 1537,
+      "evaluated_faces": 1536
+    },
+    {
+      "name": "Eye.R • brown iris and pupil",
+      "type": "MESH",
+      "base_vertices": 1345,
+      "base_faces": 1344,
+      "evaluated_vertices": 1345,
+      "evaluated_faces": 1344
+    },
+    {
+      "name": "Eye.R • scleral globe",
+      "type": "MESH",
+      "base_vertices": 1986,
+      "base_faces": 2048,
+      "evaluated_vertices": 1986,
+      "evaluated_faces": 2048
+    },
+    {
+      "name": "Eye.R • tear duct",
+      "type": "MESH",
+      "base_vertices": 362,
+      "base_faces": 384,
+      "evaluated_vertices": 362,
+      "evaluated_faces": 384
+    },
+    {
+      "name": "Eye.R • transparent corneal cap",
+      "type": "MESH",
+      "base_vertices": 1537,
+      "base_faces": 1536,
+      "evaluated_vertices": 1537,
+      "evaluated_faces": 1536
+    },
+    {
+      "name": "Eyes • lower tear menisci",
+      "type": "CURVES",
+      "strands": 2,
+      "evaluated_control_points": 62
+    },
+    {
+      "name": "Eyes • upper lash roots",
+      "type": "CURVES",
+      "strands": 2,
+      "evaluated_control_points": 94
+    },
+    {
+      "name": "Face, ears and neck • sculpted hm08",
+      "type": "MESH",
+      "base_vertices": 4528,
+      "base_faces": 4496,
+      "evaluated_vertices": 72061,
+      "evaluated_faces": 71936
+    },
+    {
+      "name": "Hair • fine flyaways at the hairline",
+      "type": "CURVES",
+      "strands": 169,
+      "evaluated_control_points": 4901
+    },
+    {
+      "name": "Hair • fine strands lifted from the crown",
+      "type": "CURVES",
+      "strands": 245,
+      "evaluated_control_points": 7595
+    },
+    {
+      "name": "Hair • fitted crown and nape underlayer",
+      "type": "MESH",
+      "base_vertices": 8000,
+      "base_faces": 7841,
+      "evaluated_vertices": 8000,
+      "evaluated_faces": 7841
+    },
+    {
+      "name": "Hair • long back waves • individual strands",
+      "type": "CURVES",
+      "strands": 4026,
+      "evaluated_control_points": 128832
+    },
+    {
+      "name": "Hair • long back waves • styling volumes",
+      "type": "MESH",
+      "base_vertices": 19320,
+      "base_faces": 18998,
+      "evaluated_vertices": 19320,
+      "evaluated_faces": 18998
+    },
+    {
+      "name": "Hair • part, crown and nape strands",
+      "type": "CURVES",
+      "strands": 6420,
+      "evaluated_control_points": 159220
+    },
+    {
+      "name": "Hair • swept and tucked temple • individual strands",
+      "type": "CURVES",
+      "strands": 3112,
+      "evaluated_control_points": 99584
+    },
+    {
+      "name": "Hair • swept and tucked temple • styling volumes",
+      "type": "MESH",
+      "base_vertices": 13440,
+      "base_faces": 13216,
+      "evaluated_vertices": 13440,
+      "evaluated_faces": 13216
+    },
+    {
+      "name": "Hair • translucent side-swept fringe",
+      "type": "CURVES",
+      "strands": 942,
+      "evaluated_control_points": 34283
+    },
+    {
+      "name": "Hair • waves draped over the raised shoulder • individual strands",
+      "type": "CURVES",
+      "strands": 4305,
+      "evaluated_control_points": 137760
+    },
+    {
+      "name": "Hair • waves draped over the raised shoulder • styling volumes",
+      "type": "MESH",
+      "base_vertices": 18480,
+      "base_faces": 18172,
+      "evaluated_vertices": 18480,
+      "evaluated_faces": 18172
+    },
+    {
+      "name": "Hand.L • relaxed reach",
+      "type": "MESH",
+      "base_vertices": 1654,
+      "base_faces": 1642,
+      "evaluated_vertices": 26317,
+      "evaluated_faces": 26272
+    },
+    {
+      "name": "Hand.R • relaxed reach",
+      "type": "MESH",
+      "base_vertices": 1654,
+      "base_faces": 1642,
+      "evaluated_vertices": 26317,
+      "evaluated_faces": 26272
+    },
+    {
+      "name": "Lashes • upper and lower margin",
+      "type": "CURVES",
+      "strands": 148,
+      "evaluated_control_points": 1036
+    },
+    {
+      "name": "Pullover • joined torso and forward sleeves",
+      "type": "MESH",
+      "base_vertices": 18562,
+      "base_faces": 18352,
+      "evaluated_vertices": 147660,
+      "evaluated_faces": 147664
+    },
+    {
+      "name": "Pullover • rib cuff.L",
+      "type": "MESH",
+      "base_vertices": 6300,
+      "base_faces": 5880,
+      "evaluated_vertices": 12600,
+      "evaluated_faces": 12600
+    },
+    {
+      "name": "Pullover • rib cuff.R",
+      "type": "MESH",
+      "base_vertices": 6300,
+      "base_faces": 5880,
+      "evaluated_vertices": 12600,
+      "evaluated_faces": 12600
+    },
+    {
+      "name": "Pullover • ribbed lower hem",
+      "type": "MESH",
+      "base_vertices": 12012,
+      "base_faces": 11088,
+      "evaluated_vertices": 24024,
+      "evaluated_faces": 24024
+    },
+    {
+      "name": "Pullover • rolled ribbed crew neck",
+      "type": "MESH",
+      "base_vertices": 11305,
+      "base_faces": 10710,
+      "evaluated_vertices": 22610,
+      "evaluated_faces": 22610
+    },
+    {
+      "name": "Pullover • tucked fabric at waist",
+      "type": "MESH",
+      "base_vertices": 128,
+      "base_faces": 1,
+      "evaluated_vertices": 128,
+      "evaluated_faces": 1
+    }
+  ],
+  "generated_textures": [
+    {
+      "name": "Iris • radial collagen and umber pigment • 640",
+      "size_px": [
+        640,
+        640
+      ],
+      "packed": true,
+      "colorspace": "Non-Color",
+      "description": "Analytic radial bundles, amber-brown stroma, limbal shading and pupil."
+    },
+    {
+      "name": "Face • procedural lid shading and tiny freckles • 1024",
+      "size_px": [
+        1024,
+        1024
+      ],
+      "packed": true,
+      "colorspace": "Non-Color",
+      "description": "Rest-coordinate eyelid and brow pigment fields with sparse cheek freckles."
+    },
+    {
+      "name": "Sweater • repeating 4×4 stockinette yarn swatch • 512",
+      "size_px": [
+        512,
+        512
+      ],
+      "packed": true,
+      "colorspace": "Non-Color",
+      "description": "Swept stitch and two-ply yarn height, color and fiber channels."
+    }
+  ],
+  "renders": [
+    {
+      "file": "renders/beauty.png",
+      "resolution_px": [
+        960,
+        1040
+      ],
+      "bytes": 1369357,
+      "sha256": "4eab556467ebefae1bc94d09bb2ce9c64729d2a9a29ff2e0b99f8c2a642e966e",
+      "camera": "Beauty • cafe selfie",
+      "orbit_azimuth_degrees": null
+    },
+    {
+      "file": "renders/front.png",
+      "resolution_px": [
+        768,
+        768
+      ],
+      "bytes": 668364,
+      "sha256": "ccc1903562a48818b455ac7c84816010fec0a6cbcef26e4ea4831450dd0e7aa7",
+      "camera": "Turntable • front",
+      "orbit_azimuth_degrees": 0
+    },
+    {
+      "file": "renders/three-quarter.png",
+      "resolution_px": [
+        768,
+        768
+      ],
+      "bytes": 665065,
+      "sha256": "47c7ec4f9b02012b24de1c0e4307b74b5cdd564cdbd6094e96803517b16cd91b",
+      "camera": "Turntable • three-quarter",
+      "orbit_azimuth_degrees": 45
+    },
+    {
+      "file": "renders/side.png",
+      "resolution_px": [
+        768,
+        768
+      ],
+      "bytes": 646426,
+      "sha256": "97d0239856374957e892eca3fb17cde3777dd6b6fe863810ed8f3fd109f78e23",
+      "camera": "Turntable • side",
+      "orbit_azimuth_degrees": 90
+    },
+    {
+      "file": "renders/back.png",
+      "resolution_px": [
+        768,
+        768
+      ],
+      "bytes": 669469,
+      "sha256": "ffa60d398bd260dc08cdef1a6d88cdd2cf1f61a1f34f15c27a53db21d4880722",
+      "camera": "Turntable • back",
+      "orbit_azimuth_degrees": 180
+    }
+  ],
+  "size_bytes_excluding_this_report": 24070914,
+  "remaining_limitations": [
+    "Hand-authored interpretation from one photograph. Facial proportions, expression, and individual hair placement are approximated.",
+    "The profile, rear skull and hairstyle, neck transition, hidden sweater surfaces, wrists and extended hand pose were inferred.",
+    "Face color is procedural with restrained microdetail. Fine asymmetry, photographic skin variation and individual facial anatomy are simplified.",
+    "Hair has styled volume meshes with real fibers. Large locks remain more regular than natural hair, especially near the crown and on the back.",
+    "Stockinette loops use packed bump and color maps on the fabric surface. Collar, cuffs, hem, sleeves and main drape have editable geometry.",
+    "The café is a small constructed set with approximate furnishings and window lighting.",
+    "Baked reach and head tilt. A production rig, facial animation controls and the lower body are outside this portrait."
+  ]
+}
+</pre></details>
+<h3>opus</h3>
+<details><summary>RUN.md（運営の実施記録）</summary><pre style="white-space:pre-wrap;word-break:break-word"># RUN — task-10-girl-3d / opus
+
+- 実施日: 2026-11-20（14:01:00–15:45:24 JST）
+- 実装時間: 104分24秒
+- 終了状態: 自然終了
+- トークン使用量: 入力 650 / キャッシュ作成 1,010,109 / キャッシュ読込 111,623,672 / 出力 880,396
+- コスト推定: $252.41（API単価前提による換算。単価の前提は ../comparison.md 参照。実際の課金形態とは異なる）
+- 成果物ファイル数: 182（ランナー生成物・node_modules・支給 input を除く）
+
+## 主な成果物
+- README.md
+- build.py
+- build_stats.json
+- character.blend
+- dev/bangs_dbg.py
+- dev/closeup.py
+- dev/count.py
+- dev/hairdebug.py
+- dev/head_preview.py
+- dev/hemview.py
+- dev/img_test.py
+- dev/inspect_base.py
+- dev/inspect_mesh.py
+- dev/knit_test.py
+- dev/montage.py
+
+## 検証結果
+チェックリスト全項目を充足。独立検証レポート（verify_report.json）付きで 104分かけて実施。
+</pre></details>
+<details><summary>README.md</summary><pre style="white-space:pre-wrap;word-break:break-word"># Editable 3D upper-body selfie portrait (Blender 5.1.1, Cycles CPU)
+
+Deliverables in this directory:
+
+| File | What it is |
+|---|---|
+| `build.py` | Reproducible builder: creates the whole scene from the supplied inputs and saves `character.blend` |
+| `lib/*.py` | Helper modules imported by `build.py` (sculpt, eyes, pose, hair, sweater, knit textures, materials, set) |
+| `render.py` | Re-opens the saved `character.blend` and renders the five PNGs, then writes `scene-report.json` |
+| `verify_blend.py` | Optional: re-opens `character.blend` and checks objects / packed images (`verify_report.json`) |
+| `character.blend` | Final editable scene (beauty camera active, all resources packed, compressed) |
+| `renders/beauty.png` | 960x1040 selfie-composition beauty render |
+| `renders/front.png`, `three-quarter.png`, `side.png`, `back.png` | 768x768 diagnostic views at 0 / 45 / 90 / 180 degrees |
+| `scene-report.json` | Blender version, engine/device, object names, bounds, geometry counts, textures, renders, limitations |
+| `build_stats.json` | Raw numbers written by `build.py` |
+| `dev/`, `previews/` | My development/preview scripts, low-quality iteration renders and stale intermediate .blend builds (kept for transparency, not deliverables) |
+
+## Reference image access (honest statement)
+
+I **did actually see the decoded photograph** `input/reference.png` (1205x1306): it was opened with an image-reading
+tool and displayed to me as an image before any modelling started. I used it only as a visual reference while
+writing parameters; `build.py` never loads it and it is not used as a texture, plane, billboard or background.
+What I observed and tried to match: a young, softly smiling feminine person, head tilted strongly toward her right
+shoulder (≈25-30° roll), warm brown eyes looking into the lens, long chestnut-brown hair with loose waves and light
+see-through bangs, the hair on her right side falling in front of the shoulder over the chest and the left side
+tucked behind the visible left ear, fair warm skin with pink cheeks and glossy pink lips, a dusty-pink chunky knit
+crew-neck sweater, both arms reaching toward the selfie camera (right sleeve huge and blurred in the lower-left
+corner, left sleeve leaving the right edge), and a bright cafe with a plant/window on the left, wooden shelves with
+jars on the right and wooden chairs/tables. The person is not identified.
+
+`input/environment.json` (landmarks, coordinate convention) and `input/ASSET-LICENSE.md` were read and used.
+
+## How to build, render and open
+
+```bash
+cd &lt;this directory&gt;
+# 1) build + save (≈20 s)
+/Applications/Blender.app/Contents/MacOS/Blender --background --factory-startup --threads 3 --python build.py
+# 2) re-open the saved file and render all five PNGs + scene-report.json (≈3.5 min on 3 CPU threads)
+/Applications/Blender.app/Contents/MacOS/Blender --background --factory-startup --threads 3 character.blend --python render.py
+# optional: re-open check
+/Applications/Blender.app/Contents/MacOS/Blender --background --factory-startup character.blend --python verify_blend.py
+```
+
+`build.py` options (after `--`): `--fast` (fewer hair strands, preview), `--no-hair`, `--out file.blend`.
+`render.py` options: `--preview` (half size, 12 samples, writes to `previews/`), `--only beauty,front,...`.
+Open `character.blend` in Blender 5.1.1: the beauty camera `Camera_Beauty` is active and the cafe set,
+beauty lights and `World_Cafe` are enabled. For the diagnostic look, disable `Cafe_Set` + `Lights_Beauty`, enable
+`Lights_Studio`, switch the world to `World_Studio` and pick `Camera_Front/ThreeQuarter/Side/Back` (this is exactly
+what `render.py` toggles; geometry and materials are identical for every view).
+
+Render settings: Cycles, **CPU**, 32 samples (adaptive), OpenImageDenoise, 3 threads, AgX, 3D-curve hair.
+No GPU, no compositing, no post-processing: the PNGs are the raw renders written by `bpy.ops.render.render`.
+
+## What was built and how
+
+**Base mesh.** `input/upper-body.obj` (CC0 MakeHuman hm08 crop) is used as the anatomical start. Because the crop
+ends just below the elbows and the pose needs hands reaching to the camera, the forearms/hands are taken from the
+supplied `input/base.obj` (the same CC0 asset): the builder re-applies the documented transform, keeps every face of
+the crop plus the arm faces, and checks that all 6093 crop vertices coincide (max distance 0.0 m). Helper geometry
+(eyes, teeth, lashes, tights, genitals) of base.obj is not used, and nothing nude is visible: skin under the sweater is
+hidden by a non-destructive `Mask` modifier (vertex group `skin_visible`), so only head, neck and hands render.
+
+**Facial sculpt (procedural, `lib/pb_body.py`).** Numpy deformation brushes driven by measured landmarks: V-line
+lower-face taper and shorter chin, softer jaw angle, crisper submental line, narrower nose bridge and alae with a
+smaller, slightly lifted tip (the hm08 nostrils are kept, so the nose stays one integrated surface), fuller everted
+lips, lifted mouth corners and cheeks for a closed-mouth smile, rounder apple cheeks / mid-face, softer brow ridge,
+slimmer neck, then a masked Taubin relax. Everything stays one continuous subdivided surface (render level 2).
+
+**Eyelids + eyeballs.** The hm08 eye opening rings are identified topologically and every ring is re-placed by a
+parametric eyelid model: an almond opening (≈30 x 9-10 mm) whose inner margin lies on the eyeball surface, an outer
+margin with ≈0.8 mm lid thickness, depth blending to the face, a double-eyelid crease, a soft under-eye roll, and an
+upper lid that follows the gaze. Eyeballs (`Eye_*_Shell`, `Eye_*_Iris`) are real geometry: a sclera sphere with a
+bulged cornea (tear-film shader: Fresnel mix of transparent + sharp gloss, sclera SSS with procedural veins and a
+limbal ring) and a recessed, slightly conical iris disc with a procedural warm-brown fibre/collarette shader and
+pupil. Both eyes are aimed at the selfie camera; a small "phone screen" area light gives catchlights.
+
+**Skin.** Principled BSDF with random-walk SSS (radius 1.0/0.42/0.22, scale 3.5 mm), colour from a per-vertex
+`skin_tone` attribute painted procedurally (warm base, cheek/nose blush, eyelid tints, vermilion lips, caruncle,
+conjunctiva, darkened nostril cavities, faint brow tint, dark scalp under the hair) plus a mask attribute (lip gloss/coat, wet socket), a
+broad noise for blotchiness and Voronoi+noise pore/micro bump with micro roughness variation. Editable in
+Vertex Paint / the node tree.
+
+**Hair (`lib/pb_hair.py`).** ~20.5k real curve strands (`Hair_Long`, `Hair_FaceFraming`, `Hair_Bangs`) grown from
+roots sampled on the posed scalp: a parting-based flow field, layer offsets that grow with travel so crown hair lies
+on top, combing attraction onto the head surface, gravity blended between head-local (styled) and world down,
+collisions with head/ear/sweater/collar, routing in front of the right shoulder (inside the raised arm) and
+behind the left ear/shoulder, a "face guard" that keeps strands out of the eyes-to-chin area, then clumping, loose
+S-waves (≈9.5 cm wavelength), frizz and flyaways. Wispy curtain-like bangs are combed onto the forehead and end at
+the brows. Principled Hair BSDF (Chiang, melanin 0.82 / redness 0.62, per-strand melanin jitter, lighter tips).
+Brows (2 x 380 short hairs lying on the skin) and lashes (2 x 140 upper, 2 x 60 lower, curled, splayed) are curves too.
+
+**Sweater (`lib/pb_sweater.py`, `lib/pb_knit.py`).** Posed torso offset by a looseness map with a "hanging drape"
+pass (fabric falls from bust/shoulder blades instead of hugging), a hem extension, and loose sleeve tubes along the
+posed arm bones that sag below the arms; these are fused with a voxel remesh, Taubin-relaxed, trimmed at a crew
+neckline / cuffs / hem, and given procedural folds (tilted compression rings that bunch at elbows and forearms,
+deeper on the gravity side, gathered folds above the hem). Separate ribbed `Sweater_Collar`, `Sweater_Cuff_L/R`
+and `Sweater_Hem` bands are swept from the cut edges and pushed off the skin. Knit UVs run around the torso and
+along each sleeve (stockinette columns follow the knitting direction, seams at back centre/armholes). Two
+procedural numpy height maps (stockinette 1024², 2x2 rib 512²), packed in the .blend, drive bump and stitch-gap
+occlusion; Principled sheen gives the mohair halo, a fibre-noise bump adds fuzz detail.
+
+**Pose.** Hand-built linear-blend skinning (no external rig): torso lean/roll, two-stage neck/head roll
+(≈30° total) with slight pitch/yaw, clavicle protraction, two-bone IK so both straight-ish arms reach toward the
+camera (hands just outside the beauty frame), relaxed curled fingers, head-rigid attachments (eyes, lashes, brows).
+
+**Scene.** `Cafe_Set` collection built from primitives: back wall, bright window wall with mullions, three potted
+plants with ~2000 leaves, wooden shelves with jars/canisters, counter and machine, chairs, a side table with a
+glass vase and white flowers, her own table in the foreground. Lights: back-left window area light (hair rim),
+soft key, front fill, warm rim, phone-screen catchlight; warm ambient world. Beauty camera: 25.5 mm at ≈0.32 m
+from the eyes, slightly above, f/2.2 depth of field focused on the eyes (the near sleeve and background blur
+naturally, like the photo). Diagnostics: 70 mm cameras around the character bounds, a neutral studio rig that turns
+with the view and a plain grey backdrop.
+
+## Observed vs inferred
+
+Observed in the photo (matched as closely as practical): front face, expression, eye colour, bangs, front/side
+hair fall, sweater front, collar, sleeves, head tilt, lighting mood, cafe elements. **Inferred / invented:** the
+side and back of the head and hair, the hairstyle behind the shoulders, the body under the sweater, the back and
+sides of the sweater (plain stockinette with a hem band), the hands (never visible in the photo; here relaxed and
+out of frame in the beauty shot), the ears' exact shape, and the whole room layout.
+
+## Self-review (how close is it?)
+
+The render reads as a soft, high-key cafe selfie with the same composition, head tilt, arm placement, hair
+colour/length, bangs and pink chunky knit as the reference, and every visible element is real 3D geometry.
+It is clearly **not** photographic and not a likeness-grade portrait: the face is a procedural re-sculpt of a generic
+head, so the facial proportions, the eye shape and the youthful roundness of the reference are only approximated
+(my face is longer, the eyes smaller and less luminous, the smile more subtle); skin is smooth and slightly
+CG-looking; the hair has less layered volume, fewer flyaways and less glossy depth than the photo and the bangs are
+more stringy; the sweater is smoother and less fuzzy than real mohair-like knit and its folds are procedural; the
+hands are serviceable but generic; the background is a blurred primitive set. Some fine stray hairs cross the neck.
+
+## Approximations / limitations
+
+* Facial likeness, eyelid crease and lip shape are procedural approximations (no scan, no photogrammetry, no ML).
+* Hair: no simulation; ~20k strands (vertex budget), so density and clump detail are below a real head of hair.
+* Knit: bump/shading from a stitch map, not modelled yarn loops; folds are displacement, not cloth simulation.
+* Under-sweater anatomy is generic hm08 posed with simple LBS and hidden by a Mask modifier.
+* The phone is not modelled (the beauty camera is the phone); hands are relaxed, not gripping anything.
+* 32-sample denoised Cycles renders: some denoiser softening in hair and defocused regions.
+
+## Resource usage (measured on the final files)
+
+* Build: ≈16 s (`build.py`), `character.blend` 13.0 MB compressed, all images packed (`verify_report.json`).
+* Renders (Cycles CPU, 3 threads, 32 spp + OIDN): beauty 115.5 s, front 22.5 s, three-quarter 14.0 s,
+  side 18.8 s, back 29.2 s.
+* Geometry at render settings: **858,550** evaluated character vertices + curve points (meshes 229,834 incl. the
+  cafe set; hair/brow/lash curve points 640,052: Hair_Long 18,706 strands, Hair_FaceFraming 735, Hair_Bangs 1,125,
+  brows 2 x 380, lashes 2 x 200). Base (unevaluated) mesh vertices: 103,180.
+* Textures: two procedural height maps (1024² stockinette, 512² rib), generated in numpy and packed. No other
+  images. The photograph is never loaded by the build.
+* Folder size ≈150 MB, mostly my preview iterations in `previews/`.
+
+## Third-party asset attribution
+
+Base mesh: **MakeHuman hm08 base mesh**, released under **CC0** (asset header: "This asset was explicitly released
+as CC0 in september 2020"; copyright holders at release: Data Collection AB, Joel Palmius, Jonas Hauquier).
+Pinned source: https://raw.githubusercontent.com/makehumancommunity/makehuman/a8bc2d54ff0ac92e78ff71431b1023eda42bf482/makehuman/data/3dobjs/base.obj
+(`input/upper-body.obj` is the coordinator's crop of it; `input/base.obj` the full file). No other models,
+textures, downloads or generation services were used; all other geometry, textures and shaders were created by the
+scripts in this directory.
+</pre></details>
+<details><summary>scene-report.json</summary><pre style="white-space:pre-wrap;word-break:break-word">{
+  "blender_version": "5.1.1",
+  "render_engine": "CYCLES",
+  "render_device": "CPU",
+  "samples": 32,
+  "denoiser": "OPENIMAGEDENOISE",
+  "threads": 3,
+  "resolution": {
+    "beauty": [
+      960,
+      1040
+    ],
+    "diagnostic": [
+      768,
+      768
+    ]
+  },
+  "render_seconds": {
+    "beauty": 115.5,
+    "front": 22.5,
+    "three-quarter": 14.0,
+    "side": 18.8,
+    "back": 29.2
+  },
+  "rendered_files": [
+    "renders/beauty.png",
+    "renders/front.png",
+    "renders/three-quarter.png",
+    "renders/side.png",
+    "renders/back.png"
+  ],
+  "blend_file": "character.blend",
+  "collections": [
+    "Cafe_Set",
+    "Cameras",
+    "Character",
+    "Character_Body",
+    "Character_Eyes",
+    "Character_Hair",
+    "Character_Sweater",
+    "Lights_Beauty",
+    "Lights_Studio"
+  ],
+  "important_objects": {
+    "body": "Body (sculpted hm08 head/neck + posed hands; Mask modifier hides skin under the sweater)",
+    "eyes": [
+      "Eye_L_Shell",
+      "Eye_L_Iris",
+      "Eye_R_Shell",
+      "Eye_R_Iris"
+    ],
+    "hair": [
+      "Lashes_Upper_L",
+      "Lashes_Lower_L",
+      "Lashes_Upper_R",
+      "Lashes_Lower_R",
+      "Brow_L",
+      "Brow_R",
+      "Hair_Long",
+      "Hair_FaceFraming",
+      "Hair_Bangs"
+    ],
+    "sweater": [
+      "Sweater_Body",
+      "Sweater_Collar",
+      "Sweater_Hem",
+      "Sweater_Cuff_L",
+      "Sweater_Cuff_R"
+    ],
+    "cameras": [
+      "Camera_Beauty",
+      "Camera_Front",
+      "Camera_ThreeQuarter",
+      "Camera_Side",
+      "Camera_Back"
+    ],
+    "lights_beauty": [
+      "Light_PhoneScreen",
+      "Light_Window_Back",
+      "Light_Key_Soft",
+      "Light_Fill_Front",
+      "Light_Rim_Right"
+    ],
+    "lights_studio": [
+      "StudioRig",
+      "Studio_Key",
+      "Studio_Fill",
+      "Studio_Rim",
+      "Studio_Top"
+    ]
+  },
+  "character_bounds_m": {
+    "min": [
+      -0.26662251353263855,
+      -0.47383251786231995,
+      0.8971042037010193
+    ],
+    "max": [
+      0.352395236492157,
+      0.2353878915309906,
+      1.6490583419799805
+    ]
+  },
+  "base_mesh_vertices_all_objects": 103180,
+  "evaluated_mesh_vertices_render_levels_all_objects": 229834,
+  "evaluated_vertices_character_meshes_plus_curve_points": 858550,
+  "hair_curve_points_total": 640052,
+  "per_object_evaluated_counts": {
+    "Body": 124195,
+    "Eye_L_Shell": 3242,
+    "Eye_L_Iris": 1297,
+    "Eye_R_Shell": 3242,
+    "Eye_R_Iris": 1297,
+    "Lashes_Upper_L": 980,
+    "Lashes_Lower_L": 420,
+    "Lashes_Upper_R": 980,
+    "Lashes_Lower_R": 420,
+    "Brow_L": 1900,
+    "Brow_R": 1900,
+    "Hair_Long": 598592,
+    "Hair_FaceFraming": 19110,
+    "Hair_Bangs": 15750,
+    "Sweater_Body": 69393,
+    "Sweater_Collar": 4352,
+    "Sweater_Hem": 5400,
+    "Sweater_Cuff_L": 3040,
+    "Sweater_Cuff_R": 3040,
+    "Cafe_Floor": 8,
+    "Cafe_BackWall": 8,
+    "Cafe_LeftWall": 8,
+    "Cafe_WindowLight": 8,
+    "Cafe_SideWindowLight": 8,
+    "Cafe_Mullion_-2.33": 8,
+    "Cafe_Mullion_-1.55": 8,
+    "Cafe_Mullion_-0.77": 8,
+    "Cafe_SideMullion_-0.20": 8,
+    "Cafe_SideMullion_+0.90": 8,
+    "Cafe_SideMullion_+2.00": 8,
+    "Cafe_WindowSill": 8,
+    "Cafe_PlantPot_0": 48,
+    "Cafe_PlantStem_0": 16,
+    "Cafe_PlantLeaves_0": 3600,
+    "Cafe_PlantPot_1": 48,
+    "Cafe_PlantStem_1": 16,
+    "Cafe_PlantLeaves_1": 2000,
+    "Cafe_PlantPot_2": 48,
+    "Cafe_PlantStem_2": 16,
+    "Cafe_PlantLeaves_2": 2400,
+    "Cafe_ShelfBack": 8,
+    "Cafe_Shelf_1.05": 8,
+    "Cafe_Shelf_1.50": 8,
+    "Cafe_Shelf_1.95": 8,
+    "Cafe_Shelf_2.40": 8,
+    "Cafe_Jar_00": 48,
+    "Cafe_JarContent_00": 48,
+    "Cafe_Jar_01": 48,
+    "Cafe_Jar_02": 48,
+    "Cafe_Jar_03": 48,
+    "Cafe_Jar_04": 48,
+    "Cafe_Jar_05": 48,
+    "Cafe_JarContent_05": 48,
+    "Cafe_Jar_06": 48,
+    "Cafe_Jar_07": 48,
+    "Cafe_Jar_08": 48,
+    "Cafe_Jar_09": 48,
+    "Cafe_Jar_10": 48,
+    "Cafe_JarContent_10": 48,
+    "Cafe_Jar_11": 48,
+    "Cafe_Jar_12": 48,
+    "Cafe_Jar_13": 48,
+    "Cafe_Jar_14": 48,
+    "Cafe_Jar_15": 48,
+    "Cafe_JarContent_15": 48,
+    "Cafe_Jar_16": 48,
+    "Cafe_Jar_17": 48,
+    "Cafe_Jar_18": 48,
+    "Cafe_Jar_19": 48,
+    "Cafe_Jar_20": 48,
+    "Cafe_JarContent_20": 48,
+    "Cafe_Jar_21": 48,
+    "Cafe_Jar_22": 48,
+    "Cafe_Jar_23": 48,
+    "Cafe_Jar_24": 48,
+    "Cafe_Jar_25": 48,
+    "Cafe_JarContent_25": 48,
+    "Cafe_Jar_26": 48,
+    "Cafe_Jar_27": 48,
+    "Cafe_Jar_28": 48,
+    "Cafe_Jar_29": 48,
+    "Cafe_Counter": 8,
+    "Cafe_CounterTop": 8,
+    "Cafe_Machine": 56,
+    "Cafe_ChairBack": 56,
+    "Cafe_ChairPost_-0.80": 8,
+    "Cafe_ChairPost_-0.44": 8,
+    "Cafe_ChairSeat": 56,
+    "Cafe_Chair2Back": 56,
+    "Cafe_Chair2Post_-0.23": 8,
+    "Cafe_Chair2Post_+0.13": 8,
+    "Cafe_Chair2Seat": 56,
+    "Cafe_TableRight": 56,
+    "Cafe_TableRightLeg": 48,
+    "Cafe_Vase": 48,
+    "Cafe_FlowerStem_0": 12,
+    "Cafe_FlowerStem_1": 12,
+    "Cafe_FlowerStem_2": 12,
+    "Cafe_FlowerStem_3": 12,
+    "Cafe_FlowerStem_4": 12,
+    "Cafe_FlowerStem_5": 12,
+    "Cafe_FlowerStem_6": 12,
+    "Cafe_FlowerStem_7": 12,
+    "Cafe_FlowerStem_8": 12,
+    "Cafe_FlowerStem_9": 12,
+    "Cafe_FlowerStem_10": 12,
+    "Cafe_FlowerStem_11": 12,
+    "Cafe_FlowerStem_12": 12,
+    "Cafe_FlowerStem_13": 12,
+    "Cafe_Flowers": 480,
+    "Cafe_TableFront": 56,
+    "Cafe_TableFrontLeg": 48,
+    "Cafe_Cup": 48
+  },
+  "hair": {
+    "Hair_Long": {
+      "strands": 18706,
+      "points": 598592
+    },
+    "Hair_FaceFraming": {
+      "strands": 735,
+      "points": 19110
+    },
+    "Hair_Bangs": {
+      "strands": 1125,
+      "points": 15750
+    }
+  },
+  "generated_textures": [
+    {
+      "name": "KnitRib_Height",
+      "size": [
+        512,
+        512
+      ],
+      "packed": true,
+      "description": "procedural numpy 2x2 rib height map for collar, cuffs and hem"
+    },
+    {
+      "name": "KnitStockinette_Height",
+      "size": [
+        1024,
+        1024
+      ],
+      "packed": true,
+      "description": "procedural numpy stockinette stitch height map (8x10 stitches/tile), drives bump + stitch-gap occlusion of the sweater"
+    }
+  ],
+  "procedural_shaders": [
+    "Skin (vertex-colour tone + masks, random-walk SSS, voronoi/noise pore bump)",
+    "Eye_Shell (tear-film cornea transparent+gloss, sclera SSS with procedural veins and limbal ring)",
+    "Eye_Iris (radial fibre noise, collarette, limbal darkening, pupil)",
+    "Hair / Hair_Brows / Hair_Lashes (Principled Hair BSDF, melanin based, per-strand variation)",
+    "Knit_Sweater / Knit_Rib (packed stitch maps + sheen fuzz + fibre noise)",
+    "Cafe_* set materials"
+  ],
+  "base_mesh": {
+    "source": "MakeHuman hm08 base mesh, CC0 (input/upper-body.obj + forearms/hands from input/base.obj)",
+    "info": {
+      "upper_body_vertices": 6093,
+      "upper_body_faces_in_crop": 6044,
+      "combined_vertices": 9517,
+      "combined_faces": 9494,
+      "max_distance_upper_body_to_combined": 0.0
+    }
+  },
+  "camera": {
+    "location": [
+      -0.013013511797036546,
+      -0.45922571862846395,
+      1.5714906172628582
+    ],
+    "look_at": [
+      -0.03801351179703655,
+      -0.08422571862846398,
+      1.4114906172628583
+    ],
+    "lens": 25.5,
+    "fstop": 2.2
+  },
+  "limitations": [
+    "Facial likeness is an approximation sculpted procedurally from a generic MakeHuman head; it is not a scan or photogrammetric reconstruction.",
+    "Unseen anatomy (back/side of head, body under the sweater, hands, ears behind hair) and the back/sides of the sweater and hair are inferred.",
+    "Hair is ~20.6k procedural curve strands (plus brows/lashes) with clumps, waves and flyaways; no hair simulation, so density is below a real head of hair and interaction with the sweater is approximate.",
+    "Knit detail is a bump/shading effect from a procedural stitch map on a smooth voxel-fused sweater mesh, not individually modelled yarn loops.",
+    "Sweater folds are procedural displacement, not cloth simulation.",
+    "Body skin under the sweater is hidden by a Mask modifier (kept intact in the mesh); the forearm/hand skinning is a simple hand-built LBS pose, not a production rig.",
+    "The phone is not modelled (the beauty camera is the phone); hands are relaxed and out of frame in the beauty shot.",
+    "The cafe is a rough blurred suggestion built from primitives.",
+    "Some fine stray hairs cross the neck; bangs are thinner/stringier than in the photo.",
+    "32-sample Cycles CPU renders with OpenImageDenoise; some denoiser smoothing is visible in hair and depth-of-field areas."
+  ]
+}</pre></details>
+<details><summary>previews/final_build_log.txt</summary><pre style="white-space:pre-wrap;word-break:break-word">[build] base mesh: {'upper_body_vertices': 6093, 'upper_body_faces_in_crop': 6044, 'combined_vertices': 9517, 'combined_faces': 9494, 'max_distance_upper_body_to_combined': 0.0}
+[build] sculpt + eyelids done
+[build] body done
+[build] eyes, lashes, brows done
+[build] sweater done: 69393 verts
+[build] hair: main 18706 strands (front 5920, tuck 7541)
+[build] hair: face-framing 735 strands
+[build] hair: bangs 1125 strands
+[build] hair grown in 13.3s
+Info: No new files have been packed
+Info: Saved as "character.blend"
+[build] saved /Users/babashunsuke/AiWorkspace/ai-verification/prac-bench/results/2026-11-20/task-10-girl-3d/opus/character.blend in 16.6s; stats {'build_seconds': 16.6, 'base_mesh_vertices': 103180, 'evaluated_mesh_vertices_render_levels': None, 'evaluated_mesh_vertices_viewport': 125098, 'hair_curve_points': 640052, 'hair': {'Hair_Long': {'strands': 18706, 'points': 598592}, 'Hair_FaceFraming': {'strands': 735, 'points': 19110}, 'Hair_Bangs': {'strands': 1125, 'points': 15750}}, 'character_bounds': {'min': [-0.26662251353263855, -0.47383251786231995, 0.8971042037010193], 'max': [0.352395236492157, 0.2353878915309906, 1.6490583419799805]}, 'base_info': {'upper_body_vertices': 6093, 'upper_body_faces_in_crop': 6044, 'combined_vertices': 9517, 'combined_faces': 9494, 'max_distance_upper_body_to_combined': 0.0}, 'fast': False, 'camera': {'location': [-0.013013511797036546, -0.45922571862846395, 1.5714906172628582], 'look_at': [-0.03801351179703655, -0.08422571862846398, 1.4114906172628583], 'lens': 25.5, 'fstop': 2.2}}
+Blender 5.1.1 (hash b70da489d7f4 built 2026-04-14 01:46:23)
+
+Blender quit
+</pre></details>
+<details><summary>previews/final_render_log.txt</summary><pre style="white-space:pre-wrap;word-break:break-word">00:00.261  blend            | Read blend: "/Users/babashunsuke/AiWorkspace/ai-verification/prac-bench/results/2026-11-20/task-10-girl-3d/opus/character.blend"
+01:55.764  render           | Saved: '/Users/babashunsuke/AiWorkspace/ai-verification/prac-bench/results/2026-11-20/task-10-girl-3d/opus/renders/beauty.png'
+[render] beauty 115.5 s
+02:18.295  render           | Saved: '/Users/babashunsuke/AiWorkspace/ai-verification/prac-bench/results/2026-11-20/task-10-girl-3d/opus/renders/front.png'
+[render] front 22.5 s
+02:32.251  render           | Saved: '/Users/babashunsuke/AiWorkspace/ai-verification/prac-bench/results/2026-11-20/task-10-girl-3d/opus/renders/three-quarter.png'
+[render] three-quarter 14.0 s
+02:51.040  render           | Saved: '/Users/babashunsuke/AiWorkspace/ai-verification/prac-bench/results/2026-11-20/task-10-girl-3d/opus/renders/side.png'
+[render] side 18.8 s
+03:20.232  render           | Saved: '/Users/babashunsuke/AiWorkspace/ai-verification/prac-bench/results/2026-11-20/task-10-girl-3d/opus/renders/back.png'
+[render] back 29.2 s
+[render] wrote scene-report.json
+Blender 5.1.1 (hash b70da489d7f4 built 2026-04-14 01:46:23)
+
+Blender quit
+</pre></details>
+</section>
+<section><h2>レンダー画像（実物）</h2>
+<h3>neon</h3>
+<img loading="lazy" src="outputs/task-10-girl-3d/neon/beauty.png" alt="neon beauty.png" style="max-width:320px;margin:4px">
+<h3>astra</h3>
+<img loading="lazy" src="outputs/task-10-girl-3d/astra/back.png" alt="astra back.png" style="max-width:320px;margin:4px">
+<img loading="lazy" src="outputs/task-10-girl-3d/astra/beauty.png" alt="astra beauty.png" style="max-width:320px;margin:4px">
+<img loading="lazy" src="outputs/task-10-girl-3d/astra/front.png" alt="astra front.png" style="max-width:320px;margin:4px">
+<img loading="lazy" src="outputs/task-10-girl-3d/astra/side.png" alt="astra side.png" style="max-width:320px;margin:4px">
+<img loading="lazy" src="outputs/task-10-girl-3d/astra/three-quarter.png" alt="astra three-quarter.png" style="max-width:320px;margin:4px">
+<h3>sol</h3>
+<img loading="lazy" src="outputs/task-10-girl-3d/sol/back.png" alt="sol back.png" style="max-width:320px;margin:4px">
+<img loading="lazy" src="outputs/task-10-girl-3d/sol/beauty.png" alt="sol beauty.png" style="max-width:320px;margin:4px">
+<img loading="lazy" src="outputs/task-10-girl-3d/sol/front.png" alt="sol front.png" style="max-width:320px;margin:4px">
+<img loading="lazy" src="outputs/task-10-girl-3d/sol/side.png" alt="sol side.png" style="max-width:320px;margin:4px">
+<img loading="lazy" src="outputs/task-10-girl-3d/sol/three-quarter.png" alt="sol three-quarter.png" style="max-width:320px;margin:4px">
+<h3>opus</h3>
+<img loading="lazy" src="outputs/task-10-girl-3d/opus/back.png" alt="opus back.png" style="max-width:320px;margin:4px">
+<img loading="lazy" src="outputs/task-10-girl-3d/opus/beauty.png" alt="opus beauty.png" style="max-width:320px;margin:4px">
+<img loading="lazy" src="outputs/task-10-girl-3d/opus/front.png" alt="opus front.png" style="max-width:320px;margin:4px">
+<img loading="lazy" src="outputs/task-10-girl-3d/opus/side.png" alt="opus side.png" style="max-width:320px;margin:4px">
+<img loading="lazy" src="outputs/task-10-girl-3d/opus/three-quarter.png" alt="opus three-quarter.png" style="max-width:320px;margin:4px">
+</section>
+</body></html>

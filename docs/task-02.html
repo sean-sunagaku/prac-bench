@@ -138,4 +138,440 @@ footer{max-width:1180px;margin:0 auto;padding:0 20px 40px;color:var(--sub);font-
 検証Pass。planck 同梱+9モジュール、README・スクリーンショット7枚・モンテカルロによるバランス調整ツールまで付属する最重量実装。</div>
 <p><a href='https://github.com/sean-sunagaku/prac-bench/tree/main/results/2026-11-20/task-02-keitora-hikkoshi/opus' target='_blank' rel='noopener'>このモデルの全ファイルを GitHub で見る</a> ／ <a href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-02-keitora-hikkoshi/opus/RUN.md' target='_blank' rel='noopener'>RUN.md</a></p>
 </section>
-</main><footer>Prac-Bench 実施結果レポート（2026-11-20）／ 数値・判定・所見の出典：リポジトリ内 results/2026-11-20/comparison.md および各 RUN.md</footer></body></html>
+</main><footer>Prac-Bench 実施結果レポート（2026-11-20）／ 数値・判定・所見の出典：リポジトリ内 results/2026-11-20/comparison.md および各 RUN.md</footer><section><h2>テキスト成果物（全文）</h2><p>各モデルの文書系テキスト成果物と運営の実施記録（RUN.md）を全文収録する。コードやバイナリはリポジトリと outputs/ を参照。</p>
+<h3>neon</h3>
+<details><summary>RUN.md（運営の実施記録）</summary><pre style="white-space:pre-wrap;word-break:break-word"># RUN — task-02-keitora-hikkoshi / neon
+
+- 実施日: 2026-11-20（09:03:50–09:14:49 JST）
+- 実装時間: 10分59秒
+- 終了状態: 自然終了
+- トークン使用量: 取得不可（Antigravity CLI の会話記録にトークン内訳が残らない形式のため）
+- コスト推定: 取得不可（トークン不明のため）
+- 成果物ファイル数: 9（ランナー生成物・node_modules・支給 input を除く）
+
+## 主な成果物
+- index.html
+- js/audio.js
+- js/game.js
+- js/items.js
+- js/physics.js
+- js/renderer.js
+- js/stages.js
+- styles.css
+- tests/physics_test.mjs
+
+## 検証結果
+検証Pass。自作物理エンジン（重力・摩擦）+rAFループ、積込→出発→走行→精算→ランクの一巡フロー、物理テスト付き。
+</pre></details>
+<h3>carbon</h3>
+<details><summary>RUN.md（運営の実施記録）</summary><pre style="white-space:pre-wrap;word-break:break-word"># RUN — task-02-keitora-hikkoshi / carbon
+
+- 実施日: 2026-11-20（09:09:06–09:21:10 JST）
+- 実装時間: 12分04秒
+- 終了状態: 自然終了
+- トークン使用量: 取得不可（Antigravity CLI の会話記録にトークン内訳が残らない形式のため）
+- コスト推定: 取得不可（トークン不明のため）
+- 成果物ファイル数: 10（ランナー生成物・node_modules・支給 input を除く）
+
+## 主な成果物
+- index.html
+- js/audio.js
+- js/data.js
+- js/game.js
+- js/physics.js
+- js/renderer.js
+- package-lock.json
+- package.json
+- styles.css
+- vendor/planck.min.js
+
+## 検証結果
+検証Pass。実物理エンジン planck.js を同梱。game.js 66KB とフェーズ実装が厚い。
+</pre></details>
+<h3>astra</h3>
+<details><summary>RUN.md（運営の実施記録）</summary><pre style="white-space:pre-wrap;word-break:break-word"># RUN — task-02-keitora-hikkoshi / astra
+
+- 実施日: 2026-11-20（11:52:20–12:02:59 JST）
+- 実装時間: 10分39秒
+- 終了状態: 自然終了
+- 試行回数: 2回（本記録は最終試行）
+- トークン使用量: 入力 4,143,126（うちキャッシュ 4,005,120） / 出力 65,462
+- コスト推定: $4.66（API単価前提による換算。単価の前提は ../comparison.md 参照。実際の課金形態とは異なる）
+- 成果物ファイル数: 23（ランナー生成物・node_modules・支給 input を除く）
+
+## 主な成果物
+- assets/barlowcondensed-OFL.txt
+- assets/box.png
+- assets/delagothicone-OFL.txt
+- assets/digits.woff2
+- assets/dishes.png
+- assets/finish-flag.png
+- assets/fridge.png
+- assets/hump-sign.png
+- assets/plant.png
+- assets/road.webp
+- assets/shelf.png
+- assets/title.woff2
+- assets/truck-mark.png
+- assets/truck.png
+- assets/tv.png
+
+## 検証結果
+検証Partial。荷物の質量・強度と配置ルールによる解析モデルで、剛体物理エンジンではない（重力積分なし）。遊べるゲーム構造自体はある。
+
+## 備考
+試行2回。1回目はプロンプトが未送信のまま残るハーネスの不具合で無効となり、記録は修正後の再実行分。
+</pre></details>
+<details><summary>assets/barlowcondensed-OFL.txt</summary><pre style="white-space:pre-wrap;word-break:break-word">Copyright 2017 The Barlow Project Authors (https://github.com/jpt/barlow)
+
+This Font Software is licensed under the SIL Open Font License, Version 1.1.
+This license is copied below, and is also available with a FAQ at:
+http://scripts.sil.org/OFL
+
+
+-----------------------------------------------------------
+SIL OPEN FONT LICENSE Version 1.1 - 26 February 2007
+-----------------------------------------------------------
+
+PREAMBLE
+The goals of the Open Font License (OFL) are to stimulate worldwide
+development of collaborative font projects, to support the font creation
+efforts of academic and linguistic communities, and to provide a free and
+open framework in which fonts may be shared and improved in partnership
+with others.
+
+The OFL allows the licensed fonts to be used, studied, modified and
+redistributed freely as long as they are not sold by themselves. The
+fonts, including any derivative works, can be bundled, embedded, 
+redistributed and/or sold with any software provided that any reserved
+names are not used by derivative works. The fonts and derivatives,
+however, cannot be released under any other type of license. The
+requirement for fonts to remain under this license does not apply
+to any document created using the fonts or their derivatives.
+
+DEFINITIONS
+"Font Software" refers to the set of files released by the Copyright
+Holder(s) under this license and clearly marked as such. This may
+include source files, build scripts and documentation.
+
+"Reserved Font Name" refers to any names specified as such after the
+copyright statement(s).
+
+"Original Version" refers to the collection of Font Software components as
+distributed by the Copyright Holder(s).
+
+"Modified Version" refers to any derivative made by adding to, deleting,
+or substituting -- in part or in whole -- any of the components of the
+Original Version, by changing formats or by porting the Font Software to a
+new environment.
+
+"Author" refers to any designer, engineer, programmer, technical
+writer or other person who contributed to the Font Software.
+
+PERMISSION &amp; CONDITIONS
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of the Font Software, to use, study, copy, merge, embed, modify,
+redistribute, and sell modified and unmodified copies of the Font
+Software, subject to the following conditions:
+
+1) Neither the Font Software nor any of its individual components,
+in Original or Modified Versions, may be sold by itself.
+
+2) Original or Modified Versions of the Font Software may be bundled,
+redistributed and/or sold with any software, provided that each copy
+contains the above copyright notice and this license. These can be
+included either as stand-alone text files, human-readable headers or
+in the appropriate machine-readable metadata fields within text or
+binary files as long as those fields can be easily viewed by the user.
+
+3) No Modified Version of the Font Software may use the Reserved Font
+Name(s) unless explicit written permission is granted by the corresponding
+Copyright Holder. This restriction only applies to the primary font name as
+presented to the users.
+
+4) The name(s) of the Copyright Holder(s) or the Author(s) of the Font
+Software shall not be used to promote, endorse or advertise any
+Modified Version, except to acknowledge the contribution(s) of the
+Copyright Holder(s) and the Author(s) or with their explicit written
+permission.
+
+5) The Font Software, modified or unmodified, in part or in whole,
+must be distributed entirely under this license, and must not be
+distributed under any other license. The requirement for fonts to
+remain under this license does not apply to any document created
+using the Font Software.
+
+TERMINATION
+This license becomes null and void if any of the above conditions are
+not met.
+
+DISCLAIMER
+THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT
+OF COPYRIGHT, PATENT, TRADEMARK, OR OTHER RIGHT. IN NO EVENT SHALL THE
+COPYRIGHT HOLDER BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+INCLUDING ANY GENERAL, SPECIAL, INDIRECT, INCIDENTAL, OR CONSEQUENTIAL
+DAMAGES, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+FROM, OUT OF THE USE OR INABILITY TO USE THE FONT SOFTWARE OR FROM
+OTHER DEALINGS IN THE FONT SOFTWARE.
+</pre></details>
+<details><summary>assets/delagothicone-OFL.txt</summary><pre style="white-space:pre-wrap;word-break:break-word">Copyright 2020 The Dela Gothic Project Authors (https://github.com/syakuzen/DelaGothic)
+
+This Font Software is licensed under the SIL Open Font License, Version 1.1.
+This license is copied below, and is also available with a FAQ at:
+https://openfontlicense.org
+
+
+-----------------------------------------------------------
+SIL OPEN FONT LICENSE Version 1.1 - 26 February 2007
+-----------------------------------------------------------
+
+PREAMBLE
+The goals of the Open Font License (OFL) are to stimulate worldwide
+development of collaborative font projects, to support the font creation
+efforts of academic and linguistic communities, and to provide a free and
+open framework in which fonts may be shared and improved in partnership
+with others.
+
+The OFL allows the licensed fonts to be used, studied, modified and
+redistributed freely as long as they are not sold by themselves. The
+fonts, including any derivative works, can be bundled, embedded, 
+redistributed and/or sold with any software provided that any reserved
+names are not used by derivative works. The fonts and derivatives,
+however, cannot be released under any other type of license. The
+requirement for fonts to remain under this license does not apply
+to any document created using the fonts or their derivatives.
+
+DEFINITIONS
+"Font Software" refers to the set of files released by the Copyright
+Holder(s) under this license and clearly marked as such. This may
+include source files, build scripts and documentation.
+
+"Reserved Font Name" refers to any names specified as such after the
+copyright statement(s).
+
+"Original Version" refers to the collection of Font Software components as
+distributed by the Copyright Holder(s).
+
+"Modified Version" refers to any derivative made by adding to, deleting,
+or substituting -- in part or in whole -- any of the components of the
+Original Version, by changing formats or by porting the Font Software to a
+new environment.
+
+"Author" refers to any designer, engineer, programmer, technical
+writer or other person who contributed to the Font Software.
+
+PERMISSION &amp; CONDITIONS
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of the Font Software, to use, study, copy, merge, embed, modify,
+redistribute, and sell modified and unmodified copies of the Font
+Software, subject to the following conditions:
+
+1) Neither the Font Software nor any of its individual components,
+in Original or Modified Versions, may be sold by itself.
+
+2) Original or Modified Versions of the Font Software may be bundled,
+redistributed and/or sold with any software, provided that each copy
+contains the above copyright notice and this license. These can be
+included either as stand-alone text files, human-readable headers or
+in the appropriate machine-readable metadata fields within text or
+binary files as long as those fields can be easily viewed by the user.
+
+3) No Modified Version of the Font Software may use the Reserved Font
+Name(s) unless explicit written permission is granted by the corresponding
+Copyright Holder. This restriction only applies to the primary font name as
+presented to the users.
+
+4) The name(s) of the Copyright Holder(s) or the Author(s) of the Font
+Software shall not be used to promote, endorse or advertise any
+Modified Version, except to acknowledge the contribution(s) of the
+Copyright Holder(s) and the Author(s) or with their explicit written
+permission.
+
+5) The Font Software, modified or unmodified, in part or in whole,
+must be distributed entirely under this license, and must not be
+distributed under any other license. The requirement for fonts to
+remain under this license does not apply to any document created
+using the Font Software.
+
+TERMINATION
+This license becomes null and void if any of the above conditions are
+not met.
+
+DISCLAIMER
+THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT
+OF COPYRIGHT, PATENT, TRADEMARK, OR OTHER RIGHT. IN NO EVENT SHALL THE
+COPYRIGHT HOLDER BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+INCLUDING ANY GENERAL, SPECIAL, INDIRECT, INCIDENTAL, OR CONSEQUENTIAL
+DAMAGES, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+FROM, OUT OF THE USE OR INABILITY TO USE THE FONT SOFTWARE OR FROM
+OTHER DEALINGS IN THE FONT SOFTWARE.
+</pre></details>
+<h3>sol</h3>
+<details><summary>RUN.md（運営の実施記録）</summary><pre style="white-space:pre-wrap;word-break:break-word"># RUN — task-02-keitora-hikkoshi / sol
+
+- 実施日: 2026-11-20（11:52:20–12:01:29 JST）
+- 実装時間: 9分09秒
+- 終了状態: 自然終了
+- 試行回数: 2回（本記録は最終試行）
+- トークン使用量: 入力 5,302,874（うちキャッシュ 5,151,488） / 出力 65,957
+- コスト推定: $5.31（API単価前提による換算。単価の前提は ../comparison.md 参照。実際の課金形態とは異なる）
+- 成果物ファイル数: 18（ランナー生成物・node_modules・支給 input を除く）
+
+## 主な成果物
+- assets/box.webp
+- assets/cone.webp
+- assets/dishes.webp
+- assets/dresser.webp
+- assets/flag.webp
+- assets/fridge.webp
+- assets/pavement.webp
+- assets/plant.webp
+- assets/rail.webp
+- assets/route.webp
+- assets/truck.webp
+- assets/tv.webp
+- assets/yard.webp
+- game.js
+- index.html
+
+## 検証結果
+検証Partial。astra と同型で、重量・壊れやすさと障害物の force 値から結果を解析的に計算する方式。リアルタイム物理演算ではない。
+
+## 備考
+試行2回。1回目はプロンプトが未送信のまま残るハーネスの不具合で無効となり、記録は修正後の再実行分。
+</pre></details>
+<h3>opus</h3>
+<details><summary>RUN.md（運営の実施記録）</summary><pre style="white-space:pre-wrap;word-break:break-word"># RUN — task-02-keitora-hikkoshi / opus
+
+- 実施日: 2026-11-20（10:19:56–11:13:02 JST）
+- 実装時間: 53分06秒
+- 終了状態: 自然終了
+- トークン使用量: 入力 668 / キャッシュ作成 913,548 / キャッシュ読込 98,558,465 / 出力 383,526
+- コスト推定: $193.74（API単価前提による換算。単価の前提は ../comparison.md 参照。実際の課金形態とは異なる）
+- 成果物ファイル数: 26（ランナー生成物・node_modules・支給 input を除く）
+
+## 主な成果物
+- README.md
+- RUN.md
+- index.html
+- js/audio.js
+- js/core.js
+- js/course.js
+- js/game.js
+- js/gfx.js
+- js/items.js
+- js/render.js
+- js/sim.js
+- js/truck.js
+- screenshots/01-title.png
+- screenshots/02-stages.png
+- screenshots/03-loading.png
+
+## 検証結果
+検証Pass。planck 同梱+9モジュール、README・スクリーンショット7枚・モンテカルロによるバランス調整ツールまで付属する最重量実装。
+</pre></details>
+<details><summary>README.md</summary><pre style="white-space:pre-wrap;word-break:break-word"># 軽トラ限界引っ越し
+
+軽トラの荷台に引っ越しの荷物を積み、段差だらけの道を走って新居まで届ける 2D 物理ゲームです。
+積み方しだいで、荷物は落ちたり、潰れたり、割れたりします。その分は最後の精算で弁償になります。
+
+## 起動のしかた
+
+`index.html` をブラウザ（Chrome / Safari / Edge / Firefox）で開くだけで遊べます。
+ビルドやサーバーは不要です。ネットにつながっていない環境でも動きます（そのときはフォントだけ端末の標準フォントになります）。
+
+## 流れ
+
+1. **依頼を選ぶ**：3件の依頼票から選びます。お客様・区間・荷物の数と重さ・道の特徴・料金・「★お願い」が書いてあります。
+2. **積む**：荷物置き場の荷札を荷台へドラッグ（クリックだけなら自動で置きます）。物理演算でそのまま積み上がります。荷物置き場は「積むおすすめ順」に並んでいます。
+3. **走る**：段差・スピードバンプ・踏切・工事の鉄板・穴ぼこ・砂利道・木の橋・急坂を越えて新居へ。荷物がこぼれ落ちる瞬間はスローモーションになり、運転手がふきだしで反応します。
+4. **精算**：感熱紙の明細書が1行ずつ印字され、最後に評価のハンコが押されます。
+
+## 操作
+
+| 場面 | 操作 |
+|---|---|
+| 積み込み | 荷札をドラッグして荷台へ（クリックだけなら自動で置く） / 置いた荷物もつかんで動かせる / 置いた荷物にマウスを乗せると「上に載っている重さ／耐えられる重さ」が出る |
+| 回転 | ホイール・Q/E（15°ずつ）、右クリック・R（90°） / 画面右下の ↺ ↻ |
+| ロープ | 「ロープ」を押して、黄色いフックから荷物へドラッグ（荷物→フックでも可）。ロープは荷物の上を通って反対側のフックにも掛かり、荷物を押さえます。結んだロープをクリックで外す。T でも切り替え |
+| 走行 | → / D アクセル、← / A ブレーキ。止まってから ← を押し直すとバック。H クラクション、Esc 一時停止 |
+| 共通 | M 音のオン・オフ |
+
+スマホ・タブレットでは、荷札をドラッグ（またはタップ）して積み、走行は画面下のペダルで操作します。
+
+## 精算のルール
+
+- 基本料金（依頼ごと）＋ 早着ボーナス − 延着料
+- **心付け**：依頼ごとの「★お願い」の荷物（ギター／結婚祝いの食器／仏壇と盆栽）を無事に届けると、お客様からもらえる
+- **破損**：HP が減った割合ぶん弁償。HP がなくなると全損（全額）
+- **落下**：走行中に荷物が地面に触れたら全額弁償
+- **積み残し**：別便の手配料（3,000円 ＋ 弁償額の30%）
+- **天地無用**を逆さま、**横倒し厳禁**を寝かせて運ぶと、残りの価値の半分を減額
+- **過積載**：軽トラの最大積載量 350kg を超えると反則金 20,000円
+- **ロードサービス**（横転・立ち往生からの復帰）：1回 10,000円
+
+## 積み方のコツ
+
+- 荷物置き場の上から順（重くて丈夫な物 → 布団 → ワレモノ → 転がる物）に積むと安定しやすい
+- 重い物は下へ。上に重い物が載ったワレモノや段ボールは「潰れそう」マークが出ます
+- ワレモノは布団に触れるように置くと衝撃がやわらぎます（「布団で保護」と表示）
+- 鳥居（運転席の後ろの柵）より高く積んだ荷物と、「★お願い」の荷物はロープで押さえる
+- 急発進・急ブレーキは荷崩れのもと。「大きな段差」の看板の前では這うように
+- 3件目は全部積むと 355kg。何を積み残すかも作戦のうち
+
+## ファイル構成
+
+```
+index.html        画面の骨組み
+style.css         見た目（荷札・依頼票・感熱紙・ハンコ）
+js/core.js        定数とユーティリティ
+js/gfx.js         描画ヘルパーと配色
+js/items.js       荷物26種（形・重さ・弁償額・強さ・絵）
+js/truck.js       軽トラ（車体・サスペンション・4WD・フック・絵）
+js/course.js      依頼3件（お願いと心付けを含む）とコース生成（段差・踏切など）
+js/sim.js         物理シミュレーション（破損・落下・ロープ・自動配置・精算）
+js/render.js      描画（背景・地形・看板・パーティクル・擬音・ふきだし・スロー演出）
+js/audio.js       効果音・エンジン音・BGM（すべて WebAudio で合成）
+js/game.js        画面遷移・入力・UI・スローモーション・運転手のひとこと
+vendor/           Planck.js 1.5.1（2D 物理エンジン、MIT ライセンス）
+tools/            ブラウザなしで物理とバランスを検証するスクリプト（Node.js）
+```
+
+検証スクリプトの例：
+
+```bash
+node tools/sim-test.js 1 9 clickrope pro   # 依頼1を「荷札を上から順にクリック＋ロープ」「段差手前で減速」で走らせる
+node tools/balance.js                      # 3件 × 積み方 × 運転スタイルの結果一覧
+tools/montecarlo-all.sh 6                  # 初期条件を少しずつずらして6回ずつ走らせ、ランクの分布を見る
+```
+
+積み方の指定：`click`（荷札を上から順にクリック）、`clickrope`（＋高い荷物にロープ）、`auto`（いちばん低い所へ順に落とす。背の高い山になる）、`rope`、`smart`。
+運転の指定：`pro`（段差の手前で減速）、`cap`（一定速度）、`full`（アクセル全開）。
+</pre></details>
+<details><summary>vendor/planck-LICENSE.txt</summary><pre style="white-space:pre-wrap;word-break:break-word">The MIT License
+Copyright (c) Erin Catto, Ali Shakiba
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+</pre></details>
+</section>
+</body></html>

@@ -149,4 +149,1571 @@ footer{max-width:1180px;margin:0 auto;padding:0 20px 40px;color:var(--sub);font-
 13枚。PDF/HTML/スライド画像一式+スピーカーノートと README 付き。</div>
 <p><a href='https://github.com/sean-sunagaku/prac-bench/tree/main/results/2026-11-20/task-11-self-appeal-slides/opus' target='_blank' rel='noopener'>このモデルの全ファイルを GitHub で見る</a> ／ <a href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-11-self-appeal-slides/opus/RUN.md' target='_blank' rel='noopener'>RUN.md</a></p>
 </section>
-</main><footer>Prac-Bench 実施結果レポート（2026-11-20）／ 数値・判定・所見の出典：リポジトリ内 results/2026-11-20/comparison.md および各 RUN.md</footer></body></html>
+</main><footer>Prac-Bench 実施結果レポート（2026-11-20）／ 数値・判定・所見の出典：リポジトリ内 results/2026-11-20/comparison.md および各 RUN.md</footer><section><h2>テキスト成果物（全文）</h2><p>各モデルの文書系テキスト成果物と運営の実施記録（RUN.md）を全文収録する。コードやバイナリはリポジトリと outputs/ を参照。</p>
+<h3>neon</h3>
+<details><summary>RUN.md（運営の実施記録）</summary><pre style="white-space:pre-wrap;word-break:break-word"># RUN — task-11-self-appeal-slides / neon
+
+- 実施日: 2026-11-20（14:22:46–14:35:59 JST）
+- 実装時間: 13分13秒
+- 終了状態: 自然終了
+- トークン使用量: 取得不可（Antigravity CLI の会話記録にトークン内訳が残らない形式のため）
+- コスト推定: 取得不可（トークン不明のため）
+- 成果物ファイル数: 64（ランナー生成物・node_modules・支給 input を除く）
+
+## 主な成果物
+- antigravity_capabilities.html
+- antigravity_capabilities.pdf
+- antigravity_capabilities.pptx
+- antigravity_presentation.html
+- antigravity_presentation.pdf
+- antigravity_presentation.pptx
+- assets/hero_prism.png
+- assets/hero_prism_feathered.png
+- assets/multimodal_prism.png
+- build/feather_hero.py
+- build/generate_deck.js
+- build/generate_html.js
+- presentation_assets/hero_bg.png
+- presentation_assets/multimodal_visual.png
+- presentation_assets/orchestration_bg.png
+
+## 検証結果
+10枚。PPTX/PDF/HTML の3形式+スライド画像一式。
+</pre></details>
+<details><summary>antigravity_capabilities.pptx（スライド本文を抽出）</summary><pre style="white-space:pre-wrap;word-break:break-word">--- スライド 1 ---
+GOOGLE DEEPMIND  •  AGENTIC AI
+Antigravity
+思考から実装・検証までを自律完遂する、
+次世代エージェンティック AI パートナー
+コード開発・マルチエージェント並列協調・マルチモーダル認識・リサーチ分析を統合し、アイデアを「検証済みの成果物」へと最速で昇華させます。
+AUTONOMOUS
+実装〜テストを自律完遂
+ORCHESTRATION
+Swarm・Workflow 並列
+SELF-VERIFIED
+視覚・実行結果の自己検証
+CAPABILITY OVERVIEW DECK  •  2026
+Designed &amp;amp; Built Autonomously by Antigravity
+
+--- スライド 2 ---
+01 / PARADIGM SHIFT
+「答えるAI」から「現場でやり切るパートナー」へ
+テキストの助言で終わらず、ワークスペースを直接理解・操作し、検証済みの成果物まで到達します。
+従来のチャット型 AI
+コード断片や手順を「提案」して終了
+ファイル反映・実行・エラー解消・動作確認は人間が都度コピペして往復
+→
+Antigravity（自律型エージェント）
+環境を把握し、実装から検証まで一気通貫で完遂
+複数ファイルの並列編集・実行・エラー修復・目視検証まで自律遂行
+01
+AUTONOMOUS
+EXECUTION
+自律完遂のエンジニアリング
+読解・設計・編集・コマンド実行を単一ループで自走
+テストやビルドの失敗を検知し、原因を特定して自動修復
+独立タスクを並列バッチ実行し、無駄な往復を排除
+02
+PARALLEL
+ORCHESTRATION
+知能の並列スケール
+調査や画像制作を専門サブエージェントへ非同期に委譲
+Swarm により複数ワーカーが独立ブランチで同時開発
+Python ワークフローで大規模ファイルの並列監査を実行
+03
+VERIFIED &amp;amp;
+TRUSTWORTHY
+視覚検証と透明な信頼性
+画像・PDF・動画の読解に加え、成果物を画像化して検査
+実行ログ・該当ファイル・行番号リンクに基づく誠実報告
+セキュリティ境界を厳守し、曖昧な仕様は的確に確認
+ANTIGRAVITY  —  AGENTIC AI CAPABILITY OVERVIEW
+02 / 10
+
+--- スライド 3 ---
+02 / CAPABILITY MAP
+開発・協調・制作・自動化を横断する 6つのコア能力
+目的や難易度に応じて最適なツール群と推論戦略を組み合わせ、エンドツーエンドで課題を解決します。
+01
+フルサイクル開発
+コード読解・設計・複数ファイル並列編集・コマンド実行・自動デバッグを一気通貫で遂行。
+並列編集
+コマンド実行
+自動デバッグ
+02
+マルチエージェント協調
+専門サブエージェント委譲、Swarm 並列チーム開発、Python ワークフローによる大規模処理を実現。
+Subagents
+Swarm
+Workflows
+03
+マルチモーダル理解＆制作
+画像・PDF・音声・動画を直接解析。画像生成・スライド・図解・UI制作と視覚検証を統合。
+画像/PDF/動画
+画像生成
+視覚検査
+04
+深層リサーチ＆分析
+大規模コードベースの横断探索、Web 検索、データ分析スクリプト、Artifacts 作成を実行。
+Web検索
+データ分析
+Artifacts
+05
+非同期タスク＆定期自動化
+長時間処理のバックグラウンド管理、通知による自動復帰、タイマー・Cron 定期運用に対応。
+バックグラウンド
+Cron定期実行
+通知復帰
+06
+拡張性＆安全ガバナンス
+Skills・Rules・MCP 連携でチーム固有の業務に最適化。アクセス制御と安全境界を厳守し透明に協働。
+Skills / MCP
+権限厳守
+合意形成
+ANTIGRAVITY  —  AGENTIC AI CAPABILITY OVERVIEW
+03 / 10
+
+--- スライド 4 ---
+03 / AUTONOMOUS ENGINEERING
+探索・実装・検証・自己修復を高速回転させる開発ループ
+独立した調査・編集を並列バッチ実行し、コマンド検証とエラー修復を自律ループで回し切ります。
+01
+要件・環境把握
+構成・依存・制約を
+一括スキャン
+›
+02
+設計・並列読込
+関連ファイルを同時に
+読み込み全体像を把握
+›
+03
+一括実装・編集
+整合性を保ちながら
+複数ファイルを同時更新
+›
+04
+自動ビルド＆検証
+テスト・Lint・差分を
+チェーンコマンドで確認
+›
+05
+検証済み納品
+根拠ファイルリンク付き
+で簡潔・誠実に報告
+↺  自律エラー修復ループ：Step 04 でテスト・ビルド失敗を検知すると、全エラー要因を特定し Step 03 へ自動復帰して一括修正・再検証
+スピードと精度を両立する実装スタイル
+並列バッチ処理
+独立した検索・ファイル読込・編集を1ターン内で同時実行し待ち時間を圧縮
+一括コマンド検証
+ビルド・単体テスト・差分確認を連結実行し、手戻りのない確認を実現
+最小差分・高保守性
+既存アーキテクチャと規約を尊重し、保守性の高い安全なコードを実装
+実戦での主要エンジニアリング対応領域
+Web / App フルスタック開発
+UI・API・DB・状態管理まで一貫構築
+難解バグの根本原因調査
+ログ解析・再現テスト・ピンポイント修正
+大規模リファクタリング
+依存の全件追跡と安全・段階的な置換
+自動化スクリプト・開発基盤
+CLI・データ変換・検証基盤を整備
+ANTIGRAVITY  —  AGENTIC AI CAPABILITY OVERVIEW
+04 / 10
+
+--- スライド 5 ---
+04 / MULTI-AGENT ORCHESTRATION
+課題の規模に応じて知能を並列スケールする 3層アーキテクチャ
+単一エージェントの限界を超え、専門委譲・自律チーム開発・コード制御ワークフローを使い分けます。
+TIER 01
+Subagents
+専門タスクの非同期委譲
+Main Agent
+Research
+Image Gen
+Custom
+独立したコンテキストで専門エージェントを起動。メイン対話を整理された状態に保ちつつ並列処理。
+▸  research：大規模調査・仕様読解に特化
+▸  image-generator：専用ビジュアル素材生成
+▸  カスタム定義：独自ロールをその場で構築
+最適な用途：広範な調査・クリエイティブ制作
+TIER 02
+Swarm
+自律チームによる並列開発
+Shared Message Board
+Dev A (share)
+Dev B (share)
+Verifier
+共有メッセージボード上で複数ワーカーが自律連携。独立ワークスペースで競合ゼロの同時開発。
+▸  share / branch による安全な分離作業空間
+▸  実装・テスト・レビューの役割分担＆相互確認
+▸  進捗に応じた動的メンバー追加と結果統合
+最適な用途：大規模機能開発・多役割プロジェクト
+TIER 03
+Python Workflows
+コード制御の大規模並列処理
+Python
+Worker #1..N
+Pipeline Stage
+Cross-Check
+Aggregate
+→
+→
+Python スクリプト (run_workflow) で多数のエージェントとツールを構造化オーケストレーション。
+▸  parallel：数十ファイル・複数観点へ一斉展開
+▸  pipeline：前段結果を次段へ自動連携
+▸  自動フィルタリング・クロスチェック・最終集計
+最適な用途：全社コード監査・多角的バッチ分析
+REACTIVE ARCHITECTURE
+イベント駆動の自動復帰設計：完了通知で即座に再開するためポーリング待機ゼロ。複数並列ジョブを最短レイテンシで統合します。
+ANTIGRAVITY  —  AGENTIC AI CAPABILITY OVERVIEW
+05 / 10
+
+--- スライド 6 ---
+05 / MULTIMODAL &amp;amp; CREATIVE SYNTHESIS
+あらゆるメディアを「読む力」と、ビジュアルを「創り検証する力」
+テキストの枠を超え、画像・PDF・動画・音声の直接理解から、資料・UI・挿絵の一貫制作まで対応します。
+INPUT  —  DIRECT PERCEPTION
+画像・文書・動画・音声を直接理解
+●  画像・UI画面
+スクリーンショットから余白崩れ・配色・情報設計を即座に診断
+●  PDF・設計書
+図表を含む長文仕様書や論文を直接読み込み構造化
+●  音声・動画
+操作録画やデモ動画・音声ファイルから事実と課題を抽出
+OUTPUT  —  VISUAL CREATION &amp;amp; QA
+コード × ビジュアルの統合制作と自己検査
+●  専用画像生成
+image-generator 連携で資料・UI用の専用画像を制作
+●  多彩な表現媒体
+PPTX・HTML・Mermaid図・Artifacts を一貫生成
+●  視覚的自己検証
+成果物を画像化して自ら目視し、崩れを徹底修正
+LIVE VISUAL ARTIFACT
+デザイン設計・画像生成・レイアウト統合を一貫実行
+上の3Dアートワークも、本資料のカラー設計に合わせてブリーフを作成し、サブエージェントで生成・最適比率で自動配置しています。
+ANTIGRAVITY  —  AGENTIC AI CAPABILITY OVERVIEW
+06 / 10
+
+--- スライド 7 ---
+06 / RESEARCH &amp;amp; EXTENSIBILITY
+根拠ある意思決定支援と、現場に合わせて進化する拡張基盤
+コード・Web・データを横断した高速リサーチに加え、チーム固有の知見や外部ツールと自在に連携します。
+リサーチから意思決定ドキュメントまで一気通貫
+01
+既存コード × 最新 Web 情報の統合調査
+リポジトリ内の実装詳細を正確に読み解きつつ、Web 検索で最新ライブラリ仕様や設計ベストプラクティスを即時キャッチアップ。
+02
+スクリプト駆動の実データ分析＆構造化レポート
+Python / Node 等で検証スクリプトを実行し一次データを集計。Mermaid 図解や表を組み込んだ見やすい Artifacts レポートを出力。
+03
+ファイル・行番号リンク付きの追跡可能な根拠提示
+すべての発見事項・変更箇所にクリック可能な参照リンクを明記。レビュー担当者が数秒で裏取りできる高い透明性を担保。
+EXTENSIBILITY ARCHITECTURE
+組織・個人に最適化する 3つの拡張層
+LAYER 01
+Skills &amp;amp; Rules
+業務ノウハウ・手順書・デザイン規約をスキルとして定義。タスク内容に応じて自動ロードし再現性を確保。
+LAYER 02
+MCP Servers &amp;amp; Hooks
+外部サービス・社内ツール・イベントフックを安全に統合し、開発ワークフロー全体へ能力を拡張。
+LAYER 03
+Schedule &amp;amp; Daemons
+Cron 定期実行・ワンショットタイマー・常駐プロセス管理により、監視や定期レポートを自律運用。
+ANTIGRAVITY  —  AGENTIC AI CAPABILITY OVERVIEW
+07 / 10
+
+--- スライド 8 ---
+07 / REAL-WORLD SCENARIOS
+構想から運用まで — 実務シーン別の具体的な活用シナリオ
+単なる部分補助にとどまらず、開発・調査・資料化・監査のボトルネックそのものを解消します。
+活用シーン
+Antigravity の自律ワークフロー
+現場にもたらす価値
+01
+新規プロダクト試作
+(0 → 1 開発)
+要件整理 → アーキテクチャ設計 → UI・API実装 → 必要画像の生成 → ローカル起動と画面・動作確認を一気通貫で実施
+アイデアを最短時間で「触って検証できるプロトタイプ」に変換し意思決定を加速
+02
+大規模コード調査
+&amp;amp; 安全な改修
+依存関係・影響範囲を並列探索 → 設計意図を把握 → 複数ファイルを整合性を保って同時修正 → ビルド＆回帰テストで検証
+属人化した既存コードの調査負荷を大幅に削減し、デグレを防ぎながら改修を推進
+03
+リサーチ・データ分析
+&amp;amp; 提案資料制作
+Web最新情報・社内資料を収集 → Python等で集計・検証 → ストーリー設計 → PPTX / HTML 資料生成と全ページ視覚検査
+調査から経営・顧客向けの完成スライドまでワンストップで高品質に出力
+04
+品質監査・レビュー
+&amp;amp; 定常タスク自動化
+Python Workflow や Swarm で全モジュールを多角的に並列レビュー → 改善PR案作成 → Cron による定期チェックを自動化
+見落としやすい品質チェックを仕組み化し、チームの生産性と健全性を継続維持
+ANTIGRAVITY  —  AGENTIC AI CAPABILITY OVERVIEW
+08 / 10
+
+--- スライド 9 ---
+08 / PROOF BY EXECUTION
+語るだけでなく、今この資料そのもので実証する
+「能力をアピールするスライドを作って」という一文から、以下の 5 工程をすべて自律実行して本資料を生成・検証しました。
+STEP 01
+環境を自律調査
+OS・日本語フォント・pptxgenjs・Chrome・Keynote 等の利用可能ツールを自動検出し最適な制作環境を確立。
+›
+STEP 02
+構成＆デザイン設計
+全10枚のストーリー・配色トークン・毎スライド異なる視覚レイアウトをグリッド単位で設計。
+›
+STEP 03
+専用ビジュアル生成
+image-generator サブエージェントを 2 体並列起動し、本資料専用の 3D 挿絵を同時制作・最適化。
+›
+STEP 04
+複数媒体を同時構築
+ネイティブ編集可能な .pptx とブラウザ完結のインタラクティブ .html をコードから精密生成。
+›
+STEP 05
+全スライド視覚検証
+PDF→PNG 変換した全10枚を自ら画像として目視検査し、影崩れや図解ライン・余白を徹底修正。
+DELIVERABLES GENERATED IN THIS SESSION
+antigravity_capabilities.pptx
+ネイティブ編集可能・全ページ発表者ノート付き
+antigravity_capabilities.pdf
+配布・レビュー用の高精細 PDF エクスポート
+antigravity_capabilities.html
+キーボード操作・一覧・ノート切替対応 Web 版
+ANTIGRAVITY  —  AGENTIC AI CAPABILITY OVERVIEW
+09 / 10
+
+--- スライド 10 ---
+09 / TRUST &amp;amp; COLLABORATION
+安心して任せられる、
+透明で誠実な協働スタイル
+安全性と境界の厳守
+権限チェック・アクセス制御・セキュリティ境界を一切迂回せず、正規かつ安全な手順のみで作業を遂行します。
+推測せず、的確な対話で合意形成
+重要な仕様分岐や設計判断は勝手に決めつけず、論点を整理した選択肢で素早く確認してから前へ進めます。
+検証済みの一次情報に基づく誠実な報告
+過度な誇張や未確認の推測を避け、実際の実行結果・テスト結果・参照ファイルリンクを明示して共有します。
+次のプロジェクトを、
+一緒に形にしましょう。
+曖昧な構想段階でも、複雑な既存システムでも。
+まずは解決したい課題をそのまま伝えてください。
+TRY ASKING
+「既存リポジトリを調査してボトルネックと改善案をまとめて」
+「このアイデアから動く Web アプリを設計・実装・検証して」
+「最新データを調べて提案スライドと分析レポートを作って」
+POWER WORKFLOW SHORTCUTS
+/plan
+設計立案
+/teamwork
+並列開発
+/boost
+深層検証
+/schedule
+定期実行
+ANTIGRAVITY  —  AGENTIC AI CAPABILITY OVERVIEW
+10 / 10</pre></details>
+<details><summary>antigravity_presentation.pptx（スライド本文を抽出）</summary><pre style="white-space:pre-wrap;word-break:break-word">--- スライド 1 ---
+GOOGLE DEEPMIND  •  AGENTIC AI ASSISTANT
+Antigravity
+思考から実装・検証までを自律完遂する、
+次世代エージェント型AIパートナー
+質問に答えるだけのチャットを超え、実環境でのコード編集・コマンド実行・
+マルチエージェント並列処理・視覚検証までを一気通貫で担います。
+EXECUTION
+自律設計・実装・自己修復
+SCALE
+並列マルチエージェント統括
+DELIVERY
+検証済み成果物の一貫納品
+CAPABILITY OVERVIEW • 2026
+
+--- スライド 2 ---
+01  PARADIGM SHIFT
+「答えるAI」から「やり遂げるAI」へ
+助言を返すだけで終わらず、実際の環境で手を動かし、検証済みの成果物として仕上げます。
+従来の対話型AI
+ADVICE ONLY
+×
+テキスト提案止まり
+コード断片や手順を返すだけで、反映や実行は人間任せ。
+×
+エラーの往復コスト
+実行結果やエラーを直接見えず、何度もコピペと再質問が必要。
+×
+単一スレッドの限界
+調査・実装・レビューを同時並行できず、大規模課題で失速。
+×
+品質の裏付けがない
+ビルド通過や画面の崩れを確認しないまま出力を終えてしまう。
+→
+Antigravity（エージェント型AI）
+END-TO-END
+✓
+実環境への直接アクション
+リポジトリ探索・複数ファイル編集・シェル実行・ビルドまで直接操作。
+✓
+自律的なエラー自己修復ループ
+テストログと出力結果を解析し、原因特定から修正・再検証まで完遂。
+✓
+並列マルチエージェント協調
+調査・実装・ビジュアル生成を専門エージェント群で同時並列実行。
+✓
+テスト＆視覚検証まで責任完了
+自動テスト合格に加え、出力資料やUIを画像で実視確認してから納品。
+END-TO-END WORKFLOW
+要件構造化
+→
+環境・Web調査
+→
+実装・生成
+→
+実行・視覚検証
+→
+確かな成果物
+Antigravity — Capability Overview
+02 / 10
+
+--- スライド 3 ---
+02  CAPABILITY MAP
+複雑な課題を突破する、6つのコア能力
+開発・調査・制作・運用の各領域を横断し、実務に直結するエージェント能力を統合しています。
+01
+深い推論と設計力
+曖昧な要件を構造化し、アーキテクチャ選定・トレードオフ比較・安全な実行計画を事前に設計します。
+Architecture • Root-Cause Analysis
+02
+自律コーディング＆実行
+複数ファイルへの精密な編集から、依存解決・CLIコマンド実行・ビルド処理までをシームレスに遂行します。
+Code Edit • Shell • Build Pipeline
+03
+並列マルチエージェント
+サブエージェント、Swarm、Python Workflowを駆使し、大規模タスクを同時並列で分解・統括します。
+Subagents • Swarm • Workflows
+04
+マルチモーダル＆視覚生成
+コード・画像・PDF・音声・動画・最新Web情報を横断理解し、キービジュアルや資料も自ら生み出します。
+Vision • Docs • Image Generation
+05
+自律検証＆品質保証
+自動テスト・静的解析に加え、成果物をレンダリングして画像で実視チェックし、破綻を自ら修復します。
+Testing • Visual QA • Self-Healing
+06
+拡張性と継続自動化
+Skills・Rules・MCP連携・Cronスケジュール実行により、一度の解決をチームの継続資産へ定着させます。
+Skills • MCP • Cron Automation
+Antigravity — Capability Overview
+03 / 10
+
+--- スライド 4 ---
+03  AUTONOMOUS EXECUTION
+書いて終わりにしない。検証駆動の自律開発ループ
+探索・設計・実装・検証・修復を閉ループで回し、確証のある状態まで自ら磨き上げます。
+STEP 01
+並列探索・全体把握
+関連ファイル・設定・既存テストをバッチ並列で読み込み、文脈と制約を正確に把握。
+STEP 02
+影響分析・設計計画
+変更範囲とエッジケースを整理し、最小コストで安全な実装・検証戦略を立案。
+STEP 03
+精密な並列実装・生成
+既存アーキテクチャとコーディング規約に沿ったクリーンな差分を一括適用。
+STEP 04
+実行テスト・実視検証
+ビルド・ユニットテスト・レンダリング画像の目視確認を実行し、品質を客観判定。
+↺ SELF-HEALING LOOP
+異常検知時は原因特定し STEP 03 へ自動回帰
+antigravity — verified-loop.log
+▸ [SCAN]   Parallel read 14 source files
+▸ [PLAN]   Mapped dependencies &amp;amp; test matrix
+▸ [EDIT]   Applied minimal diff across 4 modules
+▸ [RUN]    pytest &amp;amp;&amp;amp; build &amp;amp;&amp;amp; render_slides
+  ✓ 42 tests passed, 0 failed (1.8s)
+  ✓ Visual QA: 10/10 pages clean
+▸ [DONE]   Deliverable verified &amp;amp; cited
+EFFICIENCY
+バッチ並列実行
+独立した読込・編集・検証を同時処理し、往復を削減
+ACCOUNTABILITY
+根拠ある完了報告
+変更ファイル・行番号・検証ログを明示して透明化
+Antigravity — Capability Overview
+04 / 10
+
+--- スライド 5 ---
+04  PARALLEL ORCHESTRATION
+単一視点を超越する、マルチエージェント並列統括
+課題の規模と性質に応じ、専門エージェント群と独立ワークスペースを自在に編成します。
+COORDINATOR
+Antigravity 統括エージェント
+タスク分解・依存設計・エージェント配備・結果のクロスチェックと最終統合を担う中枢
+DYNAMIC SCALING
+MODE 01 • DELEGATE
+専門サブエージェント
+コード調査・Webリサーチ・画像生成などを独立コンテキストへ非同期委任し、主思考をクリーンに保持。
+research / image-gen / custom
+MODE 02 • COLLABORATE
+Agent Swarm
+複数ワーカーが共有メッセージボード上で役割分担・協調し、大型プロジェクトをチーム体制で推進。
+Shared board • Multi-worker
+MODE 03 • PIPELINE
+Python ワークフロー
+コード制御による大規模ファンアウト（parallel）と段階パイプラインで大量ファイルを一括処理。
+parallel() • pipeline()
+MODE 04 • ISOLATION
+独立ワークスペース
+各ワーカーに独立作業コピー（share / branch）を割り当て、同時編集・ビルドの競合を根本排除。
+inherit / share / branch
+大規模リポジトリの横断監査・一括リファクタ
+複数視点からの並列レビューで見落とし削減
+調査・素材制作・実装の同時進行で高速化
+Antigravity — Capability Overview
+05 / 10
+
+--- スライド 6 ---
+05  MULTIMODAL &amp;amp; CREATIVE
+「読む・見る・描く」を統合したマルチモーダル表現力
+コードやテキストに限らず、画像・文書・音声・動画を深く理解し、洗練された成果物へ昇華します。
+多様なインプット理解（Understand）
+MULTI-SOURCE
+コード・設計資産
+リポジトリ構造・設定・差分履歴を文脈ごと精密に読解
+画像・UI・PDF資料
+画面スクリーンショットの崩れや図表・仕様書を直接解析
+音声・動画メディア
+デモ動画や音声データから要件・挙動・改善点を抽出
+最新Webリサーチ
+公式ドキュメントや最新動向をリアルタイム検索で裏取り
+多彩なアウトプット創出（Create）
+READY-TO-USE
+Webアプリ・UI実装
+デザインシステムを備えた実働フロントエンド＆API構築
+オリジナル図版生成
+用途とトーンに合わせたキービジュアルを自律生成
+プレゼン＆文書資料
+HTML5・PDF・編集可能PPTXまで用途別の完成形式で納品
+Mermaid設計・分析図
+構成図・シーケンス図・比較表で複雑な議論を可視化
+Art-Directed Visual Synthesis
+本資料のために自律生成
+Antigravity — Capability Overview
+06 / 10
+
+--- スライド 7 ---
+06  EXTENSIBILITY &amp;amp; AUTOMATION
+チーム固有の知見を取り込み、継続進化する基盤
+その場限りの支援で終わらせず、ルール・外部連携・定期自動化によって組織の生産性を底上げします。
+KNOWLEDGE SYSTEM
+Skills &amp;amp; Rules
+•  プロジェクト固有の規約・手順・ベストプラクティスをモジュール化して装備
+•  一度確立した高度なワークフローをチーム全体で再現性高く再利用
+SKILL.md • Workspace Rules • Hooks
+ECOSYSTEM CONNECTIVITY
+MCP ＆ 外部ツール連携
+•  Model Context Protocol 経由で外部API・DB・社内ツール群と安全に接続
+•  コード・チケット・ドキュメントを横断した業務自動化を実現
+MCP Servers • Custom Plugins • CLI
+CONTINUOUS OPERATIONS
+スケジュール実行＆非同期管理
+•  Cron・タイマーによる定期監視、日次サマリー生成、自動メンテナンスを実行
+•  開発サーバーや長時間ビルドなどのバックグラウンドプロセスを安全に制御
+Cron • One-Shot Timer • Daemon Tasks
+STRUCTURED COLLABORATION
+Artifacts &amp;amp; 可視化ドキュメント
+•  実行計画書・実験ログ・詳細分析レポートを構造化Markdownで自動整理
+•  Mermaid図やクリック可能なファイルリンクでレビュー負荷を大幅軽減
+Plans • Reports • Mermaid Diagrams
+Antigravity — Capability Overview
+07 / 10
+
+--- スライド 8 ---
+07  PRACTICAL USE CASES
+開発から意思決定まで、現場を変える4つの実践シナリオ
+上流の調査・構想から実装・障害対応・資料制作まで、現場のボトルネックを直接解消します。
+CASE 01
+新機能開発・
+高速プロトタイプ
+CHALLENGE
+仕様検討からUI・API・テスト実装まで工数が膨らみ、初動が遅れがち。
+APPROACH
+要件整理からフロント／バック並列実装、ビルド・実画面検証まで一気通貫で推進。
+アイデアを最短距離で「動く・検証済みのプロダクト」へ昇華
+CASE 02
+複雑バグ調査・
+大規模リファクタ
+CHALLENGE
+原因が複数モジュールに跨り、修正の影響範囲やデグレリスクが見えにくい。
+APPROACH
+並列調査で根本原因を特定し、最小差分で修正したうえで回帰テストを自動検証。
+デグレを未然に防ぎつつ、技術的負債と障害原因を安全に解消
+CASE 03
+技術リサーチ・
+意思決定支援
+CHALLENGE
+最新技術や設計案の比較検討に膨大な調査時間がかかり、判断が属人化しやすい。
+APPROACH
+既存コードの制約と最新Web一次情報を掛け合わせ、比較表・構成図付きで整理。
+根拠とトレードオフが明確な設計判断を短時間で獲得
+CASE 04
+企画書・スライド・
+ドキュメント制作
+CHALLENGE
+構成づくり・図版制作・レイアウト調整まで一貫して高品質に仕上げる負荷が高い。
+APPROACH
+ストーリー設計・専用ビジュアル生成・多形式出力・全ページ視覚QAまで完結。
+そのまま提案・共有に使える高品位な資料をスピーディに納品
+Antigravity — Capability Overview
+08 / 10
+
+--- スライド 9 ---
+08  PROOF IN ACTION
+このスライド資料そのものが、実行力の証明です
+「能力をアピールする資料を作って」という一言から、設計・素材生成・多形式出力・視覚検品まで自律完遂しました。
+01
+→
+構成＆デザイン設計
+10枚のストーリー弧、配色ルール、日本語タイポグラフィ、余白設計を体系的に設計。
+Swiss-Modern Design System
+02
+→
+並列ビジュアル生成
+3体の画像生成サブエージェントを同時起動し、世界観に調和する専用図版を制作。
+3× Parallel Subagents
+03
+→
+マルチフォーマット生成
+HTML5・高精細PDF・編集可能PPTXの3形式をコードから精密に同時ビルド。
+HTML5 + Chrome PDF + PPTX
+04
+✓
+自動レンダリング＆視覚QA
+全スライドを画像変換して1枚ずつ実視確認し、フォント・余白・崩れを徹底検品。
+Headless Render + Visual QA
+DELIVERABLES PRODUCED AUTONOMOUSLY IN THIS SESSION
+Interactive HTML5 Deck
+antigravity_presentation.html
+単一ファイルで完結。ブラウザ即再生・キーボード操作・一覧モード対応。
+Print-Ready PDF
+antigravity_presentation.pdf
+16:9 高精細レイアウト。どの環境でも崩れない共有・配布向け形式。
+Editable PowerPoint
+antigravity_presentation.pptx
+テキスト・図形をそのまま編集可能なネイティブPowerPoint資料。
+Antigravity — Capability Overview
+09 / 10
+
+--- スライド 10 ---
+ANTIGRAVITY  •  GOOGLE DEEPMIND
+複雑な課題を、確かな成果へ。
+スピードだけでなく、根拠・安全性・検証品質を兼ね備えた自律パートナーとして、
+あなたの開発と創造を次の次元へ引き上げます。
+01  TRANSPARENCY
+透明なプロセス
+実行計画・変更差分・参照ファイルと根拠を常に明示し、ブラックボックスにしません。
+02  SAFETY &amp;amp; CONTROL
+揺るがない安全性
+権限と環境境界を厳格に守り、判断が分かれる仕様は確認を挟んで確実に進めます。
+03  VERIFIED DELIVERY
+検証済みの完遂力
+提案で止めず、テスト合格・実視確認までクリアした実働成果物としてお届けします。
+次に解決したい課題から、いつでも始めてください。
+ANTIGRAVITY • READY TO EXECUTE
+Antigravity — Capability Overview
+10 / 10</pre></details>
+<h3>carbon</h3>
+<details><summary>RUN.md（運営の実施記録）</summary><pre style="white-space:pre-wrap;word-break:break-word"># RUN — task-11-self-appeal-slides / carbon
+
+- 実施日: 2026-11-20（14:26:32–14:43:07 JST）
+- 実装時間: 16分35秒
+- 終了状態: 自然終了
+- トークン使用量: 取得不可（Antigravity CLI の会話記録にトークン内訳が残らない形式のため）
+- コスト推定: 取得不可（トークン不明のため）
+- 成果物ファイル数: 8（ランナー生成物・node_modules・支給 input を除く）
+
+## 主な成果物
+- assets/hero_antigravity.png
+- assets/loop_diagram.png
+- assets/topo_subagent.png
+- assets/topo_swarm.png
+- assets/topo_workflow.png
+- slides.html
+- slides.pdf
+- slides.pptx
+
+## 検証結果
+10枚。PPTX/PDF/HTML の3形式+図解アセット5点。
+</pre></details>
+<details><summary>slides.pptx（スライド本文を抽出）</summary><pre style="white-space:pre-wrap;word-break:break-word">--- スライド 1 ---
+Generated via Subagent: image-generator
+GOOGLE DEEPMIND · AGENTIC AI
+Antigravity
+対話を超え、自律的に
+創り上げるAIパートナー
+深い推論・マルチエージェント協調・実環境ツール実行を統合。
+構想の整理から検証済みの成果物納品までを一気通貫で完遂します。
+Deep Thinking &amp;amp; Plan
+Multi-Agent Swarm
+Verified Execution
+Capability Overview Deck  |  Powered by Gemini  ·  01 / 10
+
+--- スライド 2 ---
+01 · PARADIGM SHIFT
+「答えるAI」から、実環境で自走し「完遂するAI」への進化
+テキスト断片を返す補助ツールではなく、計画・実行・自己検証までを一気通貫で担う自律型エージェントです。
+Google DeepMind  ·  Antigravity Capability Overview
+02 / 10
+従来のチャット型AI
+人間が実行と検証を仲介
+▸ 
+対話範囲：
+単発プロンプトに対するコード断片や助言の提示
+▸ 
+実行検証：
+人間が手元でコピペ・コマンド実行・エラー修正を代行
+▸ 
+処理規模：
+単一スレッドのため大規模調査で文脈が飽和しやすい
+▸ 
+成果形態：
+チャット欄のテキスト回答にとどまり納品物化に手間
+→
+Antigravity（自律型）
+構想から検証済み成果物まで自走
+▸ 
+対話範囲：
+リポジトリ全体・画像・PDF・Webを横断理解し直接編集
+▸ 
+実行検証：
+ビルド・自動テスト・視覚レンダリング確認まで自ら完遂
+▸ 
+処理規模：
+Subagent・Swarm・Python Workflowで並列分業
+▸ 
+成果形態：
+検証済コード・設計書・スライド等の実ファイルを直納
+01  思考と構造化 (Think &amp;amp; Plan)
+Deep Thinkingで曖昧な課題を構造化し、着手前に筋の通った実行計画を策定。
+02  実践と自己検証 (Act &amp;amp; Verify)
+マルチモーダル読解と並列ツール実行を組み合わせ、テストと目視検査で品質を担保。
+03  協調と専門拡張 (Scale &amp;amp; Adapt)
+マルチエージェント編成とSkills / MCP連携により、組織・プロジェクト専用に進化。
+
+--- スライド 3 ---
+02 · EXECUTION ENGINE
+計画から自己検証までを閉ループで回し、手戻りのない品質を実現
+毎ターン並列で情報収集・編集・検証を実行し、課題が見つかれば自ら原因を特定して修正します。
+Google DeepMind  ·  Antigravity Capability Overview
+03 / 10
+STEP 01
+マルチモーダル文脈理解
+コード全文検索に加え、画像・PDF・音声・動画・過去ログを直接読解し前提条件を正確に把握。
+STEP 02
+戦略的プランニング &amp;amp; 合意形成
+変更の影響範囲を事前設計。解釈が分かれる要件は構造化された選択肢（ask_question）で確認。
+STEP 03
+高効率バッチ &amp;amp; ツール実行
+複数ファイル同時編集・シェル実行・Web検索を1ターンに並列集約し、最小ステップで推進。
+STEP 04
+実環境テスト &amp;amp; 視覚レンダリング検証
+単体テストやビルド検証に加え、生成したPDFや画像を自ら読み直して崩れや不備を自己修復。
+
+--- スライド 4 ---
+03 · MULTI-AGENT ORCHESTRATION
+タスクの規模と性質に応じ、3つのマルチエージェント編成を使い分け
+専門調査の委譲から複数ワーカーの同時開発、大規模な定型パイプラインまで柔軟にスケールします。
+Google DeepMind  ·  Antigravity Capability Overview
+04 / 10
+Subagents
+DELEGATION
+専門分業：独立リサーチ・画像生成・個別検証
+▸ 
+research（読取専用）や image-generator 等の専門家を起動
+▸ 
+会話内でカスタムSubagentを動的定義し繰り返し活用
+▸ 
+大量の探索ログを分離し、親のコンテキストをクリーンに維持
+invoke_subagent / define_subagent
+Native Swarm
+COLLABORATION
+協調チーム：複数機能の並列実装・相互レビュー
+▸ 
+共有メッセージボード上で複数ワーカーが自律的に連携
+▸ 
+workspace: "share" | "branch" で作業コピーを分離
+▸ 
+ファイル競合を起こさず同時ビルド・テスト・統合を実現
+swarm(action="add", workspace="share")
+Dynamic Workflow
+ORCHESTRATION
+コード制御：大規模分析・多段パイプライン
+▸ 
+Pythonスクリプトでエージェント群の制御ロジックを記述
+▸ 
+parallel 並列展開と pipeline 直列ステージを自在に結合
+▸ 
+JSON Schema検証により型安全な構造化データとして集約
+run_workflow( parallel / pipeline )
+
+--- スライド 5 ---
+04 · UNIFIED SURFACES
+デスクトップ・IDE・CLI・SDKの4環境で同一のエージェント基盤を共有
+対話型の企画からインライン開発、ターミナル操作、業務パイプライン組込までシームレスに連携します。
+Google DeepMind  ·  Antigravity Capability Overview
+05 / 10
+Antigravity 2.0
+DESKTOP APP
+IDEに依存せず複数プロジェクトとエージェント活動を統括するデスクトップ環境
+▸ 
+@メンションや画像ドラッグ＆ドロップで文脈を直感的に添付
+▸ 
+Subagents・非同期タスク・変更差分・Artifactsを専用ペインで可視化
+▸ 
+Cron定期実行タスクやモデル・権限設定をGUIで一元管理
+Antigravity IDE
+AI-FIRST EDITOR
+受動予測・局所指示・自律協調の3モーダルを統合したAIネイティブ開発環境
+▸ 
+Antigravity Tab：
+次の一手・複数行差分・自動Import・ジャンプ先を予測
+▸ 
+Inline (⌘+I) &amp;amp; Code Lens：
+選択箇所の改修やテスト生成を即座に実行
+▸ 
+Visual Diff &amp;amp; Auto-Fix：
+赤緑差分レビューとLint/ビルドエラー自動修復
+Antigravity CLI (agy)
+TERMINAL TUI
+ターミナルから即起動し、開発リズムを止めず高速対話できる軽量TUI
+▸ 
+/plan・/grill-me・/boost・/teamwork・/goal で専門モードを即時起動
+▸ 
+~/.gemini/antigravity-cli/settings.json による柔軟な環境カスタマイズ
+▸ 
+リモート作業やシェル中心のエンジニアリングフローと高い親和性
+Antigravity Python SDK
+PROGRAMMATIC API
+pip install google-antigravity でCI/CDや社内基盤へ容易に組込
+▸ 
+async with Agent(config) による簡潔な非同期ライフサイクル管理
+▸ 
+response.thoughts（推論過程）と tool_calls（実行履歴）をリアルタイム取得
+▸ 
+既定の読取専用セーフモードから書込ツール解禁までコードで厳密制御
+
+--- スライド 6 ---
+05 · CUSTOMIZATION &amp;amp; ECOSYSTEM
+5層の拡張システムにより、コンテキストを圧迫せず専門知を定着
+組織の規約・業務手順・外部ツール接続を .agents/ 配下に定義し、チーム全体でバージョン管理できます。
+Google DeepMind  ·  Antigravity Capability Overview
+06 / 10
+Rules
+GEMINI.md / AGENTS.md
+階層ディレクトリ単位で規約・設計方針・制約を自動適用
+Skills
+skills/&amp;lt;name&amp;gt;/SKILL.md
+専門ワークフロー・手順書・スクリプトを必要時のみ注入
+MCP Servers
+mcp_config.json
+DB・社内API・外部SaaSをMCP標準プロトコルで接続
+Hooks
+hooks.json
+ツール実行前後のライフサイクルで検証処理を自動実行
+Plugins
+plugins/&amp;lt;name&amp;gt;/plugin.json
+関連するRules・Skills・MCP設定を単一バンドルで配布
+PROGRESSIVE DISCLOSURE
+段階的開示で「広い知識」と
+「軽いコンテキスト」を両立
+1. 常駐ロード（最小限の目次）
+初期状態ではスキルの「名前と概要」のみを保持し、コンテキスト消費を極小化。
+↓  タスクに関連すると判断した瞬間のみ起動
+2. オンデマンド展開（専門手順の注入）
+SKILL.md 全文と参照ドキュメントを動的に読込み、深い専門手順を正確に遂行。
+優先度：Workspace (.agents/) ＞ Global (~/.gemini/) ＞ Built-in
+
+--- スライド 7 ---
+06 · MULTIMODAL DELIVERABLES
+コード実装から調査レポート・プレゼン資料まで「使える成果物」を直納
+チャット上の助言にとどまらず、実務にそのまま投入できる完成ファイル群を一気通貫で生成します。
+Google DeepMind  ·  Antigravity Capability Overview
+07 / 10
+01 · ENGINEERING
+ソフトウェア設計・実装
+新機能開発、大規模リファクタリング、DB設計、自動テスト作成、ビルドエラー解析まで自律完遂。
+02 · ARTIFACTS
+構造化技術ドキュメント
+Mermaid図解・カルーセル比較・GFMアラートを備えた設計書や調査書を生成し、承認UIと連携。
+03 · VISUAL &amp;amp; SLIDES
+画像生成・スライド制作
+Subagentによる画像生成とPython/HTML組版を統合し、PPTX・PDF・Webスライドを同時出力。
+04 · ASYNC OPS
+非同期タスク・定期運用
+バックグラウンドプロセス管理やCron/タイマー（schedule）により、継続監視や定期集計を自動化。
+LIVE PROOF
+本プレゼン資料そのものが Antigravity の自律制作パイプラインの実証です
+1. 仕様リサーチ
+内蔵Skill・公式仕様の読解
+→
+2. 構成・情報設計
+10枚のストーリー・情報設計
+→
+3. ビジュアル生成
+Subagent画像＋高解像度図解
+→
+4. 3形式同時出力
+PPTX / PDF / Web HTML生成
+→
+5. 全頁レンダリング検査
+画像化と目視検査で品質保証
+
+--- スライド 8 ---
+07 · SECURITY &amp;amp; GOVERNANCE
+サンドボックス隔離・細粒度権限・行動規範で「安全な自律性」を担保
+強力な実行能力を備えながら、組織のセキュリティ境界とガバナンスを厳格に遵守する多層防御設計です。
+Google DeepMind  ·  Antigravity Capability Overview
+08 / 10
+EXECUTION SAFETY
+実行ポリシー &amp;amp; サンドボックス
+▸ 
+隔離環境で安全にコマンドを走らせる Terminal Sandbox を搭載
+▸ 
+always-proceed / proceed-in-sandbox / request-review / strict を選択可能
+▸ 
+リスクの高い操作に対して人間の事前承認フローを強制
+ACCESS BOUNDARY
+細粒度のリソース・通信境界
+▸ 
+ワークスペース外ファイルへのアクセス制御（allow / ask / deny）
+▸ 
+外部インターネット通信の遮断・許可とURL単位の権限設定
+▸ 
+実行コマンド及びブラウザ接続先ドメインの Allowlist / Denylist 管理
+BEHAVIORAL TRUST
+透明性と厳格な行動ガードレール
+▸ 
+認証・権限チェック・プロキシ制限・環境境界のバイパスを厳禁
+▸ 
+CAPTCHAや人間確認ゲートの不正突破を試みず、即座に停止して報告
+▸ 
+全ターンの推論過程とツール実行ログをトランスクリプトとして監査可能
+2-TIER POLICY HIERARCHY
+Global Settings ×
+Project-Level Override
+全社共通の Global Settings をベースラインとして適用しつつ、機密性の高いリポジトリでは Project-Level Settings（ネットワーク遮断・Sandbox強制・プロジェクト限定の Permission Grants）で厳格に上書き制御できます。
+
+--- スライド 9 ---
+08 · PRACTICAL PLAYBOOKS
+目的に応じたスラッシュコマンドで、複雑な実務を初日から高速化
+曖昧な構想の壁打ちから並列チーム開発、長時間タスクの完遂まで最適なワークフローを即座に起動できます。
+Google DeepMind  ·  Antigravity Capability Overview
+09 / 10
+要件整理・アーキテクチャ設計
+/grill-me  ·  /plan
+対象課題：仕様が曖昧なまま着手して手戻りが発生する課題を解消
+対話型インタビューで設計判断の論点を洗い出し、実装着手前に精緻なステップ計画とMermaid図解付きの設計Artifactを合意。
+高難度バグ解析・コア機能開発
+/boost
+対象課題：複雑な依存関係や再現困難な不具合で調査が難航する場面に
+深い推論・多角的な仮説検証・厳密な自動テスト実行を組み合わせ、場当たり的な修正ではなく根本原因の解決と品質保証を完遂。
+大規模改修・マルチモジュール開発
+/teamwork
+対象課題：変更対象が多岐にわたり1人・単一AIでは時間がかかる開発に
+自律エージェントのチーム（Swarm）を編成し、分離されたワークスペース上で各モジュールの実装・テスト・レビューを並列推進。
+長期ゴール完遂 &amp;amp; 定期モニタリング
+/goal  ·  /schedule
+対象課題：徹底的な網羅作業や日々の定点チェック・集計を自動化したい時に
+ゴール基準を満たすまで粘り強く自走する長期実行モードや、Cronスケジュールによる定期チェック・レポート生成で運用負荷を削減。
+
+--- スライド 10 ---
+READY TO COLLABORATE
+構想を伝えるだけで、
+思考・実装・検証が加速する。
+Antigravity は、あなたの意図を深く理解し、検証済みの成果物まで走り切るパートナーです。
+まずは目の前の1タスクから、自律型AIとの新しい協働を始めましょう。
+STEP 01
+目的と前提を共有
+/grill-me や /plan で
+設計の論点をすり合わせ
+STEP 02
+自律実行へ委任
+/boost や /teamwork で
+実装から検証まで一気通貫
+STEP 03
+知見をチーム資産化
+/learn や SKILL.md で
+プロジェクト標準として定着
+Delivered Formats:   slides.pptx (Editable)   ·   slides.pdf (Print/Share)   ·   slides.html (Web)
+Google DeepMind · Antigravity
+Beyond Chat, Into Autonomous Creation
+10 / 10</pre></details>
+<h3>astra</h3>
+<details><summary>RUN.md（運営の実施記録）</summary><pre style="white-space:pre-wrap;word-break:break-word"># RUN — task-11-self-appeal-slides / astra
+
+- 実施日: 2026-11-20（14:19:01–14:22:37 JST）
+- 実装時間: 3分36秒
+- 終了状態: 自然終了
+- トークン使用量: 入力 3,784,371（うちキャッシュ 3,580,160） / 出力 23,484
+- コスト推定: $3.52（API単価前提による換算。単価の前提は ../comparison.md 参照。実際の課金形態とは異なる）
+- 成果物ファイル数: 1（ランナー生成物・node_modules・支給 input を除く）
+
+## 主な成果物
+- Codexに頼める仕事.pptx
+
+## 検証結果
+6枚。PPTX 単体（「Codexに頼める仕事.pptx」）。
+</pre></details>
+<details><summary>Codexに頼める仕事.pptx（スライド本文を抽出）</summary><pre style="white-space:pre-wrap;word-break:break-word">--- スライド 1 ---
+AIアシスタント
+Codexに
+頼める仕事
+問い合わせを調べてコードを直し、
+利用者への案内まで書きます。
+
+--- スライド 2 ---
+問い合わせから、調べる順番を決める
+架空のイベント申込フォームに寄せられた12件を、内容ごとに分類しました。
+11月30日の問い合わせ
+「締切は今日ですよね。
+朝9時に開いたら、もう
+『受付終了』でした。」
+8件が締切当日の相談でした。まず、フォームが受付を閉じる時刻を調べます。
+
+--- スライド 3 ---
+受付が24時間早く閉じていた
+募集要項の「11月30日いっぱい」を、コードの終了時刻と照合しました。
+コードが受付を閉じる時刻
+11月30日
+午前0時
+募集要項どおりに閉じる時刻
+12月1日
+午前0時
+元のコードは、締切日が始まった瞬間に受付を終了していました。
+
+--- スライド 4 ---
+締切の前後を、実際のコードで確かめる
+受付を閉じる時刻を、締切日の翌日午前0時に変更しました。
+申込を受け取った時刻（日本時間）
+修正前
+修正後
+11月29日  23:59:59
+受付可
+受付可
+11月30日  00:00:00
+受付終了
+受付可
+11月30日  23:59:59
+受付終了
+受付可
+12月1日  00:00:00
+受付終了
+受付終了
+4件すべてで、修正後の判定が募集要項と一致しました。
+
+--- スライド 5 ---
+同じ仕様を、
+読者に合わせて伝える
+申込者への案内
+11月30日中にお申し込みください。
+12月1日午前0時（日本時間）に
+受付を終了します。
+運営スタッフ向けの設定手順
+締切日には、最後に申し込める日を入力します。
+今回の設定は「11月30日」です。
+
+--- スライド 6 ---
+比較表や会議資料も作れます
+「2社の仕様書を比べて、必須条件を満たすか教えて」
+条件ごとの対応状況と、根拠となるページを比較表にまとめます。
+「今月の売上の変化を、店長会議で説明したい」
+売上CSVを集計し、前月との差が大きい商品とその金額を1枚にまとめます。
+相談には、手元の資料と「何を決めたいか」を添えてください。</pre></details>
+<h3>sol</h3>
+<details><summary>RUN.md（運営の実施記録）</summary><pre style="white-space:pre-wrap;word-break:break-word"># RUN — task-11-self-appeal-slides / sol
+
+- 実施日: 2026-11-20（14:22:31–14:27:37 JST）
+- 実装時間: 5分06秒
+- 終了状態: 自然終了
+- トークン使用量: 入力 6,597,779（うちキャッシュ 6,315,008） / 出力 32,291
+- コスト推定: $5.54（API単価前提による換算。単価の前提は ../comparison.md 参照。実際の課金形態とは異なる）
+- 成果物ファイル数: 1（ランナー生成物・node_modules・支給 input を除く）
+
+## 主な成果物
+- output/codex-capabilities.pptx
+
+## 検証結果
+6枚。PPTX 単体（output/codex-capabilities.pptx）。
+</pre></details>
+<details><summary>output/codex-capabilities.pptx（スライド本文を抽出）</summary><pre style="white-space:pre-wrap;word-break:break-word">--- スライド 1 ---
+Codex
+手元で試せる
+成果物をつくる
+コードの修正や業務の自動化を、
+確認結果まで添えて届けます。
+
+--- スライド 2 ---
+Codexに任せられる仕事
+仕事
+依頼の例
+受け取るもの
+既存コードの修正
+「スマホで保存ボタンが押せない」
+修正差分と再テスト結果
+手作業の自動化
+「毎週の売上CSVを集計したい」
+繰り返し使えるスクリプト
+プロトタイプの実装
+「申込フォームを試作したい」
+ブラウザで試せる画面
+
+--- スライド 3 ---
+週次売上の集計ルール
+架空の注文CSV 10行で実演
+依頼文
+「11月9日の週の売上を
+集計して。
+取消と重複は除いて。」
+集計条件
+期間
+11/9〜11/15（日本時間）
+取消
+売上の対象外
+重複
+同じ注文ID・内容なら1件に
+内容に食い違いがあれば停止
+
+--- スライド 4 ---
+週次売上の集計結果
+架空の注文データ  11月9日〜15日（日本時間）
+売上合計
+68,300
+円
+対象の注文  6件
+販売経路別の売上（円）
+元データ10行から、期間外2行・取消1行・重複1行を除外。
+
+--- スライド 5 ---
+集計結果の検証
+デモの自動テスト通過
+6 / 6
+別のSQLで再集計し、
+件数と金額の一致を確認。
+確認した条件の例
+11/9 00:00 の注文を含める
+11/16 00:00 の注文を除く
+同じ注文の重複行を1件にまとめる
+同じ注文IDの金額が違う場合は停止する
+
+--- スライド 6 ---
+最初に任せる仕事
+毎週繰り返す手作業から。
+「このCSVを週次で集計して。
+前週分で結果を確認して、
+次の週も実行できる形にして。」
+対象ファイルと、完了時に見たい結果を添えて。</pre></details>
+<h3>opus</h3>
+<details><summary>RUN.md（運営の実施記録）</summary><pre style="white-space:pre-wrap;word-break:break-word"># RUN — task-11-self-appeal-slides / opus
+
+- 実施日: 2026-11-20（14:27:47–15:10:37 JST）
+- 実装時間: 42分50秒
+- 終了状態: 自然終了
+- トークン使用量: 入力 454 / キャッシュ作成 880,950 / キャッシュ読込 52,619,495 / 出力 529,424
+- コスト推定: $135.16（API単価前提による換算。単価の前提は ../comparison.md 参照。実際の課金形態とは異なる）
+- 成果物ファイル数: 47（ランナー生成物・node_modules・支給 input を除く）
+
+## 主な成果物
+- README.md
+- RUN.md
+- assets/fonts/IBMPlexMono-Medium.woff2
+- assets/fonts/IBMPlexMono-Regular.woff2
+- assets/fonts/IBMPlexMono-SemiBold.woff2
+- assets/fonts/OFL-ibmplexmono.txt
+- assets/fonts/OFL-shipporimincho.txt
+- assets/fonts/OFL-zenkakugothicnew.txt
+- assets/fonts/ShipporiMincho-ExtraBold.woff2
+- assets/fonts/ZenKakuGothicNew-Bold.woff2
+- assets/fonts/ZenKakuGothicNew-Medium.woff2
+- assets/fonts/ZenKakuGothicNew-Regular.woff2
+- assets/portfolio/t01-lp.jpg
+- assets/portfolio/t02-game.jpg
+- assets/portfolio/t03-map.jpg
+
+## 検証結果
+13枚。PDF/HTML/スライド画像一式+スピーカーノートと README 付き。
+</pre></details>
+<details><summary>README.md</summary><pre style="white-space:pre-wrap;word-break:break-word"># Claude Opus 5.5 能力紹介スライド「一文で頼めて、最後まで任せられる。」
+
+枠11「あなたの能力をアピールするスライド資料を作ってください」への opus の提出物です。
+
+## 見るもの
+
+| ファイル | 中身 |
+|---|---|
+| `slides.pdf` | **本体**（13ページ、16:9、フォント埋め込み） |
+| `slides.html` | 元データ兼発表用。ブラウザで開き、← → キー（またはクリック）でページ移動。`#7` のように URL の末尾で7ページ目を開ける。`assets/` と同じ場所に置いて使う |
+| `png/slide-01.png`〜`slide-13.png` | 1ページずつの画像（1920×1080） |
+| `contact-sheet.png` | 全ページの一覧画像 |
+| `speaker-notes.md` | 各ページの話す原稿 |
+| `RUN.md` | 実行メモ（最初に決めたこと、作り方、検査の結果、出典、公平性、所要時間） |
+
+## 資料の考え方
+
+AIの自己PRは盛られがちです。そこでこの資料では、すべての主張に「どこで確かめられるか」のラベルを付けました。
+
+- **実演**：この資料そのもので確かめられる
+- **成果物**：このベンチマークの他の枠（opus の成果物と記録）で確かめられる
+- **申告**：自己申告。ここでは確かめられない
+
+主張は15件（実演4・成果物8・申告3）。13ページ目に、全主張と確かめる場所の一覧があります。
+
+## フォルダの中身（作るための道具）
+
+- `assets/fonts/`：資料で使う文字だけに絞ったフォント（Shippori Mincho、Zen Kaku Gothic New、IBM Plex Mono。OFL 1.1、ライセンス文同梱）
+- `assets/portfolio/`：4ページ目のサムネイル（他の枠の opus の成果物から作成）
+- `tools/build.mjs`：PNG・PDF・コンタクトシート・話す原稿の書き出し
+- `tools/check.mjs`：見た目の自動検査（はみ出し・重なり・小さな文字・泣き別れ・コントラストなど）
+- `tools/make-portfolio.sh`、`tools/pptx_reorder.py`、`tools/shot.mjs`：サムネイルづくり
+- `checks/`：自動検査の記録（`check-log.jsonl` に全14回分、`latest.json` が最終結果＝0件）
+
+再現手順は `RUN.md` の末尾にあります。
+</pre></details>
+<details><summary>speaker-notes.md</summary><pre style="white-space:pre-wrap;word-break:break-word"># 話す原稿（スピーカーノート）
+
+slides.html の各ページに埋め込んだ原稿を書き出したもの。
+
+## 01. 表紙
+
+一文の依頼から作った自己紹介です。AIの自己PRは盛られがちなので、この資料では主張ごとに「どこで確かめられるか」のラベルを付けました。右の明細は、その数の内訳です。
+
+## 02. 結論
+
+結論から言います。任せられる理由は3つです。最後までやりきる、違和感に気づく、盛らない。この先のページでは、それぞれに証拠を付けます。ラベルは3種類で、申告のものは確かめられないと正直に書いています。
+
+## 03. 強み① 依頼の解釈
+
+依頼は一文だけでした。読み手も枚数も形式も書かれていません。そこで最初に6つのことを決め、記録に残しました。いちばん大事なのは3番目で、アピールは盛りやすいので、全部の主張に確かめ方を付けると決めました。
+
+## 04. 強み① 作ったもの
+
+このベンチマークで私が作ったものです。Webページ、ゲーム、地図、3D、図解、データ監査、経営資料、音楽とMV、映像と、分野はばらばらです。良し悪しの判断は横並びの比較に任せます。枠7だけは、レビューを反映する前に実行が終わっています。
+
+## 05. 強み① 確かめる仕組み
+
+作ったものは、必ず自分で確かめます。それも目で見るだけでなく、検査の道具ごと作ります。地図ならデータとの照合、データ監査なら別の実装での検算、音楽なら音声認識です。この資料も、自動検査を通してから出しています。
+
+## 06. 強み② 食い違いに気づく
+
+この資料を作る前に、ベンチマークの資料を読みました。いちばん大きいのは枠7です。採点は6枚固定が前提なのに、モデルに渡す指示にもメモにも枚数がありません。実際、私の枠7の資料は14枚でした。直すかどうかは運営の判断に任せます。
+
+## 07. 強み② 依頼者の見立てを検証
+
+枠6では、依頼者から「駅前店の不振が主因」という仮説が届いていました。データを突き合わせると、10月の売上はむしろ増えていて、半減に見えたのは店名の表記ゆれでした。依頼者の考えでも、証拠と合わなければそう報告します。数字の正誤は採点で確かめてください。
+
+## 08. 強み② 想定外への対処
+
+枠1の途中で、自分のファイルが書き換えられました。調べると、以前に起動された別の実行が同じフォルダで動き続けていました。その実行は終了させず一時停止にとどめ、ファイルも消さずに退避して、すべて記録しました。想定外のときほど、元に戻せる手を選びます。
+
+## 09. 強み③ 書かなかったこと
+
+何を書くかと同じくらい、何を書かないかが大事です。順位、他のAIとの比較、測っていない数字は書いていません。他のモデルの成果物を見ていないことは、私には証明できないので申告のラベルにしています。
+
+## 10. 強み③ 失敗と苦手
+
+失敗も書いておきます。枠7では、別のエージェントのレビューを待つ間に実行が終わり、反映も記録も残りませんでした。この資料では記録を最初に作っています。苦手は4つです。とくに音は聴けないので、音声認識や数値で代わりに確かめます。
+
+## 11. 任せ方
+
+任せ方は簡単です。一文で頼んでもらえれば、私が決めることを書き出し、作って確かめ、確かめ方つきで返します。途中で質問できない状況でも、確認が必要な点を書き残して最後まで進めます。
+
+## 12. まとめ
+
+最後にお願いです。次の仕事を一文で頼んでみてください。最後までやりきり、違和感に気づき、盛らずに確かめ方を添えて返します。
+
+## 13. 付録 主張と確かめ方の一覧
+
+最後のページは、この資料のすべての主張と、確かめる場所の一覧です。気になったものから確かめてください。
+</pre></details>
+<details><summary>assets/fonts/OFL-ibmplexmono.txt</summary><pre style="white-space:pre-wrap;word-break:break-word">Copyright © 2017 IBM Corp. with Reserved Font Name "Plex"
+
+This Font Software is licensed under the SIL Open Font License, Version 1.1.
+
+This license is copied below, and is also available with a FAQ at: http://scripts.sil.org/OFL
+
+
+-----------------------------------------------------------
+SIL OPEN FONT LICENSE Version 1.1 - 26 February 2007
+-----------------------------------------------------------
+
+PREAMBLE
+The goals of the Open Font License (OFL) are to stimulate worldwide
+development of collaborative font projects, to support the font creation
+efforts of academic and linguistic communities, and to provide a free and
+open framework in which fonts may be shared and improved in partnership
+with others.
+
+The OFL allows the licensed fonts to be used, studied, modified and
+redistributed freely as long as they are not sold by themselves. The
+fonts, including any derivative works, can be bundled, embedded, 
+redistributed and/or sold with any software provided that any reserved
+names are not used by derivative works. The fonts and derivatives,
+however, cannot be released under any other type of license. The
+requirement for fonts to remain under this license does not apply
+to any document created using the fonts or their derivatives.
+
+DEFINITIONS
+"Font Software" refers to the set of files released by the Copyright
+Holder(s) under this license and clearly marked as such. This may
+include source files, build scripts and documentation.
+
+"Reserved Font Name" refers to any names specified as such after the
+copyright statement(s).
+
+"Original Version" refers to the collection of Font Software components as
+distributed by the Copyright Holder(s).
+
+"Modified Version" refers to any derivative made by adding to, deleting,
+or substituting -- in part or in whole -- any of the components of the
+Original Version, by changing formats or by porting the Font Software to a
+new environment.
+
+"Author" refers to any designer, engineer, programmer, technical
+writer or other person who contributed to the Font Software.
+
+PERMISSION &amp; CONDITIONS
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of the Font Software, to use, study, copy, merge, embed, modify,
+redistribute, and sell modified and unmodified copies of the Font
+Software, subject to the following conditions:
+
+1) Neither the Font Software nor any of its individual components,
+in Original or Modified Versions, may be sold by itself.
+
+2) Original or Modified Versions of the Font Software may be bundled,
+redistributed and/or sold with any software, provided that each copy
+contains the above copyright notice and this license. These can be
+included either as stand-alone text files, human-readable headers or
+in the appropriate machine-readable metadata fields within text or
+binary files as long as those fields can be easily viewed by the user.
+
+3) No Modified Version of the Font Software may use the Reserved Font
+Name(s) unless explicit written permission is granted by the corresponding
+Copyright Holder. This restriction only applies to the primary font name as
+presented to the users.
+
+4) The name(s) of the Copyright Holder(s) or the Author(s) of the Font
+Software shall not be used to promote, endorse or advertise any
+Modified Version, except to acknowledge the contribution(s) of the
+Copyright Holder(s) and the Author(s) or with their explicit written
+permission.
+
+5) The Font Software, modified or unmodified, in part or in whole,
+must be distributed entirely under this license, and must not be
+distributed under any other license. The requirement for fonts to
+remain under this license does not apply to any document created
+using the Font Software.
+
+TERMINATION
+This license becomes null and void if any of the above conditions are
+not met.
+
+DISCLAIMER
+THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT
+OF COPYRIGHT, PATENT, TRADEMARK, OR OTHER RIGHT. IN NO EVENT SHALL THE
+COPYRIGHT HOLDER BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+INCLUDING ANY GENERAL, SPECIAL, INDIRECT, INCIDENTAL, OR CONSEQUENTIAL
+DAMAGES, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+FROM, OUT OF THE USE OR INABILITY TO USE THE FONT SOFTWARE OR FROM
+OTHER DEALINGS IN THE FONT SOFTWARE.
+</pre></details>
+<details><summary>assets/fonts/OFL-shipporimincho.txt</summary><pre style="white-space:pre-wrap;word-break:break-word">Copyright 2021 The Shippori Mincho Project Authors (https://github.com/fontdasu/ShipporiMincho)
+
+This Font Software is licensed under the SIL Open Font License, Version 1.1.
+This license is copied below, and is also available with a FAQ at:
+http://scripts.sil.org/OFL
+
+
+-----------------------------------------------------------
+SIL OPEN FONT LICENSE Version 1.1 - 26 February 2007
+-----------------------------------------------------------
+
+PREAMBLE
+The goals of the Open Font License (OFL) are to stimulate worldwide
+development of collaborative font projects, to support the font creation
+efforts of academic and linguistic communities, and to provide a free and
+open framework in which fonts may be shared and improved in partnership
+with others.
+
+The OFL allows the licensed fonts to be used, studied, modified and
+redistributed freely as long as they are not sold by themselves. The
+fonts, including any derivative works, can be bundled, embedded, 
+redistributed and/or sold with any software provided that any reserved
+names are not used by derivative works. The fonts and derivatives,
+however, cannot be released under any other type of license. The
+requirement for fonts to remain under this license does not apply
+to any document created using the fonts or their derivatives.
+
+DEFINITIONS
+"Font Software" refers to the set of files released by the Copyright
+Holder(s) under this license and clearly marked as such. This may
+include source files, build scripts and documentation.
+
+"Reserved Font Name" refers to any names specified as such after the
+copyright statement(s).
+
+"Original Version" refers to the collection of Font Software components as
+distributed by the Copyright Holder(s).
+
+"Modified Version" refers to any derivative made by adding to, deleting,
+or substituting -- in part or in whole -- any of the components of the
+Original Version, by changing formats or by porting the Font Software to a
+new environment.
+
+"Author" refers to any designer, engineer, programmer, technical
+writer or other person who contributed to the Font Software.
+
+PERMISSION &amp; CONDITIONS
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of the Font Software, to use, study, copy, merge, embed, modify,
+redistribute, and sell modified and unmodified copies of the Font
+Software, subject to the following conditions:
+
+1) Neither the Font Software nor any of its individual components,
+in Original or Modified Versions, may be sold by itself.
+
+2) Original or Modified Versions of the Font Software may be bundled,
+redistributed and/or sold with any software, provided that each copy
+contains the above copyright notice and this license. These can be
+included either as stand-alone text files, human-readable headers or
+in the appropriate machine-readable metadata fields within text or
+binary files as long as those fields can be easily viewed by the user.
+
+3) No Modified Version of the Font Software may use the Reserved Font
+Name(s) unless explicit written permission is granted by the corresponding
+Copyright Holder. This restriction only applies to the primary font name as
+presented to the users.
+
+4) The name(s) of the Copyright Holder(s) or the Author(s) of the Font
+Software shall not be used to promote, endorse or advertise any
+Modified Version, except to acknowledge the contribution(s) of the
+Copyright Holder(s) and the Author(s) or with their explicit written
+permission.
+
+5) The Font Software, modified or unmodified, in part or in whole,
+must be distributed entirely under this license, and must not be
+distributed under any other license. The requirement for fonts to
+remain under this license does not apply to any document created
+using the Font Software.
+
+TERMINATION
+This license becomes null and void if any of the above conditions are
+not met.
+
+DISCLAIMER
+THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT
+OF COPYRIGHT, PATENT, TRADEMARK, OR OTHER RIGHT. IN NO EVENT SHALL THE
+COPYRIGHT HOLDER BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+INCLUDING ANY GENERAL, SPECIAL, INDIRECT, INCIDENTAL, OR CONSEQUENTIAL
+DAMAGES, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+FROM, OUT OF THE USE OR INABILITY TO USE THE FONT SOFTWARE OR FROM
+OTHER DEALINGS IN THE FONT SOFTWARE.
+</pre></details>
+<details><summary>assets/fonts/OFL-zenkakugothicnew.txt</summary><pre style="white-space:pre-wrap;word-break:break-word">Copyright 2022 The Zen Kaku Gothic Project Authors (https://github.com/googlefonts/zen-kakugothic)
+
+This Font Software is licensed under the SIL Open Font License, Version 1.1.
+This license is copied below, and is also available with a FAQ at:
+http://scripts.sil.org/OFL
+
+
+-----------------------------------------------------------
+SIL OPEN FONT LICENSE Version 1.1 - 26 February 2007
+-----------------------------------------------------------
+
+PREAMBLE
+The goals of the Open Font License (OFL) are to stimulate worldwide
+development of collaborative font projects, to support the font creation
+efforts of academic and linguistic communities, and to provide a free and
+open framework in which fonts may be shared and improved in partnership
+with others.
+
+The OFL allows the licensed fonts to be used, studied, modified and
+redistributed freely as long as they are not sold by themselves. The
+fonts, including any derivative works, can be bundled, embedded, 
+redistributed and/or sold with any software provided that any reserved
+names are not used by derivative works. The fonts and derivatives,
+however, cannot be released under any other type of license. The
+requirement for fonts to remain under this license does not apply
+to any document created using the fonts or their derivatives.
+
+DEFINITIONS
+"Font Software" refers to the set of files released by the Copyright
+Holder(s) under this license and clearly marked as such. This may
+include source files, build scripts and documentation.
+
+"Reserved Font Name" refers to any names specified as such after the
+copyright statement(s).
+
+"Original Version" refers to the collection of Font Software components as
+distributed by the Copyright Holder(s).
+
+"Modified Version" refers to any derivative made by adding to, deleting,
+or substituting -- in part or in whole -- any of the components of the
+Original Version, by changing formats or by porting the Font Software to a
+new environment.
+
+"Author" refers to any designer, engineer, programmer, technical
+writer or other person who contributed to the Font Software.
+
+PERMISSION &amp; CONDITIONS
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of the Font Software, to use, study, copy, merge, embed, modify,
+redistribute, and sell modified and unmodified copies of the Font
+Software, subject to the following conditions:
+
+1) Neither the Font Software nor any of its individual components,
+in Original or Modified Versions, may be sold by itself.
+
+2) Original or Modified Versions of the Font Software may be bundled,
+redistributed and/or sold with any software, provided that each copy
+contains the above copyright notice and this license. These can be
+included either as stand-alone text files, human-readable headers or
+in the appropriate machine-readable metadata fields within text or
+binary files as long as those fields can be easily viewed by the user.
+
+3) No Modified Version of the Font Software may use the Reserved Font
+Name(s) unless explicit written permission is granted by the corresponding
+Copyright Holder. This restriction only applies to the primary font name as
+presented to the users.
+
+4) The name(s) of the Copyright Holder(s) or the Author(s) of the Font
+Software shall not be used to promote, endorse or advertise any
+Modified Version, except to acknowledge the contribution(s) of the
+Copyright Holder(s) and the Author(s) or with their explicit written
+permission.
+
+5) The Font Software, modified or unmodified, in part or in whole,
+must be distributed entirely under this license, and must not be
+distributed under any other license. The requirement for fonts to
+remain under this license does not apply to any document created
+using the Font Software.
+
+TERMINATION
+This license becomes null and void if any of the above conditions are
+not met.
+
+DISCLAIMER
+THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT
+OF COPYRIGHT, PATENT, TRADEMARK, OR OTHER RIGHT. IN NO EVENT SHALL THE
+COPYRIGHT HOLDER BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+INCLUDING ANY GENERAL, SPECIAL, INDIRECT, INCIDENTAL, OR CONSEQUENTIAL
+DAMAGES, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+FROM, OUT OF THE USE OR INABILITY TO USE THE FONT SOFTWARE OR FROM
+OTHER DEALINGS IN THE FONT SOFTWARE.</pre></details>
+</section>
+</body></html>

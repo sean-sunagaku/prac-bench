@@ -103,4 +103,4 @@ Prac-Bench 初回実施（全11枠 × 5モデル = 55ラン）の記録。各ラ
 - agy の30分打ち切りは枠4 neon、枠8・9・10の neon/carbon に影響した。成果物は打ち切り時点のものとして記録している。
 - 一部のモデルフォルダには初回試行の残骸フォルダが同居していたため、運営アーカイブへ退避した（task-01/task-05 の opus、task-07 の opus/neon）。
 - モデル自身が RUN.md を作成していたランでは、運営の RUN.md に置き換えた（要点は検証に反映済み）。
-- GitHub の上限（1ファイル100MB）を超える動画5点はリポジトリに含めていない: task-08 neon `ORBITAL_RAIN_MV.mp4`（332MB）、task-08 astra `release/海は上へ落ちる.mp4`（138MB）、task-08 opus `QED_MV.mp4`（143MB）、task-09 carbon `singularity_showcase.mp4`（204MB）、task-09 opus `out/f_t.mp4`（316MB）。実施マシン上に実物があり、長さ等の計測値は各 RUN.md と本メモに記録した。`node_modules/` と task-09 neon のレンダリング済みフレーム群（中間生成物）も除外した。
+- GitHub の上限（1ファイル100MB）を超える動画5点はリポジトリ本体には含めず、GitHub Releases（タグ media-2026-11-20）に原物のまま収録し、GitHub Pages のレポートから埋め込み再生できるようにした: task-08 neon `ORBITAL_RAIN_MV.mp4`（332MB）、task-08 astra `release/海は上へ落ちる.mp4`（138MB）、task-08 opus `QED_MV.mp4`（143MB）、task-09 carbon `singularity_showcase.mp4`（204MB）、task-09 opus `out/f_t.mp4`（316MB）。長さ等の計測値は各 RUN.md と本メモに記録した。`node_modules/` と task-09 neon のレンダリング済みフレーム群（中間生成物）も除外した。
