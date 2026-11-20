@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>雪見露天風呂のカピバラ — 3D箱庭シーン</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <div id="canvas-container"></div>
+
+    <header id="title-badge" class="glass-panel">
+      <div class="badge-accent" aria-hidden="true">ゆ</div>
+      <div class="badge-text">
+        <h1>雪見露天風呂</h1>
+        <p>カピバラと柚子湯の箱庭</p>
+      </div>
+    </header>
+
+    <button id="hud-toggle" class="glass-btn icon-only" title="UIの表示/非表示" aria-label="UIの表示/非表示">
+      <span id="hud-toggle-icon">⚙</span>
+    </button>
+
+    <aside id="control-panel" class="glass-panel" aria-label="シーン設定">
+      <div class="panel-section">
+        <div class="section-label">視点カメラ</div>
+        <div class="btn-grid cols-2" id="camera-buttons">
+          <button class="chip-btn active" data-cam="diorama">箱庭全景</button>
+          <button class="chip-btn" data-cam="closeup">カピバラ</button>
+          <button class="chip-btn" data-cam="low">雪見の湯</button>
+          <button class="chip-btn" data-cam="top">俯瞰</button>
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <div class="section-label">情景・時間帯</div>
+        <div class="btn-grid cols-3" id="mood-buttons">
+          <button class="chip-btn active" data-mood="twilight">夕暮れ</button>
+          <button class="chip-btn" data-mood="morning">雪晴れ</button>
+          <button class="chip-btn" data-mood="night">月夜</button>
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <div class="section-label">演出</div>
+        <div class="toggle-row">
+          <label class="toggle-item">
+            <input type="checkbox" id="toggle-snow" checked />
+            <span>降雪</span>
+          </label>
+          <label class="toggle-item">
+            <input type="checkbox" id="toggle-steam" checked />
+            <span>湯気</span>
+          </label>
+          <label class="toggle-item">
+            <input type="checkbox" id="toggle-rotate" />
+            <span>自動回転</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="panel-hint">
+        ドラッグで回転・スクロールで拡大縮小・右ドラッグで移動
+      </div>
+    </aside>
+
+    <script type="module" src="./src/main.js"></script>
+  </body>
+</html>

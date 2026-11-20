@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark light">
+<title>カピバラの雪見露天風呂 — 3D ビューア</title>
+<style>
+  :root {
+    --sumi: #22201e;
+    --kinari: #f3eee2;
+    --shu: #c8553a;
+    --shu-soft: rgba(200, 85, 58, 0.18);
+    --panel-bg: rgba(22, 21, 20, 0.56);
+    --panel-fg: #f1ebde;
+    --muted: rgba(241, 235, 222, 0.62);
+    --line: rgba(241, 235, 222, 0.14);
+    --hover: rgba(241, 235, 222, 0.07);
+    --btn-on-bg: rgba(241, 235, 222, 0.92);
+    --btn-on-fg: #22201e;
+    --shadow: 0 8px 28px rgba(0, 0, 0, 0.22);
+    --gap: 14px;
+    --font-ui: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic UI", "YuGothic", "Meiryo", system-ui, -apple-system, sans-serif;
+    --font-title: "Hiragino Mincho ProN", "Hiragino Mincho Pro", "YuMincho", "Yu Mincho", "Noto Serif JP", serif;
+  }
+  body.mode-studio {
+    --panel-bg: rgba(250, 248, 243, 0.86);
+    --panel-fg: #2b2825;
+    --muted: rgba(43, 40, 37, 0.6);
+    --line: rgba(43, 40, 37, 0.13);
+    --hover: rgba(43, 40, 37, 0.05);
+    --btn-on-bg: #2b2825;
+    --btn-on-fg: #f3eee2;
+    --shadow: 0 6px 22px rgba(0, 0, 0, 0.08);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; overflow: hidden; }
+  body { background: #0b1026; font-family: var(--font-ui); -webkit-font-smoothing: antialiased; -webkit-text-size-adjust: 100%; }
+  body.mode-studio { background: #e3e3e1; }
+  #scene-canvas { position: fixed; inset: 0; width: 100vw; height: 100vh; height: 100dvh; display: block; touch-action: none; outline: none; }
+
+  #ui { position: fixed; inset: 0; pointer-events: none; color: var(--panel-fg); font-size: 12px; line-height: 1.5; }
+  body.noui #ui { display: none; }
+  .panel {
+    position: absolute; pointer-events: auto;
+    background: var(--panel-bg); color: var(--panel-fg);
+    border: 1px solid var(--line); border-radius: 12px; box-shadow: var(--shadow);
+    -webkit-backdrop-filter: blur(12px) saturate(1.15); backdrop-filter: blur(12px) saturate(1.15);
+  }
+  button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+  button:focus-visible, summary:focus-visible { outline: 2px solid var(--shu); outline-offset: 2px; border-radius: 6px; }
+
+  /* ---- タイトル ---- */
+  .title-card { top: calc(var(--gap) + env(safe-area-inset-top)); left: calc(var(--gap) + env(safe-area-inset-left)); max-width: min(420px, calc(100% - 2 * var(--gap))); padding: 13px 16px 12px; }
+  .title-row { display: flex; align-items: center; gap: 9px; }
+  .seal {
+    flex: none; display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 4px;
+    background: var(--shu); color: #fbf4e6; font-family: var(--font-title); font-size: 13px; line-height: 1;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.16);
+  }
+  h1 { margin: 0; font-family: var(--font-title); font-weight: 600; font-size: 17px; letter-spacing: 0.1em; white-space: nowrap; }
+  .lead { margin: 6px 0 10px; color: var(--muted); font-size: 11.5px; letter-spacing: 0.02em; white-space: nowrap; }
+  .seg { display: inline-flex; padding: 2px; border-radius: 999px; border: 1px solid var(--line); }
+  .seg button { padding: 4px 13px; border-radius: 999px; font-size: 11.5px; letter-spacing: 0.08em; color: var(--muted); transition: background .2s, color .2s; }
+  .seg button:hover { color: var(--panel-fg); }
+  .seg button[aria-pressed="true"] { background: var(--btn-on-bg); color: var(--btn-on-fg); }
+
+  /* ---- 折りたたみパネル共通 ---- */
+  details > summary {
+    list-style: none; cursor: pointer; user-select: none; -webkit-user-select: none;
+    display: flex; align-items: center; gap: 8px; padding: 10px 14px;
+    font-size: 12px; letter-spacing: 0.12em;
+  }
+  details > summary::-webkit-details-marker { display: none; }
+  details > summary::after {
+    content: ""; margin-left: auto; width: 6px; height: 6px;
+    border-right: 1.5px solid var(--muted); border-bottom: 1.5px solid var(--muted);
+    transform: rotate(-45deg); transition: transform .2s;
+  }
+  details[open] > summary::after { transform: rotate(45deg) translate(-2px, -1px); }
+  .badge { font-size: 10px; letter-spacing: 0; color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: 0 7px; }
+
+  /* ---- チェック項目 ---- */
+  .checks { top: calc(var(--gap) + env(safe-area-inset-top)); right: calc(var(--gap) + env(safe-area-inset-right)); width: 300px; max-height: calc(100% - 96px - env(safe-area-inset-top)); overflow: auto; overscroll-behavior: contain; }
+  .checks summary .mark { width: 3px; height: 13px; background: var(--shu); border-radius: 2px; }
+  #check-list { list-style: none; margin: 0; padding: 0 6px 8px; }
+  #check-list li + li { border-top: 1px solid var(--line); }
+  .check { display: flex; gap: 9px; width: 100%; text-align: left; padding: 8px 8px 8px 6px; border-radius: 8px; transition: background .15s; position: relative; }
+  .check:hover:not([disabled]) { background: var(--hover); }
+  .check[disabled] { cursor: default; opacity: 0.5; }
+  .check.is-active { background: var(--shu-soft); }
+  .check.is-active::before { content: ""; position: absolute; left: -2px; top: 9px; bottom: 9px; width: 2px; border-radius: 2px; background: var(--shu); }
+  .num { flex: none; color: var(--shu); font-size: 15px; line-height: 1.25; font-family: var(--font-title); }
+  .body { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+  .ttl { font-size: 12px; letter-spacing: 0.03em; }
+  .na { font-style: normal; color: var(--muted); font-size: 10.5px; }
+  .ev { display: flex; flex-wrap: wrap; gap: 2px 9px; font-size: 10.5px; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .ev-i b { font-weight: 600; color: var(--panel-fg); opacity: 0.9; }
+
+  /* ---- 情報 ---- */
+  .info { bottom: calc(var(--gap) + env(safe-area-inset-bottom)); left: calc(var(--gap) + env(safe-area-inset-left)); width: 252px; }
+  .nw { white-space: nowrap; }
+  #info-list { display: grid; grid-template-columns: auto 1fr; gap: 3px 12px; margin: 0; padding: 0 14px 4px; font-variant-numeric: tabular-nums; }
+  #info-list dt { color: var(--muted); font-size: 11px; }
+  #info-list dd { margin: 0; font-size: 11.5px; }
+  #info-list small { display: block; color: var(--muted); font-size: 10px; }
+  #info-list dd small { display: inline; }
+  #info-list dd:nth-of-type(4) small { display: block; }
+  .hint { margin: 6px 14px 0; color: var(--muted); font-size: 10.5px; }
+  .stamp { margin: 2px 14px 10px; color: var(--muted); font-size: 9.5px; opacity: 0.8; }
+
+  /* ---- 視点ツールバー ---- */
+  .toolbar { bottom: calc(var(--gap) + env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 4px; padding: 4px; border-radius: 999px; max-width: calc(100% - 2 * var(--gap) - 260px); }
+  #view-buttons { display: flex; gap: 2px; }
+  .toolbar button { padding: 6px 12px; border-radius: 999px; font-size: 12px; letter-spacing: 0.06em; white-space: nowrap; color: var(--muted); transition: background .2s, color .2s; }
+  .toolbar button:hover { color: var(--panel-fg); background: var(--hover); }
+  .toolbar button[aria-pressed="true"] { color: var(--btn-on-fg); background: var(--btn-on-bg); }
+  .toolbar .sep { width: 1px; height: 18px; background: var(--line); margin: 0 3px; flex: none; }
+  #rotate-btn { display: inline-flex; align-items: center; gap: 6px; }
+  #rotate-btn .dot { width: 6px; height: 6px; border-radius: 50%; border: 1.5px solid currentColor; }
+  #rotate-btn[aria-pressed="true"] { color: var(--panel-fg); background: transparent; }
+  #rotate-btn[aria-pressed="true"] .dot { background: var(--shu); border-color: var(--shu); animation: pulse 2.4s ease-in-out infinite; }
+  @keyframes pulse { 50% { opacity: 0.35; } }
+
+  /* ---- 読み込み・エラー ---- */
+  #loading, #error { position: fixed; inset: 0; display: grid; place-items: center; z-index: 10; pointer-events: none; font-family: var(--font-ui); }
+  #loading[hidden], #error[hidden] { display: none; }
+  .loading-card, .error-card { pointer-events: auto; background: rgba(22, 21, 20, 0.7); color: #f1ebde; border: 1px solid rgba(241, 235, 222, 0.14); border-radius: 12px; padding: 16px 22px; font-size: 13px; letter-spacing: 0.08em; text-align: center; -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
+  .loading-card .ring { width: 22px; height: 22px; margin: 0 auto 10px; border-radius: 50%; border: 2px solid rgba(241, 235, 222, 0.2); border-top-color: var(--shu); animation: spin 1s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .error-card { max-width: min(520px, 86vw); text-align: left; letter-spacing: 0.02em; }
+  .error-card strong { color: #f0a38f; display: block; margin-bottom: 6px; }
+  body.noui #loading { display: none; }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; }
+  }
+
+  /* ---- 狭い画面 ---- */
+  @media (max-width: 960px) {
+    .toolbar { left: auto; right: calc(var(--gap) + env(safe-area-inset-right)); transform: none; max-width: calc(100% - 2 * var(--gap) - 250px); overflow-x: auto; scrollbar-width: none; }
+    .toolbar::-webkit-scrollbar { display: none; }
+  }
+  @media (max-width: 720px) {
+    :root { --gap: 8px; }
+    #ui { font-size: 11.5px; }
+    .title-card { right: calc(var(--gap) + env(safe-area-inset-right)); width: auto; padding: 9px 11px 9px; display: grid; grid-template-columns: 1fr auto; align-items: center; column-gap: 8px; }
+    .title-row { gap: 7px; }
+    .seal { width: 19px; height: 19px; font-size: 11.5px; }
+    h1 { font-size: 15px; letter-spacing: 0.06em; }
+    .lead { grid-column: 1 / -1; grid-row: 2; margin: 4px 0 0; font-size: 10.5px; white-space: normal; }
+    .seg { grid-column: 2; grid-row: 1; }
+    .seg button { padding: 3px 9px; font-size: 11px; }
+    .checks { top: calc(var(--gap) + 76px + env(safe-area-inset-top)); width: min(300px, calc(100% - 2 * var(--gap))); max-height: calc(100% - 150px - env(safe-area-inset-top)); }
+    details > summary { padding: 8px 12px; }
+    .info { bottom: calc(var(--gap) + 52px + env(safe-area-inset-bottom)); width: min(252px, calc(100% - 2 * var(--gap))); }
+    .info:not(:has(details[open])) { width: auto; }
+    .toolbar { left: calc(var(--gap) + env(safe-area-inset-left)); right: calc(var(--gap) + env(safe-area-inset-right)); max-width: none; justify-content: flex-start; }
+    .toolbar button { padding: 6px 10px; font-size: 11.5px; }
+    .hint { display: none; }
+  }
+</style>
+</head>
+<body>
+<canvas id="scene-canvas" aria-label="カピバラの雪見露天風呂の 3D シーン（ドラッグで回転できます）"></canvas>
+
+<div id="ui">
+  <header class="panel title-card">
+    <div class="title-row">
+      <span class="seal" aria-hidden="true">湯</span>
+      <h1>カピバラの雪見露天風呂</h1>
+    </div>
+    <p class="lead">雪の夕暮れ、柚子をのせて湯に浸かるカピバラの箱庭。</p>
+    <div class="seg" role="group" aria-label="表示モード">
+      <button type="button" data-mode="mood" aria-pressed="true" title="冬の夕暮れの情景（雪・湯気・灯籠の灯り）">情景</button>
+      <button type="button" data-mode="studio" aria-pressed="false" title="中立な撮影スタジオ（環境光のみ・2m グリッド）">スタジオ</button>
+    </div>
+  </header>
+
+  <section class="panel checks" aria-label="チェック項目">
+    <details id="checks" open>
+      <summary><span class="mark" aria-hidden="true"></span>チェック項目<span class="badge">6</span></summary>
+      <ol id="check-list"></ol>
+    </details>
+  </section>
+
+  <section class="panel info" aria-label="モデル情報">
+    <details id="info">
+      <summary>情報</summary>
+      <dl id="info-list"></dl>
+      <p class="hint">ドラッグで回転・右ドラッグで移動・ホイールで拡大</p>
+      <p class="stamp" id="build-stamp"></p>
+    </details>
+  </section>
+
+  <nav class="panel toolbar" aria-label="視点">
+    <div id="view-buttons"></div>
+    <span class="sep" aria-hidden="true"></span>
+    <button type="button" id="rotate-btn" aria-pressed="false" title="自動回転（ターンテーブル）"><span class="dot" aria-hidden="true"></span>回転</button>
+  </nav>
+</div>
+
+<div id="loading" role="status" aria-live="polite"><div class="loading-card"><div class="ring"></div>読み込み中…</div></div>
+<div id="error" role="alert" hidden><div class="error-card"><strong>表示できませんでした</strong><span class="msg"></span></div></div>
+
+<script id="metrics-data" type="application/json">__METRICS_JSON__</script>
+<script id="build-info" type="application/json">__BUILD_INFO__</script>
+<script id="glb-data" type="application/octet-stream">__GLB_BASE64__</script>
+<script>/*__VIEWER_BUNDLE__*/</script>
+</body>
+</html>

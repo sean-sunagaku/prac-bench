@@ -1,0 +1,1854 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=1920, initial-scale=1.0"/>
+  <title>あおい島 観光ガイドマップ｜蒼玉県の離島・公式周遊ガイド</title>
+  <style>
+    @page {
+      size: A3 portrait;
+      margin: 0;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      background: #e2eff6;
+      color: #0f172a;
+      font-family: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Hiragino Maru Gothic ProN', 'Yu Gothic', sans-serif;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    .poster {
+      width: 1920px;
+      margin: 0 auto;
+      background: linear-gradient(180deg, #f7fcfe 0%, #fffdf8 52%, #f4fafc 100%);
+      padding: 28px 36px 30px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+    body.export-mode .poster {
+      min-height: 2714px;
+      justify-content: space-between;
+    }
+    body.export-mode .interactive-bar {
+      display: none !important;
+    }
+    @media print {
+      html {
+        zoom: 0.5846;
+      }
+      body {
+        background: #ffffff;
+      }
+      .interactive-bar {
+        display: none !important;
+      }
+      .poster {
+        min-height: 2715px;
+        justify-content: space-between;
+      }
+    }
+
+    /* 1. HEADER BANNER */
+    .header-banner {
+      background: linear-gradient(125deg, #0c4a6e 0%, #0369a1 48%, #0d9488 100%);
+      border-radius: 20px;
+      padding: 18px 28px;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      box-shadow: 0 8px 24px rgba(3, 105, 161, 0.18);
+      position: relative;
+      overflow: hidden;
+    }
+    .header-banner::after {
+      content: "";
+      position: absolute;
+      right: -60px;
+      top: -60px;
+      width: 260px;
+      height: 260px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(253,224,71,0.26) 0%, rgba(253,224,71,0) 70%);
+      pointer-events: none;
+    }
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      flex-shrink: 0;
+    }
+    .island-emblem {
+      width: 96px;
+      height: 72px;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.16);
+      border: 2px solid rgba(255,255,255,0.45);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      line-height: 1.2;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .island-emblem .emblem-top { font-size: 11px; color: #bae6fd; letter-spacing: 1px; }
+    .island-emblem .emblem-main { font-size: 20px; color: #fde047; font-family: 'Hiragino Mincho ProN', serif; }
+    .header-titles h1 {
+      font-family: 'Hiragino Mincho ProN', 'Yu Mincho', serif;
+      font-size: 36px;
+      font-weight: 900;
+      letter-spacing: 1.5px;
+      line-height: 1.15;
+      white-space: nowrap;
+    }
+    .header-titles p {
+      margin-top: 6px;
+      font-size: 14.2px;
+      color: #e0f2fe;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .header-stats {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+    .stat-chip {
+      background: rgba(255,255,255,0.14);
+      border: 1px solid rgba(255,255,255,0.32);
+      border-radius: 12px;
+      padding: 8px 13px;
+      text-align: center;
+      white-space: nowrap;
+    }
+    .stat-chip .k { display: block; font-size: 10.5px; color: #bae6fd; font-weight: 700; }
+    .stat-chip .v { display: block; font-size: 14px; color: #ffffff; font-weight: 800; margin-top: 2px; }
+
+    /* INTERACTIVE TOOLBAR (Browser view only) */
+    .interactive-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #ffffff;
+      border: 1.5px solid #bae6fd;
+      border-radius: 14px;
+      padding: 9px 18px;
+      box-shadow: 0 2px 10px rgba(2, 132, 199, 0.06);
+    }
+    .filter-btns {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .filter-btn {
+      border: 1.5px solid #cbd5e1;
+      background: #f8fafc;
+      color: #334155;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 6px 14px;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .filter-btn.active, .filter-btn:hover {
+      background: #0284c7;
+      border-color: #0284c7;
+      color: #ffffff;
+    }
+    .interactive-status {
+      font-size: 13px;
+      color: #0369a1;
+      font-weight: 700;
+    }
+
+    /* 2. MAIN MAP FRAME */
+    .map-frame {
+      width: 100%;
+      background: #ffffff;
+      border-radius: 22px;
+      border: 3px solid #0284c7;
+      box-shadow: 0 10px 28px rgba(12, 74, 110, 0.14);
+      overflow: hidden;
+      line-height: 0;
+    }
+    .map-frame svg {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    .spot-group {
+      cursor: pointer;
+      transition: opacity 0.2s ease;
+    }
+    .spot-group.dimmed {
+      opacity: 0.22;
+    }
+    .spot-group.selected rect:first-of-type {
+      stroke-width: 4px !important;
+      stroke: #f59e0b !important;
+    }
+
+    /* 3. TRANSIT & CLOCKWISE BUS DIAGRAM STRIP */
+    .transit-strip {
+      display: grid;
+      grid-template-columns: 515px 1fr;
+      gap: 18px;
+    }
+    .panel-box {
+      background: #ffffff;
+      border-radius: 18px;
+      border: 2px solid #cbd5e1;
+      padding: 15px 18px;
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05);
+    }
+    .panel-box.bus-panel {
+      border-color: #fda4af;
+      background: linear-gradient(180deg, #fffafb 0%, #ffffff 100%);
+    }
+    .panel-box.access-panel {
+      border-color: #7dd3fc;
+      background: linear-gradient(180deg, #f4fbff 0%, #ffffff 100%);
+    }
+    .panel-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 10px;
+      padding-bottom: 8px;
+      border-bottom: 1.5px solid #e2e8f0;
+    }
+    .panel-head h2 {
+      font-size: 16.5px;
+      font-weight: 900;
+      color: #0c4a6e;
+      white-space: nowrap;
+    }
+    .bus-panel .panel-head h2 { color: #9f1239; }
+    .head-badge {
+      font-size: 11.5px;
+      font-weight: 800;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: #ffe4e6;
+      color: #be123c;
+      white-space: nowrap;
+    }
+    .access-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .access-item {
+      background: #f8fafc;
+      border: 1px solid #bae6fd;
+      border-radius: 11px;
+      padding: 9px 12px;
+    }
+    .access-item strong {
+      display: block;
+      font-size: 13.5px;
+      color: #0369a1;
+      margin-bottom: 3px;
+    }
+    .access-item p {
+      font-size: 12px;
+      color: #334155;
+      line-height: 1.45;
+      font-weight: 600;
+    }
+    .access-foot {
+      margin-top: 9px;
+      font-size: 11.8px;
+      font-weight: 800;
+      color: #be123c;
+      background: #fff1f2;
+      border-radius: 8px;
+      padding: 6px 10px;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    .bus-chain {
+      display: grid;
+      grid-template-columns: repeat(10, 1fr);
+      gap: 6px;
+      align-items: stretch;
+    }
+    .bus-node-card {
+      background: #ffffff;
+      border: 1.8px solid #1e3a8a;
+      border-radius: 11px;
+      padding: 8px 5px;
+      text-align: center;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .bus-node-card.return-node {
+      border-style: dashed;
+      border-color: #e11d48;
+      background: #fff1f2;
+    }
+    .bus-node-card::after {
+      content: "▶";
+      position: absolute;
+      right: -8px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 10px;
+      color: #e11d48;
+      font-weight: 900;
+      z-index: 2;
+    }
+    .bus-node-card:last-child::after {
+      display: none;
+    }
+    .b-num {
+      display: inline-block;
+      width: 22px;
+      height: 22px;
+      line-height: 22px;
+      border-radius: 50%;
+      background: #1e3a8a;
+      color: #ffffff;
+      font-size: 11.5px;
+      font-weight: 900;
+      margin: 0 auto 4px;
+    }
+    .return-node .b-num { background: #e11d48; }
+    .b-name {
+      font-size: 12px;
+      font-weight: 900;
+      color: #0f172a;
+      line-height: 1.2;
+      margin-bottom: 4px;
+    }
+    .b-near {
+      font-size: 10.2px;
+      color: #475569;
+      font-weight: 600;
+      line-height: 1.3;
+    }
+    .bus-subnote {
+      margin-top: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #f0fdf4;
+      border: 1px solid #86efac;
+      border-radius: 9px;
+      padding: 6px 14px;
+      font-size: 12px;
+      color: #166534;
+      font-weight: 700;
+    }
+
+    /* 4. ALL 14 SPOTS DIRECTORY */
+    .spots-section {
+      display: grid;
+      grid-template-columns: 1.35fr 0.92fr 0.73fr;
+      gap: 16px;
+    }
+    .cat-column {
+      background: #ffffff;
+      border-radius: 18px;
+      padding: 14px 16px;
+      border: 2px solid #e2e8f0;
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.04);
+    }
+    .cat-column.cat-nature { border-color: #5eead4; background: linear-gradient(180deg, #f2fbf9 0%, #ffffff 22%); }
+    .cat-column.cat-food   { border-color: #fcd34d; background: linear-gradient(180deg, #fffcf0 0%, #ffffff 22%); }
+    .cat-column.cat-culture{ border-color: #fda4af; background: linear-gradient(180deg, #fff5f7 0%, #ffffff 22%); }
+
+    .cat-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      padding-bottom: 7px;
+      border-bottom: 2px solid rgba(15,23,42,0.08);
+    }
+    .cat-header h3 {
+      font-size: 16.5px;
+      font-weight: 900;
+    }
+    .cat-nature .cat-header h3 { color: #0f766e; }
+    .cat-food .cat-header h3   { color: #b45309; }
+    .cat-culture .cat-header h3{ color: #be123c; }
+    .cat-count {
+      font-size: 11.5px;
+      font-weight: 800;
+      padding: 3px 9px;
+      border-radius: 999px;
+      background: rgba(15,23,42,0.06);
+      color: #334155;
+    }
+    .nature-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 9px;
+    }
+    .single-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+    }
+    .spot-card {
+      background: #ffffff;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 9px 11px;
+      cursor: pointer;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+    .spot-card:hover, .spot-card.active {
+      border-color: #0284c7;
+      box-shadow: 0 3px 10px rgba(2,132,199,0.16);
+    }
+    .spot-card-head {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+    .spot-num {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      color: #ffffff;
+      font-size: 12px;
+      font-weight: 900;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .spot-title-wrap {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .spot-title-wrap h4 {
+      font-size: 14px;
+      font-weight: 900;
+      color: #0f172a;
+    }
+    .spot-sub {
+      font-size: 10.5px;
+      font-weight: 700;
+      color: #64748b;
+    }
+    .spot-desc {
+      font-size: 11.5px;
+      line-height: 1.42;
+      color: #334155;
+      margin-bottom: 6px;
+    }
+    .spot-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+    .meta-pill {
+      font-size: 10.2px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 6px;
+      background: #f1f5f9;
+      color: #334155;
+    }
+    .stop-pill { background: #eff6ff; color: #1e40af; }
+    .stay-pill { background: #f0fdf4; color: #166534; }
+    .best-pill { background: #fffbeb; color: #92400e; }
+
+    /* 5. SPECIALTIES (4) + MODEL COURSES (3) */
+    .bottom-section {
+      display: grid;
+      grid-template-columns: 680px 1fr;
+      gap: 18px;
+    }
+    .specialties-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .spec-card {
+      background: linear-gradient(135deg, #fffbeb 0%, #ffffff 100%);
+      border: 1.5px solid #fde68a;
+      border-radius: 12px;
+      padding: 10px 12px;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+    }
+    .spec-badge {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 900;
+      color: #ffffff;
+      flex-shrink: 0;
+    }
+    .spec-card h4 {
+      font-size: 14px;
+      font-weight: 900;
+      color: #92400e;
+      margin-bottom: 2px;
+    }
+    .spec-card p {
+      font-size: 11.4px;
+      color: #334155;
+      line-height: 1.38;
+      margin-bottom: 4px;
+    }
+    .spec-place {
+      display: inline-block;
+      font-size: 10.3px;
+      font-weight: 800;
+      color: #0369a1;
+      background: #e0f2fe;
+      padding: 2px 7px;
+      border-radius: 5px;
+    }
+
+    .courses-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 11px;
+    }
+    .course-card {
+      background: #f8fafc;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 13px;
+      padding: 11px 13px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .course-card:hover, .course-card.active {
+      border-color: #0284c7;
+      background: #f0f9ff;
+    }
+    .course-tag {
+      display: inline-block;
+      font-size: 10.5px;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: #0284c7;
+      color: #ffffff;
+      margin-bottom: 5px;
+    }
+    .course-card h4 {
+      font-size: 13.8px;
+      font-weight: 900;
+      color: #0f172a;
+      margin-bottom: 6px;
+    }
+    .course-steps {
+      font-size: 11.4px;
+      line-height: 1.5;
+      color: #1e293b;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+    .course-note {
+      font-size: 10.7px;
+      color: #475569;
+      line-height: 1.35;
+      background: #ffffff;
+      padding: 5px 8px;
+      border-radius: 7px;
+      border-left: 3px solid #0d9488;
+    }
+    .planning-tips {
+      margin-top: 10px;
+      background: #fffbeb;
+      border: 1px solid #fcd34d;
+      border-radius: 9px;
+      padding: 7px 12px;
+      font-size: 11.5px;
+      color: #78350f;
+      font-weight: 700;
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+    }
+  </style>
+</head>
+<body>
+  <script>
+    if (window.location.search.includes('export=1')) {
+      document.body.classList.add('export-mode');
+    }
+  </script>
+  <div class="poster" id="poster-root">
+    <!-- 1. HEADER BANNER -->
+    <header class="header-banner">
+      <div class="header-left">
+        <div class="island-emblem">
+          <span class="emblem-top">蒼玉県の離島</span>
+          <span class="emblem-main">あおい島</span>
+        </div>
+        <div class="header-titles">
+          <h1>あおい島 観光ガイドマップ</h1>
+          <p>蒼玉の海と白砂の浜、みかん香る丘と標高428mのあおい岳 —— ぐるり一周21kmの島旅へ</p>
+        </div>
+      </div>
+      <div class="header-stats">
+        <div class="stat-chip"><span class="k">本土からのアクセス</span><span class="v">蒼玉港 ⇔ 高速船35分 / フェリー55分</span></div>
+        <div class="stat-chip"><span class="k">島の形・規模</span><span class="v">東西約6.8km × 南北約4.2km (約19.6km²)</span></div>
+        <div class="stat-chip"><span class="k">島のシンボル</span><span class="v">あおい岳（標高428m）</span></div>
+        <div class="stat-chip"><span class="k">中心集落・人口</span><span class="v">あおい集落（南東部）／約1,850人</span></div>
+      </div>
+    </header>
+
+    <!-- Interactive Filter Bar (Browser mode only; hidden in export/print) -->
+    <div class="interactive-bar">
+      <div class="filter-btns">
+        <button class="filter-btn active" onclick="filterCategory('all', this)">すべて表示 (全14スポット)</button>
+        <button class="filter-btn" onclick="filterCategory('nature', this)">自然・展望 (①〜⑦)</button>
+        <button class="filter-btn" onclick="filterCategory('food', this)">食・買い物・体験 (⑧〜⑪)</button>
+        <button class="filter-btn" onclick="filterCategory('culture', this)">温泉・神社・文化 (⑫〜⑭)</button>
+      </div>
+      <div class="interactive-status" id="interactive-status">マップ上のピンや下のスポットカード・モデルコースをクリックすると場所をハイライトできます</div>
+    </div>
+
+    <!-- 2. HERO ILLUSTRATED MAP -->
+    <main class="map-frame">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1820 1220" width="1820" height="1220" id="aoi-island-svg" style="font-family: 'Hiragino Maru Gothic ProN', 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', sans-serif;">
+  <defs>
+    <radialGradient id="seaGrad" cx="50%" cy="50%" r="68%">
+      <stop offset="0%" stop-color="#daf4fb"/>
+      <stop offset="52%" stop-color="#b4e4f5"/>
+      <stop offset="100%" stop-color="#85c8e8"/>
+    </radialGradient>
+    <linearGradient id="landBase" x1="20%" y1="15%" x2="80%" y2="85%">
+      <stop offset="0%" stop-color="#e3f1ce"/>
+      <stop offset="55%" stop-color="#cde5b5"/>
+      <stop offset="100%" stop-color="#b9d89e"/>
+    </linearGradient>
+    <radialGradient id="peakGlow" cx="48%" cy="42%" r="58%">
+      <stop offset="0%" stop-color="#74a65c"/>
+      <stop offset="100%" stop-color="#90be76"/>
+    </radialGradient>
+    <radialGradient id="sunsetGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#fb923c" stop-opacity="0.48"/>
+      <stop offset="60%" stop-color="#fda4af" stop-opacity="0.22"/>
+      <stop offset="100%" stop-color="#fda4af" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="pearlWater" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#67e8f9" stop-opacity="0.88"/>
+      <stop offset="100%" stop-color="#2dd4bf" stop-opacity="0.46"/>
+    </linearGradient>
+    <filter id="softShadow" x="-12%" y="-12%" width="128%" height="132%">
+      <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#0c4a6e" flood-opacity="0.16"/>
+    </filter>
+    <filter id="islandDrop" x="-8%" y="-8%" width="118%" height="118%">
+      <feDropShadow dx="0" dy="6" stdDeviation="10" flood-color="#0369a1" flood-opacity="0.18"/>
+    </filter>
+    <filter id="pinShadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#0f172a" flood-opacity="0.28"/>
+    </filter>
+    <clipPath id="islandClip">
+      <path d="M 1421.0,572.0 C 1419.7,585.0 1407.5,597.7 1396.0,616.0 C 1384.5,634.3 1368.8,660.0 1352.0,682.0 C 1335.2,704.0 1315.7,729.0 1295.0,748.0 C 1274.3,767.0 1249.2,783.7 1228.0,796.0 C 1206.8,808.3 1182.7,818.7 1168.0,822.0 C 1153.3,825.3 1148.3,812.7 1140.0,816.0 C 1131.7,819.3 1134.3,831.0 1118.0,842.0 C 1101.7,853.0 1067.5,871.3 1042.0,882.0 C 1016.5,892.7 990.7,900.8 965.0,906.0 C 939.3,911.2 915.8,912.7 888.0,913.0 C 860.2,913.3 829.0,911.8 798.0,908.0 C 767.0,904.2 732.3,898.0 702.0,890.0 C 671.7,882.0 640.0,870.3 616.0,860.0 C 592.0,849.7 575.3,839.7 558.0,828.0 C 540.7,816.3 527.3,802.7 512.0,790.0 C 496.7,777.3 480.7,766.3 466.0,752.0 C 451.3,737.7 437.0,720.3 424.0,704.0 C 411.0,687.7 398.7,671.0 388.0,654.0 C 377.3,637.0 361.0,620.7 360.0,602.0 C 359.0,583.3 371.0,563.0 382.0,542.0 C 393.0,521.0 407.3,498.3 426.0,476.0 C 444.7,453.7 468.7,429.7 494.0,408.0 C 519.3,386.3 547.0,364.3 578.0,346.0 C 609.0,327.7 644.3,311.0 680.0,298.0 C 715.7,285.0 755.7,274.7 792.0,268.0 C 828.3,261.3 864.0,258.0 898.0,258.0 C 932.0,258.0 966.0,263.0 996.0,268.0 C 1026.0,273.0 1058.3,280.3 1078.0,288.0 C 1097.7,295.7 1111.7,302.3 1114.0,314.0 C 1116.3,325.7 1090.7,343.3 1092.0,358.0 C 1093.3,372.7 1108.0,392.5 1122.0,402.0 C 1136.0,411.5 1157.3,416.3 1176.0,415.0 C 1194.7,413.7 1218.7,401.2 1234.0,394.0 C 1249.3,386.8 1255.0,368.0 1268.0,372.0 C 1281.0,376.0 1296.0,399.3 1312.0,418.0 C 1328.0,436.7 1348.7,464.0 1364.0,484.0 C 1379.3,504.0 1394.5,523.3 1404.0,538.0 C 1413.5,552.7 1422.3,559.0 1421.0,572.0 Z"/>
+    </clipPath>
+  </defs>
+
+  <!-- 1. OCEAN BACKGROUND & 1km NAUTICAL GRID -->
+  <rect x="0" y="0" width="1820" height="1220" fill="url(#seaGrad)"/>
+  <g stroke="#ffffff" stroke-opacity="0.28" stroke-width="1" stroke-dasharray="4,6">
+
+    <line x1="180" y1="0" x2="180" y2="1220"/>
+    <line x1="336" y1="0" x2="336" y2="1220"/>
+    <line x1="492" y1="0" x2="492" y2="1220"/>
+    <line x1="648" y1="0" x2="648" y2="1220"/>
+    <line x1="804" y1="0" x2="804" y2="1220"/>
+    <line x1="960" y1="0" x2="960" y2="1220"/>
+    <line x1="1116" y1="0" x2="1116" y2="1220"/>
+    <line x1="1272" y1="0" x2="1272" y2="1220"/>
+    <line x1="1428" y1="0" x2="1428" y2="1220"/>
+    <line x1="1584" y1="0" x2="1584" y2="1220"/>
+    <line x1="1740" y1="0" x2="1740" y2="1220"/>
+    <line x1="0" y1="120" x2="1820" y2="120"/>
+    <line x1="0" y1="276" x2="1820" y2="276"/>
+    <line x1="0" y1="432" x2="1820" y2="432"/>
+    <line x1="0" y1="588" x2="1820" y2="588"/>
+    <line x1="0" y1="744" x2="1820" y2="744"/>
+    <line x1="0" y1="900" x2="1820" y2="900"/>
+    <line x1="0" y1="1056" x2="1820" y2="1056"/>
+    <line x1="0" y1="1212" x2="1820" y2="1212"/>
+  </g>
+  <circle cx="295" cy="602" r="148" fill="url(#sunsetGlow)"/>
+  <g opacity="0.52">
+    <circle cx="1450" cy="570" r="118" fill="#fef08a" opacity="0.38"/>
+    <g stroke="#f59e0b" stroke-width="2.2" stroke-linecap="round" opacity="0.5">
+      <line x1="1438" y1="570" x2="1498" y2="520"/>
+      <line x1="1442" y1="570" x2="1512" y2="548"/>
+      <line x1="1442" y1="570" x2="1514" y2="574"/>
+      <line x1="1442" y1="570" x2="1508" y2="600"/>
+      <line x1="1436" y1="570" x2="1492" y2="624"/>
+    </g>
+  </g>
+  <g fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" opacity="0.52">
+    <path d="M 210,330 q 10,-6 20,0 t 20,0 m -28,9 q 10,-5 20,0 t 20,0"/>
+    <path d="M 355,250 q 10,-6 20,0 t 20,0 m -28,9 q 10,-5 20,0 t 20,0"/>
+    <path d="M 1535,310 q 10,-6 20,0 t 20,0 m -28,9 q 10,-5 20,0 t 20,0"/>
+    <path d="M 1645,410 q 10,-6 20,0 t 20,0 m -28,9 q 10,-5 20,0 t 20,0"/>
+    <path d="M 210,860 q 10,-6 20,0 t 20,0 m -28,9 q 10,-5 20,0 t 20,0"/>
+    <path d="M 415,905 q 10,-6 20,0 t 20,0 m -28,9 q 10,-5 20,0 t 20,0"/>
+    <path d="M 1355,915 q 10,-6 20,0 t 20,0 m -28,9 q 10,-5 20,0 t 20,0"/>
+    <path d="M 1385,290 q 10,-6 20,0 t 20,0 m -28,9 q 10,-5 20,0 t 20,0"/>
+  </g>
+  <path d="M 1474.1,570.3 C 1472.6,585.0 1459.2,599.3 1446.6,620.0 C 1433.9,640.7 1416.7,669.8 1398.2,694.6 C 1379.7,719.5 1358.2,747.7 1335.5,769.2 C 1312.8,790.7 1285.1,809.5 1261.8,823.4 C 1238.5,837.4 1211.9,849.0 1195.8,852.8 C 1179.7,856.6 1174.2,842.3 1165.0,846.0 C 1155.8,849.8 1158.8,863.0 1140.8,875.4 C 1122.8,887.8 1085.2,908.6 1057.2,920.6 C 1029.2,932.7 1000.7,941.9 972.5,947.7 C 944.3,953.6 918.4,955.3 887.8,955.6 C 857.2,956.0 822.9,954.3 788.8,950.0 C 754.7,945.7 716.6,938.7 683.2,929.6 C 649.8,920.6 615.0,907.4 588.6,895.8 C 562.2,884.1 543.9,872.8 524.8,859.6 C 505.7,846.4 491.1,831.0 474.2,816.6 C 457.3,802.3 439.7,789.9 423.6,773.7 C 407.5,757.5 391.7,737.9 377.4,719.5 C 363.1,701.0 349.5,682.2 337.8,663.0 C 326.1,643.8 308.1,625.3 307.0,604.2 C 305.9,583.1 319.1,560.1 331.2,536.4 C 343.3,512.7 359.1,487.1 379.6,461.8 C 400.1,436.6 426.5,409.5 454.4,385.0 C 482.3,360.5 512.7,335.6 546.8,314.9 C 580.9,294.2 619.8,275.4 659.0,260.7 C 698.2,246.0 742.2,234.3 782.2,226.8 C 822.2,219.3 861.4,215.5 898.8,215.5 C 936.2,215.5 973.6,221.1 1006.6,226.8 C 1039.6,232.4 1075.2,240.7 1096.8,249.4 C 1118.4,258.1 1133.8,265.6 1136.4,278.8 C 1139.0,292.0 1110.7,311.9 1112.2,328.5 C 1113.7,345.1 1129.8,367.5 1145.2,378.2 C 1160.6,388.9 1184.1,394.4 1204.6,392.9 C 1225.1,391.4 1251.5,377.3 1268.4,369.2 C 1285.3,361.1 1291.5,339.8 1305.8,344.3 C 1320.1,348.8 1336.6,375.2 1354.2,396.3 C 1371.8,417.4 1394.5,448.3 1411.4,470.9 C 1428.3,493.5 1445.0,515.3 1455.4,531.9 C 1465.9,548.5 1475.6,555.6 1474.1,570.3 Z" fill="#bceef6" fill-opacity="0.56"/>
+  <path d="M 1447.6,571.2 C 1446.2,585.0 1433.4,598.5 1421.3,618.0 C 1409.2,637.5 1392.8,664.9 1375.1,688.3 C 1357.4,711.7 1337.0,738.4 1315.2,758.6 C 1293.5,778.8 1267.1,796.6 1244.9,809.7 C 1222.7,822.8 1197.3,833.9 1181.9,837.4 C 1166.5,841.0 1161.2,827.5 1152.5,831.0 C 1143.8,834.6 1146.6,847.0 1129.4,858.7 C 1112.2,870.4 1076.4,889.9 1049.6,901.3 C 1022.8,912.7 995.7,921.4 968.8,926.9 C 941.8,932.4 917.1,934.0 887.9,934.3 C 858.7,934.7 825.9,933.1 793.4,929.0 C 760.9,924.9 724.5,918.3 692.6,909.8 C 660.8,901.3 627.5,888.9 602.3,877.9 C 577.1,866.9 559.6,856.2 541.4,843.8 C 523.2,831.4 509.2,816.8 493.1,803.3 C 477.0,789.8 460.2,778.1 444.8,762.9 C 429.4,747.6 414.3,729.1 400.7,711.7 C 387.1,694.3 374.1,676.6 362.9,658.5 C 351.7,640.4 334.6,623.0 333.5,603.1 C 332.4,583.2 345.1,561.6 356.6,539.2 C 368.2,516.8 383.2,492.7 402.8,468.9 C 422.4,445.1 447.6,419.6 474.2,396.5 C 500.8,373.4 529.9,350.0 562.4,330.5 C 594.9,310.9 632.0,293.2 669.5,279.3 C 707.0,265.5 749.0,254.5 787.1,247.4 C 825.2,240.3 862.7,236.7 898.4,236.7 C 934.1,236.7 969.8,242.1 1001.3,247.4 C 1032.8,252.7 1066.8,260.5 1087.4,268.7 C 1108.1,276.9 1122.8,284.0 1125.2,296.4 C 1127.7,308.8 1100.7,327.6 1102.1,343.2 C 1103.5,358.9 1118.9,380.0 1133.6,390.1 C 1148.3,400.2 1170.7,405.4 1190.3,404.0 C 1209.9,402.5 1235.1,389.2 1251.2,381.6 C 1267.3,374.0 1273.2,353.9 1286.9,358.2 C 1300.6,362.4 1316.3,387.3 1333.1,407.1 C 1349.9,427.0 1371.6,456.1 1387.7,477.4 C 1403.8,498.7 1419.7,519.3 1429.7,534.9 C 1439.7,550.6 1449.0,557.3 1447.6,571.2 Z" fill="#9ef0f0" fill-opacity="0.66"/>
+  <ellipse cx="500" cy="804" rx="96" ry="54" transform="rotate(34 500 804)" fill="url(#pearlWater)"/>
+  <ellipse cx="1165" cy="366" rx="84" ry="48" transform="rotate(-14 1165 366)" fill="#7dd3fc" fill-opacity="0.56"/>
+
+  <path d="M 1421.0,572.0 C 1419.7,585.0 1407.5,597.7 1396.0,616.0 C 1384.5,634.3 1368.8,660.0 1352.0,682.0 C 1335.2,704.0 1315.7,729.0 1295.0,748.0 C 1274.3,767.0 1249.2,783.7 1228.0,796.0 C 1206.8,808.3 1182.7,818.7 1168.0,822.0 C 1153.3,825.3 1148.3,812.7 1140.0,816.0 C 1131.7,819.3 1134.3,831.0 1118.0,842.0 C 1101.7,853.0 1067.5,871.3 1042.0,882.0 C 1016.5,892.7 990.7,900.8 965.0,906.0 C 939.3,911.2 915.8,912.7 888.0,913.0 C 860.2,913.3 829.0,911.8 798.0,908.0 C 767.0,904.2 732.3,898.0 702.0,890.0 C 671.7,882.0 640.0,870.3 616.0,860.0 C 592.0,849.7 575.3,839.7 558.0,828.0 C 540.7,816.3 527.3,802.7 512.0,790.0 C 496.7,777.3 480.7,766.3 466.0,752.0 C 451.3,737.7 437.0,720.3 424.0,704.0 C 411.0,687.7 398.7,671.0 388.0,654.0 C 377.3,637.0 361.0,620.7 360.0,602.0 C 359.0,583.3 371.0,563.0 382.0,542.0 C 393.0,521.0 407.3,498.3 426.0,476.0 C 444.7,453.7 468.7,429.7 494.0,408.0 C 519.3,386.3 547.0,364.3 578.0,346.0 C 609.0,327.7 644.3,311.0 680.0,298.0 C 715.7,285.0 755.7,274.7 792.0,268.0 C 828.3,261.3 864.0,258.0 898.0,258.0 C 932.0,258.0 966.0,263.0 996.0,268.0 C 1026.0,273.0 1058.3,280.3 1078.0,288.0 C 1097.7,295.7 1111.7,302.3 1114.0,314.0 C 1116.3,325.7 1090.7,343.3 1092.0,358.0 C 1093.3,372.7 1108.0,392.5 1122.0,402.0 C 1136.0,411.5 1157.3,416.3 1176.0,415.0 C 1194.7,413.7 1218.7,401.2 1234.0,394.0 C 1249.3,386.8 1255.0,368.0 1268.0,372.0 C 1281.0,376.0 1296.0,399.3 1312.0,418.0 C 1328.0,436.7 1348.7,464.0 1364.0,484.0 C 1379.3,504.0 1394.5,523.3 1404.0,538.0 C 1413.5,552.7 1422.3,559.0 1421.0,572.0 Z" fill="none" stroke="#ffffff" stroke-width="11" stroke-opacity="0.88" filter="url(#islandDrop)"/>
+  <path d="M 1421.0,572.0 C 1419.7,585.0 1407.5,597.7 1396.0,616.0 C 1384.5,634.3 1368.8,660.0 1352.0,682.0 C 1335.2,704.0 1315.7,729.0 1295.0,748.0 C 1274.3,767.0 1249.2,783.7 1228.0,796.0 C 1206.8,808.3 1182.7,818.7 1168.0,822.0 C 1153.3,825.3 1148.3,812.7 1140.0,816.0 C 1131.7,819.3 1134.3,831.0 1118.0,842.0 C 1101.7,853.0 1067.5,871.3 1042.0,882.0 C 1016.5,892.7 990.7,900.8 965.0,906.0 C 939.3,911.2 915.8,912.7 888.0,913.0 C 860.2,913.3 829.0,911.8 798.0,908.0 C 767.0,904.2 732.3,898.0 702.0,890.0 C 671.7,882.0 640.0,870.3 616.0,860.0 C 592.0,849.7 575.3,839.7 558.0,828.0 C 540.7,816.3 527.3,802.7 512.0,790.0 C 496.7,777.3 480.7,766.3 466.0,752.0 C 451.3,737.7 437.0,720.3 424.0,704.0 C 411.0,687.7 398.7,671.0 388.0,654.0 C 377.3,637.0 361.0,620.7 360.0,602.0 C 359.0,583.3 371.0,563.0 382.0,542.0 C 393.0,521.0 407.3,498.3 426.0,476.0 C 444.7,453.7 468.7,429.7 494.0,408.0 C 519.3,386.3 547.0,364.3 578.0,346.0 C 609.0,327.7 644.3,311.0 680.0,298.0 C 715.7,285.0 755.7,274.7 792.0,268.0 C 828.3,261.3 864.0,258.0 898.0,258.0 C 932.0,258.0 966.0,263.0 996.0,268.0 C 1026.0,273.0 1058.3,280.3 1078.0,288.0 C 1097.7,295.7 1111.7,302.3 1114.0,314.0 C 1116.3,325.7 1090.7,343.3 1092.0,358.0 C 1093.3,372.7 1108.0,392.5 1122.0,402.0 C 1136.0,411.5 1157.3,416.3 1176.0,415.0 C 1194.7,413.7 1218.7,401.2 1234.0,394.0 C 1249.3,386.8 1255.0,368.0 1268.0,372.0 C 1281.0,376.0 1296.0,399.3 1312.0,418.0 C 1328.0,436.7 1348.7,464.0 1364.0,484.0 C 1379.3,504.0 1394.5,523.3 1404.0,538.0 C 1413.5,552.7 1422.3,559.0 1421.0,572.0 Z" fill="url(#landBase)" stroke="#5b8c5a" stroke-width="2.2"/>
+
+  <g clip-path="url(#islandClip)">
+    <path d="M 1402.4,572.6 C 1401.1,585.0 1389.4,597.1 1378.3,614.6 C 1367.2,632.1 1352.1,656.6 1335.8,677.6 C 1319.6,698.6 1300.8,722.5 1280.8,740.7 C 1260.9,758.8 1236.6,774.7 1216.2,786.5 C 1195.7,798.3 1172.4,808.2 1158.3,811.3 C 1144.1,814.5 1139.3,802.4 1131.2,805.6 C 1123.2,808.8 1125.8,819.9 1110.0,830.4 C 1094.3,840.9 1061.3,858.4 1036.7,868.6 C 1012.1,878.8 987.1,886.6 962.4,891.6 C 937.6,896.5 914.9,897.9 888.1,898.2 C 861.2,898.6 831.1,897.1 801.2,893.5 C 771.3,889.8 737.9,883.9 708.6,876.3 C 679.3,868.6 648.8,857.5 625.6,847.6 C 602.4,837.8 586.3,828.2 569.6,817.1 C 552.9,805.9 540.0,792.9 525.2,780.8 C 510.4,768.7 495.0,758.2 480.8,744.5 C 466.7,730.8 452.9,714.2 440.3,698.6 C 427.8,683.0 415.9,667.1 405.6,650.9 C 395.3,634.7 379.5,619.1 378.6,601.2 C 377.6,583.4 389.2,564.0 399.8,543.9 C 410.4,523.9 424.2,502.2 442.2,480.9 C 460.3,459.6 483.4,436.7 507.9,416.0 C 532.3,395.3 559.0,374.3 588.9,356.8 C 618.8,339.2 652.9,323.3 687.4,310.9 C 721.8,298.5 760.4,288.6 795.4,282.3 C 830.5,275.9 864.9,272.7 897.7,272.7 C 930.5,272.7 963.3,277.5 992.3,282.3 C 1021.2,287.0 1052.4,294.0 1071.4,301.4 C 1090.4,308.7 1103.9,315.1 1106.2,326.2 C 1108.4,337.3 1083.6,354.2 1084.9,368.2 C 1086.2,382.2 1100.4,401.2 1113.9,410.2 C 1127.4,419.3 1148.0,423.9 1166.0,422.6 C 1184.0,421.4 1207.2,409.4 1222.0,402.6 C 1236.8,395.8 1242.2,377.8 1254.8,381.6 C 1267.3,385.4 1281.8,407.7 1297.2,425.5 C 1312.7,443.3 1332.6,469.4 1347.4,488.5 C 1362.2,507.6 1376.8,526.1 1386.0,540.1 C 1395.2,554.1 1403.7,560.2 1402.4,572.6 Z" fill="#d6eab8" fill-opacity="0.45"/>
+
+    <!-- White sand arc of 真珠浜 -->
+    <path d="M 452,742 Q 505,786 572,838 L 548,868 Q 486,820 432,768 Z" fill="#fef3c7" stroke="#f59e0b" stroke-opacity="0.35" stroke-width="1.5"/>
+    <path d="M 458,748 Q 508,790 566,834" fill="none" stroke="#fde68a" stroke-width="7" stroke-linecap="round"/>
+
+    <!-- Topographic Elevation Contours rising to あおい岳 (428m) -->
+    <path d="M 1264.3,539.2 C 1262.9,561.6 1237.8,588.6 1214.6,614.0 C 1191.5,639.3 1150.8,676.3 1125.4,691.5 C 1099.9,706.7 1084.3,695.3 1062.0,705.1 C 1039.7,714.8 1021.7,739.0 991.4,750.0 C 961.2,761.0 921.4,770.1 880.6,771.0 C 839.8,771.9 786.2,765.0 746.6,755.4 C 707.0,745.8 671.3,728.9 643.0,713.2 C 614.6,697.6 597.1,681.3 576.7,661.6 C 556.3,641.8 530.6,618.7 520.6,594.9 C 510.5,571.1 503.5,546.6 516.2,518.8 C 529.0,490.9 561.1,455.3 596.9,427.6 C 632.6,400.0 682.3,369.8 730.8,352.8 C 779.3,335.8 840.0,326.8 887.8,325.6 C 935.5,324.5 994.1,334.7 1017.4,346.0 C 1040.6,357.4 1015.7,379.2 1027.4,393.6 C 1039.2,408.0 1066.8,430.8 1087.9,432.4 C 1109.0,434.0 1131.6,395.3 1154.2,403.2 C 1176.7,411.0 1204.9,456.7 1223.3,479.3 C 1241.6,502.0 1265.8,516.7 1264.3,539.2 Z" fill="#bedc9f" stroke="#7da865" stroke-width="1.2" stroke-dasharray="6,4" opacity="0.92"/>
+    <path d="M 1136.9,514.0 C 1131.4,534.3 1098.9,576.3 1076.4,595.0 C 1053.9,613.7 1028.4,614.1 1002.0,626.3 C 975.6,638.4 953.0,662.0 918.0,667.7 C 883.0,673.3 828.0,669.2 791.8,660.3 C 755.5,651.4 725.7,632.4 700.6,614.3 C 675.4,596.2 647.9,575.8 641.0,551.7 C 634.2,527.7 635.9,497.2 659.3,469.9 C 682.6,442.6 735.6,403.9 781.2,388.0 C 826.8,372.0 899.9,369.6 932.9,374.2 C 965.8,378.8 959.9,405.9 979.0,415.6 C 998.0,425.2 1025.4,422.5 1047.1,432.1 C 1068.9,441.8 1094.6,459.9 1109.5,473.5 C 1124.5,487.2 1142.4,493.8 1136.9,514.0 Z" fill="#a7ce89" stroke="#689652" stroke-width="1.2" opacity="0.94"/>
+    <path d="M 1030.7,498.4 C 1027.5,510.7 1008.5,536.3 995.4,547.6 C 982.3,559.0 967.4,559.3 952.0,566.7 C 936.6,574.1 923.4,588.4 903.0,591.9 C 882.6,595.3 850.5,592.8 829.4,587.4 C 808.2,582.0 790.8,570.4 776.2,559.4 C 761.5,548.4 745.5,536.0 741.4,521.3 C 737.4,506.7 738.5,488.1 752.1,471.5 C 765.7,454.9 796.6,431.3 823.2,421.6 C 849.8,411.9 892.5,410.4 911.7,413.2 C 930.9,416.0 927.5,432.6 938.6,438.4 C 949.7,444.3 965.6,442.6 978.3,448.5 C 991.0,454.4 1006.0,465.4 1014.7,473.7 C 1023.4,482.0 1033.9,486.0 1030.7,498.4 Z" fill="#8fbe72" stroke="#558242" stroke-width="1.3" opacity="0.95"/>
+    <path d="M 945.7,486.3 C 943.0,493.1 930.1,508.7 922.6,515.4 C 915.0,522.1 910.8,524.6 900.2,526.6 C 889.7,528.6 871.0,530.5 859.4,527.6 C 847.9,524.8 837.5,517.2 831.1,509.7 C 824.7,502.2 816.8,492.2 821.0,482.4 C 825.3,472.6 842.9,456.2 856.8,450.7 C 870.7,445.2 894.6,446.9 904.6,449.4 C 914.5,451.9 910.6,461.7 916.3,465.9 C 922.0,470.1 934.0,471.5 938.9,474.9 C 943.8,478.3 948.4,479.6 945.7,486.3 Z" fill="url(#peakGlow)" stroke="#446e34" stroke-width="1.4"/>
+
+    <!-- 風の丘 grassy highland -->
+    <path d="M 425.0,636.0 C 436.3,626.3 469.8,626.0 486.0,632.0 C 502.2,638.0 517.7,657.7 522.0,672.0 C 526.3,686.3 521.7,709.0 512.0,718.0 C 502.3,727.0 479.7,730.7 464.0,726.0 C 448.3,721.3 424.5,705.0 418.0,690.0 C 411.5,675.0 413.7,645.7 425.0,636.0 Z" fill="#e5f2b8" stroke="#84a955" stroke-width="1.5" stroke-dasharray="4,3"/>
+
+    <!-- あおい柑橘園 terraces & orange mikan dots -->
+    <g opacity="0.94">
+      <ellipse cx="706" cy="798" rx="58" ry="34" transform="rotate(-12 706 798)" fill="#d9f09d" stroke="#84cc16" stroke-width="1.3"/>
+      <path d="M 662,790 Q 706,778 750,786 M 658,804 Q 706,792 754,800 M 666,818 Q 708,808 746,814" fill="none" stroke="#65a30d" stroke-width="2" stroke-linecap="round"/>
+      <circle cx="678" cy="786" r="3.6" fill="#f97316"/><circle cx="696" cy="783" r="3.6" fill="#fb923c"/>
+      <circle cx="718" cy="784" r="3.6" fill="#f97316"/><circle cx="736" cy="788" r="3.6" fill="#fb923c"/>
+      <circle cx="672" cy="801" r="3.6" fill="#fb923c"/><circle cx="692" cy="798" r="3.6" fill="#f97316"/>
+      <circle cx="712" cy="797" r="3.6" fill="#fb923c"/><circle cx="732" cy="801" r="3.6" fill="#f97316"/>
+      <circle cx="686" cy="813" r="3.6" fill="#f97316"/><circle cx="708" cy="811" r="3.6" fill="#fb923c"/>
+      <circle cx="728" cy="813" r="3.6" fill="#f97316"/>
+    </g>
+
+    <!-- あおい集落 (Southeast center village) -->
+    <g opacity="0.86">
+      <ellipse cx="1132" cy="774" rx="68" ry="48" transform="rotate(-22 1132 774)" fill="#f3f0d7" opacity="0.68"/>
+      <g fill="#d97757" stroke="#fff" stroke-width="0.9">
+        <rect x="1088" y="758" width="11" height="8" rx="1"/><rect x="1104" y="766" width="10" height="7" rx="1"/>
+        <rect x="1132" y="748" width="12" height="8" rx="1"/><rect x="1148" y="742" width="10" height="7" rx="1"/>
+        <rect x="1122" y="776" width="11" height="8" rx="1"/><rect x="1140" y="780" width="11" height="7" rx="1"/>
+        <rect x="1096" y="784" width="10" height="7" rx="1"/><rect x="1168" y="772" width="10" height="7" rx="1"/>
+      </g>
+    </g>
+
+    <!-- 静浦集落 (NE fishing village) -->
+    <g fill="#64748b" stroke="#f8fafc" stroke-width="0.9" opacity="0.9">
+      <rect x="1146" y="418" width="11" height="7" rx="1"/>
+      <rect x="1162" y="423" width="11" height="7" rx="1"/>
+      <rect x="1194" y="416" width="11" height="7" rx="1"/>
+      <rect x="1209" y="410" width="11" height="7" rx="1"/>
+    </g>
+
+    <!-- せせらぎ渓谷 (Stream from NE slope of Mt. Aoi into 静浦湾) -->
+    <path d="M 926,472 C 958,446 982,422 1006,396 C 1030,370 1058,348 1096,358" fill="none" stroke="#bae6fd" stroke-width="9" stroke-linecap="round"/>
+    <path d="M 926,472 C 958,446 982,422 1006,396 C 1030,370 1058,348 1096,358" fill="none" stroke="#0284c7" stroke-width="4.2" stroke-linecap="round"/>
+    <!-- Waterfall cascade -->
+    <g transform="translate(992, 404)">
+      <rect x="-8" y="-5" width="16" height="11" rx="3" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.2"/>
+      <line x1="-4" y1="-4" x2="-4" y2="5" stroke="#0284c7" stroke-width="1.2"/>
+      <line x1="0" y1="-4" x2="0" y2="5" stroke="#0284c7" stroke-width="1.2"/>
+      <line x1="4" y1="-4" x2="4" y2="5" stroke="#0284c7" stroke-width="1.2"/>
+    </g>
+
+    <!-- Forest tree clusters -->
+    <g fill="#5b924c" opacity="0.46">
+      <circle cx="760" cy="480" r="8"/><circle cx="772" cy="485" r="7"/><circle cx="750" cy="488" r="6"/>
+      <circle cx="790" cy="630" r="8"/><circle cx="804" cy="635" r="7"/><circle cx="780" cy="638" r="6"/>
+      <circle cx="1050" cy="610" r="8"/><circle cx="1064" cy="616" r="7"/><circle cx="1040" cy="618" r="6"/>
+      <circle cx="1180" cy="630" r="8"/><circle cx="1194" cy="635" r="7"/>
+      <circle cx="620" cy="560" r="8"/><circle cx="634" cy="566" r="7"/>
+      <circle cx="815" cy="370" r="8"/><circle cx="829" cy="375" r="7"/>
+      <circle cx="1235" cy="535" r="8"/><circle cx="1248" cy="540" r="7"/>
+    </g>
+  </g>
+
+  <!-- Harbor Breakwaters & Boats -->
+  <path d="M 1166,822 L 1182,846 L 1162,854" fill="none" stroke="#64748b" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M 1122,838 L 1138,860 L 1150,858" fill="none" stroke="#64748b" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M 1168,412 L 1172,394 L 1190,394" fill="none" stroke="#64748b" stroke-width="3.2" stroke-linecap="round"/>
+  <g transform="translate(1150, 384)">
+    <path d="M -9,0 L 9,0 L 6,5 L -6,5 Z" fill="#ffffff" stroke="#0369a1" stroke-width="1.2"/>
+    <rect x="-3" y="-4" width="6" height="4" fill="#38bdf8"/>
+  </g>
+  <g transform="translate(1206, 382)">
+    <path d="M -8,0 L 8,0 L 5,4.5 L -5,4.5 Z" fill="#ffffff" stroke="#0369a1" stroke-width="1.2"/>
+    <rect x="-2.5" y="-3.5" width="5" height="3.5" fill="#fb923c"/>
+  </g>
+
+  <!-- Mountain Hiking Trails & Walking Paths -->
+  <g fill="none" stroke-linecap="round">
+    <path d="M 890,794 C 884,730 896,645 888,558 L 882,486" stroke="#ffffff" stroke-width="5.5" opacity="0.8"/>
+    <path d="M 656,422 C 722,442 798,466 882,486" stroke="#ffffff" stroke-width="5.5" opacity="0.8"/>
+    <path d="M 890,794 C 884,730 896,645 888,558 L 882,486" stroke="#9a3412" stroke-width="3" stroke-dasharray="7,6"/>
+    <path d="M 656,422 C 722,442 798,466 882,486" stroke="#9a3412" stroke-width="3" stroke-dasharray="7,6"/>
+
+    <!-- Walking Paths -->
+    <path d="M 406,602 Q 434,642 468,668" stroke="#ffffff" stroke-width="4.5" opacity="0.85"/>
+    <path d="M 406,602 Q 434,642 468,668" stroke="#15803d" stroke-width="2.4" stroke-dasharray="3,5"/>
+    <path d="M 890,880 L 890,794" stroke="#ffffff" stroke-width="4.5" opacity="0.85"/>
+    <path d="M 890,880 L 890,794" stroke="#15803d" stroke-width="2.4" stroke-dasharray="3,5"/>
+    <path d="M 988,306 Q 1002,352 1006,396" stroke="#ffffff" stroke-width="4.5" opacity="0.85"/>
+    <path d="M 988,306 Q 1002,352 1006,396" stroke="#15803d" stroke-width="2.4" stroke-dasharray="3,5"/>
+    <path d="M 1126,798 Q 1142,780 1154,762 M 1126,798 Q 1118,766 1116,734" stroke="#ffffff" stroke-width="4" opacity="0.85"/>
+    <path d="M 1126,798 Q 1142,780 1154,762 M 1126,798 Q 1118,766 1116,734" stroke="#15803d" stroke-width="2.2" stroke-dasharray="2,4"/>
+  </g>
+
+  <!-- Trail & Walk Time Pills -->
+  <g font-size="10.5" font-weight="800">
+    <rect x="708" y="424" width="118" height="20" rx="10" fill="#fff7ed" stroke="#c2410c" stroke-width="1.2"/>
+    <text x="767" y="438" text-anchor="middle" fill="#9a3412">北西麓登山道 (登90分)</text>
+
+    <rect x="758" y="684" width="118" height="20" rx="10" fill="#fff7ed" stroke="#c2410c" stroke-width="1.2"/>
+    <text x="817" y="698" text-anchor="middle" fill="#9a3412">南麓登山道 (登90分)</text>
+
+    <rect x="674" y="388" width="44" height="17" rx="4" fill="#9a3412"/>
+    <text x="696" y="400" text-anchor="middle" fill="#ffffff" font-size="10">登山口</text>
+
+    <rect x="910" y="772" width="44" height="17" rx="4" fill="#9a3412"/>
+    <text x="932" y="784" text-anchor="middle" fill="#ffffff" font-size="10">登山口</text>
+
+    <!-- Walking duration mini pills -->
+    <rect x="428" y="614" width="54" height="16" rx="8" fill="#f0fdf4" stroke="#15803d" stroke-width="1.1"/>
+    <text x="455" y="625" text-anchor="middle" fill="#166534" font-size="9.5">徒歩10分</text>
+
+    <rect x="900" y="830" width="50" height="16" rx="8" fill="#f0fdf4" stroke="#15803d" stroke-width="1.1"/>
+    <text x="925" y="841" text-anchor="middle" fill="#166534" font-size="9.5">徒歩3分</text>
+
+    <rect x="814" y="516" width="56" height="16" rx="8" fill="#fff7ed" stroke="#c2410c" stroke-width="1.1"/>
+    <text x="842" y="527" text-anchor="middle" fill="#9a3412" font-size="9.5">徒歩5分</text>
+  </g>
+
+  <!-- Loop Road & Clockwise Bus Route -->
+  <path d="M 1126.0,798.0 C 1095.3,812.3 1065.3,837.3 1038.0,850.0 C 1010.7,862.7 986.7,869.0 962.0,874.0 C 937.3,879.0 918.0,880.0 890.0,880.0 C 862.0,880.0 826.3,878.3 794.0,874.0 C 761.7,869.7 726.3,862.7 696.0,854.0 C 665.7,845.3 637.7,835.7 612.0,822.0 C 586.3,808.3 563.7,789.3 542.0,772.0 C 520.3,754.7 499.3,736.0 482.0,718.0 C 464.7,700.0 450.7,683.3 438.0,664.0 C 425.3,644.7 407.3,623.7 406.0,602.0 C 404.7,580.3 418.3,556.3 430.0,534.0 C 441.7,511.7 458.3,488.3 476.0,468.0 C 493.7,447.7 514.3,429.0 536.0,412.0 C 557.7,395.0 579.0,380.7 606.0,366.0 C 633.0,351.3 665.7,335.3 698.0,324.0 C 730.3,312.7 766.7,303.7 800.0,298.0 C 833.3,292.3 866.7,288.7 898.0,290.0 C 929.3,291.3 962.0,298.0 988.0,306.0 C 1014.0,314.0 1037.3,323.0 1054.0,338.0 C 1070.7,353.0 1075.3,380.3 1088.0,396.0 C 1100.7,411.7 1115.0,424.3 1130.0,432.0 C 1145.0,439.7 1159.3,442.3 1178.0,442.0 C 1196.7,441.7 1223.7,431.3 1242.0,430.0 C 1260.3,428.7 1272.0,423.0 1288.0,434.0 C 1304.0,445.0 1324.0,473.0 1338.0,496.0 C 1352.0,519.0 1371.0,548.7 1372.0,572.0 C 1373.0,595.3 1357.3,613.7 1344.0,636.0 C 1330.7,658.3 1312.3,684.7 1292.0,706.0 C 1271.7,727.3 1249.7,748.7 1222.0,764.0 C 1194.3,779.3 1156.7,783.7 1126.0,798.0 Z" fill="none" stroke="#64748b" stroke-width="11" stroke-linejoin="round" opacity="0.72"/>
+  <path d="M 1126.0,798.0 C 1095.3,812.3 1065.3,837.3 1038.0,850.0 C 1010.7,862.7 986.7,869.0 962.0,874.0 C 937.3,879.0 918.0,880.0 890.0,880.0 C 862.0,880.0 826.3,878.3 794.0,874.0 C 761.7,869.7 726.3,862.7 696.0,854.0 C 665.7,845.3 637.7,835.7 612.0,822.0 C 586.3,808.3 563.7,789.3 542.0,772.0 C 520.3,754.7 499.3,736.0 482.0,718.0 C 464.7,700.0 450.7,683.3 438.0,664.0 C 425.3,644.7 407.3,623.7 406.0,602.0 C 404.7,580.3 418.3,556.3 430.0,534.0 C 441.7,511.7 458.3,488.3 476.0,468.0 C 493.7,447.7 514.3,429.0 536.0,412.0 C 557.7,395.0 579.0,380.7 606.0,366.0 C 633.0,351.3 665.7,335.3 698.0,324.0 C 730.3,312.7 766.7,303.7 800.0,298.0 C 833.3,292.3 866.7,288.7 898.0,290.0 C 929.3,291.3 962.0,298.0 988.0,306.0 C 1014.0,314.0 1037.3,323.0 1054.0,338.0 C 1070.7,353.0 1075.3,380.3 1088.0,396.0 C 1100.7,411.7 1115.0,424.3 1130.0,432.0 C 1145.0,439.7 1159.3,442.3 1178.0,442.0 C 1196.7,441.7 1223.7,431.3 1242.0,430.0 C 1260.3,428.7 1272.0,423.0 1288.0,434.0 C 1304.0,445.0 1324.0,473.0 1338.0,496.0 C 1352.0,519.0 1371.0,548.7 1372.0,572.0 C 1373.0,595.3 1357.3,613.7 1344.0,636.0 C 1330.7,658.3 1312.3,684.7 1292.0,706.0 C 1271.7,727.3 1249.7,748.7 1222.0,764.0 C 1194.3,779.3 1156.7,783.7 1126.0,798.0 Z" fill="none" stroke="#fffef7" stroke-width="7.5" stroke-linejoin="round"/>
+  <path d="M 1126.0,798.0 C 1095.3,812.3 1065.3,837.3 1038.0,850.0 C 1010.7,862.7 986.7,869.0 962.0,874.0 C 937.3,879.0 918.0,880.0 890.0,880.0 C 862.0,880.0 826.3,878.3 794.0,874.0 C 761.7,869.7 726.3,862.7 696.0,854.0 C 665.7,845.3 637.7,835.7 612.0,822.0 C 586.3,808.3 563.7,789.3 542.0,772.0 C 520.3,754.7 499.3,736.0 482.0,718.0 C 464.7,700.0 450.7,683.3 438.0,664.0 C 425.3,644.7 407.3,623.7 406.0,602.0 C 404.7,580.3 418.3,556.3 430.0,534.0 C 441.7,511.7 458.3,488.3 476.0,468.0 C 493.7,447.7 514.3,429.0 536.0,412.0 C 557.7,395.0 579.0,380.7 606.0,366.0 C 633.0,351.3 665.7,335.3 698.0,324.0 C 730.3,312.7 766.7,303.7 800.0,298.0 C 833.3,292.3 866.7,288.7 898.0,290.0 C 929.3,291.3 962.0,298.0 988.0,306.0 C 1014.0,314.0 1037.3,323.0 1054.0,338.0 C 1070.7,353.0 1075.3,380.3 1088.0,396.0 C 1100.7,411.7 1115.0,424.3 1130.0,432.0 C 1145.0,439.7 1159.3,442.3 1178.0,442.0 C 1196.7,441.7 1223.7,431.3 1242.0,430.0 C 1260.3,428.7 1272.0,423.0 1288.0,434.0 C 1304.0,445.0 1324.0,473.0 1338.0,496.0 C 1352.0,519.0 1371.0,548.7 1372.0,572.0 C 1373.0,595.3 1357.3,613.7 1344.0,636.0 C 1330.7,658.3 1312.3,684.7 1292.0,706.0 C 1271.7,727.3 1249.7,748.7 1222.0,764.0 C 1194.3,779.3 1156.7,783.7 1126.0,798.0 Z" fill="none" stroke="#e11d48" stroke-width="3.0" stroke-dasharray="10,7" stroke-linecap="round" id="bus-loop-path"/>
+
+  <g id="bus-clockwise-arrows">
+    <g transform="translate(1000.5,864.4) rotate(162.8)">
+      <circle cx="0" cy="0" r="9.5" fill="#e11d48" stroke="#ffffff" stroke-width="2"/>
+      <path d="M -3.5,-4.2 L 4.8,0 L -3.5,4.2 Z" fill="#ffffff"/>
+    </g>
+    <g transform="translate(794.0,874.0) rotate(-172.4)">
+      <circle cx="0" cy="0" r="9.5" fill="#e11d48" stroke="#ffffff" stroke-width="2"/>
+      <path d="M -3.5,-4.2 L 4.8,0 L -3.5,4.2 Z" fill="#ffffff"/>
+    </g>
+    <g transform="translate(612.0,822.0) rotate(-151.8)">
+      <circle cx="0" cy="0" r="9.5" fill="#e11d48" stroke="#ffffff" stroke-width="2"/>
+      <path d="M -3.5,-4.2 L 4.8,0 L -3.5,4.2 Z" fill="#ffffff"/>
+    </g>
+    <g transform="translate(459.1,692.6) rotate(-129.6)">
+      <circle cx="0" cy="0" r="9.5" fill="#e11d48" stroke="#ffffff" stroke-width="2"/>
+      <path d="M -3.5,-4.2 L 4.8,0 L -3.5,4.2 Z" fill="#ffffff"/>
+    </g>
+    <g transform="translate(476.0,468.0) rotate(-48.9)">
+      <circle cx="0" cy="0" r="9.5" fill="#e11d48" stroke="#ffffff" stroke-width="2"/>
+      <path d="M -3.5,-4.2 L 4.8,0 L -3.5,4.2 Z" fill="#ffffff"/>
+    </g>
+    <g transform="translate(800.0,298.0) rotate(-9.7)">
+      <circle cx="0" cy="0" r="9.5" fill="#e11d48" stroke="#ffffff" stroke-width="2"/>
+      <path d="M -3.5,-4.2 L 4.8,0 L -3.5,4.2 Z" fill="#ffffff"/>
+    </g>
+    <g transform="translate(1088.0,396.0) rotate(52.6)">
+      <circle cx="0" cy="0" r="9.5" fill="#e11d48" stroke="#ffffff" stroke-width="2"/>
+      <path d="M -3.5,-4.2 L 4.8,0 L -3.5,4.2 Z" fill="#ffffff"/>
+    </g>
+    <g transform="translate(1288.0,434.0) rotate(34.6)">
+      <circle cx="0" cy="0" r="9.5" fill="#e11d48" stroke="#ffffff" stroke-width="2"/>
+      <path d="M -3.5,-4.2 L 4.8,0 L -3.5,4.2 Z" fill="#ffffff"/>
+    </g>
+    <g transform="translate(1292.0,706.0) rotate(133.2)">
+      <circle cx="0" cy="0" r="9.5" fill="#e11d48" stroke="#ffffff" stroke-width="2"/>
+      <path d="M -3.5,-4.2 L 4.8,0 L -3.5,4.2 Z" fill="#ffffff"/>
+    </g>
+  </g>
+  <g filter="url(#pinShadow)">
+    <rect x="642" y="236" width="256" height="25" rx="12.5" fill="#be123c" stroke="#ffffff" stroke-width="1.8"/>
+    <!-- Pure vector bus icon -->
+    <g transform="translate(660, 248.5)">
+      <rect x="-8" y="-6" width="16" height="11" rx="2.5" fill="#ffffff"/>
+      <rect x="-6" y="-4" width="12" height="4.5" rx="1" fill="#be123c"/>
+      <circle cx="-4.5" cy="5.5" r="1.8" fill="#fde047"/>
+      <circle cx="4.5" cy="5.5" r="1.8" fill="#fde047"/>
+    </g>
+    <text x="778" y="253" text-anchor="middle" fill="#ffffff" font-size="11.5" font-weight="800">バス周回線：時計回り ▶ (1日6便・70分)</text>
+
+    <rect x="1226" y="756" width="168" height="22" rx="11" fill="#fffbeb" stroke="#64748b" stroke-width="1.4"/>
+    <text x="1310" y="771" text-anchor="middle" fill="#334155" font-size="11" font-weight="700">あおいライン (周囲約21km)</text>
+  </g>
+
+  <!-- Miniature Landmark Illustrations -->
+  <!-- ⑥ 鏡池 -->
+  <g transform="translate(888, 558)">
+    <ellipse cx="0" cy="0" rx="17" ry="10" fill="#38bdf8" stroke="#0369a1" stroke-width="1.6"/>
+    <ellipse cx="-4" cy="-2" rx="7" ry="3" fill="#e0f2fe" opacity="0.88"/>
+  </g>
+
+  <!-- ⑤ あおい岳山頂 (428m) -->
+  <g transform="translate(882, 486)">
+    <polygon points="0,-16 -14,9 14,9" fill="#3f6212" stroke="#ffffff" stroke-width="2"/>
+    <polygon points="0,-16 -6,-4 6,-4" fill="#bef264"/>
+    <line x1="0" y1="-16" x2="0" y2="-26" stroke="#78350f" stroke-width="2"/>
+    <path d="M 0,-26 L 11,-22 L 0,-18 Z" fill="#f59e0b"/>
+  </g>
+
+  <!-- ① あおい灯台 (White lighthouse) -->
+  <g transform="translate(1419, 556)">
+    <polygon points="-5,14 -3,-10 3,-10 5,14" fill="#ffffff" stroke="#0f172a" stroke-width="1.4"/>
+    <rect x="-4" y="-14" width="8" height="4" fill="#fbbf24" stroke="#0f172a" stroke-width="1.1"/>
+    <polygon points="-5,-14 0,-19 5,-14" fill="#ef4444"/>
+  </g>
+
+  <!-- ② 夕凪岬 (Setting sun) -->
+  <g transform="translate(328, 596)">
+    <path d="M -18,6 A 18,18 0 0,1 18,6 Z" fill="#f97316" opacity="0.88"/>
+    <line x1="-24" y1="6" x2="24" y2="6" stroke="#ea580c" stroke-width="2" stroke-linecap="round"/>
+    <line x1="-14" y1="11" x2="14" y2="11" stroke="#fb923c" stroke-width="1.6" stroke-linecap="round"/>
+  </g>
+
+  <!-- ④ 真珠浜 Beach Parasol -->
+  <g transform="translate(490, 774) rotate(-15)">
+    <line x1="0" y1="-7" x2="0" y2="8" stroke="#78350f" stroke-width="1.6"/>
+    <path d="M -10,-2 A 10,8 0 0,1 10,-2 Z" fill="#fb7185" stroke="#ffffff" stroke-width="1"/>
+  </g>
+
+  <!-- ⑬ あおい神社 (Torii & Giant Sacred Tree) -->
+  <g transform="translate(640, 418)">
+    <circle cx="-13" cy="-8" r="10" fill="#166534"/>
+    <rect x="-15" y="0" width="4" height="8" fill="#78350f"/>
+    <path d="M -5,-8 L 13,-8 M -3,-4 L 11,-4 M -1,-8 L -1,8 M 9,-8 L 9,8" stroke="#dc2626" stroke-width="2.4" stroke-linecap="round"/>
+  </g>
+
+  <!-- ⑫ あおい温泉 (Onsen steam) -->
+  <g transform="translate(870, 794)">
+    <ellipse cx="0" cy="5" rx="11" ry="6" fill="#fed7aa" stroke="#c2410c" stroke-width="1.5"/>
+    <path d="M -5,2 Q -7,-4 -4,-8 M 0,3 Q -2,-3 1,-7 M 5,2 Q 3,-4 6,-8" fill="none" stroke="#ea580c" stroke-width="1.8" stroke-linecap="round"/>
+  </g>
+
+  <!-- ③ 風の丘展望台 panoramic sightlines -->
+  <g transform="translate(468, 668)">
+    <path d="M 0,0 L -62,-46 M 0,0 L 22,94" stroke="#0d9488" stroke-width="1.3" stroke-dasharray="3,3" opacity="0.65"/>
+  </g>
+
+  <!-- Pure Vector Rental Cycle Pill near Harbor (placed cleanly below-left of Port) -->
+  <g transform="translate(1056, 846)" filter="url(#pinShadow)">
+    <rect x="-54" y="-10" width="108" height="20" rx="10" fill="#ecfeff" stroke="#0891b2" stroke-width="1.4"/>
+    <circle cx="-41" cy="2" r="3.5" fill="none" stroke="#0e7490" stroke-width="1.4"/>
+    <circle cx="-31" cy="2" r="3.5" fill="none" stroke="#0e7490" stroke-width="1.4"/>
+    <path d="M -41,2 L -36,-3 L -31,2 M -36,-3 L -37,-5" fill="none" stroke="#0e7490" stroke-width="1.3"/>
+    <text x="8" y="4" text-anchor="middle" fill="#0e7490" font-size="10" font-weight="800">レンタサイクル</text>
+  </g>
+
+  <g style="font-family: 'Hiragino Mincho ProN', 'Yu Mincho', serif;" font-weight="700">
+    <text x="828" y="500" text-anchor="end" font-size="14" fill="#1e3a1e" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">あおい岳 428m</text>
+    <text x="1174" y="364" text-anchor="middle" font-size="13.5" fill="#0369a1" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">静浦湾</text>
+    <text x="476" y="822" text-anchor="end" font-size="13" fill="#0f766e" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">真珠浜</text>
+    <text x="482" y="650" text-anchor="start" font-size="12" fill="#3f6212" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">風の丘</text>
+    <text x="1068" y="742" text-anchor="end" font-size="12" fill="#78350f" stroke="#ffffff" stroke-width="3.5" paint-order="stroke">あおい集落</text>
+  </g>
+  <g id="bus-stops-layer">
+    <g class="bus-stop-node" data-stop="1">
+      <line x1="1126" y1="798" x2="1048" y2="804" stroke="#1e3a8a" stroke-width="1.4" opacity="0.7"/>
+      <rect x="1002.0" y="794.0" width="92" height="20" rx="10" fill="#ffffff" fill-opacity="0.95" stroke="#1e3a8a" stroke-width="1.4"/>
+      <text x="1048" y="808" text-anchor="middle" fill="#1e3a8a" font-size="10.8" font-weight="800">停1 あおい港</text>
+      <circle cx="1126" cy="798" r="11.5" fill="#1e3a8a" stroke="#ffffff" stroke-width="2.5" filter="url(#pinShadow)"/>
+      <text x="1126" y="802" text-anchor="middle" fill="#ffffff" font-size="11" font-weight="800">1</text>
+    </g>
+    <g class="bus-stop-node" data-stop="2">
+      <line x1="890" y1="880" x2="890" y2="912" stroke="#1e3a8a" stroke-width="1.4" opacity="0.7"/>
+      <rect x="826.0" y="902.0" width="128" height="20" rx="10" fill="#ffffff" fill-opacity="0.95" stroke="#1e3a8a" stroke-width="1.4"/>
+      <text x="890" y="916" text-anchor="middle" fill="#1e3a8a" font-size="10.8" font-weight="800">停2 あおい温泉入口</text>
+      <circle cx="890" cy="880" r="11.5" fill="#1e3a8a" stroke="#ffffff" stroke-width="2.5" filter="url(#pinShadow)"/>
+      <text x="890" y="884" text-anchor="middle" fill="#ffffff" font-size="11" font-weight="800">2</text>
+    </g>
+    <g class="bus-stop-node" data-stop="3">
+      <line x1="696" y1="854" x2="654" y2="884" stroke="#1e3a8a" stroke-width="1.4" opacity="0.7"/>
+      <rect x="608.0" y="874.0" width="92" height="20" rx="10" fill="#ffffff" fill-opacity="0.95" stroke="#1e3a8a" stroke-width="1.4"/>
+      <text x="654" y="888" text-anchor="middle" fill="#1e3a8a" font-size="10.8" font-weight="800">停3 柑橘園前</text>
+      <circle cx="696" cy="854" r="11.5" fill="#1e3a8a" stroke="#ffffff" stroke-width="2.5" filter="url(#pinShadow)"/>
+      <text x="696" y="858" text-anchor="middle" fill="#ffffff" font-size="11" font-weight="800">3</text>
+    </g>
+    <g class="bus-stop-node" data-stop="4">
+      <line x1="542" y1="772" x2="596" y2="760" stroke="#1e3a8a" stroke-width="1.4" opacity="0.7"/>
+      <rect x="556.0" y="750.0" width="80" height="20" rx="10" fill="#ffffff" fill-opacity="0.95" stroke="#1e3a8a" stroke-width="1.4"/>
+      <text x="596" y="764" text-anchor="middle" fill="#1e3a8a" font-size="10.8" font-weight="800">停4 真珠浜</text>
+      <circle cx="542" cy="772" r="11.5" fill="#1e3a8a" stroke="#ffffff" stroke-width="2.5" filter="url(#pinShadow)"/>
+      <text x="542" y="776" text-anchor="middle" fill="#ffffff" font-size="11" font-weight="800">4</text>
+    </g>
+    <g class="bus-stop-node" data-stop="5">
+      <line x1="406" y1="602" x2="462" y2="592" stroke="#1e3a8a" stroke-width="1.4" opacity="0.7"/>
+      <rect x="422.0" y="582.0" width="80" height="20" rx="10" fill="#ffffff" fill-opacity="0.95" stroke="#1e3a8a" stroke-width="1.4"/>
+      <text x="462" y="596" text-anchor="middle" fill="#1e3a8a" font-size="10.8" font-weight="800">停5 夕凪岬</text>
+      <circle cx="406" cy="602" r="11.5" fill="#1e3a8a" stroke="#ffffff" stroke-width="2.5" filter="url(#pinShadow)"/>
+      <text x="406" y="606" text-anchor="middle" fill="#ffffff" font-size="11" font-weight="800">5</text>
+    </g>
+    <g class="bus-stop-node" data-stop="6">
+      <line x1="606" y1="366" x2="536" y2="340" stroke="#1e3a8a" stroke-width="1.4" opacity="0.7"/>
+      <rect x="478.0" y="330.0" width="116" height="20" rx="10" fill="#ffffff" fill-opacity="0.95" stroke="#1e3a8a" stroke-width="1.4"/>
+      <text x="536" y="344" text-anchor="middle" fill="#1e3a8a" font-size="10.8" font-weight="800">停6 あおい神社前</text>
+      <circle cx="606" cy="366" r="11.5" fill="#1e3a8a" stroke="#ffffff" stroke-width="2.5" filter="url(#pinShadow)"/>
+      <text x="606" y="370" text-anchor="middle" fill="#ffffff" font-size="11" font-weight="800">6</text>
+    </g>
+    <g class="bus-stop-node" data-stop="7">
+      <line x1="988" y1="306" x2="1006" y2="276" stroke="#1e3a8a" stroke-width="1.4" opacity="0.7"/>
+      <rect x="937.0" y="266.0" width="138" height="20" rx="10" fill="#ffffff" fill-opacity="0.95" stroke="#1e3a8a" stroke-width="1.4"/>
+      <text x="1006" y="280" text-anchor="middle" fill="#1e3a8a" font-size="10.8" font-weight="800">停7 せせらぎ渓谷入口</text>
+      <circle cx="988" cy="306" r="11.5" fill="#1e3a8a" stroke="#ffffff" stroke-width="2.5" filter="url(#pinShadow)"/>
+      <text x="988" y="310" text-anchor="middle" fill="#ffffff" font-size="11" font-weight="800">7</text>
+    </g>
+    <g class="bus-stop-node" data-stop="8">
+      <line x1="1178" y1="442" x2="1232" y2="458" stroke="#1e3a8a" stroke-width="1.4" opacity="0.7"/>
+      <rect x="1197.0" y="448.0" width="70" height="20" rx="10" fill="#ffffff" fill-opacity="0.95" stroke="#1e3a8a" stroke-width="1.4"/>
+      <text x="1232" y="462" text-anchor="middle" fill="#1e3a8a" font-size="10.8" font-weight="800">停8 静浦</text>
+      <circle cx="1178" cy="442" r="11.5" fill="#1e3a8a" stroke="#ffffff" stroke-width="2.5" filter="url(#pinShadow)"/>
+      <text x="1178" y="446" text-anchor="middle" fill="#ffffff" font-size="11" font-weight="800">8</text>
+    </g>
+    <g class="bus-stop-node" data-stop="9">
+      <line x1="1372" y1="572" x2="1326" y2="544" stroke="#1e3a8a" stroke-width="1.4" opacity="0.7"/>
+      <rect x="1286.0" y="534.0" width="80" height="20" rx="10" fill="#ffffff" fill-opacity="0.95" stroke="#1e3a8a" stroke-width="1.4"/>
+      <text x="1326" y="548" text-anchor="middle" fill="#1e3a8a" font-size="10.8" font-weight="800">停9 朝日岬</text>
+      <circle cx="1372" cy="572" r="11.5" fill="#1e3a8a" stroke="#ffffff" stroke-width="2.5" filter="url(#pinShadow)"/>
+      <text x="1372" y="576" text-anchor="middle" fill="#ffffff" font-size="11" font-weight="800">9</text>
+    </g>
+  </g>
+  <g id="spots-layer">
+    <g class="spot-group" id="map-spot-1" data-spot="1" data-cat="nature">
+      <line x1="1468.0" y1="543.0" x2="1404.0" y2="570.0" stroke="#0f766e" stroke-width="1.8" stroke-dasharray="4,3" opacity="0.88"/>
+      <circle cx="1404" cy="570" r="13.5" fill="#0f766e" stroke="#ffffff" stroke-width="2.6" filter="url(#pinShadow)"/>
+      <text x="1404" y="574.5" text-anchor="middle" fill="#ffffff" font-size="12" font-weight="800">1</text>
+      <g filter="url(#softShadow)">
+        <rect x="1468" y="512" width="322" height="62" rx="10" fill="#ffffff" fill-opacity="0.97" stroke="#14b8a6" stroke-width="2"/>
+        <rect x="1468" y="512" width="8" height="62" rx="4" fill="#0f766e"/>
+        <circle cx="1493" cy="533" r="11.5" fill="#0f766e"/>
+        <text x="1493" y="537" text-anchor="middle" fill="#ffffff" font-size="11.5" font-weight="800">1</text>
+        <text x="1511" y="537" fill="#0f172a" font-size="14" font-weight="800">朝日岬・あおい灯台</text>
+        <text x="1511" y="558" fill="#475569" font-size="11.5" font-weight="600">早朝の朝日｜滞在30分</text>
+      </g>
+    </g>
+    <g class="spot-group" id="map-spot-2" data-spot="2" data-cat="nature">
+      <line x1="324.0" y1="577.0" x2="372.0" y2="602.0" stroke="#0f766e" stroke-width="1.8" stroke-dasharray="4,3" opacity="0.88"/>
+      <circle cx="372" cy="602" r="13.5" fill="#0f766e" stroke="#ffffff" stroke-width="2.6" filter="url(#pinShadow)"/>
+      <text x="372" y="606.5" text-anchor="middle" fill="#ffffff" font-size="12" font-weight="800">2</text>
+      <g filter="url(#softShadow)">
+        <rect x="28" y="546" width="296" height="62" rx="10" fill="#ffffff" fill-opacity="0.97" stroke="#14b8a6" stroke-width="2"/>
+        <rect x="28" y="546" width="8" height="62" rx="4" fill="#0f766e"/>
+        <circle cx="53" cy="567" r="11.5" fill="#0f766e"/>
+        <text x="53" y="571" text-anchor="middle" fill="#ffffff" font-size="11.5" font-weight="800">2</text>
+        <text x="71" y="571" fill="#0f172a" font-size="14" font-weight="800">夕凪岬</text>
+        <text x="71" y="592" fill="#475569" font-size="11.5" font-weight="600">夕日の名所｜滞在30分</text>
+      </g>
+    </g>
+    <g class="spot-group" id="map-spot-3" data-spot="3" data-cat="nature">
+      <line x1="340.0" y1="675.0" x2="468.0" y2="668.0" stroke="#0f766e" stroke-width="1.8" stroke-dasharray="4,3" opacity="0.88"/>
+      <circle cx="468" cy="668" r="13.5" fill="#0f766e" stroke="#ffffff" stroke-width="2.6" filter="url(#pinShadow)"/>
+      <text x="468" y="672.5" text-anchor="middle" fill="#ffffff" font-size="12" font-weight="800">3</text>
+      <g filter="url(#softShadow)">
+        <rect x="28" y="644" width="312" height="62" rx="10" fill="#ffffff" fill-opacity="0.97" stroke="#14b8a6" stroke-width="2"/>
+        <rect x="28" y="644" width="8" height="62" rx="4" fill="#0f766e"/>
+        <circle cx="53" cy="665" r="11.5" fill="#0f766e"/>
+        <text x="53" y="669" text-anchor="middle" fill="#ffffff" font-size="11.5" font-weight="800">3</text>
+        <text x="71" y="669" fill="#0f172a" font-size="14" font-weight="800">風の丘展望台</text>
+        <text x="71" y="690" fill="#475569" font-size="11.5" font-weight="600">夕凪岬停 徒歩10分｜滞在20分</text>
+      </g>
+    </g>
+    <g class="spot-group" id="map-spot-4" data-spot="4" data-cat="nature">
+      <line x1="344.0" y1="795.0" x2="512.0" y2="792.0" stroke="#0f766e" stroke-width="1.8" stroke-dasharray="4,3" opacity="0.88"/>
+      <circle cx="512" cy="792" r="13.5" fill="#0f766e" stroke="#ffffff" stroke-width="2.6" filter="url(#pinShadow)"/>
+      <text x="512" y="796.5" text-anchor="middle" fill="#ffffff" font-size="12" font-weight="800">4</text>
+      <g filter="url(#softShadow)">
+        <rect x="28" y="764" width="316" height="62" rx="10" fill="#ffffff" fill-opacity="0.97" stroke="#14b8a6" stroke-width="2"/>
+        <rect x="28" y="764" width="8" height="62" rx="4" fill="#0f766e"/>
+        <circle cx="53" cy="785" r="11.5" fill="#0f766e"/>
+        <text x="53" y="789" text-anchor="middle" fill="#ffffff" font-size="11.5" font-weight="800">4</text>
+        <text x="71" y="789" fill="#0f172a" font-size="14" font-weight="800">真珠浜海水浴場</text>
+        <text x="71" y="810" fill="#475569" font-size="11.5" font-weight="600">白砂と遠浅の海｜滞在1〜2時間</text>
+      </g>
+    </g>
+    <g class="spot-group" id="map-spot-5" data-spot="5" data-cat="nature">
+      <line x1="924.0" y1="485.0" x2="882.0" y2="486.0" stroke="#0f766e" stroke-width="1.8" stroke-dasharray="4,3" opacity="0.88"/>
+      <circle cx="882" cy="486" r="13.5" fill="#0f766e" stroke="#ffffff" stroke-width="2.6" filter="url(#pinShadow)"/>
+      <text x="882" y="490.5" text-anchor="middle" fill="#ffffff" font-size="12" font-weight="800">5</text>
+      <g filter="url(#softShadow)">
+        <rect x="924" y="456" width="268" height="58" rx="10" fill="#ffffff" fill-opacity="0.97" stroke="#14b8a6" stroke-width="2"/>
+        <rect x="924" y="456" width="8" height="58" rx="4" fill="#0f766e"/>
+        <circle cx="949" cy="477" r="11.5" fill="#0f766e"/>
+        <text x="949" y="481" text-anchor="middle" fill="#ffffff" font-size="11.5" font-weight="800">5</text>
+        <text x="967" y="481" fill="#0f172a" font-size="14" font-weight="800">あおい岳登山</text>
+        <text x="967" y="502" fill="#475569" font-size="11.5" font-weight="600">標高428m｜登り90分・下り70分</text>
+      </g>
+    </g>
+    <g class="spot-group" id="map-spot-6" data-spot="6" data-cat="nature">
+      <line x1="928.0" y1="562.0" x2="888.0" y2="558.0" stroke="#0f766e" stroke-width="1.8" stroke-dasharray="4,3" opacity="0.88"/>
+      <circle cx="888" cy="558" r="13.5" fill="#0f766e" stroke="#ffffff" stroke-width="2.6" filter="url(#pinShadow)"/>
+      <text x="888" y="562.5" text-anchor="middle" fill="#ffffff" font-size="12" font-weight="800">6</text>
+      <g filter="url(#softShadow)">
+        <rect x="928" y="534" width="258" height="56" rx="10" fill="#ffffff" fill-opacity="0.97" stroke="#14b8a6" stroke-width="2"/>
+        <rect x="928" y="534" width="8" height="56" rx="4" fill="#0f766e"/>
+        <circle cx="953" cy="555" r="11.5" fill="#0f766e"/>
+        <text x="953" y="559" text-anchor="middle" fill="#ffffff" font-size="11.5" font-weight="800">6</text>
+        <text x="971" y="559" fill="#0f172a" font-size="14" font-weight="800">鏡池</text>
+        <text x="971" y="580" fill="#475569" font-size="11.5" font-weight="600">山頂南へ徒歩5分｜滞在15分</text>
+      </g>
+    </g>
+    <g class="spot-group" id="map-spot-7" data-spot="7" data-cat="nature">
+      <line x1="1002.0" y1="208.0" x2="1006.0" y2="396.0" stroke="#0f766e" stroke-width="1.8" stroke-dasharray="4,3" opacity="0.88"/>
+      <circle cx="1006" cy="396" r="13.5" fill="#0f766e" stroke="#ffffff" stroke-width="2.6" filter="url(#pinShadow)"/>
+      <text x="1006" y="400.5" text-anchor="middle" fill="#ffffff" font-size="12" font-weight="800">7</text>
+      <g filter="url(#softShadow)">
+        <rect x="856" y="146" width="292" height="62" rx="10" fill="#ffffff" fill-opacity="0.97" stroke="#14b8a6" stroke-width="2"/>
+        <rect x="856" y="146" width="8" height="62" rx="4" fill="#0f766e"/>
+        <circle cx="881" cy="167" r="11.5" fill="#0f766e"/>
+        <text x="881" y="171" text-anchor="middle" fill="#ffffff" font-size="11.5" font-weight="800">7</text>
+        <text x="899" y="171" fill="#0f172a" font-size="14" font-weight="800">せせらぎ渓谷</text>
+        <text x="899" y="192" fill="#475569" font-size="11.5" font-weight="600">清流遊歩道と小滝｜滞在40分</text>
+      </g>
+    </g>
+    <g class="spot-group" id="map-spot-8" data-spot="8" data-cat="food">
+      <line x1="1468.0" y1="767.0" x2="1162.0" y2="796.0" stroke="#d97706" stroke-width="1.8" stroke-dasharray="4,3" opacity="0.88"/>
+      <circle cx="1162" cy="796" r="13.5" fill="#d97706" stroke="#ffffff" stroke-width="2.6" filter="url(#pinShadow)"/>
+      <text x="1162" y="800.5" text-anchor="middle" fill="#ffffff" font-size="12" font-weight="800">8</text>
+      <g filter="url(#softShadow)">
+        <rect x="1468" y="738" width="322" height="58" rx="10" fill="#ffffff" fill-opacity="0.97" stroke="#f59e0b" stroke-width="2"/>
+        <rect x="1468" y="738" width="8" height="58" rx="4" fill="#d97706"/>
+        <circle cx="1493" cy="759" r="11.5" fill="#d97706"/>
+        <text x="1493" y="763" text-anchor="middle" fill="#ffffff" font-size="11.5" font-weight="800">8</text>
+        <text x="1511" y="763" fill="#0f172a" font-size="14" font-weight="800">みなと市場</text>
+        <text x="1511" y="784" fill="#475569" font-size="11.5" font-weight="600">港すぐ隣・海鮮丼｜滞在40分</text>
+      </g>
+    </g>
+    <g class="spot-group" id="map-spot-9" data-spot="9" data-cat="food">
+      <line x1="1345.0" y1="224.0" x2="1182.0" y2="412.0" stroke="#d97706" stroke-width="1.8" stroke-dasharray="4,3" opacity="0.88"/>
+      <circle cx="1182" cy="412" r="13.5" fill="#d97706" stroke="#ffffff" stroke-width="2.6" filter="url(#pinShadow)"/>
+      <text x="1182" y="416.5" text-anchor="middle" fill="#ffffff" font-size="12" font-weight="800">9</text>
+      <g filter="url(#softShadow)">
+        <rect x="1182" y="162" width="326" height="62" rx="10" fill="#ffffff" fill-opacity="0.97" stroke="#f59e0b" stroke-width="2"/>
+        <rect x="1182" y="162" width="8" height="62" rx="4" fill="#d97706"/>
+        <circle cx="1207" cy="183" r="11.5" fill="#d97706"/>
+        <text x="1207" y="187" text-anchor="middle" fill="#ffffff" font-size="11.5" font-weight="800">9</text>
+        <text x="1225" y="187" fill="#0f172a" font-size="14" font-weight="800">静浦の朝市と漁師町</text>
+        <text x="1225" y="208" fill="#475569" font-size="11.5" font-weight="600">朝市 7:00〜9:00｜滞在40分</text>
+      </g>
+    </g>
+    <g class="spot-group" id="map-spot-10" data-spot="10" data-cat="food">
+      <line x1="649.0" y1="954.0" x2="704.0" y2="792.0" stroke="#d97706" stroke-width="1.8" stroke-dasharray="4,3" opacity="0.88"/>
+      <circle cx="704" cy="792" r="13.5" fill="#d97706" stroke="#ffffff" stroke-width="2.6" filter="url(#pinShadow)"/>
+      <text x="704" y="796.5" text-anchor="middle" fill="#ffffff" font-size="12" font-weight="800">10</text>
+      <g filter="url(#softShadow)">
+        <rect x="506" y="954" width="286" height="62" rx="10" fill="#ffffff" fill-opacity="0.97" stroke="#f59e0b" stroke-width="2"/>
+        <rect x="506" y="954" width="8" height="62" rx="4" fill="#d97706"/>
+        <circle cx="531" cy="975" r="11.5" fill="#d97706"/>
+        <text x="531" y="979" text-anchor="middle" fill="#ffffff" font-size="11.5" font-weight="800">10</text>
+        <text x="549" y="979" fill="#0f172a" font-size="14" font-weight="800">あおい柑橘園</text>
+        <text x="549" y="1000" fill="#475569" font-size="11.5" font-weight="600">みかん収穫・直売｜滞在40分</text>
+      </g>
+    </g>
+    <g class="spot-group" id="map-spot-11" data-spot="11" data-cat="food">
+      <line x1="1468.0" y1="699.0" x2="1154.0" y2="762.0" stroke="#d97706" stroke-width="1.8" stroke-dasharray="4,3" opacity="0.88"/>
+      <circle cx="1154" cy="762" r="13.5" fill="#d97706" stroke="#ffffff" stroke-width="2.6" filter="url(#pinShadow)"/>
+      <text x="1154" y="766.5" text-anchor="middle" fill="#ffffff" font-size="12" font-weight="800">11</text>
+      <g filter="url(#softShadow)">
+        <rect x="1468" y="670" width="322" height="58" rx="10" fill="#ffffff" fill-opacity="0.97" stroke="#f59e0b" stroke-width="2"/>
+        <rect x="1468" y="670" width="8" height="58" rx="4" fill="#d97706"/>
+        <circle cx="1493" cy="691" r="11.5" fill="#d97706"/>
+        <text x="1493" y="695" text-anchor="middle" fill="#ffffff" font-size="11.5" font-weight="800">11</text>
+        <text x="1511" y="695" fill="#0f172a" font-size="14" font-weight="800">蒼玉ガラス工房</text>
+        <text x="1511" y="716" fill="#475569" font-size="11.5" font-weight="600">港から徒歩5分｜体験込み60分</text>
+      </g>
+    </g>
+    <g class="spot-group" id="map-spot-12" data-spot="12" data-cat="culture">
+      <line x1="955.0" y1="954.0" x2="890.0" y2="794.0" stroke="#be123c" stroke-width="1.8" stroke-dasharray="4,3" opacity="0.88"/>
+      <circle cx="890" cy="794" r="13.5" fill="#be123c" stroke="#ffffff" stroke-width="2.6" filter="url(#pinShadow)"/>
+      <text x="890" y="798.5" text-anchor="middle" fill="#ffffff" font-size="12" font-weight="800">12</text>
+      <g filter="url(#softShadow)">
+        <rect x="808" y="954" width="294" height="62" rx="10" fill="#ffffff" fill-opacity="0.97" stroke="#fb7185" stroke-width="2"/>
+        <rect x="808" y="954" width="8" height="62" rx="4" fill="#be123c"/>
+        <circle cx="833" cy="975" r="11.5" fill="#be123c"/>
+        <text x="833" y="979" text-anchor="middle" fill="#ffffff" font-size="11.5" font-weight="800">12</text>
+        <text x="851" y="979" fill="#0f172a" font-size="14" font-weight="800">あおい温泉</text>
+        <text x="851" y="1000" fill="#475569" font-size="11.5" font-weight="600">温泉入口停 徒歩3分｜滞在60分</text>
+      </g>
+    </g>
+    <g class="spot-group" id="map-spot-13" data-spot="13" data-cat="culture">
+      <line x1="643.0" y1="230.0" x2="656.0" y2="422.0" stroke="#be123c" stroke-width="1.8" stroke-dasharray="4,3" opacity="0.88"/>
+      <circle cx="656" cy="422" r="13.5" fill="#be123c" stroke="#ffffff" stroke-width="2.6" filter="url(#pinShadow)"/>
+      <text x="656" y="426.5" text-anchor="middle" fill="#ffffff" font-size="12" font-weight="800">13</text>
+      <g filter="url(#softShadow)">
+        <rect x="494" y="168" width="298" height="62" rx="10" fill="#ffffff" fill-opacity="0.97" stroke="#fb7185" stroke-width="2"/>
+        <rect x="494" y="168" width="8" height="62" rx="4" fill="#be123c"/>
+        <circle cx="519" cy="189" r="11.5" fill="#be123c"/>
+        <text x="519" y="193" text-anchor="middle" fill="#ffffff" font-size="11.5" font-weight="800">13</text>
+        <text x="537" y="193" fill="#0f172a" font-size="14" font-weight="800">あおい神社</text>
+        <text x="537" y="214" fill="#475569" font-size="11.5" font-weight="600">石段と大木・登山口｜滞在30分</text>
+      </g>
+    </g>
+    <g class="spot-group" id="map-spot-14" data-spot="14" data-cat="culture">
+      <line x1="1468.0" y1="631.0" x2="1116.0" y2="734.0" stroke="#be123c" stroke-width="1.8" stroke-dasharray="4,3" opacity="0.88"/>
+      <circle cx="1116" cy="734" r="13.5" fill="#be123c" stroke="#ffffff" stroke-width="2.6" filter="url(#pinShadow)"/>
+      <text x="1116" y="738.5" text-anchor="middle" fill="#ffffff" font-size="12" font-weight="800">14</text>
+      <g filter="url(#softShadow)">
+        <rect x="1468" y="602" width="322" height="58" rx="10" fill="#ffffff" fill-opacity="0.97" stroke="#fb7185" stroke-width="2"/>
+        <rect x="1468" y="602" width="8" height="58" rx="4" fill="#be123c"/>
+        <circle cx="1493" cy="623" r="11.5" fill="#be123c"/>
+        <text x="1493" y="627" text-anchor="middle" fill="#ffffff" font-size="11.5" font-weight="800">14</text>
+        <text x="1511" y="627" fill="#0f172a" font-size="14" font-weight="800">あおい島資料館</text>
+        <text x="1511" y="648" fill="#475569" font-size="11.5" font-weight="600">港から徒歩7分｜滞在30分</text>
+      </g>
+    </g>
+  </g>
+  <g id="ferry-route-layer">
+    <!-- Dual sea lanes (Ferry & High-Speed Boat) -->
+    <path d="M 1216,1032 C 1188,968 1170,906 1148,848" fill="none" stroke="#ffffff" stroke-width="6" opacity="0.72"/>
+    <path d="M 1216,1032 C 1188,968 1170,906 1148,848" fill="none" stroke="#0369a1" stroke-width="3" stroke-dasharray="8,6"/>
+    <path d="M 1264,1032 C 1236,964 1206,900 1168,846" fill="none" stroke="#0d9488" stroke-width="2.2" stroke-dasharray="5,5"/>
+    <polygon points="1146,844 1143,858 1155,854" fill="#0369a1"/>
+    <polygon points="1218,1036 1208,1025 1220,1021" fill="#0369a1"/>
+
+    <!-- Ferry Illustration -->
+    <g transform="translate(1172, 944) rotate(-18)">
+      <path d="M -24,4 L 24,4 L 19,13 L -19,13 Z" fill="#0284c7" stroke="#ffffff" stroke-width="1.5"/>
+      <rect x="-15" y="-5" width="30" height="9" rx="2" fill="#ffffff" stroke="#0284c7" stroke-width="1.3"/>
+      <rect x="-6" y="-11" width="10" height="6" rx="1" fill="#f59e0b"/>
+      <circle cx="-9" cy="-0.5" r="1.6" fill="#0284c7"/><circle cx="0" cy="-0.5" r="1.6" fill="#0284c7"/><circle cx="9" cy="-0.5" r="1.6" fill="#0284c7"/>
+    </g>
+
+    <!-- High-Speed Boat Illustration -->
+    <g transform="translate(1228, 926) rotate(-25)">
+      <path d="M -18,3 L 19,3 L 13,9 L -15,9 Z" fill="#0d9488" stroke="#ffffff" stroke-width="1.3"/>
+      <path d="M -10,-3 L 10,-3 L 14,3 L -12,3 Z" fill="#ffffff" stroke="#0d9488" stroke-width="1.1"/>
+    </g>
+
+    <!-- Mainland Terminal Card -->
+    <g filter="url(#softShadow)">
+      <rect x="1116" y="1034" width="318" height="158" rx="12" fill="#f0f9ff" fill-opacity="0.97" stroke="#0284c7" stroke-width="2"/>
+      <rect x="1116" y="1034" width="318" height="32" rx="10" fill="#0284c7"/>
+      <!-- Pure vector ship icon -->
+      <g transform="translate(1142, 1050)">
+        <path d="M -9,2 L 9,2 L 7,6 L -7,6 Z" fill="#ffffff"/>
+        <rect x="-5" y="-3" width="10" height="5" rx="1" fill="#bae6fd"/>
+      </g>
+      <text x="1284" y="1055" text-anchor="middle" fill="#ffffff" font-size="13" font-weight="800">本土アクセス航路：蒼玉港 ⇔ あおい港</text>
+      <text x="1132" y="1087" fill="#0c4a6e" font-size="12" font-weight="800">● フェリー：約55分（1日5往復・車両積載可）</text>
+      <text x="1132" y="1110" fill="#0f766e" font-size="12" font-weight="800">● 高速船　：約35分（1日3往復・旅客のみ）</text>
+      <text x="1132" y="1134" fill="#334155" font-size="11.5" font-weight="700">始発：本土（蒼玉港）発 7:10</text>
+      <text x="1132" y="1154" fill="#be123c" font-size="11.5" font-weight="800">最終：島（あおい港）発 18:20 ※季節により変動</text>
+      <text x="1132" y="1177" fill="#475569" font-size="10.5" font-weight="600">▼ 南東の海を越えて蒼玉県本土「蒼玉港」へ</text>
+    </g>
+  </g>
+
+  <g id="port-inset" filter="url(#softShadow)">
+    <circle cx="1136" cy="774" r="54" fill="none" stroke="#0f766e" stroke-width="1.8" stroke-dasharray="5,4" opacity="0.72"/>
+    <path d="M 1188,794 L 1456,868" fill="none" stroke="#0f766e" stroke-width="1.5" stroke-dasharray="4,4" opacity="0.65"/>
+
+    <rect x="1456" y="828" width="336" height="364" rx="14" fill="#fffef9" stroke="#0f766e" stroke-width="2.2"/>
+    <rect x="1456" y="828" width="336" height="34" rx="12" fill="#0f766e"/>
+    <!-- Pure vector magnifier icon -->
+    <g transform="translate(1480, 845)">
+      <circle cx="-2" cy="-2" r="5.5" fill="none" stroke="#ffffff" stroke-width="2"/>
+      <line x1="2" y1="2" x2="7" y2="7" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round"/>
+    </g>
+    <text x="1632" y="850" text-anchor="middle" fill="#ffffff" font-size="12.8" font-weight="800">あおい港・あおい集落（徒歩拡大マップ）</text>
+
+    <!-- Sea inside inset -->
+    <path d="M 1458,1122 Q 1580,1104 1685,1130 L 1790,1130 L 1790,1190 L 1458,1190 Z" fill="#bae6fd"/>
+    <path d="M 1458,1122 Q 1580,1104 1685,1130 L 1790,1130" fill="none" stroke="#0284c7" stroke-width="2"/>
+    <text x="1728" y="1168" text-anchor="middle" fill="#0369a1" font-size="11.5" font-weight="800">あおい港（南東部）</text>
+
+    <!-- Village roads & walking lanes -->
+    <path d="M 1472,1076 Q 1600,1060 1776,1082" fill="none" stroke="#cbd5e1" stroke-width="9"/>
+    <path d="M 1472,1076 Q 1600,1060 1776,1082" fill="none" stroke="#e11d48" stroke-width="2.4" stroke-dasharray="6,5"/>
+    <path d="M 1608,1064 L 1540,966 M 1608,1064 L 1698,926" fill="none" stroke="#15803d" stroke-width="2.5" stroke-dasharray="4,4"/>
+
+    <!-- Walking time pills on top of green lines (zero overlap!) -->
+    <rect x="1534" y="994" width="60" height="18" rx="9" fill="#f0fdf4" stroke="#15803d" stroke-width="1.2"/>
+    <text x="1564" y="1007" text-anchor="middle" fill="#166534" font-size="9.8" font-weight="800">徒歩約5分</text>
+
+    <rect x="1634" y="976" width="60" height="18" rx="9" fill="#f0fdf4" stroke="#15803d" stroke-width="1.2"/>
+    <text x="1664" y="989" text-anchor="middle" fill="#166534" font-size="9.8" font-weight="800">徒歩約7分</text>
+
+    <!-- Ferry Terminal & Rental Cycle -->
+    <rect x="1560" y="1090" width="116" height="32" rx="6" fill="#0284c7"/>
+    <text x="1618" y="1110" text-anchor="middle" fill="#ffffff" font-size="10.8" font-weight="800">フェリーターミナル</text>
+
+    <rect x="1466" y="1092" width="86" height="28" rx="6" fill="#ecfeff" stroke="#0891b2" stroke-width="1.5"/>
+    <text x="1509" y="1110" text-anchor="middle" fill="#0e7490" font-size="9.8" font-weight="800">レンタサイクル</text>
+
+    <!-- Bus Stop 1 in inset with clean white pill -->
+    <rect x="1552" y="1028" width="112" height="19" rx="9.5" fill="#ffffff" stroke="#1e3a8a" stroke-width="1.3"/>
+    <text x="1608" y="1041" text-anchor="middle" fill="#1e3a8a" font-size="10" font-weight="800">停1 あおい港(起点)</text>
+    <circle cx="1608" cy="1064" r="10" fill="#1e3a8a" stroke="#ffffff" stroke-width="2"/>
+    <text x="1608" y="1068" text-anchor="middle" fill="#ffffff" font-size="10" font-weight="800">1</text>
+
+    <!-- ⑧ みなと市場 -->
+    <rect x="1682" y="1034" width="98" height="44" rx="8" fill="#fffbeb" stroke="#d97706" stroke-width="1.8"/>
+    <text x="1731" y="1053" text-anchor="middle" fill="#b45309" font-size="11.2" font-weight="800">⑧ みなと市場</text>
+    <text x="1731" y="1070" text-anchor="middle" fill="#475569" font-size="9.8" font-weight="700">港のすぐ隣</text>
+
+    <!-- ⑪ 蒼玉ガラス工房 -->
+    <rect x="1470" y="920" width="138" height="46" rx="8" fill="#fffbeb" stroke="#d97706" stroke-width="1.8"/>
+    <text x="1539" y="940" text-anchor="middle" fill="#b45309" font-size="11.2" font-weight="800">⑪ 蒼玉ガラス工房</text>
+    <text x="1539" y="957" text-anchor="middle" fill="#475569" font-size="9.8" font-weight="700">港から徒歩約5分</text>
+
+    <!-- ⑭ あおい島資料館 -->
+    <rect x="1624" y="878" width="154" height="46" rx="8" fill="#fff1f2" stroke="#be123c" stroke-width="1.8"/>
+    <text x="1701" y="898" text-anchor="middle" fill="#be123c" font-size="11.2" font-weight="800">⑭ あおい島資料館</text>
+    <text x="1701" y="915" text-anchor="middle" fill="#475569" font-size="9.8" font-weight="700">港から徒歩約7分 (雨天◎)</text>
+  </g>
+
+  <g id="title-cartouche" filter="url(#softShadow)">
+    <rect x="28" y="26" width="438" height="132" rx="16" fill="#ffffff" fill-opacity="0.96" stroke="#0284c7" stroke-width="2.4"/>
+    <rect x="28" y="26" width="438" height="32" rx="14" fill="#0369a1"/>
+    <text x="247" y="47" text-anchor="middle" fill="#e0f2fe" font-size="12" font-weight="800" letter-spacing="2">SOGYOKU PREF. — AOI ISLAND TOURIST MAP</text>
+    <text x="50" y="96" fill="#0c4a6e" font-size="33" font-weight="900" style="font-family: 'Hiragino Mincho ProN', 'Yu Mincho', serif;">あおい島 観光マップ</text>
+    <text x="52" y="123" fill="#334155" font-size="12.5" font-weight="700">蒼玉の海とみかん香る、ぐるり一周21kmの離島</text>
+    <text x="52" y="144" fill="#0f766e" font-size="11.5" font-weight="800">東西約6.8km × 南北約4.2km ｜ 面積 約19.6km² ｜ 人口 約1,850人</text>
+  </g>
+
+  <g transform="translate(1708, 114)" filter="url(#softShadow)">
+    <circle cx="0" cy="0" r="54" fill="#ffffff" fill-opacity="0.94" stroke="#0284c7" stroke-width="2"/>
+    <circle cx="0" cy="0" r="37" fill="none" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="3,3"/>
+    <!-- Cardinal star -->
+    <polygon points="0,-33 7.5,-7.5 0,-13 -7.5,-7.5" fill="#e11d48"/>
+    <polygon points="0,33 7,7.5 0,13 -7,7.5" fill="#0369a1"/>
+    <polygon points="33,0 7.5,7 13,0 7.5,-7" fill="#0369a1"/>
+    <polygon points="-33,0 -7.5,7 -13,0 -7.5,-7" fill="#0369a1"/>
+    <!-- N pill cleanly above outer ring -->
+    <rect x="-26" y="-72" width="52" height="20" rx="10" fill="#be123c" stroke="#ffffff" stroke-width="1.5"/>
+    <text x="0" y="-58" text-anchor="middle" fill="#ffffff" font-size="11.5" font-weight="900">N (北)</text>
+    <text x="0" y="47" text-anchor="middle" fill="#334155" font-size="10.5" font-weight="800">S</text>
+    <text x="44" y="4" text-anchor="middle" fill="#334155" font-size="10.5" font-weight="800">E</text>
+    <text x="-44" y="4" text-anchor="middle" fill="#334155" font-size="10.5" font-weight="800">W</text>
+  </g>
+
+  <g id="map-legend" filter="url(#softShadow)">
+    <rect x="28" y="886" width="448" height="306" rx="14" fill="#ffffff" fill-opacity="0.96" stroke="#0284c7" stroke-width="2"/>
+    <rect x="28" y="886" width="448" height="32" rx="12" fill="#0369a1"/>
+    <text x="252" y="907" text-anchor="middle" fill="#ffffff" font-size="13" font-weight="800">凡例・路線とスポットの見方（MAP LEGEND）</text>
+
+    <circle cx="56" cy="940" r="10" fill="#0f766e"/><text x="56" y="944" text-anchor="middle" fill="#fff" font-size="10" font-weight="800">1</text>
+    <text x="74" y="944" fill="#0f172a" font-size="12" font-weight="800">自然・展望 (①〜⑦)</text>
+
+    <circle cx="212" cy="940" r="10" fill="#d97706"/><text x="212" y="944" text-anchor="middle" fill="#fff" font-size="10" font-weight="800">8</text>
+    <text x="230" y="944" fill="#0f172a" font-size="12" font-weight="800">食・買い物・体験 (⑧〜⑪)</text>
+
+    <circle cx="56" cy="970" r="10" fill="#be123c"/><text x="56" y="974" text-anchor="middle" fill="#fff" font-size="10" font-weight="800">12</text>
+    <text x="74" y="974" fill="#0f172a" font-size="12" font-weight="800">温泉・神社・文化 (⑫〜⑭)</text>
+
+    <circle cx="258" cy="970" r="10" fill="#1e3a8a"/><text x="258" y="974" text-anchor="middle" fill="#fff" font-size="10" font-weight="800">1</text>
+    <text x="276" y="974" fill="#1e3a8a" font-size="12" font-weight="800">バス停留所 (全9か所・時計回り)</text>
+
+    <line x1="46" y1="1004" x2="96" y2="1004" stroke="#64748b" stroke-width="8"/>
+    <line x1="46" y1="1004" x2="96" y2="1004" stroke="#fffef7" stroke-width="5"/>
+    <line x1="46" y1="1004" x2="96" y2="1004" stroke="#e11d48" stroke-width="2.5" stroke-dasharray="7,5"/>
+    <circle cx="71" cy="1004" r="7" fill="#e11d48"/><polygon points="69,1000.5 75,1004 69,1007.5" fill="#fff"/>
+    <text x="108" y="1008" fill="#0f172a" font-size="11.5" font-weight="700">あおいライン(約21km) ＆ バス周回線(時計回り・1日6便)</text>
+
+    <line x1="46" y1="1032" x2="96" y2="1032" stroke="#9a3412" stroke-width="3" stroke-dasharray="6,5"/>
+    <text x="108" y="1036" fill="#0f172a" font-size="11.5" font-weight="700">あおい岳登山道（南麓・北西麓の2登山口）</text>
+
+    <line x1="46" y1="1058" x2="96" y2="1058" stroke="#15803d" stroke-width="2.5" stroke-dasharray="3,5"/>
+    <text x="108" y="1062" fill="#0f172a" font-size="11.5" font-weight="700">徒歩遊歩道・集落内ルート</text>
+
+    <line x1="46" y1="1084" x2="96" y2="1084" stroke="#0369a1" stroke-width="2.8" stroke-dasharray="7,5"/>
+    <text x="108" y="1088" fill="#0f172a" font-size="11.5" font-weight="700">フェリー・高速船航路（蒼玉港 ⇔ あおい港）</text>
+
+    <!-- True Geometric Scale Bar: 1 km = 156 px, 2 km = 312 px -->
+    <g transform="translate(52, 1138)">
+      <text x="0" y="-12" fill="#334155" font-size="11" font-weight="800">縮尺（島の大きさ：東西約6.8km × 南北約4.2km）</text>
+      <rect x="0" y="0" width="156" height="9" fill="#0369a1" stroke="#0f172a" stroke-width="1"/>
+      <rect x="156" y="0" width="156" height="9" fill="#ffffff" stroke="#0f172a" stroke-width="1"/>
+      <line x1="0" y1="-4" x2="0" y2="13" stroke="#0f172a" stroke-width="1.6"/>
+      <line x1="156" y1="-4" x2="156" y2="13" stroke="#0f172a" stroke-width="1.6"/>
+      <line x1="312" y1="-4" x2="312" y2="13" stroke="#0f172a" stroke-width="1.6"/>
+      <text x="0" y="26" text-anchor="middle" fill="#0f172a" font-size="11" font-weight="800">0</text>
+      <text x="156" y="26" text-anchor="middle" fill="#0f172a" font-size="11" font-weight="800">1 km</text>
+      <text x="312" y="26" text-anchor="middle" fill="#0f172a" font-size="11" font-weight="800">2 km</text>
+    </g>
+  </g>
+</svg>
+    </main>
+
+    <!-- 3. ACCESS & CLOCKWISE BUS CONNECTION DIAGRAM -->
+    <section class="transit-strip">
+      <div class="panel-box access-panel">
+        <div class="panel-head">
+          <h2>本土との交通（蒼玉港 ⇔ あおい港）</h2>
+          <span class="head-badge" style="background:#e0f2fe;color:#0369a1;">島の玄関口：南東部</span>
+        </div>
+        <div class="access-grid">
+          <div class="access-item">
+            <strong>フェリー（1日5往復）</strong>
+            <p>所要 約55分 ／ 車両の積載可<br/>マイカー・バイクでの来島に対応</p>
+          </div>
+          <div class="access-item">
+            <strong>高速船（1日3往復）</strong>
+            <p>所要 約35分 ／ 旅客のみ<br/>日帰りや朝一番の来島に便利</p>
+          </div>
+        </div>
+        <div class="access-foot">
+          運航目安：始発 本土発 7:10 ／ 最終 島発 18:20（季節により変動）
+        </div>
+      </div>
+
+      <div class="panel-box bus-panel">
+        <div class="panel-head">
+          <h2>あおい島バス「周回線」停留所つながり図（あおい港から時計回り）</h2>
+          <span class="head-badge">1日6便・一周 約70分（時計回り）</span>
+        </div>
+        <div class="bus-chain">
+          <div class="bus-node-card"><span class="b-num">1</span><div class="b-name">あおい港</div><div class="b-near">ターミナル・⑧みなと市場・⑪⑭集落</div></div>
+          <div class="bus-node-card"><span class="b-num">2</span><div class="b-name">あおい温泉入口</div><div class="b-near">⑫あおい温泉(歩3分)・⑤南麓登山口</div></div>
+          <div class="bus-node-card"><span class="b-num">3</span><div class="b-name">柑橘園前</div><div class="b-near">⑩あおい柑橘園(南向き斜面)</div></div>
+          <div class="bus-node-card"><span class="b-num">4</span><div class="b-name">真珠浜</div><div class="b-near">④真珠浜海水浴場(南西部)</div></div>
+          <div class="bus-node-card"><span class="b-num">5</span><div class="b-name">夕凪岬</div><div class="b-near">②夕凪岬・③風の丘(歩10分)</div></div>
+          <div class="bus-node-card"><span class="b-num">6</span><div class="b-name">あおい神社前</div><div class="b-near">⑬あおい神社・⑤北西麓登山口</div></div>
+          <div class="bus-node-card"><span class="b-num">7</span><div class="b-name">せせらぎ渓谷入口</div><div class="b-near">⑦せせらぎ渓谷(北東部)</div></div>
+          <div class="bus-node-card"><span class="b-num">8</span><div class="b-name">静浦</div><div class="b-near">⑨静浦の朝市・静浦漁港(静浦湾)</div></div>
+          <div class="bus-node-card"><span class="b-num">9</span><div class="b-name">朝日岬</div><div class="b-near">①朝日岬・あおい灯台(東端)</div></div>
+          <div class="bus-node-card return-node"><span class="b-num">↺</span><div class="b-name">あおい港へ帰着</div><div class="b-near">東海岸を南下して①あおい港へ戻る</div></div>
+        </div>
+        <div class="bus-subnote">
+          <span>周回道路：あおい島周回線（通称「あおいライン」海岸沿い一周 約21km）</span>
+          <span>あおいレンタサイクル（あおい港ターミナル横）：電動アシストあり・寄り道なしで一周 約2.5〜3時間</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. ALL 14 TOURIST SPOTS GUIDE -->
+    <section class="spots-section">
+      <div class="cat-column cat-nature">
+        <div class="cat-header">
+          <h3>自然・展望スポット</h3>
+          <span class="cat-count">①〜⑦ 全7か所</span>
+        </div>
+        <div class="nature-grid">
+          
+            <div class="spot-card" data-spot-card="1" onclick="highlightSpot(1)">
+              <div class="spot-card-head">
+                <span class="spot-num" style="background:#0f766e">1</span>
+                <div class="spot-title-wrap">
+                  <h4>朝日岬・あおい灯台</h4>
+                  <span class="spot-sub">自然・展望</span>
+                </div>
+              </div>
+              <p class="spot-desc">島の東端に立つ白い灯台。水平線から昇る島一番の朝日を望む絶景の岬。</p>
+              <div class="spot-meta">
+                <span class="meta-pill stop-pill">最寄り：朝日岬</span>
+                <span class="meta-pill stay-pill">滞在：約30分</span>
+                <span class="meta-pill best-pill">早朝（島で一番早い朝日）</span>
+              </div>
+            </div>
+
+            <div class="spot-card" data-spot-card="2" onclick="highlightSpot(2)">
+              <div class="spot-card-head">
+                <span class="spot-num" style="background:#0f766e">2</span>
+                <div class="spot-title-wrap">
+                  <h4>夕凪岬</h4>
+                  <span class="spot-sub">自然・展望</span>
+                </div>
+              </div>
+              <p class="spot-desc">島の西端に突き出す岬。穏やかな夕凪の海へ夕日が沈む島随一の夕景スポット。</p>
+              <div class="spot-meta">
+                <span class="meta-pill stop-pill">最寄り：夕凪岬</span>
+                <span class="meta-pill stay-pill">滞在：約30分</span>
+                <span class="meta-pill best-pill">夕方（海に沈む夕日）</span>
+              </div>
+            </div>
+
+            <div class="spot-card" data-spot-card="3" onclick="highlightSpot(3)">
+              <div class="spot-card-head">
+                <span class="spot-num" style="background:#0f766e">3</span>
+                <div class="spot-title-wrap">
+                  <h4>風の丘展望台</h4>
+                  <span class="spot-sub">展望</span>
+                </div>
+              </div>
+              <p class="spot-desc">真珠浜と夕凪岬の両方を見渡せる、西部の見晴らしのよい草原の高台。</p>
+              <div class="spot-meta">
+                <span class="meta-pill stop-pill">最寄り：夕凪岬（徒歩約10分）</span>
+                <span class="meta-pill stay-pill">滞在：約20分</span>
+                <span class="meta-pill best-pill">日中〜夕方</span>
+              </div>
+            </div>
+
+            <div class="spot-card" data-spot-card="4" onclick="highlightSpot(4)">
+              <div class="spot-card-head">
+                <span class="spot-num" style="background:#0f766e">4</span>
+                <div class="spot-title-wrap">
+                  <h4>真珠浜海水浴場</h4>
+                  <span class="spot-sub">自然・海</span>
+                </div>
+              </div>
+              <p class="spot-desc">白砂とエメラルド色の遠浅の海が続く、島で唯一の海水浴場。</p>
+              <div class="spot-meta">
+                <span class="meta-pill stop-pill">最寄り：真珠浜</span>
+                <span class="meta-pill stay-pill">滞在：約1〜2時間</span>
+                <span class="meta-pill best-pill">午前〜午後</span>
+              </div>
+            </div>
+
+            <div class="spot-card" data-spot-card="5" onclick="highlightSpot(5)">
+              <div class="spot-card-head">
+                <span class="spot-num" style="background:#0f766e">5</span>
+                <div class="spot-title-wrap">
+                  <h4>あおい岳登山</h4>
+                  <span class="spot-sub">自然・登山</span>
+                </div>
+              </div>
+              <p class="spot-desc">島のほぼ全域から望む最高峰（428m）。南麓（温泉側）・北西麓（神社側）の2登山口があり、山頂から島を一周見渡せる。</p>
+              <div class="spot-meta">
+                <span class="meta-pill stop-pill">最寄り：あおい温泉入口 / あおい神社前</span>
+                <span class="meta-pill stay-pill">滞在：登り約90分・下り約70分</span>
+                <span class="meta-pill best-pill">午前出発推奨（往復約3時間）</span>
+              </div>
+            </div>
+
+            <div class="spot-card" data-spot-card="6" onclick="highlightSpot(6)">
+              <div class="spot-card-head">
+                <span class="spot-num" style="background:#0f766e">6</span>
+                <div class="spot-title-wrap">
+                  <h4>鏡池</h4>
+                  <span class="spot-sub">自然</span>
+                </div>
+              </div>
+              <p class="spot-desc">あおい岳の山頂直下・南側にある小さな池。風のない日は水面に空が鏡のように映る。</p>
+              <div class="spot-meta">
+                <span class="meta-pill stop-pill">最寄り：登山とセットで訪問</span>
+                <span class="meta-pill stay-pill">滞在：約15分</span>
+                <span class="meta-pill best-pill">風の穏やかな日</span>
+              </div>
+            </div>
+
+            <div class="spot-card" data-spot-card="7" onclick="highlightSpot(7)">
+              <div class="spot-card-head">
+                <span class="spot-num" style="background:#0f766e">7</span>
+                <div class="spot-title-wrap">
+                  <h4>せせらぎ渓谷</h4>
+                  <span class="spot-sub">自然</span>
+                </div>
+              </div>
+              <p class="spot-desc">あおい岳北東斜面から静浦湾へ流れる清流沿いの渓谷。遊歩道と小さな滝がある。</p>
+              <div class="spot-meta">
+                <span class="meta-pill stop-pill">最寄り：せせらぎ渓谷入口</span>
+                <span class="meta-pill stay-pill">滞在：約40分</span>
+                <span class="meta-pill best-pill">午前〜午後（森林浴）</span>
+              </div>
+            </div>
+        </div>
+      </div>
+
+      <div class="cat-column cat-food">
+        <div class="cat-header">
+          <h3>食・買い物・体験スポット</h3>
+          <span class="cat-count">⑧〜⑪ 全4か所</span>
+        </div>
+        <div class="single-grid">
+          
+            <div class="spot-card" data-spot-card="8" onclick="highlightSpot(8)">
+              <div class="spot-card-head">
+                <span class="spot-num" style="background:#d97706">8</span>
+                <div class="spot-title-wrap">
+                  <h4>みなと市場</h4>
+                  <span class="spot-sub">食・買い物</span>
+                </div>
+              </div>
+              <p class="spot-desc">あおい港隣接の市場。島の魚介や特産品が並び、食堂では名物「島の海鮮丼」が味わえる。</p>
+              <div class="spot-meta">
+                <span class="meta-pill stop-pill">最寄り：あおい港（すぐ隣）</span>
+                <span class="meta-pill stay-pill">滞在：約40分</span>
+                <span class="meta-pill best-pill">到着直後・帰り際</span>
+              </div>
+            </div>
+
+            <div class="spot-card" data-spot-card="9" onclick="highlightSpot(9)">
+              <div class="spot-card-head">
+                <span class="spot-num" style="background:#d97706">9</span>
+                <div class="spot-title-wrap">
+                  <h4>静浦の朝市と漁師町</h4>
+                  <span class="spot-sub">食・町並み</span>
+                </div>
+              </div>
+              <p class="spot-desc">静浦漁港のそばで開かれる朝市（7:00〜9:00ごろ）と、古い漁師町の風情ある町並み。</p>
+              <div class="spot-meta">
+                <span class="meta-pill stop-pill">最寄り：静浦</span>
+                <span class="meta-pill stay-pill">滞在：約40分</span>
+                <span class="meta-pill best-pill">早朝（朝市 7:00〜9:00ごろ）</span>
+              </div>
+            </div>
+
+            <div class="spot-card" data-spot-card="10" onclick="highlightSpot(10)">
+              <div class="spot-card-head">
+                <span class="spot-num" style="background:#d97706">10</span>
+                <div class="spot-title-wrap">
+                  <h4>あおい柑橘園</h4>
+                  <span class="spot-sub">食・体験</span>
+                </div>
+              </div>
+              <p class="spot-desc">南向き斜面に広がる柑橘園。名物「あおいみかん」の収穫体験（秋〜冬）とジュース・ジャムの販売。</p>
+              <div class="spot-meta">
+                <span class="meta-pill stop-pill">最寄り：柑橘園前</span>
+                <span class="meta-pill stay-pill">滞在：約40分</span>
+                <span class="meta-pill best-pill">日中（収穫体験は秋〜冬）</span>
+              </div>
+            </div>
+
+            <div class="spot-card" data-spot-card="11" onclick="highlightSpot(11)">
+              <div class="spot-card-head">
+                <span class="spot-num" style="background:#d97706">11</span>
+                <div class="spot-title-wrap">
+                  <h4>蒼玉ガラス工房</h4>
+                  <span class="spot-sub">体験・工芸</span>
+                </div>
+              </div>
+              <p class="spot-desc">島の砂を使った青いガラス「蒼玉ガラス」の工房。あおい集落内で小物作り体験ができる。</p>
+              <div class="spot-meta">
+                <span class="meta-pill stop-pill">最寄り：あおい港（徒歩約5分）</span>
+                <span class="meta-pill stay-pill">滞在：約60分（体験込み）</span>
+                <span class="meta-pill best-pill">日中・雨の日にも◎</span>
+              </div>
+            </div>
+        </div>
+      </div>
+
+      <div class="cat-column cat-culture">
+        <div class="cat-header">
+          <h3>温泉・神社・文化スポット</h3>
+          <span class="cat-count">⑫〜⑭ 全3か所</span>
+        </div>
+        <div class="single-grid">
+          
+            <div class="spot-card" data-spot-card="12" onclick="highlightSpot(12)">
+              <div class="spot-card-head">
+                <span class="spot-num" style="background:#be123c">12</span>
+                <div class="spot-title-wrap">
+                  <h4>あおい温泉</h4>
+                  <span class="spot-sub">温泉</span>
+                </div>
+              </div>
+              <p class="spot-desc">あおい岳南麓にある日帰り入浴可能な島唯一の温泉施設。南麓登山口にも近い。</p>
+              <div class="spot-meta">
+                <span class="meta-pill stop-pill">最寄り：あおい温泉入口（徒歩約3分）</span>
+                <span class="meta-pill stay-pill">滞在：約60分</span>
+                <span class="meta-pill best-pill">下山後・午後〜夕方</span>
+              </div>
+            </div>
+
+            <div class="spot-card" data-spot-card="13" onclick="highlightSpot(13)">
+              <div class="spot-card-head">
+                <span class="spot-num" style="background:#be123c">13</span>
+                <div class="spot-title-wrap">
+                  <h4>あおい神社</h4>
+                  <span class="spot-sub">神社</span>
+                </div>
+              </div>
+              <p class="spot-desc">あおい岳北西麓に鎮座する島の守り神。参道の石段と御神木の大木で知られる。</p>
+              <div class="spot-meta">
+                <span class="meta-pill stop-pill">最寄り：あおい神社前</span>
+                <span class="meta-pill stay-pill">滞在：約30分</span>
+                <span class="meta-pill best-pill">午前〜午後</span>
+              </div>
+            </div>
+
+            <div class="spot-card" data-spot-card="14" onclick="highlightSpot(14)">
+              <div class="spot-card-head">
+                <span class="spot-num" style="background:#be123c">14</span>
+                <div class="spot-title-wrap">
+                  <h4>あおい島資料館</h4>
+                  <span class="spot-sub">文化</span>
+                </div>
+              </div>
+              <p class="spot-desc">島の漁業と暮らしの歴史を紹介する小さな資料館。雨の日の立ち寄り先にもなる。</p>
+              <div class="spot-meta">
+                <span class="meta-pill stop-pill">最寄り：あおい港（徒歩約7分）</span>
+                <span class="meta-pill stay-pill">滞在：約30分</span>
+                <span class="meta-pill best-pill">いつでも（雨の日の立ち寄りにも）</span>
+              </div>
+            </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. SPECIALTIES (4) & MODEL COURSES (3) -->
+    <section class="bottom-section">
+      <div class="panel-box">
+        <div class="panel-head">
+          <h2>あおい島の食・特産品コレクション</h2>
+          <span class="head-badge" style="background:#fef3c7;color:#92400e;">島ならではの味と手仕事</span>
+        </div>
+        <div class="specialties-grid">
+          <div class="spec-card">
+            <div class="spec-badge" style="background:#f97316;">柑橘</div>
+            <div>
+              <h4>あおいみかん</h4>
+              <p>太陽を浴びた島名物の柑橘。ジュースやジャム、人気のソフトクリームも味わえる。</p>
+              <span class="spec-place">主な場所：⑩あおい柑橘園 ／ ⑧みなと市場</span>
+            </div>
+          </div>
+          <div class="spec-card">
+            <div class="spec-badge" style="background:#0284c7;">海鮮</div>
+            <div>
+              <h4>島の海鮮丼</h4>
+              <p>北東部の静浦漁港に水揚げされた新鮮な島の魚介を贅沢に盛りつけた名物丼。</p>
+              <span class="spec-place">主な場所：⑧みなと市場の食堂 ／ ⑨静浦の朝市</span>
+            </div>
+          </div>
+          <div class="spec-card">
+            <div class="spec-badge" style="background:#0f766e;">海藻</div>
+            <div>
+              <h4>あおいひじき</h4>
+              <p>穏やかな静浦湾周辺で採れる風味豊かなひじき。日持ちする島土産として定番。</p>
+              <span class="spec-place">主な場所：⑧みなと市場 ／ ⑨静浦</span>
+            </div>
+          </div>
+          <div class="spec-card">
+            <div class="spec-badge" style="background:#1d4ed8;">工芸</div>
+            <div>
+              <h4>蒼玉ガラス</h4>
+              <p>島の砂を使って生み出される澄んだ青色のガラス工芸品。工房で小物作り体験も可能。</p>
+              <span class="spec-place">主な場所：⑪蒼玉ガラス工房（あおい集落内）</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel-box">
+        <div class="panel-head">
+          <h2>旅のスタイル別 おすすめ周遊モデルコース</h2>
+          <span class="head-badge" style="background:#ccfbf1;color:#0f766e;">時計回りバス＆見頃時刻に対応</span>
+        </div>
+        <div class="courses-grid">
+          <div class="course-card" onclick="highlightCourse([10,4,3,2,7,8,11], this)">
+            <span class="course-tag">日帰り1日（約7.5時間・バス周遊）</span>
+            <h4>時計回りで巡る 王道満喫コース</h4>
+            <div class="course-steps">
+              停1 あおい港 ➔ ⑩あおい柑橘園(40分) ➔ ④真珠浜(60分) ➔ 停5から③風の丘＆②夕凪岬(計60分) ➔ ⑦せせらぎ渓谷(40分) ➔ 港へ戻り⑧みなと市場・⑪蒼玉ガラス工房
+            </div>
+            <div class="course-note">バスの時計回り順に沿って無理なく5〜6か所を巡り、18:20最終船までに余裕で帰港！</div>
+          </div>
+
+          <div class="course-card" onclick="highlightCourse([5,6,12,8], this)">
+            <span class="course-tag">半日〜1日（約5.5時間・登山＆温泉）</span>
+            <h4>あおい岳登頂・鏡池と温泉コース</h4>
+            <div class="course-steps">
+              停1 あおい港 ➔ 停2 あおい温泉入口 ➔ 南麓登山口から⑤あおい岳山頂＆⑥鏡池（往復＋滞在 約3時間）➔ 下山後に⑫あおい温泉で入浴(60分) ➔ 港へ戻り⑧みなと市場(40分)
+            </div>
+            <div class="course-note">登山約3時間を主軸に、下山すぐ南麓の温泉で汗を流せる爽快ルート（北西麓・⑬神社側へ縦走も可）。</div>
+          </div>
+
+          <div class="course-card" onclick="highlightCourse([4,3,2,1,9,14], this)">
+            <span class="course-tag">1泊2日（電動レンタサイクル活用）</span>
+            <h4>夕凪の夕日・朝日岬・静浦朝市コース</h4>
+            <div class="course-steps">
+              【1日目午後】港で自転車 ➔ ④真珠浜 ➔ ③風の丘展望台 ➔ ②夕凪岬で夕日鑑賞<br/>
+              【2日目早朝】①朝日岬で島一番の朝日 ➔ ⑨静浦の朝市(7:00〜9:00) ➔ ⑭あおい島資料館
+            </div>
+            <div class="course-note">早朝限定の朝市(7〜9時)・朝日岬と夕方の夕凪岬をすべて見頃の時間帯に堪能！</div>
+          </div>
+        </div>
+        <div class="planning-tips">
+          <span>バス移動の目安：1周約70分 ／ 半日(約4h)なら2〜3スポット、1日(約8h)なら4〜6スポットが快適</span>
+          <span>最終船（島発18:20目安）から逆算してコース計画を！雨の日は⑪ガラス工房・⑭資料館もおすすめ</span>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const SPOTS_DATA = {"1": {"id": 1, "cat": "nature", "name": "朝日岬・あおい灯台", "sub": "自然・展望", "pos": [1404, 570], "box": [1468, 512, 322, 62], "leader_from": "left", "badge": "早朝の朝日｜滞在30分", "stop": "朝日岬", "stay": "約30分", "best": "早朝（島で一番早い朝日）", "desc": "島の東端に立つ白い灯台。水平線から昇る島一番の朝日を望む絶景の岬。"}, "2": {"id": 2, "cat": "nature", "name": "夕凪岬", "sub": "自然・展望", "pos": [372, 602], "box": [28, 546, 296, 62], "leader_from": "right", "badge": "夕日の名所｜滞在30分", "stop": "夕凪岬", "stay": "約30分", "best": "夕方（海に沈む夕日）", "desc": "島の西端に突き出す岬。穏やかな夕凪の海へ夕日が沈む島随一の夕景スポット。"}, "3": {"id": 3, "cat": "nature", "name": "風の丘展望台", "sub": "展望", "pos": [468, 668], "box": [28, 644, 312, 62], "leader_from": "right", "badge": "夕凪岬停 徒歩10分｜滞在20分", "stop": "夕凪岬（徒歩約10分）", "stay": "約20分", "best": "日中〜夕方", "desc": "真珠浜と夕凪岬の両方を見渡せる、西部の見晴らしのよい草原の高台。"}, "4": {"id": 4, "cat": "nature", "name": "真珠浜海水浴場", "sub": "自然・海", "pos": [512, 792], "box": [28, 764, 316, 62], "leader_from": "right", "badge": "白砂と遠浅の海｜滞在1〜2時間", "stop": "真珠浜", "stay": "約1〜2時間", "best": "午前〜午後", "desc": "白砂とエメラルド色の遠浅の海が続く、島で唯一の海水浴場。"}, "5": {"id": 5, "cat": "nature", "name": "あおい岳登山", "sub": "自然・登山", "pos": [882, 486], "box": [924, 456, 268, 58], "leader_from": "left", "badge": "標高428m｜登り90分・下り70分", "stop": "あおい温泉入口 / あおい神社前", "stay": "登り約90分・下り約70分", "best": "午前出発推奨（往復約3時間）", "desc": "島のほぼ全域から望む最高峰（428m）。南麓（温泉側）・北西麓（神社側）の2登山口があり、山頂から島を一周見渡せる。"}, "6": {"id": 6, "cat": "nature", "name": "鏡池", "sub": "自然", "pos": [888, 558], "box": [928, 534, 258, 56], "leader_from": "left", "badge": "山頂南へ徒歩5分｜滞在15分", "stop": "登山とセットで訪問", "stay": "約15分", "best": "風の穏やかな日", "desc": "あおい岳の山頂直下・南側にある小さな池。風のない日は水面に空が鏡のように映る。"}, "7": {"id": 7, "cat": "nature", "name": "せせらぎ渓谷", "sub": "自然", "pos": [1006, 396], "box": [856, 146, 292, 62], "leader_from": "bottom", "badge": "清流遊歩道と小滝｜滞在40分", "stop": "せせらぎ渓谷入口", "stay": "約40分", "best": "午前〜午後（森林浴）", "desc": "あおい岳北東斜面から静浦湾へ流れる清流沿いの渓谷。遊歩道と小さな滝がある。"}, "8": {"id": 8, "cat": "food", "name": "みなと市場", "sub": "食・買い物", "pos": [1162, 796], "box": [1468, 738, 322, 58], "leader_from": "left", "badge": "港すぐ隣・海鮮丼｜滞在40分", "stop": "あおい港（すぐ隣）", "stay": "約40分", "best": "到着直後・帰り際", "desc": "あおい港隣接の市場。島の魚介や特産品が並び、食堂では名物「島の海鮮丼」が味わえる。"}, "9": {"id": 9, "cat": "food", "name": "静浦の朝市と漁師町", "sub": "食・町並み", "pos": [1182, 412], "box": [1182, 162, 326, 62], "leader_from": "bottom", "badge": "朝市 7:00〜9:00｜滞在40分", "stop": "静浦", "stay": "約40分", "best": "早朝（朝市 7:00〜9:00ごろ）", "desc": "静浦漁港のそばで開かれる朝市（7:00〜9:00ごろ）と、古い漁師町の風情ある町並み。"}, "10": {"id": 10, "cat": "food", "name": "あおい柑橘園", "sub": "食・体験", "pos": [704, 792], "box": [506, 954, 286, 62], "leader_from": "top", "badge": "みかん収穫・直売｜滞在40分", "stop": "柑橘園前", "stay": "約40分", "best": "日中（収穫体験は秋〜冬）", "desc": "南向き斜面に広がる柑橘園。名物「あおいみかん」の収穫体験（秋〜冬）とジュース・ジャムの販売。"}, "11": {"id": 11, "cat": "food", "name": "蒼玉ガラス工房", "sub": "体験・工芸", "pos": [1154, 762], "box": [1468, 670, 322, 58], "leader_from": "left", "badge": "港から徒歩5分｜体験込み60分", "stop": "あおい港（徒歩約5分）", "stay": "約60分（体験込み）", "best": "日中・雨の日にも◎", "desc": "島の砂を使った青いガラス「蒼玉ガラス」の工房。あおい集落内で小物作り体験ができる。"}, "12": {"id": 12, "cat": "culture", "name": "あおい温泉", "sub": "温泉", "pos": [890, 794], "box": [808, 954, 294, 62], "leader_from": "top", "badge": "温泉入口停 徒歩3分｜滞在60分", "stop": "あおい温泉入口（徒歩約3分）", "stay": "約60分", "best": "下山後・午後〜夕方", "desc": "あおい岳南麓にある日帰り入浴可能な島唯一の温泉施設。南麓登山口にも近い。"}, "13": {"id": 13, "cat": "culture", "name": "あおい神社", "sub": "神社", "pos": [656, 422], "box": [494, 168, 298, 62], "leader_from": "bottom", "badge": "石段と大木・登山口｜滞在30分", "stop": "あおい神社前", "stay": "約30分", "best": "午前〜午後", "desc": "あおい岳北西麓に鎮座する島の守り神。参道の石段と御神木の大木で知られる。"}, "14": {"id": 14, "cat": "culture", "name": "あおい島資料館", "sub": "文化", "pos": [1116, 734], "box": [1468, 602, 322, 58], "leader_from": "left", "badge": "港から徒歩7分｜滞在30分", "stop": "あおい港（徒歩約7分）", "stay": "約30分", "best": "いつでも（雨の日の立ち寄りにも）", "desc": "島の漁業と暮らしの歴史を紹介する小さな資料館。雨の日の立ち寄り先にもなる。"}};
+
+    function clearHighlights() {
+      document.querySelectorAll('.spot-group').forEach(el => {
+        el.classList.remove('dimmed', 'selected');
+      });
+      document.querySelectorAll('.spot-card, .course-card').forEach(el => {
+        el.classList.remove('active');
+      });
+    }
+
+    function filterCategory(cat, btn) {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+      clearHighlights();
+      if (cat === 'all') {
+        document.getElementById('interactive-status').textContent = '全14スポットを表示中（ピンやカードをクリックすると場所をハイライトします）';
+        return;
+      }
+      document.querySelectorAll('.spot-group').forEach(el => {
+        if (el.dataset.cat !== cat) el.classList.add('dimmed');
+      });
+      const names = { nature: '自然・展望 (①〜⑦)', food: '食・買い物・体験 (⑧〜⑪)', culture: '温泉・神社・文化 (⑫〜⑭)' };
+      document.getElementById('interactive-status').textContent = 'カテゴリ絞り込み中：' + names[cat];
+    }
+
+    function highlightSpot(id) {
+      clearHighlights();
+      document.querySelectorAll('.spot-group').forEach(el => {
+        if (Number(el.dataset.spot) === id) {
+          el.classList.add('selected');
+        } else {
+          el.classList.add('dimmed');
+        }
+      });
+      const card = document.querySelector(`.spot-card[data-spot-card="${id}"]`);
+      if (card) card.classList.add('active');
+      const s = SPOTS_DATA[id];
+      if (s) {
+        document.getElementById('interactive-status').textContent =
+          `スポット #${s.id}「${s.name}」｜最寄り：${s.stop} ｜ 滞在目安：${s.stay}`;
+      }
+    }
+
+    function highlightCourse(ids, cardEl) {
+      clearHighlights();
+      if (cardEl) cardEl.classList.add('active');
+      document.querySelectorAll('.spot-group').forEach(el => {
+        const sid = Number(el.dataset.spot);
+        if (ids.includes(sid)) {
+          el.classList.add('selected');
+        } else {
+          el.classList.add('dimmed');
+        }
+      });
+      ids.forEach(id => {
+        const c = document.querySelector(`.spot-card[data-spot-card="${id}"]`);
+        if (c) c.classList.add('active');
+      });
+      document.getElementById('interactive-status').textContent =
+        `モデルコースの立ち寄りスポット（${ids.map(i => '#' + i).join(' → ')}）をマップ上に表示中`;
+    }
+
+    document.querySelectorAll('.spot-group').forEach(el => {
+      el.addEventListener('click', () => highlightSpot(Number(el.dataset.spot)));
+    });
+  </script>
+</body>
+</html>

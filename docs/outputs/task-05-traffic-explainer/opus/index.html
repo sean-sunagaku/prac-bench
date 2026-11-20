@@ -1,0 +1,2672 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>渋滞を抜けたら、何もなかった。──触ってわかる自然渋滞のしくみ</title>
+<meta name="description" content="事故も工事もない高速道路で、なぜ突然渋滞が生まれるのか。1台のブレーキから始まる渋滞の波を、自分の手で起こして確かめるインタラクティブ図解。">
+<meta name="theme-color" content="#0c6a4b">
+<style>
+:root {
+  --paper: #f2f5f3;
+  --paper-2: #e6ece9;
+  --ink: #16201c;
+  --ink-soft: #4a5853;
+  --ink-mute: #6f7c77;
+  --rule: #cfd9d4;
+  --sign: #0c6a4b;
+  --sign-deep: #08523a;
+  --brake: #e2352b;
+  --amber: #f2a516;
+  --night: #0e141b;
+  --night-2: #161e27;
+  --road: #262f39;
+  --you: #4aa8ff;
+  --calm: #39c6d8;
+  --radius-fig: 14px;
+  --font: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Yu Gothic UI", "Yu Gothic", Meiryo, system-ui, sans-serif;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font);
+  font-size: 17px;
+  line-height: 1.9;
+  letter-spacing: 0.02em;
+  font-feature-settings: "palt" 0;
+}
+
+a { color: var(--sign); text-underline-offset: 3px; }
+a:hover { color: var(--sign-deep); }
+strong { font-weight: 700; }
+.num, .stat b, .tnum { font-variant-numeric: tabular-nums; font-feature-settings: "tnum"; }
+
+:focus-visible { outline: 3px solid var(--amber); outline-offset: 3px; border-radius: 6px; }
+
+.skip { position: absolute; left: -9999px; }
+.skip:focus { left: 12px; top: 12px; background: #fff; padding: 8px 12px; z-index: 10; }
+
+/* ---------- レイアウト ---------- */
+.col { max-width: 700px; margin: 0 auto; padding: 0 22px; }
+.wide { max-width: 1120px; margin: 0 auto; padding: 0 22px; }
+
+/* ---------- ヒーロー ---------- */
+.hero { padding: 44px 0 10px; }
+.hero h1 {
+  font-size: clamp(34px, 6.4vw, 64px);
+  line-height: 1.22;
+  letter-spacing: 0.01em;
+  font-weight: 800;
+  margin: 0 0 18px;
+}
+.hero h1 .line { display: block; }
+.hero .lede { font-size: 18px; color: var(--ink-soft); margin: 0 0 26px; max-width: 40em; }
+
+/* ---------- 図のパネル（夜の道路） ---------- */
+.fig {
+  position: relative;
+  background: var(--night);
+  color: #e9eef0;
+  border-radius: var(--radius-fig);
+  overflow: hidden;
+  margin: 26px 0 8px;
+  box-shadow: 0 1px 0 rgba(255,255,255,0.04) inset;
+}
+.fig canvas { display: block; width: 100%; touch-action: manipulation; }
+.fig-cap { font-size: 14.5px; color: var(--ink-soft); margin: 8px 2px 28px; line-height: 1.75; }
+
+.fig-bar {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px;
+  padding: 12px 16px;
+  background: var(--night-2);
+  border-top: 1px solid rgba(255,255,255,0.06);
+}
+.fig-bar .spacer { flex: 1 1 auto; }
+
+/* ボタン */
+.btn {
+  appearance: none; border: 0; cursor: pointer;
+  font: inherit; font-size: 15px; font-weight: 700; letter-spacing: 0.03em;
+  padding: 10px 18px; border-radius: 999px;
+  background: var(--sign); color: #fff;
+  transition: background .15s, transform .08s;
+  -webkit-user-select: none; user-select: none;
+  touch-action: manipulation;
+}
+.btn:hover { background: #0f7a57; }
+.btn:active { transform: translateY(1px); }
+.btn.ghost { background: transparent; color: #cfd8dc; box-shadow: inset 0 0 0 1.5px rgba(255,255,255,0.28); }
+.btn.ghost:hover { background: rgba(255,255,255,0.07); color: #fff; }
+.btn[disabled] { opacity: .45; cursor: default; }
+
+.btn.brake {
+  position: relative; overflow: hidden;
+  background: var(--brake); color: #fff;
+  padding: 14px 26px; font-size: 17px;
+  box-shadow: 0 0 0 0 rgba(226,53,43,0.5);
+  -webkit-touch-callout: none;
+}
+.btn.brake:hover { background: #ef3d33; }
+.btn.brake .fill {
+  position: absolute; left: 0; top: 0; bottom: 0; width: 0;
+  background: rgba(255,255,255,0.22); pointer-events: none;
+}
+.btn.brake.on { box-shadow: 0 0 22px 2px rgba(255,70,60,0.65); }
+.btn.brake span, .btn.brake small { position: relative; }
+.btn.brake small { display: block; font-size: 12px; font-weight: 400; opacity: .85; letter-spacing: .04em; margin-top: 1px; }
+.btn.brake { line-height: 1.35; }
+
+.seg { display: inline-flex; border-radius: 999px; box-shadow: inset 0 0 0 1.5px rgba(255,255,255,0.22); padding: 3px; gap: 2px; }
+.seg button {
+  appearance: none; border: 0; background: transparent; color: #c9d3d7; cursor: pointer;
+  font: inherit; font-size: 14px; font-weight: 700; padding: 6px 13px; border-radius: 999px;
+}
+.seg button[aria-pressed="true"] { background: #e9eef0; color: var(--night); }
+.seg .lab { font-size: 13px; color: #9fb0b6; padding: 6px 4px 6px 10px; font-weight: 400; }
+
+/* スライダー */
+.ctrl { display: grid; gap: 4px; min-width: 210px; flex: 1 1 230px; }
+.ctrl label { font-size: 14px; color: #c3ced2; display: flex; justify-content: space-between; gap: 10px; }
+.ctrl label b { color: #fff; font-size: 16px; }
+.ctrl .hint { font-size: 13px; color: #a3b3b9; line-height: 1.5; }
+input[type="range"] {
+  -webkit-appearance: none; appearance: none; width: 100%; height: 30px; background: transparent; cursor: pointer;
+}
+input[type="range"]::-webkit-slider-runnable-track { height: 6px; border-radius: 3px; background: linear-gradient(90deg, var(--amber) var(--p, 50%), rgba(255,255,255,0.18) var(--p, 50%)); }
+input[type="range"]::-moz-range-track { height: 6px; border-radius: 3px; background: rgba(255,255,255,0.18); }
+input[type="range"]::-moz-range-progress { height: 6px; border-radius: 3px; background: var(--amber); }
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 24px; height: 24px; margin-top: -9px; border-radius: 50%;
+  background: #fff; border: 0; box-shadow: 0 1px 4px rgba(0,0,0,0.5);
+}
+input[type="range"]::-moz-range-thumb { width: 24px; height: 24px; border-radius: 50%; background: #fff; border: 0; box-shadow: 0 1px 4px rgba(0,0,0,0.5); }
+input[type="range"]:focus-visible { outline: none; }
+input[type="range"]:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 4px var(--amber); }
+input[type="range"]:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 4px var(--amber); }
+
+/* 実況 */
+.live {
+  font-size: 16px; line-height: 1.75; color: #f1f5f6; min-height: 3.5em;
+}
+.live .em { color: #ffcf5a; font-weight: 700; }
+.live .red { color: #ff7a6e; font-weight: 700; }
+
+.stats { display: flex; flex-wrap: wrap; gap: 6px 20px; font-size: 13px; color: #9fb0b6; }
+.stat b { display: block; font-size: 22px; color: #fff; font-weight: 700; line-height: 1.25; letter-spacing: 0; }
+.stat b small { font-size: 13px; font-weight: 400; color: #b7c4c9; margin-left: 2px; }
+
+/* 速度の凡例 */
+.legend { display: flex; align-items: center; gap: 10px; font-size: 13px; color: #b3c1c6; }
+.legend > span { white-space: nowrap; }
+.legend .ramp { position: relative; width: 190px; height: 10px; border-radius: 5px; }
+.legend .ticks { position: relative; width: 190px; height: 17px; font-size: 12px; color: #b3c1c6; }
+.legend .ticks span { position: absolute; transform: translateX(-50%); white-space: nowrap; }
+.legend-wrap { display: grid; gap: 1px; }
+
+/* ヒーローのオーバーレイ（環状道路の内側） */
+.hero-fig { margin-top: 6px; }
+.hero-panel {
+  position: absolute; display: grid; align-content: center; gap: 12px;
+  pointer-events: none;
+}
+.hero-panel > * { pointer-events: auto; }
+.hero-panel .live { min-height: 5.4em; }
+.hero-panel .row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.hero-panel.static { position: static; padding: 14px 16px 16px; background: var(--night-2); }
+.hero-panel.static .row { order: -1; }
+.hero-panel.static .live { min-height: 4.2em; }
+@media (max-width: 760px) {
+  .hero-panel.static .live { min-height: 6.2em; }
+}
+
+/* ---------- 本文 ---------- */
+section.chapter { padding: 40px 0 8px; }
+.sign {
+  display: flex; align-items: stretch; gap: 0;
+  background: var(--sign); color: #fff;
+  border-radius: 7px; padding: 4px;
+  margin: 18px 0 22px;
+  box-shadow: 0 2px 0 var(--sign-deep);
+}
+.sign .in {
+  flex: 1; display: flex; align-items: center; gap: 14px;
+  border: 2px solid rgba(255,255,255,0.92); border-radius: 5px;
+  padding: 10px 16px 11px;
+}
+.sign .no {
+  flex: none; display: grid; place-items: center;
+  width: 38px; height: 38px; border-radius: 50%;
+  background: #fff; color: var(--sign); font-weight: 800; font-size: 20px; line-height: 1;
+}
+.sign h2 { margin: 0; font-size: clamp(21px, 3.2vw, 27px); line-height: 1.4; font-weight: 700; letter-spacing: 0.03em; }
+
+.chapter p { margin: 0 0 1.1em; }
+.chapter h3 { font-size: 19px; margin: 34px 0 10px; line-height: 1.5; }
+.chapter ul, .chapter ol { padding-left: 1.3em; margin: 0 0 1.2em; }
+.chapter li { margin: 0 0 .45em; }
+
+.note {
+  border-left: 4px solid var(--amber);
+  background: #fbf6e8;
+  padding: 12px 16px; margin: 18px 0 22px; border-radius: 0 8px 8px 0;
+  font-size: 15.5px; line-height: 1.8;
+}
+.got {
+  background: #fff; border-radius: 10px; padding: 16px 20px; margin: 22px 0;
+  box-shadow: 0 0 0 1px var(--rule);
+}
+.got h4 { margin: 0 0 6px; font-size: 15px; color: var(--sign); }
+.got p:last-child, .got ul:last-child { margin-bottom: 0; }
+
+/* やってみよう（チェックリスト） */
+.missions { list-style: none; padding: 0 !important; margin: 14px 0 0 !important; display: grid; gap: 8px; }
+.missions li { display: flex; gap: 10px; align-items: flex-start; margin: 0 !important; font-size: 15px; line-height: 1.65; color: #d8e1e4; }
+.missions .box {
+  flex: none; width: 22px; height: 22px; margin-top: 1px; border-radius: 6px;
+  box-shadow: inset 0 0 0 2px rgba(255,255,255,0.35); display: grid; place-items: center;
+  font-size: 14px; font-weight: 800; color: transparent; transition: background .2s;
+}
+.missions li.done .box { background: var(--amber); box-shadow: none; color: var(--night); }
+.missions li.done .t { color: #fff; }
+.missions .why { display: block; font-size: 13.5px; color: #ffd27a; }
+
+/* 予想クイズ */
+.quiz { padding: 14px 16px 6px; display: grid; gap: 10px; }
+.quiz .q { font-size: 16px; color: #fff; font-weight: 700; line-height: 1.6; }
+.quiz .choices { display: flex; flex-wrap: wrap; gap: 8px; }
+.quiz .choices button { font-size: 14.5px; padding: 9px 16px; }
+.quiz .choices button[aria-pressed="true"] { background: #e9eef0; color: var(--night); box-shadow: none; }
+
+.verdict { font-size: 16px; line-height: 1.7; padding: 0 16px 14px; min-height: 2.2em; color: #f1f5f6; }
+.verdict .red { color: #ff7a6e; font-weight: 700; }
+.verdict .ok { color: #7fe0b0; font-weight: 700; }
+
+/* 2カラム（図＋操作） */
+.split { display: grid; grid-template-columns: minmax(0, 1fr); }
+.panel { padding: 14px 16px 16px; background: var(--night-2); display: grid; gap: 14px; }
+.panel .ctrls { display: flex; flex-wrap: wrap; gap: 14px 22px; }
+
+/* 流れの量のグラフ */
+.chart { position: relative; padding: 10px 14px 6px; background: var(--night); }
+.chart svg { display: block; width: 100%; height: auto; overflow: visible; }
+.chart .ttl { font-size: 14px; color: #dfe7ea; font-weight: 700; margin: 2px 2px 0; }
+.chart .sub { font-size: 12.5px; color: #93a5ab; margin: 0 2px 4px; }
+.tip {
+  position: absolute; pointer-events: none; background: #fff; color: var(--ink);
+  font-size: 12.5px; line-height: 1.5; padding: 6px 9px; border-radius: 6px;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.35); white-space: nowrap; transform: translate(-50%, -115%);
+  opacity: 0; transition: opacity .12s;
+}
+.tip.on { opacity: 1; }
+.tablebox { padding: 0 16px 14px; font-size: 13.5px; color: #cfd8dc; }
+.tablebox table { border-collapse: collapse; width: 100%; max-width: 520px; }
+.tablebox th, .tablebox td { border-bottom: 1px solid rgba(255,255,255,0.12); padding: 4px 8px; text-align: right; }
+.tablebox th:first-child, .tablebox td:first-child { text-align: left; }
+.linkbtn { background: none; border: 0; color: #9fd8c4; font: inherit; font-size: 13px; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; padding: 0; }
+
+/* 現実の道路のイラスト */
+.places { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin: 22px 0 10px; }
+.place { background: #fff; border-radius: 10px; padding: 12px 14px 14px; box-shadow: 0 0 0 1px var(--rule); }
+.place svg { display: block; width: 100%; height: auto; margin-bottom: 6px; }
+.place h4 { margin: 0 0 4px; font-size: 15.5px; }
+.place p { margin: 0 !important; font-size: 14px; line-height: 1.7; color: var(--ink-soft); }
+@media (max-width: 760px) { .places { grid-template-columns: 1fr; } }
+
+/* 詳しい設定 */
+details.more { background: var(--night-2); border-top: 1px solid rgba(255,255,255,0.06); }
+details.more summary { cursor: pointer; padding: 12px 16px; font-size: 14.5px; color: #dfe7ea; font-weight: 700; list-style: none; }
+details.more summary::-webkit-details-marker { display: none; }
+details.more summary::before { content: "＋"; display: inline-block; width: 1.4em; color: var(--amber); }
+details.more[open] summary::before { content: "−"; }
+details.more .ctrls { display: flex; flex-wrap: wrap; gap: 14px 22px; padding: 0 16px 16px; }
+
+/* まとめ */
+.summary { counter-reset: s; list-style: none; padding: 0 !important; display: grid; gap: 14px; }
+.summary li { counter-increment: s; position: relative; padding: 14px 18px 14px 62px; background: #fff; border-radius: 10px; box-shadow: 0 0 0 1px var(--rule); margin: 0 !important; }
+.summary li::before {
+  content: counter(s); position: absolute; left: 16px; top: 14px;
+  width: 32px; height: 32px; border-radius: 50%; background: var(--sign); color: #fff;
+  display: grid; place-items: center; font-weight: 800;
+}
+.summary b { display: block; font-size: 17px; margin-bottom: 2px; }
+
+.tips { display: grid; gap: 10px; padding: 0 !important; list-style: none; }
+.tips li { display: grid; grid-template-columns: 26px 1fr; gap: 10px; margin: 0 !important; }
+.tips li::before { content: ""; width: 14px; height: 14px; margin-top: 8px; border-radius: 3px; background: var(--sign); }
+
+footer.notes { margin-top: 56px; padding: 34px 0 60px; background: var(--paper-2); font-size: 14px; line-height: 1.8; color: var(--ink-soft); }
+footer.notes h2 { font-size: 17px; color: var(--ink); margin: 0 0 10px; }
+footer.notes h3 { font-size: 15px; color: var(--ink); margin: 22px 0 6px; }
+footer.notes ol, footer.notes ul { padding-left: 1.4em; }
+footer.notes li { margin-bottom: 6px; }
+
+.hero h1, .sign h2, .chapter h3, .summary b, .place h4, .quiz .q, .got h4 { word-break: auto-phrase; text-wrap: balance; }
+.lede, .chapter p, .fig-cap, .live, .verdict { word-break: auto-phrase; text-wrap: pretty; }
+
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+@media (max-width: 760px) {
+  body { font-size: 16px; line-height: 1.85; }
+  .col, .wide { padding: 0 16px; }
+  .hero { padding-top: 28px; }
+  .hero .lede { font-size: 16px; }
+  .fig { border-radius: 10px; margin-left: -6px; margin-right: -6px; }
+  .btn.brake { width: 100%; }
+  .stat b { font-size: 19px; }
+  .sign .no { width: 32px; height: 32px; font-size: 17px; }
+  .sign .in { padding: 8px 12px 9px; gap: 10px; }
+}
+
+</style>
+</head>
+<body>
+<a class="skip" href="#ch1">本文へ移動</a>
+<noscript><p style="margin:0;padding:12px 16px;background:#fbf6e8;font-size:15px">このページの図は JavaScript で動きます。ブラウザの設定で JavaScript を有効にしてください。</p></noscript>
+
+<header class="hero">
+  <div class="wide">
+    <h1><span class="line">渋滞を抜けたら、</span><span class="line">何もなかった。</span></h1>
+    <p class="lede">事故も工事もない高速道路で、なぜ突然、渋滞が生まれるのでしょうか。答えは「1台のブレーキ」と「人間の反応の遅れ」にあります。下の道路で、あなた自身の手で渋滞を起こして確かめてみてください。</p>
+
+    <div class="fig hero-fig" id="hero">
+      <canvas id="heroCanvas" aria-label="1周1kmの環状道路を30台の車が走るシミュレーション。車をタップするとブレーキを踏みます。" role="img"></canvas>
+      <div class="hero-panel static" id="heroPanel">
+        <div class="live" id="heroLive" aria-live="polite"></div>
+        <div class="row">
+          <button class="btn brake" id="heroBrake" aria-describedby="heroLive"><span class="fill"></span><span>黄色い印の車でブレーキ</span><small>長押しするほど強く</small></button>
+        </div>
+        <div class="stats" id="heroStats">
+          <div class="stat">ブレーキから<b class="tnum" id="hsT">—</b></div>
+          <div class="stat">いちばん遅い車<b class="tnum" id="hsMin">—</b></div>
+          <div class="stat">止まった車（延べ）<b class="tnum" id="hsStop">0<small>台</small></b></div>
+          <div class="stat">平均の速さ<b class="tnum" id="hsMean">—</b></div>
+        </div>
+      </div>
+      <div class="fig-bar">
+        <div class="legend-wrap" data-legend></div>
+        <span class="spacer"></span>
+        <div class="seg" data-speed="hero" role="group" aria-label="再生の速さ"><span class="lab">速さ</span><button aria-pressed="true" data-v="1">×1</button><button aria-pressed="false" data-v="3">×3</button></div>
+        <button class="btn ghost" id="heroReset">最初から</button>
+      </div>
+    </div>
+    <p class="fig-cap">1周1kmの環状道路を、30台が時速65kmで等間隔に走っています。合流も坂もありません。どの車もタップ（クリック）すると、その車が軽くブレーキを踏みます。色は速さを表し、白いほど速く、赤いほど遅い車です。</p>
+  </div>
+</header>
+
+<main>
+  <!-- 1 -->
+  <section class="chapter" id="ch1">
+    <div class="col">
+      <div class="sign"><div class="in"><span class="no">1</span><h2>犯人は、とっくに走り去っている</h2></div></div>
+      <p>ボタンを軽く押しただけなら、ブレーキを踏んだ車が落とした速さは十数km/hほどです。しかも数秒後には元の速さに戻っています。それなのに数十秒たつと、ずっと後ろの車が完全に止まりました。</p>
+      <p>止まった車のドライバーには、前が詰まったから止まったように見えます。原因になった車は、そのころには半周近く先を順調に走っています。誰も事故を起こしていないし、乱暴な運転をした人もいません。（環状道路なので、しばらくすると犯人の車も1周して、自分が作った渋滞の最後尾に追いつきます。それでも渋滞は消えません。もう誰か1台のせいではなくなっているからです。）</p>
+      <p>このとき、渋滞の<strong>かたまり</strong>そのものにも注目してください。ブレーキを踏んだ場所（赤い旗）にとどまらず、少しずつ<strong>後ろへ</strong>ずれていきます。次の図で、この動きをじっくり見てみましょう。</p>
+      <div class="note">この道路は1kmあたり30台で、第4章で見る「分かれ目（約25台）」をすでに超えています。それでもブレーキを踏ませるまで渋滞しないのは、第1〜3章では全員が完璧に一定の速さで走れることにしてあるからです。現実の道路では、誰かのわずかな減速が、このブレーキの役目を果たします。</div>
+    </div>
+  </section>
+
+  <!-- 2 -->
+  <section class="chapter" id="ch2">
+    <div class="col">
+      <div class="sign"><div class="in"><span class="no">2</span><h2>車は前へ、渋滞は後ろへ</h2></div></div>
+      <p>さっきの環状道路を切り開いて、まっすぐに並べました。右へ走って右端から出た車は、左端に戻ってきます。青い車が「あなた」で、黄色い枠の車が、あなたのちょうど半周先にいる15台前の車です。この車にブレーキを踏ませて、あなたに何が起きるか見てみましょう。</p>
+    </div>
+    <div class="wide">
+      <div class="fig" id="wave">
+        <canvas id="waveCanvas" role="img" aria-label="まっすぐに伸ばした道路と、その走行記録。車の跡は右上へ、渋滞の赤い帯は左上へ伸びていく。"></canvas>
+        <div class="panel">
+          <div class="live" id="waveLive" aria-live="polite"></div>
+          <div class="ctrls" style="align-items:center">
+            <button class="btn" id="waveGo">15台前の車にブレーキを踏ませる</button>
+            <div class="seg" data-speed="wave" role="group" aria-label="再生の速さ"><span class="lab">速さ</span><button aria-pressed="false" data-v="1">×1</button><button aria-pressed="true" data-v="2">×2</button><button aria-pressed="false" data-v="4">×4</button></div>
+            <div class="stats">
+              <div class="stat">渋滞が動く向きと速さ<b class="tnum" id="wsWave">—</b></div>
+              <div class="stat">あなたが渋滞で失った時間<b class="tnum" id="wsLost">—</b></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="fig-cap">上は道路のいまの様子です。下の「走行記録」は、道路の様子を0.25秒ごとに写し取って積み重ねたもので、いちばん上が「いま」、下へいくほど前の時刻です。1本の線が1台の車の動きを表し、赤い帯が渋滞（時速40km以下）の場所です。</p>
+    </div>
+    <div class="col">
+      <p>走行記録では、車の線は右上へ伸びます（時間がたつと前へ進む）。ところが渋滞の赤い帯は<strong>左上</strong>へ伸びます。渋滞は、車とは逆向きに動いているのです。</p>
+      <p>しくみは単純です。渋滞の先頭では、前が空いた車から順に走り去っていきます。最後尾には、後ろから来た車が次々に加わります。車は先頭から抜け、最後尾に加わる。その結果、かたまりの位置は後ろへずれていきます。</p>
+      <div class="note">駅の改札に並ぶ行列を思い浮かべてください。先頭の人が1歩進むと、その人の後ろにできたすき間を次の人が詰め、そのまた後ろの人が詰め……と、すき間が1人ずつ後ろへ伝わっていきます。人は前へ進んでいるのに、すき間は後ろへ進みます。渋滞の波も同じです。</div>
+      <p>実際の高速道路でも、渋滞の波はおよそ<strong>時速15〜20km</strong>で後ろへ進むことが観測されています。この図で測れる速さも時速20km前後で、ほぼ同じです。渋滞の中にいる人からは、波が後ろへ去っていくのは見えません。抜けた先に何もないのは、そのためです。</p>
+    </div>
+  </section>
+
+  <!-- 3 -->
+  <section class="chapter" id="ch3">
+    <div class="col">
+      <div class="sign"><div class="in"><span class="no">3</span><h2>小さなブレーキが育つわけ</h2></div></div>
+      <p>なぜ十数km/hの減速が、後ろでは「止まる」ほど大きくなるのでしょうか。カギは<strong>反応の遅れ</strong>です。前の車のブレーキランプが点いてから自分がブレーキを踏むまで、人はおよそ1秒かかります。</p>
+      <p>時速80kmの車は、1秒で約22m進みます。前の車が減速を始めてから自分が気づくまでの1秒間、自分はまだ元の速さのままなので、車間はぐっと詰まります。後ろの車は、詰まった分を取り戻すため、前の車より少し<strong>強く</strong>ブレーキを踏むことになります。その後ろの車は、さらに強く踏みます。伝言ゲームで話がだんだん大げさになるように、減速は後ろへいくほど大きくなります。</p>
+      <p>12台の車列で試してみましょう。先頭の車が、時速80kmから60kmへ減速します。</p>
+    </div>
+    <div class="wide">
+      <div class="fig" id="chain">
+        <div class="quiz" id="quiz">
+          <div class="q">予想してください。12台目の車はどうなると思いますか？</div>
+          <div class="choices" role="group" aria-label="予想">
+            <button class="btn ghost" data-a="small">少しだけ減速する</button>
+            <button class="btn ghost" data-a="same">先頭と同じくらい減速する</button>
+            <button class="btn ghost" data-a="stop">止まってしまう</button>
+          </div>
+        </div>
+        <canvas id="chainCanvas" role="img" aria-label="12台の車列と、各車がいちばん遅くなったときの速さの棒グラフ"></canvas>
+        <div class="verdict" id="chainVerdict" aria-live="polite"></div>
+        <div class="panel">
+          <div class="ctrls">
+            <div class="ctrl">
+              <label for="chTau">反応の遅れ <b class="tnum" id="chTauV">1.1秒</b></label>
+              <input type="range" id="chTau" min="0.3" max="2" step="0.1" value="1.1">
+              <span class="hint">前の車の変化に気づいてから、ペダルを踏むまでの時間</span>
+            </div>
+            <div class="ctrl">
+              <label for="chGap">車間距離 <b class="tnum" id="chGapV">25m</b></label>
+              <input type="range" id="chGap" min="15" max="60" step="1" value="25">
+              <span class="hint">時速80kmで走っているときに、前の車とあける距離</span>
+            </div>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center">
+            <button class="btn" id="chGo">先頭の車がブレーキ</button>
+            <div class="seg" data-speed="chain" role="group" aria-label="再生の速さ"><span class="lab">速さ</span><button aria-pressed="false" data-v="0.5">スロー</button><button aria-pressed="true" data-v="1.5">ふつう</button><button aria-pressed="false" data-v="4">速く</button></div>
+          </div>
+          <div style="font-size:14.5px;font-weight:700;color:#ffd27a;margin-top:2px">やってみよう<span style="font-weight:400;color:#9fb0b6;font-size:13px">（スライダーで条件を変えると自動で再生し、条件を満たすとチェックが付きます）</span></div>
+          <ul class="missions" id="missions">
+            <li data-m="1"><span class="box">✓</span><span class="t">そのままブレーキを踏ませて、止まる車が出るのを見る<span class="why"></span></span></li>
+            <li data-m="2"><span class="box">✓</span><span class="t">車間距離だけを広げて、止まる車をゼロにする<span class="why"></span></span></li>
+            <li data-m="3"><span class="box">✓</span><span class="t">車間距離は25m以下のまま、反応の遅れだけを短くして、止まる車をゼロにする<span class="why"></span></span></li>
+          </ul>
+        </div>
+      </div>
+      <p class="fig-cap">棒の高さは、各車がいちばん遅くなったときの速さです。右端が先頭で、左へいくほど後ろの車です。薄い枠は、ひとつ前に試した結果です。</p>
+    </div>
+    <div class="col">
+      <div class="got">
+        <h4>わかったこと</h4>
+        <ul>
+          <li><strong>車間が詰まっているほど</strong>、反応が遅れたぶんを取り戻す余裕がなく、減速が大きく伝わります。</li>
+          <li><strong>反応が遅いほど</strong>、気づいたときには車間が詰まっていて、強いブレーキが必要になります。</li>
+          <li>車間がたっぷりあれば、反応が遅れても、ゆっくりした減速で受け止められます。波はそこで小さくなって消えます。</li>
+        </ul>
+      </div>
+      <p>前の車の減速に気づいてブレーキを踏むまでには、状況によっておよそ0.7〜1.5秒かかるとされます。身構えていれば約0.7秒ですが、前の車のブレーキランプのように不意に来る合図だと約1.25秒かかります。反応の遅れはゼロにはできません。だから現実の道路で効くのは、<strong>車間</strong>のほうです。この図では、車間をおよそ40mまで広げると、反応の遅れが1.1秒でも波は育たなくなります。</p>
+    </div>
+  </section>
+
+  <!-- 4 -->
+  <section class="chapter" id="ch4">
+    <div class="col">
+      <div class="sign"><div class="in"><span class="no">4</span><h2>1kmに25台を超えると、自然に生まれる</h2></div></div>
+      <p>現実のドライバーは、ずっと一定の速さでは走れません。少しアクセルが緩んだり、気づかない上り坂で速度が落ちたりします。これまでの図では全員が完璧に一定の速さで走っていましたが、ここでは全員の運転に、こうした小さな<strong>ゆらぎ</strong>を入れます。わざとブレーキを踏む車は1台もありません。</p>
+      <p>台数を変えて、何が起きるか見てください。</p>
+    </div>
+    <div class="wide">
+      <div class="fig" id="dens">
+        <canvas id="densCanvas" role="img" aria-label="運転にゆらぎのある環状道路。台数を変えられる。"></canvas>
+        <div class="panel">
+          <div class="live" id="densLive" aria-live="polite"></div>
+          <div class="ctrls" style="align-items:flex-end">
+            <div class="ctrl" style="max-width:420px">
+              <label for="dnN">1kmあたりの台数 <b class="tnum" id="dnNV">20台</b></label>
+              <input type="range" id="dnN" min="10" max="50" step="1" value="20">
+              <span class="hint" id="dnHint">車間 およそ45m</span>
+            </div>
+            <div class="seg" data-speed="dens" role="group" aria-label="再生の速さ"><span class="lab">速さ</span><button aria-pressed="false" data-v="1">×1</button><button aria-pressed="true" data-v="3">×3</button><button aria-pressed="false" data-v="6">×6</button></div>
+            <div class="stats">
+              <div class="stat">平均の速さ<b class="tnum" id="dsMean">—</b></div>
+              <div class="stat">1時間に流れる台数<b class="tnum" id="dsFlow">—</b></div>
+            </div>
+          </div>
+        </div>
+        <div class="chart" id="flowChart">
+          <div class="ttl">混み具合と、1時間に流れる台数</div>
+          <div class="sub">点線は、全員が等間隔のまま走れた場合の計算値です。実線は、ゆらぎのある道路を10分間走らせて測った値です。大きな丸は、いま上で走っている道路の値です。</div>
+          <svg id="flowSvg" role="img" aria-label="横軸が1kmあたりの台数、縦軸が1時間に流れる台数のグラフ"></svg>
+          <div class="tip" id="flowTip"></div>
+        </div>
+        <div class="tablebox"><button class="linkbtn" id="flowTableBtn" aria-expanded="false">グラフの数値を表で見る</button><div id="flowTable" hidden></div></div>
+      </div>
+      <p class="fig-cap">流れる台数は「1kmあたりの台数 × 平均の速さ」で計算しています。台数を変えると、道路は等間隔の状態からやり直します。</p>
+    </div>
+    <div class="col">
+      <p>1kmあたり20台くらいまでは、ゆらぎがあってもすぐ消えて、流れは順調なままです。ところが25台を超えると、しばらくして誰かのわずかな減速が育ち、止まる車が出てきます。これが自然渋滞です。</p>
+      <p>実際の高速道路でも、1車線1kmあたり約25台（平均すると約40mに1台）を超えると、渋滞が起きやすくなることが観測データから分かっています。渋滞を研究する西成活裕さん（東京大学）らが示した値です。この図の道路も、ちょうどそのあたりで性質が変わります。</p>
+      <p>グラフも見てください。台数が増えるほど、1時間に流れる台数は増えていきます。ただしそれは分かれ目までです。分かれ目を超えると渋滞が起きて、<strong>台数を増やしたのに、流れる台数はかえって減ります</strong>。点線（等間隔のまま走れた場合）との差が、渋滞のせいで失われた分です。</p>
+      <div class="note">2008年に発表された実験で、名古屋大学の杉山雄規さん、東京大学の西成活裕さんらは、1周230mの円形コースで22台の車に「時速30kmくらいで、前の車に安全についていく」ことだけを頼みました。坂も合流もないのに、しばらくすると渋滞のかたまりが生まれ、時速約20kmで後ろへ進んでいきました。この図は、その実験を高速道路の速さで再現したものです。</div>
+    </div>
+  </section>
+
+  <!-- 5 -->
+  <section class="chapter" id="ch5">
+    <div class="col">
+      <div class="sign"><div class="in"><span class="no">5</span><h2>最初のブレーキは、どこで生まれる？</h2></div></div>
+      <p>現実の高速道路では、最初のきっかけを作るのは「わざとのブレーキ」ではありません。ドライバー自身も気づかないくらいの減速です。車が多いときに次のような場所でそれが起きると、波が育ちはじめます。</p>
+      <div class="places">
+        <div class="place">
+          <svg viewBox="0 0 220 90" aria-hidden="true"><path d="M0 30 C60 30 80 70 110 70 S170 26 220 22" fill="none" stroke="#262f39" stroke-width="9" stroke-linecap="round"/><path d="M0 30 C60 30 80 70 110 70 S170 26 220 22" fill="none" stroke="#fff" stroke-width="1.2" stroke-dasharray="6 7"/><g transform="translate(140 55) rotate(-22)"><rect x="-9" y="-5" width="18" height="10" rx="3" fill="#f7931e"/><circle cx="-9" cy="-3" r="2.2" fill="#ff3b30"/><circle cx="-9" cy="3" r="2.2" fill="#ff3b30"/></g><text x="98" y="88" font-size="11" fill="#4a5853" text-anchor="middle">ここから上り坂</text></svg>
+          <h4>サグ（下り坂から上り坂へ変わる所）</h4>
+          <p>坂がゆるやかすぎて、上り坂だと気づきません。アクセルを踏み増さないので、知らないうちに速度が落ちます。</p>
+        </div>
+        <div class="place">
+          <svg viewBox="0 0 220 90" aria-hidden="true"><path d="M120 76 V40 A40 40 0 0 1 200 40 V76 Z" fill="#cfd9d4"/><path d="M134 76 V44 A26 26 0 0 1 186 44 V76 Z" fill="#16201c"/><rect x="0" y="70" width="220" height="10" fill="#262f39"/><g transform="translate(92 64)"><rect x="-10" y="-6" width="20" height="11" rx="3" fill="#ffd35a"/><circle cx="-10" cy="-3" r="2.2" fill="#ff3b30"/><circle cx="-10" cy="2" r="2.2" fill="#ff3b30"/></g><text x="60" y="40" font-size="11" fill="#4a5853" text-anchor="middle">暗い・狭く見える</text></svg>
+          <h4>トンネルの入口</h4>
+          <p>中が暗く、壁が迫って見えるので、思わずアクセルを緩めたり、ブレーキを踏んだりしがちです。</p>
+        </div>
+        <div class="place">
+          <svg viewBox="0 0 220 90" aria-hidden="true"><rect x="0" y="22" width="220" height="40" fill="#262f39"/><path d="M0 42 H220" stroke="#fff" stroke-width="1.2" stroke-dasharray="8 8"/><path d="M0 84 C60 84 90 64 140 62" fill="none" stroke="#262f39" stroke-width="16"/><g transform="translate(118 60) rotate(-10)"><rect x="-10" y="-5" width="20" height="10" rx="3" fill="#e8f1ee"/></g><g transform="translate(150 52)"><rect x="-10" y="-5" width="20" height="10" rx="3" fill="#f7931e"/><circle cx="-10" cy="-3" r="2.2" fill="#ff3b30"/><circle cx="-10" cy="3" r="2.2" fill="#ff3b30"/></g><text x="60" y="15" font-size="11" fill="#4a5853" text-anchor="middle">急に割り込まれると…</text></svg>
+          <h4>合流・車線変更</h4>
+          <p>目の前に車が入ってくると車間が急に短くなり、後ろの車はブレーキを踏みます。それが最初の一押しになります。</p>
+        </div>
+      </div>
+      <p id="nexcoText">NEXCO東日本によると、管内で1年間に起きる渋滞の約7割は、事故や工事ではなく、車が集中する「交通集中」によるものです。そしてその発生場所の約6割を、上り坂とサグが占めています（2025年）。</p>
+    </div>
+  </section>
+
+  <!-- 6 -->
+  <section class="chapter" id="ch6">
+    <div class="col">
+      <div class="sign"><div class="in"><span class="no">6</span><h2>波は、車間のゆとりで消せる</h2></div></div>
+      <p>反応の遅れが波を育てるなら、波を吸収するのは<strong>車間のゆとり</strong>です。下の道路では、すでに渋滞の波が何周も回っています。ここに「ゆとり運転」の車を入れてみましょう。</p>
+      <p>ゆとり運転の車は、前の車にぴったりついていくのをやめて、自分のこれまでの平均の速さで、一定のペースで走ります。前の車が離れても急いで追いつかず、前が詰まってきたら早めにゆっくり減速します。あいた車間がクッションになり、止まらずに波をやり過ごします。</p>
+    </div>
+    <div class="wide">
+      <div class="fig" id="fix">
+        <canvas id="fixCanvas" role="img" aria-label="渋滞の波がある環状道路。ゆとり運転の車を加えられる。"></canvas>
+        <div class="panel">
+          <div class="live" id="fixLive" aria-live="polite"></div>
+          <div class="ctrls" style="align-items:center">
+            <div class="seg" id="absSeg" role="group" aria-label="ゆとり運転の車の台数"><span class="lab">ゆとり運転の車</span><button aria-pressed="true" data-n="0">0台</button><button aria-pressed="false" data-n="1">1台</button><button aria-pressed="false" data-n="2">2台</button><button aria-pressed="false" data-n="3">3台</button></div>
+            <div class="seg" data-speed="fix" role="group" aria-label="再生の速さ"><span class="lab">速さ</span><button aria-pressed="false" data-v="1">×1</button><button aria-pressed="true" data-v="3">×3</button><button aria-pressed="false" data-v="6">×6</button></div>
+            <button class="btn ghost" id="fixReset">渋滞した状態に戻す</button>
+          </div>
+          <div class="stats">
+            <div class="stat">直近1分で止まった車<b class="tnum" id="fsStops">—</b></div>
+            <div class="stat">いちばん遅い車<b class="tnum" id="fsMin">—</b></div>
+            <div class="stat">平均の速さ（直近1分）<b class="tnum" id="fsMean">—</b></div>
+          </div>
+        </div>
+        <details class="more" id="fixMore">
+          <summary>条件を自由に変えて試す</summary>
+          <div class="ctrls">
+            <div class="ctrl"><label for="fxN">1kmあたりの台数 <b class="tnum" id="fxNV">26台</b></label><input type="range" id="fxN" min="10" max="50" step="1" value="26"></div>
+            <div class="ctrl"><label for="fxTau">反応の遅れ <b class="tnum" id="fxTauV">1.1秒</b></label><input type="range" id="fxTau" min="0.3" max="2" step="0.1" value="1.1"></div>
+            <div class="ctrl"><label for="fxNoise">運転のゆらぎ <b class="tnum" id="fxNoiseV">ふつう</b></label><input type="range" id="fxNoise" min="0" max="3" step="1" value="2"></div>
+            <span class="hint" style="font-size:13px;color:#9fb0b6;flex-basis:100%">ここでも、車をタップするとその車がブレーキを踏みます。台数を変えると道路はやり直しになります。</span>
+          </div>
+        </details>
+      </div>
+      <p class="fig-cap">水色の車がゆとり運転の車です。ほかの車の色は速さを表します。グラフの線は、いちばん遅い車の速さの移り変わりです。</p>
+    </div>
+    <div class="col">
+      <p>1台だけでは、波は弱まるものの消えきらず、止まる車がまた出てきます。2〜3台（全体の1割ほど）入れると、数分で渋滞の波が消えていきます（×6で見ると早く確かめられます）。そして<strong>全体の平均の速さは、むしろ上がります</strong>。止まっては発進する運転より、ゆったりでも一定に流れるほうが、結果として速く進めるのです。</p>
+      <p>2018年に発表されたアメリカの研究チーム（Sternら）の実験では、1周260mのコースを約20台で走らせ、そのうち1台だけを、速さを自動で調整する車にしてゆとりのある走り方をさせました。すると渋滞の波が消え、いちばんうまくいった条件では、速さのばらつきが約8割減り、燃料の消費は約4割減り、通過できた台数は約14%増えました。この実験は時速30km弱のゆっくりした流れでしたが、この図は高速道路の速さで、波がより育ちやすい条件にしてあります。そのため1台だけでは消えきりません。日本でも2009年に、中央道の小仏トンネル付近で、車間を40mほどあけて走る車を何台か走らせる実験が行われ、流れの速さが回復したと報じられています。</p>
+
+      <h3>ふだんの運転でできること</h3>
+      <p>NEXCO東日本も「渋滞予防運転」として、上り坂やサグでの無意識な速度低下に気をつけること、車間距離をとること、むやみに車線変更をしないこと、渋滞の先頭では速やかに速度を戻すことを呼びかけています。</p>
+      <ul class="tips">
+        <li><span><strong>車間距離をたっぷりとる。</strong>前の車が減速しても、強いブレーキを踏まずに済みます。後ろへ波を送らないための、いちばん確かな方法です。</span></li>
+        <li><span><strong>上り坂やトンネルの手前では、速度の低下に気をつける。</strong>知らないうちに落ちた速度が、最初のきっかけになります。</span></li>
+        <li><span><strong>前方にブレーキランプが見えたら、早めにアクセルを緩める。</strong>止まる直前まで詰めるより、ゆっくり近づくほうが波を吸収できます。</span></li>
+        <li><span><strong>渋滞の先頭では、前が空いたらすぐスムーズに発進する。</strong>出ていく車が早いほど、渋滞は早く小さくなります。</span></li>
+        <li><span><strong>無理な車線変更や割り込みをしない。</strong>入られた側の車間が急に縮み、ブレーキの連鎖が始まります。</span></li>
+      </ul>
+      <p>「車間をあけると割り込まれる」と思うかもしれません。割り込まれたら、あわてて詰め直したり強いブレーキを踏んだりせず、少しずつ車間を戻せば十分です。</p>
+    </div>
+  </section>
+
+  <!-- まとめ -->
+  <section class="chapter" id="ch7">
+    <div class="col">
+      <div class="sign"><div class="in"><span class="no">7</span><h2>まとめ：渋滞は誰のせいでもない</h2></div></div>
+      <ol class="summary">
+        <li><b>きっかけは、ほんの小さな減速</b>1台の軽いブレーキや、坂道でのわずかな速度低下で十分です。</li>
+        <li><b>反応の遅れが、減速を後ろへ大きくしていく</b>車間が詰まっていると、後ろの車ほど強いブレーキが必要になり、ついには止まる車が出ます。</li>
+        <li><b>車が多すぎると、波は消えずに育つ</b>1車線1kmに約25台（約40mに1台）を超えると、誰が悪いわけでもなく渋滞が生まれ、後ろへ時速15〜20kmほどで進んでいきます。抜けた先に何もないのはそのためです。</li>
+        <li><b>車間のゆとりが、波を消す</b>ゆとりのある運転をする車が少しいるだけで、波は弱まり、全体が速く流れます。</li>
+      </ol>
+      <p style="margin-top:22px">次に渋滞につかまったら、少しだけ車間をあけてみてください。あなたの後ろの何十台かは、止まらずに済むかもしれません。</p>
+    </div>
+  </section>
+</main>
+
+<footer class="notes">
+  <div class="col">
+    <h2>このシミュレーションについて</h2>
+    <p>車の動きは、交通工学でよく使われる追従モデル「Intelligent Driver Model」（Treiber ら, 2000）に、<strong>反応の遅れ</strong>を加えて計算しています。各ドライバーは、反応の遅れの分だけ前に見た「車間」「自分の速さ」「前の車の速さ」をもとに、アクセルとブレーキを決めます。危険なほど近づいたときだけは、遅れなしで強いブレーキを踏みます（車どうしが重なることはありません）。</p>
+    <ul>
+      <li>出したい速さ 時速100km、止まったときの車間 2.5m、車の長さ 4.6m、反応の遅れ 1.1秒（第3章と第6章で変えられます）</li>
+      <li>計算の刻み 0.05秒。描画はその間をなめらかにつないでいます。</li>
+      <li>第1〜3章では全員が完璧に一定の速さで走れることにしてあり、ブレーキを踏ませない限り等間隔のまま走り続けます。第4章からは、運転に小さなゆらぎを入れています。</li>
+      <li>ゆとり運転の車は、Stern ら（2018）の実験で使われた制御方法を、高速道路の速さに合わせて簡単にしたものです。</li>
+      <li>現実の道路の数値（分かれ目約25台/km、波の速さ時速15〜20km）に近くなるようにパラメータを決めています。ただし実際の道路には車線変更や大型車などもあり、この図はしくみを確かめるための単純化したモデルです。</li>
+    </ul>
+    <h3>参考にした資料</h3>
+    <ol id="refs">
+      <li>Y. Sugiyama, M. Fukui, M. Kikuchi, K. Hasebe, A. Nakayama, K. Nishinari, S. Tadaki, S. Yukawa, “Traffic jams without bottlenecks — experimental evidence for the physical mechanism of the formation of a jam”, <i>New Journal of Physics</i> 10, 033001 (2008). <a href="https://iopscience.iop.org/article/10.1088/1367-2630/10/3/033001">論文</a>（周長230m・22台・時速約30km、渋滞は時速約20kmで後ろへ。臨界密度 約25台/km の観測データも掲載）</li>
+      <li>国土交通省 国土交通政策研究所の講演（西成活裕氏, 2015年2月4日）の概要 <a href="https://www.mlit.go.jp/pri/kouenkai/syousai/pdf/b-150204.pdf">PDF</a>（25台/kmが臨界、波の速さ15〜20km/h）</li>
+      <li>M. Treiber, A. Hennecke, D. Helbing, “Congested traffic states in empirical observations and microscopic simulations”, <i>Physical Review E</i> 62, 1805 (2000). <a href="https://arxiv.org/abs/cond-mat/0002177">arXiv</a>（このページのモデルのもと。ストップ＆ゴーの波は約15km/hで後ろへ）</li>
+      <li>A. Kesting, M. Treiber, D. Helbing（2008）<a href="https://arxiv.org/abs/0805.0300">arXiv:0805.0300</a>（ミュンヘン北のA9で波の速さ 約15.5km/h、各国の典型値 15±5km/h）</li>
+      <li>NEXCO中日本 報道発表（2009年7月28日）<a href="https://www.c-nexco.co.jp/corporate/pressroom/news_old/?id=1481">渋滞の定義</a>：時速40km以下で低速走行あるいは停止発進を繰り返す車列が、1km以上かつ15分以上継続した状態</li>
+      <li>NEXCO東日本「渋滞対策」<a href="https://www.e-nexco.co.jp/activity/safety/detail_07.html">ページ</a>（渋滞の約7割が交通集中、その約6割が上り坂・サグ部〔2025年〕、渋滞予防運転の4箇条）</li>
+      <li>R. E. Stern ほか, “Dissipation of stop-and-go waves via control of autonomous vehicles: Field experiments”, <i>Transportation Research Part C</i> 89, 205–221 (2018). <a href="https://arxiv.org/abs/1705.01693">arXiv</a>（周長260m・21〜22台、自動制御の車1台）</li>
+      <li>M. Green, “How long does it take to stop? Methodological analysis of driver perception-brake times”, <i>Transportation Human Factors</i> 2, 195–216 (2000). 著者による解説：<a href="https://www.visualexpert.com/Resources/reactiontime.html">Driver Reaction Time</a></li>
+      <li>小仏トンネル付近での実験（2009年）の報道：<a href="https://newswitch.jp/p/4578">ニュースイッチ（日刊工業新聞）</a></li>
+      <li>西成活裕『渋滞学』新潮選書（2006）</li>
+    </ol>
+  </div>
+</footer>
+
+<script>
+window.FLOW_DATA = [{"k":10,"q":957,"v":95.7,"stops":0},{"k":12,"q":1126,"v":93.8,"stops":0},{"k":14,"q":1283,"v":91.7,"stops":0},{"k":16,"q":1428,"v":89.2,"stops":0},{"k":18,"q":1552,"v":86.2,"stops":0},{"k":20,"q":1662,"v":83.1,"stops":0},{"k":22,"q":1752,"v":79.6,"stops":0},{"k":24,"q":1820,"v":75.8,"stops":0},{"k":26,"q":1467,"v":56.4,"stops":130},{"k":28,"q":1515,"v":54.1,"stops":183},{"k":30,"q":1472,"v":49.1,"stops":159},{"k":32,"q":1427,"v":44.6,"stops":240},{"k":34,"q":1358,"v":39.9,"stops":288},{"k":36,"q":1355,"v":37.6,"stops":314},{"k":38,"q":1245,"v":32.8,"stops":372},{"k":40,"q":1176,"v":29.4,"stops":537},{"k":42,"q":1191,"v":28.4,"stops":547},{"k":44,"q":1033,"v":23.5,"stops":802},{"k":46,"q":1069,"v":23.2,"stops":718},{"k":48,"q":1035,"v":21.6,"stops":784},{"k":50,"q":1072,"v":21.4,"stops":972}];
+</script>
+<script>
+/*
+ * engine.js — 交通シミュレーション本体（描画から独立。ブラウザでも Node でも動く）
+ *
+ * モデル：Intelligent Driver Model（Treiber, Hennecke, Helbing 2000）に
+ *         「反応の遅れ」を加えた追従モデル。
+ *   - ドライバーは τ 秒前に見た「車間・自分の速さ・前の車の速さ」をもとにアクセルとブレーキを決める。
+ *   - ただし、いま強いブレーキが必要な場面（reflex を超える減速が要る）では、遅れなしで反射的にブレーキを踏む。
+ *   - 状態は「位置」ではなく「前の車との車間」と「速さ」で持つ。全員が同じ状態なら計算結果も
+ *     ビット単位で同じになるので、きっかけを与えない限り等間隔の流れが数値誤差で崩れることはない。
+ * 単位：メートル・秒（速さは m/s。表示のときに km/h へ直す）
+ */
+(function (root, factory) {
+  const api = factory();
+  if (typeof module === 'object' && module.exports) module.exports = api;
+  else root.TrafficEngine = api;
+})(typeof self !== 'undefined' ? self : this, function () {
+  'use strict';
+
+  const KMH = 3.6;
+  const H = 72; // 反応の遅れ用の履歴の長さ（ステップ数）。dt=0.05 で 3.6 秒ぶん
+
+  const DEFAULTS = {
+    v0: 100 / KMH,  // 出したい速さ（制限速度 100km/h の高速道路）
+    T: 1.3,         // 保ちたい車間（時間）[s]
+    s0: 2.5,        // 止まったときの車間 [m]
+    aMax: 1.3,      // 加速の強さ [m/s²]
+    aLow: 0,        // 低速での加速の上乗せ [m/s²]（0 で無効）
+    bComf: 4.0,     // ブレーキの踏み方（大きいほど、近づいてからまとめて踏む）[m/s²]
+    delta: 4,
+    len: 4.6,       // 車の長さ [m]
+    tau: 1.1,       // 反応の遅れ [s]
+    reflex: 3.0,    // これより強いブレーキが必要なら、遅れなしで反応 [m/s²]
+    bMax: 8.0,      // 物理的な最大減速 [m/s²]
+    noise: 0,       // 運転のゆらぎの強さ [m/s²]
+    noiseTheta: 2.5 // ゆらぎの続く時間の目安 [s]
+  };
+
+  function mulberry32(seed) {
+    let a = seed >>> 0;
+    return function () {
+      a = (a + 0x6D2B79F5) >>> 0;
+      let t = a;
+      t = Math.imul(t ^ (t >>> 15), t | 1);
+      t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+
+  function clamp(x, lo, hi) { return x < lo ? lo : x > hi ? hi : x; }
+
+  class Sim {
+    /**
+     * @param {object} o
+     *   ring   : true なら環状道路（周長 length）、false なら直線の車列（先頭は自由に走る）
+     *   length : 環状道路の周長 [m]
+     *   n      : 台数
+     *   v      : 初速 [m/s]（直線の車列では先頭の巡航速度）
+     *   gap    : 直線の車列の初期車間 [m]（省略時は釣り合いの車間）
+     */
+    constructor(o) {
+      this.ring = o.ring !== false;
+      this.length = o.length || 1000;
+      this.dt = o.dt || 0.05;
+      this.p = Object.assign({}, DEFAULTS, o.params || {});
+      this.seed = o.seed || 7;
+      this.reset(o.n || 20, o.v, o.gap);
+    }
+
+    reset(n, v, gap) {
+      const p = this.p;
+      this.n = n;
+      this.t = 0;
+      this.k = 0;
+      this.rng = mulberry32(this.seed);
+      this.s = new Float64Array(n);     // 前の車との車間（バンパー間）
+      this.v = new Float64Array(n);     // 速さ
+      this.acc = new Float64Array(n);   // 直近の加速度
+      this.dx = new Float64Array(n);
+      this.v0i = new Float64Array(n).fill(p.v0);
+      this.xi = new Float64Array(n);    // ゆらぎ（OU 過程）
+      this.brakeT = new Float64Array(n);  // 強制ブレーキの残り時間
+      this.brakeA = new Float64Array(n);  // 強制ブレーキの強さ
+      this.hold = new Uint8Array(n);      // 押している間ブレーキ（ボタン長押し用）
+      this.type = new Uint8Array(n);      // 0: ふつう, 1: ゆとり運転
+      this.uAbs = new Float64Array(n);    // ゆとり運転：自分の平均の速さ
+      this.vcAbs = new Float64Array(n);   // ゆとり運転：いま目指している速さ
+      this.minV = new Float64Array(n);    // これまでの最低速度
+      this.stopped = new Uint8Array(n);   // 止まっているか（ヒステリシスつき）
+      this.hs = new Float64Array(n * H);
+      this.hv = new Float64Array(n * H);
+      this.hl = new Float64Array(n * H);
+      this.clampCount = 0;
+      this.minGap = Infinity;
+      this.stopEvents = 0;
+      this.maxDecel = 0;
+
+      if (this.ring) {
+        const sp = this.length / n;
+        const g = sp - p.len;
+        const ve = v != null ? v : this.equilibriumSpeed(g);
+        this.s.fill(g);
+        this.v.fill(ve);
+        this.xRef = 0;
+      } else {
+        const ve = v != null ? v : 80 / KMH;
+        const g = gap != null ? gap : this.equilibriumGap(ve);
+        this.s.fill(g);
+        this.s[n - 1] = 1e6;
+        this.v.fill(ve);
+        this.v0i[n - 1] = ve; // 先頭は巡航速度で走る
+        this.xRef = 0;
+      }
+      this.minV.set(this.v);
+      for (let i = 0; i < n; i++) {
+        const vl = this.v[this.lead(i)];
+        for (let h = 0; h < H; h++) {
+          this.hs[i * H + h] = this.s[i];
+          this.hv[i * H + h] = this.v[i];
+          this.hl[i * H + h] = vl;
+        }
+      }
+    }
+
+    lead(i) {
+      if (this.ring) return i === this.n - 1 ? 0 : i + 1;
+      return i === this.n - 1 ? i : i + 1;
+    }
+    follower(i) {
+      if (this.ring) return i === 0 ? this.n - 1 : i - 1;
+      return i === 0 ? -1 : i - 1;
+    }
+
+    /** IDM の加速度 */
+    idm(s, v, dv, v0, T) {
+      const p = this.p;
+      const a = p.aMax + p.aLow * Math.max(0, 1 - v / (60 / KMH));
+      const sStar = p.s0 + Math.max(0, v * T + (v * dv) / (2 * Math.sqrt(a * p.bComf)));
+      const free = 1 - Math.pow(Math.max(v, 0) / v0, p.delta);
+      const ss = Math.max(s, 0.05);
+      return a * (free - (sStar / ss) * (sStar / ss));
+    }
+
+    /** 速さ v で釣り合う車間 */
+    equilibriumGap(v) {
+      const p = this.p;
+      const r = 1 - Math.pow(v / p.v0, p.delta);
+      return (p.s0 + v * p.T) / Math.sqrt(Math.max(r, 1e-6));
+    }
+
+    /** 車間 g で釣り合う速さ */
+    equilibriumSpeed(g) {
+      let lo = 0, hi = this.p.v0;
+      for (let it = 0; it < 60; it++) {
+        const mid = (lo + hi) / 2;
+        if (this.equilibriumGap(mid) < g) lo = mid; else hi = mid;
+      }
+      return (lo + hi) / 2;
+    }
+
+    /** 強制ブレーキ（decel [m/s²] を duration 秒） */
+    brake(i, decel, duration) {
+      this.brakeA[i] = decel;
+      this.brakeT[i] = duration;
+    }
+
+    setAbsorber(i, on) {
+      this.type[i] = on ? 1 : 0;
+      if (on) {
+        this.uAbs[i] = this.meanSpeed(); // 道路全体の平均の速さから始める
+        this.vcAbs[i] = this.v[i];
+      }
+    }
+
+    gauss() {
+      let u = 0, w = 0;
+      while (u === 0) u = this.rng();
+      while (w === 0) w = this.rng();
+      return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * w);
+    }
+
+    step() {
+      const p = this.p, dt = this.dt, n = this.n;
+      const s = this.s, v = this.v;
+      const kNow = this.k % H;
+      const D = clamp(Math.round(p.tau / dt), 0, H - 2);
+      const kDel = ((this.k - D) % H + H) % H;
+
+      // 1) いま見えている状態を記録
+      for (let i = 0; i < n; i++) {
+        const o = i * H + kNow;
+        this.hs[o] = s[i];
+        this.hv[o] = v[i];
+        this.hl[o] = v[this.lead(i)];
+      }
+
+      // 2) 加速度を決める
+      const sq = Math.sqrt(2 * dt / p.noiseTheta);
+      for (let i = 0; i < n; i++) {
+        const li = this.lead(i);
+        const isFreeLeader = !this.ring && i === n - 1;
+        const vl = isFreeLeader ? v[i] : v[li];
+        const sNow = isFreeLeader ? 1e6 : s[i];
+        const v0 = this.v0i[i];
+
+        let a;
+        if (this.type[i] === 1) {
+          a = this.absorberAcc(i, sNow, v[i], vl);
+        } else {
+          const o = i * H + kDel;
+          const sD = isFreeLeader ? 1e6 : this.hs[o];
+          const vD = this.hv[o];
+          const vlD = isFreeLeader ? vD : this.hl[o];
+          a = this.idm(sD, vD, vD - vlD, v0, p.T);
+          if (p.noise > 0 && v[i] > 1) {
+            this.xi[i] += -this.xi[i] / p.noiseTheta * dt + p.noise * sq * this.gauss();
+            a += this.xi[i];
+          }
+          const aNow = this.idm(sNow, v[i], v[i] - vl, v0, p.T);
+          if (aNow < -p.reflex) a = Math.min(a, aNow); // 危ないときは反射的に
+        }
+
+        if (this.brakeT[i] > 0 || this.hold[i]) {
+          const aNow = this.idm(sNow, v[i], v[i] - vl, v0, p.T);
+          a = Math.min(-this.brakeA[i], aNow);
+          if (this.brakeT[i] > 0) this.brakeT[i] = Math.max(0, this.brakeT[i] - dt);
+        }
+
+        a = clamp(a, -p.bMax, 3);
+        this.acc[i] = a;
+      }
+
+      // 3) 位置と速さを進める（止まるときは逆走しない）
+      for (let i = 0; i < n; i++) {
+        let a = this.acc[i];
+        const vi = v[i];
+        let vn = vi + a * dt;
+        let d;
+        if (vn < 0) {
+          d = a < 0 ? Math.min(vi * dt, -vi * vi / (2 * a)) : 0;
+          vn = 0;
+        } else {
+          d = vi * dt + 0.5 * a * dt * dt;
+        }
+        this.dx[i] = d;
+        v[i] = vn;
+        if (-a > this.maxDecel) this.maxDecel = -a;
+      }
+      for (let i = 0; i < n; i++) {
+        if (!this.ring && i === n - 1) continue;
+        s[i] += this.dx[this.lead(i)] - this.dx[i];
+      }
+      this.xRef += this.ring ? this.dx[0] : this.dx[n - 1];
+
+      // 4) 安全装置（正しく動いていれば一度も働かない。働いた回数は clampCount に残す）
+      const sHard = 0.5;
+      for (let i = 0; i < n; i++) {
+        if (!this.ring && i === n - 1) continue;
+        if (s[i] < this.minGap) this.minGap = s[i];
+        if (s[i] < sHard) {
+          this.clampCount++;
+          const li = this.lead(i);
+          const fix = sHard - s[i];
+          s[i] = sHard;
+          // 後ろの車を下げたぶん、その後ろの車間を詰める
+          const fi = this.follower(i);
+          if (fi >= 0) s[fi] -= fix;
+          if (this.ring && i === 0) this.xRef -= fix;
+          v[i] = Math.min(v[i], v[li]);
+        }
+      }
+
+      // 5) 記録
+      for (let i = 0; i < n; i++) {
+        if (v[i] < this.minV[i]) this.minV[i] = v[i];
+        if (this.stopped[i]) {
+          if (v[i] > 2.5) this.stopped[i] = 0;
+        } else if (v[i] < 0.4) {
+          this.stopped[i] = 1;
+          this.stopEvents++;
+        }
+      }
+
+      this.t += dt;
+      this.k++;
+    }
+
+    /**
+     * ゆとり運転：前の車にぴったりついていくのをやめ、
+     * 「自分のこれまでの平均の速さ」を目安に一定のペースで走る（車間が空けば少しだけ詰める）。
+     * 前の車に近づきすぎたときだけ、前の車の速さに合わせる。
+     * Stern ら（2018）の円形コース実験で使われた制御（PI with saturation）を高速道路の速さに合わせて簡略化したもの。
+     */
+    absorberAcc(i, sNow, vi, vl) {
+      const dt = this.dt;
+      this.uAbs[i] += (vi - this.uAbs[i]) * dt / 38;                 // 約40秒の平均
+      const vt = this.uAbs[i] + 1.0 * clamp((sNow - 12) / 48, 0, 1);  // 車間が空いていれば少しだけ速く
+      const closing = vi - vl;
+      const ss = Math.max(2 * closing, 6);
+      const al = clamp((sNow - ss) / 8, 0, 1);  // 車間が十分なら 1（目安のペース）、近すぎれば 0（前に合わせる）
+      const be = 1 - 0.5 * al;
+      this.vcAbs[i] = be * (al * vt + (1 - al) * vl) + (1 - be) * this.vcAbs[i];
+      const a = clamp(this.vcAbs[i] - vi, -3, 1.2);
+      return Math.min(a, this.idm(sNow, vi, vi - vl, this.v0i[i], 0.9)); // 危ないときは普通にブレーキ
+    }
+
+    /** 各車の位置（環状なら 0〜length） */
+    positions(out) {
+      const n = this.n, p = this.p;
+      const x = out || new Float64Array(n);
+      if (this.ring) {
+        let cur = this.xRef;
+        for (let i = 0; i < n; i++) {
+          let xm = cur % this.length;
+          if (xm < 0) xm += this.length;
+          x[i] = xm;
+          cur += p.len + this.s[i];
+        }
+      } else {
+        let cur = this.xRef;
+        for (let i = n - 1; i >= 0; i--) {
+          x[i] = cur;
+          if (i > 0) cur -= p.len + this.s[i - 1];
+        }
+      }
+      return x;
+    }
+
+    meanSpeed() {
+      let sum = 0;
+      for (let i = 0; i < this.n; i++) sum += this.v[i];
+      return sum / this.n;
+    }
+    minSpeed() {
+      let m = Infinity;
+      for (let i = 0; i < this.n; i++) if (this.v[i] < m) m = this.v[i];
+      return m;
+    }
+    speedStd() {
+      const m = this.meanSpeed();
+      let q = 0;
+      for (let i = 0; i < this.n; i++) q += (this.v[i] - m) * (this.v[i] - m);
+      return Math.sqrt(q / this.n);
+    }
+    countBelow(th) {
+      let c = 0;
+      for (let i = 0; i < this.n; i++) if (this.v[i] < th) c++;
+      return c;
+    }
+
+    /**
+     * 渋滞のかたまりの中心（環状道路のみ）。速さ th 未満の車の位置を、遅さで重みづけした円周平均。
+     * 渋滞がなければ null。
+     */
+    jamCenter(th, xs) {
+      if (!this.ring) return null;
+      const x = xs || this.positions();
+      let cx = 0, cy = 0, wsum = 0;
+      for (let i = 0; i < this.n; i++) {
+        const w = th - this.v[i];
+        if (w <= 0) continue;
+        const ang = (x[i] / this.length) * 2 * Math.PI;
+        cx += w * Math.cos(ang);
+        cy += w * Math.sin(ang);
+        wsum += w;
+      }
+      if (wsum <= 0) return null;
+      let ang = Math.atan2(cy, cx);
+      if (ang < 0) ang += 2 * Math.PI;
+      return (ang / (2 * Math.PI)) * this.length;
+    }
+  }
+
+  /**
+   * いちばん大きな渋滞のかたまりの「先頭」（車が抜けていく側）の位置。渋滞がなければ null。
+   * 渋滞の先頭は、かたまりが育っていても縮んでいても一定の速さで後ろへ進むので、波の速さを測るのに向いている。
+   */
+  Sim.prototype.jamHead = function (th, xs) {
+    if (!this.ring) return null;
+    const n = this.n, v = this.v, thr = th;
+    let start = -1;
+    for (let i = 0; i < n; i++) if (v[i] >= thr) { start = i; break; }
+    if (start < 0) return null;
+    let best = null, cur = null;
+    for (let k = 1; k <= n; k++) {
+      const i = (start + k) % n;
+      if (v[i] < thr) {
+        if (!cur) cur = { head: i, cnt: 0 };
+        cur.head = i; cur.cnt++;
+      } else if (cur) { if (!best || cur.cnt > best.cnt) best = cur; cur = null; }
+    }
+    if (cur && (!best || cur.cnt > best.cnt)) best = cur;
+    if (!best || best.cnt < 3) return null;
+    const x = xs || this.positions();
+    return (x[best.head] + this.p.len) % this.length;
+  };
+
+  /** 渋滞の中心の動きから、波の速さを測る（直近 win 秒の回帰） */
+  class WaveMeter {
+    constructor(length, win) {
+      this.length = length;
+      this.win = win || 12;
+      this.reset();
+    }
+    reset() {
+      this.ts = [];
+      this.xs = [];
+      this.last = null;
+      this.offset = 0;
+    }
+    push(t, x) {
+      if (x == null) { this.reset(); return; }
+      if (this.last != null) {
+        let d = x - this.last;
+        if (d > this.length / 2) this.offset -= this.length;
+        else if (d < -this.length / 2) this.offset += this.length;
+      }
+      this.last = x;
+      this.ts.push(t);
+      this.xs.push(x + this.offset);
+      while (this.ts.length && this.ts[0] < t - this.win) { this.ts.shift(); this.xs.shift(); }
+    }
+    /** m/s（負なら後ろ向き）。データが足りなければ null */
+    speed() {
+      const n = this.ts.length;
+      if (n < 10 || this.ts[n - 1] - this.ts[0] < this.win * 0.6) return null;
+      let mt = 0, mx = 0;
+      for (let i = 0; i < n; i++) { mt += this.ts[i]; mx += this.xs[i]; }
+      mt /= n; mx /= n;
+      let num = 0, den = 0, res = 0;
+      for (let i = 0; i < n; i++) {
+        num += (this.ts[i] - mt) * (this.xs[i] - mx);
+        den += (this.ts[i] - mt) * (this.ts[i] - mt);
+      }
+      if (den <= 0) return null;
+      const slope = num / den;
+      for (let i = 0; i < n; i++) {
+        const e = this.xs[i] - (mx + slope * (this.ts[i] - mt));
+        res += e * e;
+      }
+      // ばらつきが大きすぎるときは信用しない
+      if (Math.sqrt(res / n) > 25) return null;
+      return slope;
+    }
+  }
+
+  /**
+   * 波の速さを「速さの分布のずれ」から測る。lag 秒前の速さの分布と、いまの分布を
+   * 少しずつずらして重ね、いちばんよく重なるずらし幅を求める（相互相関）。
+   * 渋滞が育ったり縮んだりしていても、波全体が動く速さを安定して測れる。
+   */
+  class WaveXCorr {
+    constructor(sim, o) {
+      o = o || {};
+      this.sim = sim;
+      this.bin = o.bin || 2.5;
+      this.lag = o.lag || 8;
+      this.every = o.every || 1;
+      this.keep = o.keep || 9;
+      this.nb = Math.round(sim.length / this.bin);
+      this.reset();
+    }
+    reset() { this.hist = []; this.ests = []; this.nextT = -1; }
+    profile() {
+      const sim = this.sim, L = sim.length, nb = this.nb, bin = this.bin;
+      const u = new Float64Array(nb), x = sim.positions(), n = sim.n, half = sim.p.len / 2;
+      for (let i = 0; i < n; i++) {
+        const j = (i + 1) % n;
+        const x0 = x[i] + half;
+        let x1 = x[j] + half;
+        if (x1 <= x0) x1 += L;
+        const b0 = Math.ceil(x0 / bin), b1 = Math.floor(x1 / bin);
+        for (let b = b0; b <= b1; b++) {
+          const f = (b * bin - x0) / (x1 - x0);
+          u[((b % nb) + nb) % nb] = sim.v[i] * (1 - f) + sim.v[j] * f;
+        }
+      }
+      return u;
+    }
+    update() {
+      const sim = this.sim, t = sim.t;
+      if (t < this.nextT) return;
+      this.nextT = t + this.every;
+      if (sim.speedStd() < 1.5) { this.hist.length = 0; this.ests.length = 0; return; }
+      const u = this.profile();
+      this.hist.push({ t, u });
+      while (this.hist.length > 1 && this.hist[1].t <= t - this.lag + 1e-6) this.hist.shift();
+      const old = this.hist[0];
+      const dt = t - old.t;
+      if (dt < this.lag - 0.5) return;
+      const nb = this.nb, a = old.u, b = u;
+      let ma = 0, mb = 0;
+      for (let i = 0; i < nb; i++) { ma += a[i]; mb += b[i]; }
+      ma /= nb; mb /= nb;
+      const maxS = Math.ceil((12 * dt) / this.bin); // ±時速43km まで
+      const cs = new Float64Array(2 * maxS + 1);
+      let best = -Infinity, bs = 0;
+      for (let s = -maxS; s <= maxS; s++) {
+        let c = 0;
+        for (let i = 0; i < nb; i++) c += (a[i] - ma) * (b[(i + s + nb) % nb] - mb);
+        cs[s + maxS] = c;
+        if (c > best) { best = c; bs = s; }
+      }
+      let frac = 0;
+      if (bs > -maxS && bs < maxS) {
+        const c0 = cs[bs + maxS - 1], c1 = cs[bs + maxS], c2 = cs[bs + maxS + 1];
+        const den = c0 - 2 * c1 + c2;
+        if (den < 0) frac = 0.5 * (c0 - c2) / den;
+      }
+      this.ests.push(((bs + frac) * this.bin) / dt);
+      if (this.ests.length > this.keep) this.ests.shift();
+    }
+    /** m/s（負なら後ろ向き）。測れていなければ null */
+    speed() {
+      if (this.ests.length < 4) return null;
+      const s = this.ests.slice().sort((p, q) => p - q);
+      return s[Math.floor(s.length / 2)];
+    }
+  }
+
+  return { Sim, WaveMeter, WaveXCorr, DEFAULTS, KMH, mulberry32 };
+});
+
+</script>
+<script>
+/* app.js — 図の描画と操作（engine.js の TrafficEngine を使う） */
+(function () {
+  'use strict';
+  const { Sim, WaveXCorr, KMH } = window.TrafficEngine;
+  const TAU = Math.PI * 2;
+  const reduceMotion = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+  const $ = (id) => document.getElementById(id);
+  const clamp = (x, a, b) => (x < a ? a : x > b ? b : x);
+  const fmt = (x) => Math.round(x).toLocaleString('ja-JP');
+
+  /* ================= 速さの色（白→琥珀→赤） ================= */
+  const STOPS = [[0, 214, 38, 30], [20, 238, 88, 36], [40, 247, 146, 30], [52, 255, 204, 84], [63, 246, 243, 222], [100, 255, 255, 255]];
+  const LUT = new Array(121);
+  for (let k = 0; k <= 120; k++) {
+    let j = 0;
+    while (j < STOPS.length - 2 && k > STOPS[j + 1][0]) j++;
+    const a = STOPS[j], b = STOPS[j + 1];
+    const f = clamp((k - a[0]) / (b[0] - a[0]), 0, 1);
+    LUT[k] = `rgb(${Math.round(a[1] + (b[1] - a[1]) * f)},${Math.round(a[2] + (b[2] - a[2]) * f)},${Math.round(a[3] + (b[3] - a[3]) * f)})`;
+  }
+  const speedColor = (kmh) => LUT[clamp(Math.round(kmh), 0, 120)];
+  const BG = '#0e141b', ROAD = '#262f39', SHOULDER = '#18202a', YOU = '#4aa8ff', CALM = '#39c6d8', FLAG = '#ff5a4e', PIN = '#ffd35a';
+
+  function buildLegends() {
+    const grad = STOPS.map((s) => `rgb(${s[1]},${s[2]},${s[3]}) ${s[0]}%`).join(',');
+    document.querySelectorAll('[data-legend]').forEach((el) => {
+      el.innerHTML = `<div class="legend" aria-label="色は速さ。赤が時速0km、白が時速100km"><span>車の色＝速さ</span><div><div class="ramp" style="background:linear-gradient(90deg,${grad})"></div><div class="ticks">${[0, 40, 60, 80, 100].map((v) => `<span style="left:${v}%">${v}</span>`).join('')}<span style="left:20%;color:#ff8c80">渋滞</span></div></div><span>km/h</span></div>`;
+    });
+  }
+
+  /* ================= Canvas と描画ループ ================= */
+  function setupCanvas(canvas, heightFn) {
+    const ctx = canvas.getContext('2d');
+    const st = { canvas, ctx, w: 0, h: 0, dpr: 1, onResize: null };
+    st.resize = function () {
+      const w = Math.max(240, canvas.parentElement.clientWidth);
+      const h = Math.round(heightFn(w));
+      const dpr = Math.min(2, window.devicePixelRatio || 1);
+      if (w === st.w && h === st.h && dpr === st.dpr) return;
+      canvas.style.height = h + 'px';
+      canvas.width = Math.round(w * dpr);
+      canvas.height = Math.round(h * dpr);
+      st.w = w; st.h = h; st.dpr = dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      if (st.onResize) st.onResize();
+    };
+    return st;
+  }
+
+  const figs = [];
+  const io = ('IntersectionObserver' in window) ? new IntersectionObserver((ents) => {
+    for (const e of ents) { const f = figs.find((x) => x.el === e.target); if (f) f.visible = e.isIntersecting; }
+  }, { rootMargin: '150px 0px' }) : null;
+  function addFig(f) {
+    figs.push(f);
+    f.visible = !io;
+    if (io) io.observe(f.el);
+    f.draw(); // 画面に入る前でも、止まった絵は描いておく
+  }
+  let resizeQueued = false;
+  function queueResize() {
+    if (resizeQueued) return;
+    resizeQueued = true;
+    requestAnimationFrame(() => { resizeQueued = false; for (const f of figs) f.resize(); });
+  }
+  let lastT = performance.now();
+  function frame(now) {
+    const dt = clamp((now - lastT) / 1000, 0, 0.1);
+    lastT = now;
+    for (const f of figs) if (f.visible) { f.update(dt); f.draw(); }
+    requestAnimationFrame(frame);
+  }
+
+  /** 決まった刻みでシミュレーションを進め、刻みの間を補間して描くための係 */
+  class Runner {
+    constructor(sim) { this.speed = 1; this.running = !reduceMotion; this.setSim(sim); }
+    setSim(sim) {
+      this.sim = sim;
+      this.xCur = sim.positions(new Float64Array(sim.n));
+      this.xPrev = Float64Array.from(this.xCur);
+      this.acc = 0;
+    }
+    advance(dtReal, onStep) {
+      if (!this.running) return;
+      const sim = this.sim;
+      this.acc += dtReal * this.speed;
+      let k = 0;
+      while (this.acc >= sim.dt && k < 240) {
+        this.xPrev.set(this.xCur);
+        sim.step();
+        sim.positions(this.xCur);
+        this.acc -= sim.dt;
+        k++;
+        if (onStep) onStep();
+      }
+      if (k >= 240) this.acc = 0;
+    }
+    /** 車 i の後端の位置（補間つき） */
+    pos(i) {
+      const a = Math.min(1, this.acc / this.sim.dt);
+      let d = this.xCur[i] - this.xPrev[i];
+      if (this.sim.ring) {
+        const L = this.sim.length;
+        if (d < -L / 2) d += L; else if (d > L / 2) d -= L;
+        const x = this.xPrev[i] + d * a;
+        return ((x % L) + L) % L;
+      }
+      return this.xPrev[i] + d * a;
+    }
+  }
+
+  function roundRect(ctx, x, y, w, h, r) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.arcTo(x + w, y, x + w, y + h, r);
+    ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r);
+    ctx.arcTo(x, y, x + w, y, r);
+    ctx.closePath();
+  }
+
+  /** 上から見た車。brakeI は 0〜1（ブレーキの強さ） */
+  function drawCar(ctx, x, y, ang, L, W, fill, brakeI, outline) {
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.rotate(ang);
+    if (brakeI > 0.02) {
+      const r = 3 + 9 * brakeI;
+      const g = ctx.createRadialGradient(-L / 2, 0, 0, -L / 2, 0, r + W * 0.6);
+      g.addColorStop(0, `rgba(255,50,35,${0.55 + 0.4 * brakeI})`);
+      g.addColorStop(1, 'rgba(255,50,35,0)');
+      ctx.fillStyle = g;
+      ctx.beginPath();
+      ctx.arc(-L / 2, 0, r + W * 0.6, 0, TAU);
+      ctx.fill();
+    }
+    roundRect(ctx, -L / 2, -W / 2, L, W, Math.min(2.6, W / 3));
+    ctx.fillStyle = fill;
+    ctx.fill();
+    if (outline) { ctx.lineWidth = 2; ctx.strokeStyle = outline; ctx.stroke(); }
+    if (L > 7) {
+      ctx.fillStyle = 'rgba(14,20,27,0.42)';
+      ctx.fillRect(L * 0.06, -W / 2 + 1.1, Math.max(1.2, L * 0.17), W - 2.2);
+    }
+    ctx.fillStyle = brakeI > 0.02 ? '#ff3a2a' : 'rgba(150,20,20,0.95)';
+    const tl = Math.max(1, Math.min(1.8, L * 0.12));
+    ctx.fillRect(-L / 2, -W / 2 + 0.6, tl, Math.max(1.2, W * 0.26));
+    ctx.fillRect(-L / 2, W / 2 - 0.6 - Math.max(1.2, W * 0.26), tl, Math.max(1.2, W * 0.26));
+    ctx.restore();
+  }
+  const brakeOf = (a) => clamp((-a - 0.5) / 3, 0, 1);
+
+  /* ================= 環状道路（陸上トラック型） ================= */
+  class Track {
+    constructor(w, h, padX, padY, top) {
+      this.vertical = h > w * 1.08;
+      const W = this.vertical ? h - 2 * padY : w - 2 * padX;
+      const H = this.vertical ? w - 2 * padX : h - 2 * padY;
+      this.R = Math.max(30, H / 2);
+      this.Ls = Math.max(0, W - 2 * this.R);
+      this.P = 2 * this.Ls + TAU * this.R;
+      this.cx = w / 2;
+      this.cy = (top || 0) + h / 2;
+    }
+    local(d) {
+      const { Ls, R, P } = this;
+      d = ((d % P) + P) % P;
+      if (d < Ls) return [-Ls / 2 + d, R, 0];
+      d -= Ls;
+      if (d < Math.PI * R) { const ph = Math.PI / 2 - d / R; return [Ls / 2 + R * Math.cos(ph), R * Math.sin(ph), ph - Math.PI / 2]; }
+      d -= Math.PI * R;
+      if (d < Ls) return [Ls / 2 - d, -R, Math.PI];
+      d -= Ls;
+      const ph = -Math.PI / 2 - d / R;
+      return [-Ls / 2 + R * Math.cos(ph), R * Math.sin(ph), ph - Math.PI / 2];
+    }
+    /** 道のり d の点：[x, y, 進行方向] */
+    point(d, off) {
+      const p = this.local(d);
+      let lx = p[0], ly = p[1];
+      if (off) { lx += Math.cos(p[2] + Math.PI / 2) * off; ly += Math.sin(p[2] + Math.PI / 2) * off; }
+      if (this.vertical) return [this.cx + ly, this.cy - lx, p[2] - Math.PI / 2];
+      return [this.cx + lx, this.cy + ly, p[2]];
+    }
+    path(ctx, off) {
+      const { Ls } = this, R = this.R + off;
+      ctx.save();
+      ctx.translate(this.cx, this.cy);
+      if (this.vertical) ctx.rotate(-Math.PI / 2);
+      ctx.beginPath();
+      ctx.moveTo(-Ls / 2, R);
+      ctx.lineTo(Ls / 2, R);
+      ctx.arc(Ls / 2, 0, R, Math.PI / 2, -Math.PI / 2, true);
+      ctx.lineTo(-Ls / 2, -R);
+      ctx.arc(-Ls / 2, 0, R, -Math.PI / 2, -Math.PI * 1.5, true);
+      ctx.closePath();
+      ctx.restore();
+    }
+    /** 道のり d1 から d2 まで（d2 > d1）の帯 */
+    band(ctx, d1, d2, width, color) {
+      ctx.beginPath();
+      const n = Math.max(2, Math.ceil((d2 - d1) / 4));
+      for (let k = 0; k <= n; k++) {
+        const p = this.point(d1 + (d2 - d1) * (k / n));
+        if (k === 0) ctx.moveTo(p[0], p[1]); else ctx.lineTo(p[0], p[1]);
+      }
+      ctx.lineWidth = width;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.strokeStyle = color;
+      ctx.stroke();
+    }
+  }
+
+  /** 環状道路の図（ヒーロー・密度・対策で共通） */
+  class RingView {
+    constructor(cs, runner, opt) {
+      this.cs = cs;
+      this.runner = runner;
+      this.opt = opt || {};
+      this.base = document.createElement('canvas');
+    }
+    layout() {
+      const { w, h, dpr } = this.cs;
+      const H = h - (this.opt.bottom || 0);
+      const vertical = H > w * 1.08;
+      const padX = vertical ? 40 : (this.opt.padX || 74);
+      const padY = vertical ? 54 : (this.opt.padY || 46);
+      this.track = new Track(w, H, padX, padY, 0);
+      this.laneW = clamp(Math.min(w, H) / 24, 14, 22);
+      this.carW = clamp(this.laneW * 0.5, 6.5, 10);
+      // 下ごしらえ（背景と道路）をキャッシュ
+      this.base.width = Math.round(w * dpr);
+      this.base.height = Math.round(h * dpr);
+      const b = this.base.getContext('2d');
+      b.setTransform(dpr, 0, 0, dpr, 0, 0);
+      b.fillStyle = BG;
+      b.fillRect(0, 0, w, h);
+      const t = this.track;
+      // 内側の芝生（ほんのり）
+      t.path(b, -this.laneW / 2 - 6);
+      b.fillStyle = '#111a20';
+      b.fill();
+      t.path(b, 0);
+      b.lineWidth = this.laneW + 10;
+      b.strokeStyle = SHOULDER;
+      b.stroke();
+      b.lineWidth = this.laneW;
+      b.strokeStyle = ROAD;
+      b.stroke();
+      b.setLineDash([]);
+      b.lineWidth = 1.3;
+      b.strokeStyle = 'rgba(255,255,255,0.5)';
+      t.path(b, this.laneW / 2 - 1.6); b.stroke();
+      t.path(b, -this.laneW / 2 + 1.6); b.stroke();
+      // 進む向きの印（路面の矢羽根）
+      const L = this.runner.sim.length;
+      b.strokeStyle = 'rgba(255,255,255,0.16)';
+      b.lineWidth = 1.6;
+      for (let m = 50; m < L; m += 100) {
+        const p = t.point(this.d(m));
+        const ux = Math.cos(p[2]), uy = Math.sin(p[2]);
+        const nx = -uy, ny = ux, k = this.laneW * 0.22;
+        b.beginPath();
+        b.moveTo(p[0] - ux * k + nx * k, p[1] - uy * k + ny * k);
+        b.lineTo(p[0] + ux * k * 0.4, p[1] + uy * k * 0.4);
+        b.lineTo(p[0] - ux * k - nx * k, p[1] - uy * k - ny * k);
+        b.stroke();
+      }
+      // 100m ごとの目盛り
+      b.fillStyle = 'rgba(255,255,255,0.32)';
+      for (let m = 0; m < L; m += 100) {
+        const p1 = t.point(this.d(m), this.laneW / 2 + 5);
+        const p2 = t.point(this.d(m), this.laneW / 2 + 10);
+        b.beginPath(); b.moveTo(p1[0], p1[1]); b.lineTo(p2[0], p2[1]);
+        b.lineWidth = 1.2; b.strokeStyle = 'rgba(255,255,255,0.3)'; b.stroke();
+      }
+    }
+    d(x) { return (x / this.runner.sim.length) * this.track.P; }
+    get scale() { return this.track.P / this.runner.sim.length; }
+    carLen() {
+      const sim = this.runner.sim;
+      const s = this.scale;
+      return Math.min(Math.max(sim.p.len * s * 1.3, 5.5), (sim.p.len + sim.p.s0) * s - 2.5);
+    }
+    drawBase(ctx) { ctx.drawImage(this.base, 0, 0, this.cs.w, this.cs.h); }
+    /** 渋滞（時速 th 未満）のかたまり：[{d1, d2, iTail, iHead}] */
+    jams(th) {
+      const sim = this.runner.sim, n = sim.n, v = sim.v;
+      const thr = th / KMH;
+      let start = -1;
+      for (let i = 0; i < n; i++) if (v[i] >= thr) { start = i; break; }
+      if (start < 0) return [{ all: true }];
+      const out = [];
+      let cur = null;
+      for (let k = 1; k <= n; k++) {
+        const i = (start + k) % n;
+        if (v[i] < thr) {
+          if (!cur) cur = { iTail: i, iHead: i, cnt: 0 };
+          cur.iHead = i; cur.cnt++;
+        } else if (cur) { out.push(cur); cur = null; }
+      }
+      if (cur) out.push(cur);
+      const L = sim.length, len = sim.p.len;
+      for (const j of out) {
+        const x1 = this.runner.pos(j.iTail) - 3;
+        let x2 = this.runner.pos(j.iHead) + len + 3;
+        if (x2 < x1) x2 += L;
+        j.d1 = this.d(x1); j.d2 = this.d(x2);
+        j.x1 = x1; j.x2 = x2;
+      }
+      return out;
+    }
+    drawJams(ctx, list) {
+      for (const j of list) {
+        if (j.all) { this.track.path(ctx, 0); ctx.lineWidth = this.laneW + 12; ctx.strokeStyle = 'rgba(226,53,43,0.22)'; ctx.stroke(); continue; }
+        if (j.cnt < 2) continue;
+        this.track.band(ctx, j.d1, j.d2, this.laneW + 12, 'rgba(226,53,43,0.26)');
+      }
+    }
+    drawCars(ctx, style) {
+      const sim = this.runner.sim, t = this.track, n = sim.n;
+      const L = this.carLen(), W = this.carW, half = sim.p.len / 2;
+      for (let i = 0; i < n; i++) {
+        const x = this.runner.pos(i) + half;
+        const p = t.point(this.d(x));
+        let fill = speedColor(sim.v[i] * KMH), outline = null;
+        if (sim.type[i] === 1) {
+          fill = CALM; outline = '#e9fbff';
+          ctx.strokeStyle = 'rgba(57,198,216,0.55)'; ctx.lineWidth = 2;
+          ctx.beginPath(); ctx.arc(p[0], p[1], L * 0.5 + 7, 0, TAU); ctx.stroke();
+        }
+        if (style && style(i)) { const s = style(i); if (s.fill) fill = s.fill; if (s.outline) outline = s.outline; }
+        drawCar(ctx, p[0], p[1], p[2], L, W, fill, brakeOf(sim.acc[i]), outline);
+      }
+    }
+    carScreen(i) {
+      const sim = this.runner.sim;
+      return this.track.point(this.d(this.runner.pos(i) + sim.p.len / 2));
+    }
+    hit(px, py) {
+      const sim = this.runner.sim;
+      let best = -1, bd = Infinity;
+      for (let i = 0; i < sim.n; i++) {
+        const p = this.carScreen(i);
+        const d = Math.hypot(p[0] - px, p[1] - py);
+        if (d < bd) { bd = d; best = i; }
+      }
+      const lim = Math.max(28, this.scale * (sim.length / sim.n) * 0.48);
+      return bd <= lim ? best : -1;
+    }
+    label(ctx, d, off, text, color, opt) {
+      const p = this.track.point(d, off);
+      const o = opt || {};
+      ctx.font = `${o.weight || 700} ${o.size || 13}px ${getComputedStyle(document.body).fontFamily}`;
+      const tw = ctx.measureText(text).width;
+      const x = clamp(p[0], tw / 2 + 6, this.cs.w - tw / 2 - 6);
+      const y = clamp(p[1], 12, this.cs.h - (this.opt.bottom || 0) - 8);
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      if (o.bg) {
+        ctx.fillStyle = o.bg;
+        roundRect(ctx, x - tw / 2 - 6, y - 10, tw + 12, 20, 6);
+        ctx.fill();
+      }
+      ctx.fillStyle = color;
+      ctx.fillText(text, x, y);
+      return [x, y, tw];
+    }
+    /** 道路の外側に向けた矢印（進行方向と逆＝後ろ向き） */
+    arrowBack(ctx, d, off, len, color) {
+      const a = this.track.point(d, off), b = this.track.point(d - len, off);
+      ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]); ctx.stroke();
+      const ang = Math.atan2(b[1] - a[1], b[0] - a[0]);
+      ctx.beginPath();
+      ctx.moveTo(b[0], b[1]);
+      ctx.lineTo(b[0] - 8 * Math.cos(ang - 0.45), b[1] - 8 * Math.sin(ang - 0.45));
+      ctx.lineTo(b[0] - 8 * Math.cos(ang + 0.45), b[1] - 8 * Math.sin(ang + 0.45));
+      ctx.closePath(); ctx.fill();
+    }
+  }
+
+  function bindSpeedSeg(name, runner, onChange) {
+    const seg = document.querySelector(`[data-speed="${name}"]`);
+    if (!seg) return;
+    seg.addEventListener('click', (e) => {
+      const b = e.target.closest('button');
+      if (!b) return;
+      seg.querySelectorAll('button').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+      runner.speed = parseFloat(b.dataset.v);
+      runner.running = true;
+      if (onChange) onChange();
+    });
+    const on = seg.querySelector('[aria-pressed="true"]');
+    if (on) runner.speed = parseFloat(on.dataset.v);
+  }
+  function setRangeFill(inp) {
+    const p = ((inp.value - inp.min) / (inp.max - inp.min)) * 100;
+    inp.style.setProperty('--p', p + '%');
+  }
+
+  /* =========================================================
+   * 図1（ヒーロー）：1台のブレーキで渋滞が生まれる
+   * ========================================================= */
+  function heroFigure() {
+    const el = $('hero');
+    const canvas = $('heroCanvas');
+    const panel = $('heroPanel');
+    const N = 30, LEN = 1000;
+    let sim = new Sim({ ring: true, length: LEN, n: N });
+    const runner = new Runner(sim);
+    const cs = setupCanvas(canvas, (w) => (w < 860 ? clamp(w * 0.98, 320, 540) : clamp(w * 0.47, 380, 540)));
+    const view = new RingView(cs, runner, { padX: 84, padY: 48 });
+    let sel = 21;          // 黄色い印の車
+    let rec = null;        // ブレーキの記録
+    let holdStart = null;  // 長押しの開始（実時間）
+    let meter = new WaveXCorr(sim);
+    let waveKmh = null;
+    let lastLive = '';
+    let overlay = false;
+
+    function reset() {
+      sim = new Sim({ ring: true, length: LEN, n: N });
+      runner.setSim(sim);
+      rec = null; holdStart = null; meter = new WaveXCorr(sim); waveKmh = null;
+      setLive();
+      updStats();
+    }
+    function startBrake(i, how) {
+      if (!runner.running) runner.running = true;
+      sel = i;
+      rec = {
+        car: i, t0: sim.t, v0: sim.v[i], vmin: sim.v[i], x0: runner.pos(i) + sim.p.len / 2,
+        stops0: sim.stopEvents, firstStop: null, min40: null, released: null, how
+      };
+      meter.reset(); waveKmh = null;
+    }
+    /** 波の速さ：止まる車がいるはっきりした渋滞のときだけ更新し、なめらかにする */
+    function updWave() {
+      meter.update();
+      const s = meter.speed();
+      if (s == null || sim.minSpeed() > 8 / KMH) return;
+      const kmh = -s * KMH;
+      if (kmh < 8 || kmh > 32) return;
+      waveKmh = waveKmh == null ? kmh : waveKmh * 0.92 + kmh * 0.08;
+    }
+    function onStep() {
+      if (!rec) return;
+      const v = sim.v[rec.car];
+      if (rec.released == null && !sim.hold[rec.car] && sim.brakeT[rec.car] <= 0) rec.released = sim.t;
+      if (rec.released == null) rec.vmin = Math.min(rec.vmin, v);
+      if (rec.released != null && sim.t - rec.released < 3) rec.vmin = Math.min(rec.vmin, v);
+      const mn = sim.minSpeed();
+      if (rec.min40 == null && mn < 40 / KMH) rec.min40 = sim.t;
+      if (rec.firstStop == null && mn < 0.4) rec.firstStop = sim.t;
+      updWave();
+    }
+
+    // ---- 長押しブレーキ ----
+    const btn = $('heroBrake');
+    const fill = btn.querySelector('.fill');
+    function press(e) {
+      if (e) e.preventDefault();
+      if (holdStart != null) return;
+      holdStart = performance.now();
+      if (!rec || sim.t - rec.t0 > 2 || rec.car !== sel) startBrake(sel, 'button');
+      sim.hold[sel] = 1;
+      sim.brakeA[sel] = 3.0;
+      btn.classList.add('on');
+    }
+    function release() {
+      if (holdStart == null) return;
+      const held = (performance.now() - holdStart) / 1000 * runner.speed;
+      holdStart = null;
+      sim.hold[sel] = 0;
+      if (held < 1.2) sim.brake(sel, 3.0, 1.2 - held); // 短いタップでも、はっきり分かるブレーキに
+      btn.classList.remove('on');
+      fill.style.width = '0';
+    }
+    btn.addEventListener('pointerdown', (e) => {
+      press(e);
+      try { btn.setPointerCapture(e.pointerId); } catch (err) { /* 合成イベントなどで捕捉できなくても、ブレーキは効かせる */ }
+    });
+    btn.addEventListener('pointerup', release);
+    btn.addEventListener('pointercancel', release);
+    btn.addEventListener('lostpointercapture', release);
+    btn.addEventListener('keydown', (e) => { if ((e.key === ' ' || e.key === 'Enter') && !e.repeat) press(e); });
+    btn.addEventListener('keyup', (e) => { if (e.key === ' ' || e.key === 'Enter') release(); });
+    btn.addEventListener('click', (e) => e.preventDefault());
+    btn.addEventListener('contextmenu', (e) => e.preventDefault()); // スマホの長押しメニューを出さない
+
+    // ---- 車をタップ ----
+    canvas.addEventListener('pointerdown', (e) => {
+      const r = canvas.getBoundingClientRect();
+      const i = view.hit(e.clientX - r.left, e.clientY - r.top);
+      if (i < 0) return;
+      startBrake(i, 'tap');
+      sim.brake(i, 3.0, 1.4);
+    });
+    canvas.style.cursor = 'pointer';
+    $('heroReset').addEventListener('click', reset);
+    bindSpeedSeg('hero', runner);
+
+    function setLive() {
+      const live = $('heroLive');
+      let html;
+      const v0 = sim.equilibriumSpeed(LEN / N - sim.p.len) * KMH;
+      if (!rec) {
+        html = `30台が時速<span class="em">${Math.round(v0)}km</span>で、等間隔に走っています。赤いボタンを押すと、黄色い印の車がブレーキを踏みます。長く押すほど強く減速します。`;
+      } else {
+        const t = sim.t - rec.t0;
+        const drop = Math.max(0, (rec.v0 - rec.vmin) * KMH);
+        const holding = sim.hold[rec.car] || sim.brakeT[rec.car] > 0;
+        if (holding) {
+          html = `ブレーキ中… 時速<span class="em">${Math.round(sim.v[rec.car] * KMH)}km</span>`;
+        } else if (rec.firstStop != null && sim.t - rec.firstStop < 9) {
+          html = `最初の車は時速${Math.round(drop)}km落としただけなのに、ブレーキから<span class="red">${Math.round(rec.firstStop - rec.t0)}秒後</span>、ついに<span class="red">止まる車</span>が出ました。最初にブレーキを踏んだ車は、もうはるか先を走っています。`;
+        } else if (rec.firstStop != null) {
+          const more = sim.t - rec.firstStop > 30 ? '<br>なぜこうなるのか、下へ読み進めて1つずつ確かめましょう。' : '';
+          html = (waveKmh != null
+            ? `渋滞のかたまりは、車とは逆向きに、時速<span class="em">${Math.round(waveKmh)}km</span>で後ろへ動いています。誰も悪くないのに、渋滞は消えません。`
+            : `渋滞のかたまりは、車とは逆向きに、ゆっくり後ろへ動いています。誰も悪くないのに、渋滞は消えません。`) + more;
+        } else if (rec.min40 != null) {
+          html = `時速40km以下の車が出てきました。NEXCO（高速道路会社）が「渋滞」の目安にしている速さです。止まる車が出るまで、もう少しです。`;
+        } else if (rec.released != null && sim.t - rec.released < 5) {
+          html = `ブレーキはここまで。時速${Math.round(rec.v0 * KMH)}km → ${Math.round(rec.vmin * KMH)}kmと、<span class="em">${Math.round(drop)}km/h</span>落としただけです。この車はすぐ元の速さに戻ります。`;
+        } else if (t > 75) {
+          html = `減速の波は、後ろへ伝わりながら少しずつ大きくなっています。待ちきれなければ、もう一度ブレーキを踏んでみてください。`;
+        } else {
+          html = `後ろの車が、次々にブレーキを踏んでいます。<span class="em">後ろへいくほど、減速が大きく</span>なっていきます（ブレーキランプのリレー）。${runner.speed === 1 ? '<br>下の「×3」で早送りもできます。' : ''}`;
+        }
+      }
+      if (html !== lastLive) { live.innerHTML = html; lastLive = html; }
+    }
+    function updStats() {
+      $('hsT').innerHTML = rec ? `${Math.floor(sim.t - rec.t0)}<small>秒</small>` : '—';
+      $('hsMin').innerHTML = `${Math.round(sim.minSpeed() * KMH)}<small>km/h</small>`;
+      $('hsStop').innerHTML = `${rec ? sim.stopEvents - rec.stops0 : 0}<small>台</small>`;
+      $('hsMean').innerHTML = `${Math.round(sim.meanSpeed() * KMH)}<small>km/h</small>`;
+    }
+
+    function placePanel() {
+      overlay = cs.w >= 860;
+      panel.classList.toggle('static', !overlay);
+      if (!overlay) { panel.style.cssText = ''; return; }
+      const t = view.track;
+      const iw = t.Ls + t.R * 1.1, ih = t.R * 2 - view.laneW - 96;
+      panel.style.left = `${t.cx - iw / 2}px`;
+      panel.style.top = `${t.cy - ih / 2}px`;
+      panel.style.width = `${iw}px`;
+      panel.style.height = `${ih}px`;
+    }
+    cs.onResize = () => { view.layout(); placePanel(); };
+
+    let statT = 0;
+    const fig = {
+      el,
+      resize() { cs.resize(); },
+      update(dt) {
+        runner.advance(dt, onStep);
+        if (holdStart != null) {
+          const held = (performance.now() - holdStart) / 1000;
+          fill.style.width = `${clamp(held / 4, 0, 1) * 100}%`;
+          if (held > 6) release();
+        }
+        statT += dt;
+        if (statT > 0.2) { statT = 0; setLive(); updStats(); }
+      },
+      draw() {
+        const ctx = cs.ctx;
+        view.drawBase(ctx);
+        const jams = view.jams(40);
+        view.drawJams(ctx, jams);
+        // ブレーキ地点の旗
+        if (rec) {
+          const d = view.d(rec.x0);
+          const pIn = view.track.point(d, view.laneW / 2 + 4), pOut = view.track.point(d, view.laneW / 2 + 22);
+          ctx.strokeStyle = FLAG; ctx.lineWidth = 2;
+          ctx.beginPath(); ctx.moveTo(pIn[0], pIn[1]); ctx.lineTo(pOut[0], pOut[1]); ctx.stroke();
+          // 旗（進行方向にたなびく三角形）
+          const ang = view.track.point(d)[2];
+          const ux = Math.cos(ang), uy = Math.sin(ang);
+          const nx = (pOut[0] - pIn[0]) / 18, ny = (pOut[1] - pIn[1]) / 18;
+          ctx.fillStyle = FLAG;
+          ctx.beginPath();
+          ctx.moveTo(pOut[0], pOut[1]);
+          ctx.lineTo(pOut[0] + ux * 12 - nx * 4, pOut[1] + uy * 12 - ny * 4);
+          ctx.lineTo(pOut[0] - nx * 8, pOut[1] - ny * 8);
+          ctx.closePath(); ctx.fill();
+          view.label(ctx, d, -(view.laneW / 2 + (cs.w < 600 ? 32 : 27)), 'ブレーキ地点', '#ffb3ab', { size: cs.w < 600 ? 11 : 12, weight: 700, bg: 'rgba(14,20,27,0.78)' });
+        }
+        view.drawCars(ctx, (i) => (i === sel ? { outline: PIN } : null));
+        // 黄色い印
+        const p = view.carScreen(sel);
+        ctx.strokeStyle = PIN; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.arc(p[0], p[1], view.carLen() * 0.5 + 9, 0, TAU); ctx.stroke();
+        // 渋滞ラベル
+        for (const j of jams) {
+          if (j.all || j.cnt < 3) continue;
+          const mid = (j.d1 + j.d2) / 2;
+          const off = view.laneW / 2 + 17;
+          const showV = waveKmh != null && rec && rec.firstStop != null;
+          const narrow = cs.w < 600;
+          view.label(ctx, mid, off, showV && !narrow ? `渋滞（後ろへ時速${Math.round(waveKmh)}km）` : '渋滞', '#ffd0ca', { size: narrow ? 12 : 13 });
+          view.arrowBack(ctx, j.d1 + 6, view.laneW / 2 + 5, Math.min(60, 26 + (j.d2 - j.d1) * 0.2), '#ff8c80');
+        }
+        if (!runner.running) {
+          ctx.fillStyle = 'rgba(14,20,27,0.55)';
+          ctx.fillRect(0, 0, cs.w, cs.h);
+        }
+      }
+    };
+    cs.resize();
+    reset();
+    addFig(fig);
+    return fig;
+  }
+
+  /* =========================================================
+   * 図2：車は前へ、渋滞は後ろへ（まっすぐな道路＋走行記録）
+   * ========================================================= */
+  function waveFigure() {
+    const el = $('wave');
+    const canvas = $('waveCanvas');
+    const N = 30, LEN = 1000, YOU_I = 0, BRAKE_I = 15;
+    const ROW_DT = 0.25;      // 走行記録の1行の時間
+    const PX_PER_S = 4;       // 走行記録の1秒あたりの高さ
+    let sim, rec, meter, nextRow, prevRowX, lastLive = '', lost = null;
+    const runner = new Runner(new Sim({ ring: true, length: LEN, n: N }));
+    const cs = setupCanvas(canvas, (w) => (w < 700 ? 300 : 352));
+    const hist = document.createElement('canvas');
+    const hctx = hist.getContext('2d');
+    let G = null;
+
+    function geom() {
+      const { w, h } = cs;
+      const mL = w < 700 ? 50 : 56, mR = w < 700 ? 10 : 18;
+      const stripY = 30, stripH = 26;
+      const dTop = stripY + stripH + 14, dBot = h - 22;
+      G = { mL, mR, x0: mL, x1: w - mR, stripY, stripH, dTop, dBot, dH: dBot - dTop };
+      G.sx = (G.x1 - G.x0) / LEN;
+    }
+    function resetHist() {
+      const { dpr } = cs;
+      hist.width = Math.max(1, Math.round((G.x1 - G.x0) * dpr));
+      hist.height = Math.max(1, Math.round(G.dH * dpr));
+      hctx.setTransform(1, 0, 0, 1, 0, 0);
+      hctx.fillStyle = '#121a22';
+      hctx.fillRect(0, 0, hist.width, hist.height);
+      prevRowX = null;
+    }
+    function reset() {
+      sim = new Sim({ ring: true, length: LEN, n: N });
+      // 走行記録がはじめから埋まっているように、先に少し走らせておく（その間は等間隔のまま）
+      const pre = G ? Math.ceil(G.dH / PX_PER_S) + 1 : 0;
+      sim.xRef = (((220 - sim.v[0] * pre) % LEN) + LEN) % LEN; // 走らせ終わったとき、あなたが左寄りにいるように
+      runner.setSim(sim);
+      rec = null; lost = null;
+      meter = new WaveXCorr(sim);
+      nextRow = 0;
+      if (G) {
+        resetHist();
+        while (sim.t < pre) {
+          runner.xPrev.set(runner.xCur);
+          sim.step();
+          sim.positions(runner.xCur);
+          if (sim.t + 1e-9 >= nextRow) { row(); nextRow += ROW_DT; }
+        }
+        runner.xPrev.set(runner.xCur);
+      }
+      setLive(); updStats();
+      $('waveGo').textContent = '15台前の車にブレーキを踏ませる';
+    }
+    function go() {
+      if (rec) { reset(); }
+      runner.running = true;
+      rec = { t0: sim.t, v0: sim.v[YOU_I], youMin: sim.v[YOU_I], stopped: false, slowed: false, exited: null, dist: 0, waveKmh: null, vBrake0: sim.v[BRAKE_I], vBrakeMin: sim.v[BRAKE_I] };
+      sim.brake(BRAKE_I, 3.0, 1.5);
+      $('waveGo').textContent = 'もう一度（最初から）';
+    }
+    $('waveGo').addEventListener('click', go);
+    bindSpeedSeg('wave', runner);
+
+    function row() {
+      const { dpr } = cs;
+      const W = hist.width, H = hist.height;
+      const dy = Math.max(1, Math.round(PX_PER_S * ROW_DT * dpr));
+      hctx.drawImage(hist, 0, 0, W, H - dy, 0, dy, W, H - dy);
+      hctx.fillStyle = '#121a22';
+      hctx.fillRect(0, 0, W, dy);
+      const sx = G.sx * dpr;
+      const x = runner.xCur, half = sim.p.len / 2;
+      // 渋滞の帯
+      const thr = 40 / KMH;
+      hctx.fillStyle = 'rgba(226,53,43,0.62)';
+      for (let i = 0; i < N; i++) {
+        const j = sim.lead(i);
+        if (sim.v[i] < thr && sim.v[j] < thr) {
+          let a = x[i] + half, b = x[j] + half;
+          if (b < a) b += LEN;
+          if (b - a < 60) {
+            hctx.fillRect(a * sx, 0, (b - a) * sx, dy);
+            if (b > LEN) hctx.fillRect((a - LEN) * sx, 0, (b - a) * sx, dy);
+          }
+        }
+      }
+      // 車の跡
+      if (prevRowX) {
+        for (let pass = 0; pass < 2; pass++) {
+          for (let i = 0; i < N; i++) {
+            const isYou = i === YOU_I;
+            if ((pass === 1) !== isYou) continue;
+            const xa = prevRowX[i] + half, xb = x[i] + half;
+            if (Math.abs(xb - xa) > LEN / 2) continue;
+            hctx.strokeStyle = isYou ? YOU : (i === BRAKE_I && rec ? '#ffd35a' : speedColor(sim.v[i] * KMH));
+            hctx.globalAlpha = isYou || (i === BRAKE_I && rec) ? 1 : (cs.w < 560 ? 0.55 : 0.72);
+            hctx.lineWidth = (isYou ? 2.6 : 1.25) * dpr;
+            hctx.beginPath();
+            hctx.moveTo(xa * sx, dy);
+            hctx.lineTo(xb * sx, 0);
+            hctx.stroke();
+          }
+        }
+        hctx.globalAlpha = 1;
+      }
+      prevRowX = Float64Array.from(x);
+    }
+    function onStep() {
+      if (sim.t + 1e-9 >= nextRow) { row(); nextRow += ROW_DT; }
+      if (!rec) return;
+      const v = sim.v[YOU_I];
+      rec.vBrakeMin = Math.min(rec.vBrakeMin, sim.v[BRAKE_I]);
+      rec.dist += v * sim.dt;
+      rec.youMin = Math.min(rec.youMin, v);
+      if (v < rec.v0 * 0.85) rec.slowed = true;
+      if (v < 0.4) rec.stopped = true;
+      if (rec.slowed && rec.exited == null && v > rec.v0 * 0.9 && sim.t - rec.t0 > 20) {
+        rec.exited = sim.t;
+        lost = (sim.t - rec.t0) - rec.dist / rec.v0;
+      }
+      if (rec.exited != null && !rec.again && sim.t - rec.exited > 5 && v < rec.v0 * 0.8) rec.again = true;
+      meter.update();
+      const s = meter.speed();
+      if (s != null && sim.minSpeed() < 8 / KMH) {
+        const kmh = -s * KMH;
+        if (kmh >= 8 && kmh <= 32) rec.waveKmh = rec.waveKmh == null ? kmh : rec.waveKmh * 0.92 + kmh * 0.08;
+      }
+    }
+    function setLive() {
+      const live = $('waveLive');
+      let html;
+      const vY = sim.v[YOU_I] * KMH;
+      if (!rec) {
+        html = `あなた（<span style="color:${YOU};font-weight:700">青い車</span>）は時速${Math.round(vY)}kmで順調に走っています。右のほうにいる黄色い枠の車が、あなたの15台前の車です。ボタンを押して、この車にブレーキを踏ませましょう。`;
+      } else if (rec.again) {
+        html = `1周して、また同じ渋滞の最後尾に追いつきました（環状道路なので）。渋滞は消えずに、後ろへ動きながら回り続けています。「もう一度」で最初からやり直せます。`;
+      } else if (rec.exited != null) {
+        const minTxt = rec.stopped ? '一度は完全に止まりました' : `時速${Math.round(rec.youMin * KMH)}kmまで落ちました`;
+        html = `渋滞を抜けました。前には……<span class="em">何もありません</span>。あなたは${minTxt}が、原因は見当たりません。渋滞は、あなたの後ろへ去っていきました。走行記録の青い線が、あなたの通った跡です。`;
+      } else if (rec.stopped && vY > 1) {
+        html = `ノロノロと動き出しました（時速${Math.round(vY)}km）。まだ前が詰まっています。`;
+      } else if (rec.stopped) {
+        html = `<span class="red">止まりました。</span>前の車も止まっています。でも、見える範囲に事故も工事もありません。`;
+      } else if (rec.slowed) {
+        html = `前の車のブレーキランプが点きました。あなたもブレーキを踏みます。いまは時速<span class="em">${Math.round(vY)}km</span>。`;
+      } else if (sim.t - rec.t0 < 4) {
+        html = `15台前の車がブレーキを踏みました。時速${Math.round(rec.vBrake0 * KMH)}km → ${Math.round(rec.vBrakeMin * KMH)}km、ほんの少しの減速です。`;
+      } else {
+        html = `ブレーキランプのリレーが、後ろへ、つまりあなたのほうへ伝わってきます。伝わるたびに、減速が少しずつ大きくなっています。`;
+      }
+      if (html !== lastLive) { live.innerHTML = html; lastLive = html; }
+    }
+    function updStats() {
+      $('wsWave').innerHTML = rec && rec.waveKmh != null ? `後ろへ 時速${Math.round(rec.waveKmh)}<small>km</small>` : (rec ? '<small>測定中…</small>' : '—');
+      $('wsLost').innerHTML = lost != null ? `約${Math.round(lost)}<small>秒${rec && rec.again ? '（1回目）' : ''}</small>` : (rec ? '<small>走行中…</small>' : '—');
+    }
+    cs.onResize = () => { geom(); if (!rec) reset(); else resetHist(); };
+
+    let statT = 0;
+    const fig = {
+      el,
+      resize() { cs.resize(); },
+      update(dt) {
+        runner.advance(dt, onStep);
+        statT += dt;
+        if (statT > 0.2) { statT = 0; setLive(); updStats(); }
+      },
+      draw() {
+        const ctx = cs.ctx, { w, h } = cs;
+        const font = getComputedStyle(document.body).fontFamily;
+        ctx.fillStyle = BG;
+        ctx.fillRect(0, 0, w, h);
+        // 見出し
+        ctx.font = `700 12.5px ${font}`;
+        ctx.fillStyle = '#9fb0b6';
+        ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+        ctx.fillText(w < 560 ? 'いまの道路' : 'いまの道路（1周1kmを切り開いたもの）', G.x0, 14);
+        ctx.textAlign = 'right';
+        ctx.fillText('進む向き →', G.x1, 14);
+        // 道路
+        const sy = G.stripY;
+        ctx.fillStyle = SHOULDER;
+        ctx.fillRect(G.x0 - 4, sy - 4, G.x1 - G.x0 + 8, G.stripH + 8);
+        ctx.fillStyle = ROAD;
+        ctx.fillRect(G.x0, sy, G.x1 - G.x0, G.stripH);
+        ctx.strokeStyle = 'rgba(255,255,255,0.45)'; ctx.lineWidth = 1.2;
+        ctx.beginPath(); ctx.moveTo(G.x0, sy + 2); ctx.lineTo(G.x1, sy + 2); ctx.moveTo(G.x0, sy + G.stripH - 2); ctx.lineTo(G.x1, sy + G.stripH - 2); ctx.stroke();
+        // 渋滞の帯（いま）
+        const thr = 40 / KMH, half = sim.p.len / 2;
+        ctx.fillStyle = 'rgba(226,53,43,0.32)';
+        for (let i = 0; i < N; i++) {
+          const j = sim.lead(i);
+          if (sim.v[i] < thr && sim.v[j] < thr) {
+            let a = runner.pos(i) + half, b = runner.pos(j) + half;
+            if (b < a) b += LEN;
+            if (b - a < 60) {
+              const xa = G.x0 + a * G.sx, xb = G.x0 + b * G.sx;
+              ctx.fillRect(xa, sy - 4, Math.min(xb, G.x1) - xa, G.stripH + 8);
+              if (xb > G.x1) ctx.fillRect(G.x0, sy - 4, xb - G.x1, G.stripH + 8);
+            }
+          }
+        }
+        // 車
+        const L = Math.max(4, Math.min(sim.p.len * G.sx * 1.15, (sim.p.len + sim.p.s0) * G.sx - 1.5));
+        const Wc = Math.min(11, L * 0.8 + 2.5);
+        ctx.save();
+        ctx.beginPath(); ctx.rect(G.x0, sy - 6, G.x1 - G.x0, G.stripH + 12); ctx.clip();
+        for (let i = 0; i < N; i++) {
+          const x = G.x0 + (runner.pos(i) + half) * G.sx;
+          const isYou = i === YOU_I, isB = i === BRAKE_I;
+          const fill = isYou ? YOU : speedColor(sim.v[i] * KMH);
+          drawCar(ctx, x, sy + G.stripH / 2, 0, L, Wc, fill, brakeOf(sim.acc[i]), isB ? PIN : null);
+          if (x > G.x1 - L) drawCar(ctx, x - (G.x1 - G.x0), sy + G.stripH / 2, 0, L, Wc, fill, brakeOf(sim.acc[i]), isB ? PIN : null);
+        }
+        ctx.restore();
+        // 「あなた」ラベル
+        const xy = G.x0 + (runner.pos(YOU_I) + half) * G.sx;
+        ctx.font = `700 12px ${font}`; ctx.textAlign = 'center'; ctx.fillStyle = YOU;
+        ctx.fillText('あなた', clamp(xy, G.x0 + 20, G.x1 - 20), sy + G.stripH + 8);
+        const xb = G.x0 + (runner.pos(BRAKE_I) + half) * G.sx;
+        ctx.fillStyle = PIN;
+        ctx.fillText('15台前', clamp(xb, G.x0 + 22, G.x1 - 22), sy + G.stripH + 8);
+        // 走行記録
+        ctx.drawImage(hist, G.x0, G.dTop, G.x1 - G.x0, G.dH);
+        ctx.strokeStyle = 'rgba(255,255,255,0.12)'; ctx.lineWidth = 1;
+        ctx.strokeRect(G.x0 + 0.5, G.dTop + 0.5, G.x1 - G.x0 - 1, G.dH - 1);
+        ctx.font = `${w < 560 ? 11 : 12}px ${font}`; ctx.fillStyle = '#a3b3b9'; ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
+        for (let s = 0; s * PX_PER_S <= G.dH - 6; s += 15) {
+          const y = G.dTop + s * PX_PER_S;
+          ctx.fillText(s === 0 ? 'いま' : `${s}秒前`, G.x0 - 6, y + (s === 0 ? 6 : 0));
+          if (s > 0) { ctx.fillStyle = 'rgba(255,255,255,0.08)'; ctx.fillRect(G.x0, y, G.x1 - G.x0, 1); ctx.fillStyle = '#8fa1a8'; }
+        }
+        ctx.textAlign = 'left';
+        ctx.fillText(w < 560 ? '線＝車の動き　赤い帯＝渋滞' : '走行記録：線＝1台の車の動き　赤い帯＝渋滞（時速40km以下）', G.x0, h - 9);
+        if (!runner.running) { ctx.fillStyle = 'rgba(14,20,27,0.5)'; ctx.fillRect(0, 0, w, h); }
+      }
+    };
+    cs.resize();
+    reset();
+    addFig(fig);
+    return fig;
+  }
+
+  /* =========================================================
+   * 図3：伝言ゲーム（12台の車列）
+   * ========================================================= */
+  function chainFigure() {
+    const el = $('chain');
+    const canvas = $('chainCanvas');
+    const N = 12, V = 80 / KMH, DIP = 20;
+    const tauIn = $('chTau'), gapIn = $('chGap');
+    const runner = new Runner(new Sim({ ring: false, n: N, v: V }));
+    const cs = setupCanvas(canvas, (w) => (w < 700 ? 330 : 360));
+    let sim, run = null, prevMins = null, quizAns = null, scale = 1;
+    const done = { 1: false, 2: false, 3: false };
+    let hover = -1;
+
+    function makeSim() {
+      const tau = parseFloat(tauIn.value), gap = parseFloat(gapIn.value);
+      const tmp = new Sim({ ring: false, n: 2, v: V });
+      const r = Math.sqrt(1 - Math.pow(V / tmp.p.v0, tmp.p.delta));
+      const T = (gap * r - tmp.p.s0) / V;
+      const s = new Sim({ ring: false, n: N, v: V, params: { tau, T } });
+      return s;
+    }
+    function reset(autoBrakeIn) {
+      sim = makeSim();
+      runner.setSim(sim);
+      scale = targetScale();
+      run = { tau: sim.p.tau, gap: parseFloat(gapIn.value), brakeAt: autoBrakeIn != null ? sim.t + autoBrakeIn : null, t0: null, finished: false, mins: null };
+      $('chainVerdict').innerHTML = '';
+    }
+    function start() {
+      runner.running = true;
+      reset(0.8);
+    }
+    let deb = null;
+    function onSlider() {
+      $('chTauV').textContent = `${parseFloat(tauIn.value).toFixed(1)}秒`;
+      $('chGapV').textContent = `${gapIn.value}m`;
+      setRangeFill(tauIn); setRangeFill(gapIn);
+      clearTimeout(deb);
+      deb = setTimeout(start, 450);
+    }
+    tauIn.addEventListener('input', onSlider);
+    gapIn.addEventListener('input', onSlider);
+    $('chGo').addEventListener('click', start);
+    bindSpeedSeg('chain', runner);
+    document.querySelectorAll('#quiz [data-a]').forEach((b) => b.addEventListener('click', () => {
+      quizAns = b.dataset.a;
+      document.querySelectorAll('#quiz [data-a]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+      start();
+    }));
+
+    function onStep() {
+      if (!run) return;
+      if (run.brakeAt != null && run.t0 == null && sim.t < run.brakeAt && $('chainVerdict').textContent === '') {
+        $('chainVerdict').textContent = `まもなく先頭の車がブレーキを踏みます（反応の遅れ${run.tau.toFixed(1)}秒・車間${run.gap}m）`;
+      }
+      if (run.brakeAt != null && run.t0 == null && sim.t >= run.brakeAt) {
+        run.t0 = sim.t;
+        sim.minV.set(sim.v);
+        sim.brake(N - 1, 2.0, DIP / KMH / 2.0);
+      }
+      if (run.t0 != null && !run.finished && sim.k % 6 === 0) {
+        // 走っている間の手応え：ブレーキがいま何台目まで伝わったか
+        let reached = 0;
+        for (let k = 0; k < N; k++) if (sim.minV[N - 1 - k] < V - 1.5 / KMH) reached = k + 1;
+        const txt = `先頭の車がブレーキを踏みました。ブレーキが後ろへ伝わっています……（いま${reached}台目まで）`;
+        if ($('chainVerdict').textContent !== txt) $('chainVerdict').textContent = txt;
+      }
+      if (run.t0 != null && !run.finished) {
+        const t = sim.t - run.t0;
+        let rec = true;
+        for (let i = 0; i < N; i++) if (sim.v[i] < Math.min(sim.minV[i] + 4 / KMH, 77 / KMH)) { rec = false; break; }
+        if ((t > 12 && rec) || t > 80) finish();
+      }
+    }
+    function finish() {
+      run.finished = true;
+      const mins = [];
+      for (let k = 0; k < N; k++) mins.push(sim.minV[N - 1 - k] * KMH); // mins[0] = 先頭
+      run.mins = mins;
+      const stopAt = mins.findIndex((m) => m < 1);
+      const lastDip = 80 - mins[N - 1];
+      let html = '';
+      let judge = '';
+      if (quizAns) {
+        const truth = stopAt >= 0 && stopAt <= N - 1 && mins[N - 1] < 1 ? 'stop' : (lastDip < DIP * 0.8 ? 'small' : (lastDip <= DIP * 1.3 ? 'same' : (mins[N - 1] < 1 ? 'stop' : 'big')));
+        judge = quizAns === truth ? '<span class="ok">予想どおり！</span> ' : (truth === 'big' ? '' : '<span class="red">予想と違いました。</span> ');
+        quizAns = null;
+        document.querySelectorAll('#quiz [data-a]').forEach((x) => x.setAttribute('aria-pressed', 'false'));
+      }
+      if (stopAt >= 0) {
+        html = `${judge}<span class="red">${stopAt + 1}台目で、ついに止まりました。</span>先頭は時速20km落としただけなのに、後ろへいくほど減速が大きくなりました。`;
+        if (Math.abs(run.tau - 1.1) < 0.05 && run.gap === 25) markDone(1, `反応の遅れ1.1秒・車間25mで、${stopAt + 1}台目が止まりました`);
+      } else {
+        if (lastDip < DIP * 0.95) {
+          html = `${judge}<span class="ok">波は小さくなって消えました。</span>12台目は時速${Math.round(mins[N - 1])}kmまでしか落ちていません。`;
+        } else {
+          html = `${judge}<span class="ok">止まる車は出ませんでした。</span>ただ、12台目は時速${Math.round(mins[N - 1])}kmまで落ちていて、減速はまだ少し大きくなっています。車列がもっと長ければ、どこかで止まる車が出るかもしれません。`;
+        }
+        if (Math.abs(run.tau - 1.1) < 0.05 && run.gap > 25) markDone(2, `車間${run.gap}mなら、止まる車はゼロ（12台目の最低 時速${Math.round(mins[N - 1])}km）`);
+        if (run.gap <= 25 && run.tau < 1.05) markDone(3, `反応の遅れ${run.tau.toFixed(1)}秒なら、止まる車はゼロ（12台目の最低 時速${Math.round(mins[N - 1])}km）`);
+      }
+      $('chainVerdict').innerHTML = html;
+      prevMins = mins;
+    }
+    function markDone(m, why, hint) {
+      const li = document.querySelector(`#missions [data-m="${m}"]`);
+      if (!li) return;
+      if (why) { done[m] = true; li.classList.add('done'); li.querySelector('.why').textContent = why; }
+      else if (!done[m] && hint) { li.querySelector('.why').textContent = hint; }
+    }
+
+    // ---- ホバーで数値 ----
+    const tip = document.createElement('div');
+    tip.className = 'tip';
+    el.appendChild(tip);
+    function barGeom() {
+      const { w, h } = cs;
+      const roadH = w < 700 ? 92 : 112;
+      const top = roadH + 40, bot = h - 34;
+      const left = w < 700 ? 34 : 46, right = w - 12;
+      const slot = (right - left) / N;
+      return { roadH, top, bot, left, right, slot };
+    }
+    canvas.addEventListener('pointermove', (e) => {
+      const r = canvas.getBoundingClientRect();
+      const x = e.clientX - r.left, y = e.clientY - r.top;
+      const B = barGeom();
+      if (y < B.top - 10 || y > B.bot + 30 || x < B.left || x > B.right) { hover = -1; tip.classList.remove('on'); return; }
+      const slot = Math.floor((x - B.left) / B.slot);
+      hover = clamp(slot, 0, N - 1);
+      const k = N - 1 - hover; // k: 0 = 先頭
+      const nm = k === 0 ? '先頭の車' : `${k + 1}台目`;
+      const cur = Math.round(sim.minV[N - 1 - k] * KMH);
+      const prev = prevMins && run && run.finished ? null : prevMins;
+      tip.innerHTML = `${nm}：いちばん遅いとき 時速${cur}km${prev ? `<br>前回：時速${Math.round(prev[k])}km` : ''}`;
+      tip.style.left = `${canvas.offsetLeft + B.left + (hover + 0.5) * B.slot}px`;
+      tip.style.top = `${canvas.offsetTop + B.top + 6}px`;
+      tip.classList.add('on');
+    });
+    canvas.addEventListener('pointerleave', () => { hover = -1; tip.classList.remove('on'); });
+
+    /** 車列ぜんぶが画面に収まる縮尺（車列が伸び縮みしたら、ゆっくり追従する） */
+    function targetScale() {
+      const ext = (runner.xCur[N - 1] + sim.p.len) - runner.xCur[0];
+      return (cs.w - 84) / (Math.max(ext, 180) * 1.06);
+    }
+    cs.onResize = () => { if (sim) scale = targetScale(); };
+
+    const fig = {
+      el,
+      resize() { cs.resize(); },
+      update(dt) {
+        runner.advance(dt, onStep);
+      },
+      draw() {
+        const ctx = cs.ctx, { w, h } = cs;
+        const font = getComputedStyle(document.body).fontFamily;
+        const B = barGeom();
+        ctx.fillStyle = BG;
+        ctx.fillRect(0, 0, w, h);
+        // ---- 道路（先頭の車を追いかけるカメラ） ----
+        const roadY = 34, roadH = B.roadH - 50;
+        ctx.fillStyle = SHOULDER; ctx.fillRect(0, roadY - 5, w, roadH + 10);
+        ctx.fillStyle = ROAD; ctx.fillRect(0, roadY, w, roadH);
+        const ts = targetScale();
+        scale += (ts - scale) * (ts < scale ? 0.12 : 0.03);
+        const leadX = runner.pos(N - 1) + sim.p.len / 2;
+        const camX = w - 46; // 先頭の車の画面上の位置
+        const toScr = (x) => camX + (x - leadX) * scale;
+        // 破線（地面に固定）
+        ctx.strokeStyle = 'rgba(255,255,255,0.4)'; ctx.lineWidth = 1.4;
+        const dashM = 20, gapM = 12;
+        const start = Math.floor((leadX - (camX + 40) / scale) / (dashM + gapM)) * (dashM + gapM);
+        ctx.beginPath();
+        for (let m = start; toScr(m) < w + 40; m += dashM + gapM) {
+          ctx.moveTo(toScr(m), roadY + 3); ctx.lineTo(toScr(m + dashM), roadY + 3);
+          ctx.moveTo(toScr(m), roadY + roadH - 3); ctx.lineTo(toScr(m + dashM), roadY + roadH - 3);
+        }
+        ctx.stroke();
+        const L = Math.max(5, Math.min(sim.p.len * scale * 1.1, (sim.p.len + sim.p.s0) * scale - 1.5));
+        const Wc = clamp(Math.min(roadH * 0.5, L * 0.75 + 2), 5, 15);
+        ctx.font = `700 11px ${font}`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        for (let i = 0; i < N; i++) {
+          const x = toScr(runner.pos(i) + sim.p.len / 2);
+          if (x < -20) continue;
+          const k = N - 1 - i;
+          drawCar(ctx, x, roadY + roadH / 2, 0, L, Wc, speedColor(sim.v[i] * KMH), brakeOf(sim.acc[i]), hover === i ? PIN : null);
+          if (k === 0 || k === N - 1 || hover === i || (L > 9 && (k + 1) % 2 === 0) || L > 16) {
+            ctx.fillStyle = hover === i ? PIN : '#8fa1a8';
+            ctx.fillText(k === 0 ? '先頭' : String(k + 1), x, roadY + roadH + 14);
+          }
+        }
+        ctx.textAlign = 'left'; ctx.fillStyle = '#9fb0b6'; ctx.font = `700 12.5px ${font}`;
+        ctx.fillText(w < 560 ? '12台の車列' : '12台の車列（カメラは先頭の車を追いかけています）', 12, 14);
+        ctx.textAlign = 'right';
+        ctx.fillText('進む向き →', w - 12, 14);
+
+        // ---- 棒グラフ：各車のいちばん遅い速さ ----
+        const vmax = 90;
+        const yOf = (kmh) => B.bot - (clamp(kmh, 0, vmax) / vmax) * (B.bot - B.top);
+        ctx.font = `12px ${font}`; ctx.textBaseline = 'middle';
+        for (const g of [0, 20, 40, 60, 80]) {
+          const y = yOf(g);
+          ctx.fillStyle = g === 0 ? 'rgba(255,255,255,0.3)' : 'rgba(255,255,255,0.08)';
+          ctx.fillRect(B.left, Math.round(y), B.right - B.left, 1);
+          ctx.fillStyle = '#7f9198'; ctx.textAlign = 'right';
+          ctx.fillText(String(g), B.left - 6, y);
+        }
+        ctx.textAlign = 'left'; ctx.fillStyle = '#9fb0b6'; ctx.font = `700 12.5px ${font}`;
+        ctx.fillText(w < 560 ? '各車のいちばん遅いときの速さ（km/h）' : '各車が、いちばん遅くなったときの速さ（km/h）', B.left, B.top - 16);
+        const bw = Math.min(30, B.slot * 0.62);
+        const started = run && run.t0 != null;
+        for (let k = 0; k < N; k++) {
+          const i = N - 1 - k;            // k = 0 が先頭
+          const slot = N - 1 - k;         // 右端が先頭
+          const cx = B.left + (slot + 0.5) * B.slot;
+          const mn = started ? sim.minV[i] * KMH : sim.v[i] * KMH;
+          const y = yOf(mn);
+          // 前回
+          if (prevMins) {
+            const py = yOf(prevMins[k]);
+            ctx.strokeStyle = 'rgba(255,255,255,0.35)'; ctx.lineWidth = 1; ctx.setLineDash([3, 3]);
+            ctx.strokeRect(cx - bw / 2 - 2.5, py, bw + 5, B.bot - py);
+            ctx.setLineDash([]);
+          }
+          ctx.fillStyle = speedColor(mn);
+          roundRect(ctx, cx - bw / 2, y, bw, Math.max(1, B.bot - y), Math.min(4, bw / 4));
+          ctx.fill();
+          if (hover === slot) { ctx.strokeStyle = PIN; ctx.lineWidth = 2; ctx.stroke(); }
+          // 値
+          if (started) {
+            ctx.fillStyle = '#e9eef0'; ctx.textAlign = 'center'; ctx.font = `700 ${B.slot < 30 ? 10 : 12}px ${font}`;
+            ctx.fillText(String(Math.round(mn)), cx, Math.min(y - 9, B.bot - 9));
+          }
+          ctx.fillStyle = '#a3b3b9'; ctx.font = `${B.slot < 30 ? 10.5 : 12}px ${font}`; ctx.textAlign = 'center';
+          ctx.fillText(k === 0 ? '先頭' : String(k + 1), cx, B.bot + 13);
+        }
+        ctx.textAlign = 'left'; ctx.fillStyle = '#93a5ab'; ctx.font = `12px ${font}`;
+        ctx.fillText('← 後ろの車', B.left, B.bot + 27);
+        ctx.textAlign = 'right';
+        ctx.fillText('数字は前から何台目か', B.right, B.bot + 27);
+        if (!runner.running) { ctx.fillStyle = 'rgba(14,20,27,0.45)'; ctx.fillRect(0, 0, w, h); }
+      }
+    };
+    cs.resize();
+    onSlider();
+    clearTimeout(deb);
+    reset(null);
+    addFig(fig);
+    return fig;
+  }
+
+  /* =========================================================
+   * 図4：混み具合（ゆらぎあり）と流れる台数
+   * ========================================================= */
+  function densityFigure() {
+    const el = $('dens');
+    const canvas = $('densCanvas');
+    const nIn = $('dnN');
+    const LEN = 1000, NOISE = 0.15;
+    let sim, hist = [], lastLive = '';
+    const runner = new Runner(new Sim({ ring: true, length: LEN, n: 20 }));
+    const cs = setupCanvas(canvas, (w) => (w < 700 ? clamp(w * 1.0, 320, 440) : clamp(w * 0.36, 300, 400)));
+    const view = new RingView(cs, runner, { padX: 60, padY: 40 });
+    const data = window.FLOW_DATA || [];
+
+    function reset() {
+      const n = parseInt(nIn.value, 10);
+      sim = new Sim({ ring: true, length: LEN, n, seed: 3, params: { noise: NOISE } });
+      runner.setSim(sim);
+      hist = [];
+      view.layout();
+      $('dnNV').textContent = `${n}台`;
+      $('dnHint').textContent = `車間 およそ${Math.round(LEN / n - sim.p.len)}m`;
+      setRangeFill(nIn);
+    }
+    nIn.addEventListener('input', () => { runner.running = true; reset(); });
+    bindSpeedSeg('dens', runner);
+
+    let acc = 0;
+    function onStep() {
+      acc += sim.dt;
+      if (acc >= 0.5) {
+        acc = 0;
+        hist.push({ t: sim.t, mean: sim.meanSpeed(), min: sim.minSpeed(), stops: sim.stopEvents });
+        while (hist.length && hist[0].t < sim.t - 60) hist.shift();
+      }
+    }
+    function windowStats(sec) {
+      const rows = hist.filter((r) => r.t >= sim.t - sec);
+      if (!rows.length) return null;
+      const mean = rows.reduce((a, r) => a + r.mean, 0) / rows.length;
+      const min = Math.min(...rows.map((r) => r.min));
+      const stops = rows[rows.length - 1].stops - rows[0].stops;
+      return { mean, min, stops };
+    }
+    function setLive() {
+      const n = sim.n;
+      const w20 = windowStats(30);
+      let html;
+      if (!w20 || sim.t < 5) {
+        html = `1kmあたり${n}台が、等間隔で走り出しました。全員の運転に小さなゆらぎがあります。`;
+      } else if (w20.stops > 0 || sim.minSpeed() < 1) {
+        html = `<span class="red">渋滞が発生しています。</span>わざとブレーキを踏んだ車は1台もないのに、止まる車が出ています。`;
+      } else if (w20.min < 40 / KMH) {
+        html = `ゆらぎが育って、速さが大きく落ちる場所が出てきました。`;
+      } else {
+        html = n <= 25
+          ? `流れは順調です。ゆらぎで速さが少し変わっても、すぐに元に戻ります。${sim.t > 30 ? '台数を28〜30台にしてみましょう。' : ''}`
+          : `いまのところ順調です。でも、この混み具合だと、ゆらぎがしだいに育っていきます。少し待ってみてください（×6で早送りできます）。`;
+      }
+      if (html !== lastLive) { $('densLive').innerHTML = html; lastLive = html; }
+      const ws = windowStats(30);
+      const mean = ws ? ws.mean : sim.meanSpeed();
+      $('dsMean').innerHTML = `${Math.round(mean * KMH)}<small>km/h</small>`;
+      $('dsFlow').innerHTML = `${fmt(n * mean * KMH)}<small>台</small>`;
+      updChartDot(n, n * mean * KMH);
+    }
+
+    // ---- グラフ（SVG） ----
+    const svg = $('flowSvg');
+    const NS = 'http://www.w3.org/2000/svg';
+    const tip = $('flowTip');
+    let CW = 600, CH = 240, dot = null, xs = null, ys = null;
+    const M = { l: 66, r: 16, t: 14, b: 40 };
+    const X0 = 10, X1 = 50, Y1 = 2200;
+    function mk(tag, attrs, parent) {
+      const e = document.createElementNS(NS, tag);
+      for (const k in attrs) e.setAttribute(k, attrs[k]);
+      (parent || svg).appendChild(e);
+      return e;
+    }
+    function drawChart() {
+      CW = Math.max(300, svg.parentElement.clientWidth - 28);
+      CH = CW < 500 ? 230 : 250;
+      svg.setAttribute('viewBox', `0 0 ${CW} ${CH}`);
+      svg.setAttribute('width', CW);
+      svg.setAttribute('height', CH);
+      while (svg.firstChild) svg.removeChild(svg.firstChild);
+      xs = (k) => M.l + ((k - X0) / (X1 - X0)) * (CW - M.l - M.r);
+      ys = (q) => CH - M.b - (q / Y1) * (CH - M.t - M.b);
+      const g = mk('g', {});
+      for (let q = 0; q <= Y1; q += 500) {
+        mk('line', { x1: M.l, x2: CW - M.r, y1: ys(q), y2: ys(q), stroke: q === 0 ? 'rgba(255,255,255,0.35)' : 'rgba(255,255,255,0.09)', 'stroke-width': 1 }, g);
+        const t = mk('text', { x: M.l - 8, y: ys(q) + 4, 'text-anchor': 'end', 'font-size': 11, fill: '#8fa1a8' }, g);
+        t.textContent = q.toLocaleString('ja-JP');
+      }
+      for (let k = 10; k <= 50; k += 10) {
+        const t = mk('text', { x: xs(k), y: CH - M.b + 17, 'text-anchor': 'middle', 'font-size': 11, fill: '#8fa1a8' }, g);
+        t.textContent = String(k);
+      }
+      const xl = mk('text', { x: (M.l + CW - M.r) / 2, y: CH - 6, 'text-anchor': 'middle', 'font-size': 12, fill: '#b7c4c9' }, g);
+      xl.textContent = '1kmあたりの台数 →（右ほど混んでいる）';
+      const yl = mk('text', { x: 12, y: M.t + (CH - M.t - M.b) / 2, 'text-anchor': 'middle', 'font-size': 12, fill: '#b7c4c9', transform: `rotate(-90 12 ${M.t + (CH - M.t - M.b) / 2})` }, g);
+      yl.textContent = '1時間に流れる台数';
+      if (!data.length) return;
+      // 等間隔のまま走れた場合（点線）
+      const tmp = new Sim({ ring: true, length: LEN, n: 10 });
+      let dd = '';
+      for (let k = X0; k <= X1; k += 0.5) {
+        const v = tmp.equilibriumSpeed(LEN / k - tmp.p.len) * KMH;
+        dd += `${dd ? 'L' : 'M'}${xs(k).toFixed(1)},${ys(k * v).toFixed(1)}`;
+      }
+      mk('path', { d: dd, fill: 'none', stroke: 'rgba(255,255,255,0.55)', 'stroke-width': 1.6, 'stroke-dasharray': '4 4' });
+      // 実測（ゆらぎあり）
+      let dm = '';
+      for (const p of data) dm += `${dm ? 'L' : 'M'}${xs(p.k).toFixed(1)},${ys(p.q).toFixed(1)}`;
+      mk('path', { d: dm, fill: 'none', stroke: '#f7931e', 'stroke-width': 2.2 });
+      const peak = data.reduce((a, b) => (b.q > a.q ? b : a), data[0]);
+      for (const p of data) {
+        const c = mk('circle', { cx: xs(p.k), cy: ys(p.q), r: 4, fill: '#f7931e', stroke: BG, 'stroke-width': 2 });
+        const hit = mk('circle', { cx: xs(p.k), cy: ys(p.q), r: 11, fill: 'transparent', tabindex: 0, 'aria-label': `1kmあたり${p.k}台：1時間に${fmt(p.q)}台` });
+        const show = () => {
+          tip.innerHTML = `1kmあたり<b>${p.k}台</b>：1時間に<b>${fmt(p.q)}台</b><br>平均 時速${Math.round(p.v)}km${p.stops > 0 ? '・渋滞あり' : ''}`;
+          const r = svg.getBoundingClientRect(), pr = svg.parentElement.getBoundingClientRect();
+          tip.style.left = `${r.left - pr.left + 14 + xs(p.k) * (r.width / CW)}px`;
+          tip.style.top = `${r.top - pr.top + 10 + ys(p.q) * (r.height / CH)}px`;
+          tip.classList.add('on');
+          c.setAttribute('r', 6);
+        };
+        const hide = () => { tip.classList.remove('on'); c.setAttribute('r', 4); };
+        hit.addEventListener('pointerenter', show); hit.addEventListener('pointerleave', hide);
+        hit.addEventListener('focus', show); hit.addEventListener('blur', hide);
+      }
+      // 分かれ目
+      const px = xs(peak.k), py = ys(peak.q);
+      mk('line', { x1: px, x2: px, y1: py - 8, y2: py - 34, stroke: '#ffd35a', 'stroke-width': 1.2 });
+      const pt = mk('text', { x: px, y: py - 40, 'text-anchor': 'middle', 'font-size': 12, fill: '#ffd35a', 'font-weight': 700 });
+      pt.textContent = `いちばん流れるのは${peak.k}台前後`;
+      // ラベル（直接表示）
+      const last = data[data.length - 1];
+      const l1 = mk('text', { x: xs(last.k) - 4, y: ys(last.q) + 18, 'text-anchor': 'end', 'font-size': 11.5, fill: '#f7b25a' });
+      l1.textContent = '実際（ゆらぎあり）';
+      const k2 = 44, v2 = tmp.equilibriumSpeed(LEN / k2 - tmp.p.len) * KMH;
+      const l2 = mk('text', { x: xs(k2), y: ys(k2 * v2) - 10, 'text-anchor': 'middle', 'font-size': 11.5, fill: 'rgba(255,255,255,0.7)' });
+      l2.textContent = '等間隔のまま走れたら';
+      dot = mk('g', {});
+      mk('circle', { r: 9, fill: 'none', stroke: '#fff', 'stroke-width': 2 }, dot);
+      mk('circle', { r: 4.5, fill: '#fff' }, dot);
+      const dl = mk('text', { x: 13, y: -9, 'text-anchor': 'start', 'font-size': 12, fill: '#fff', 'font-weight': 700, stroke: BG, 'stroke-width': 3, 'paint-order': 'stroke' }, dot);
+      dl.textContent = 'いま';
+      // 表
+      const tb = $('flowTable');
+      tb.innerHTML = `<table><thead><tr><th>1kmあたりの台数</th><th>1時間に流れる台数</th><th>平均の速さ</th><th>渋滞</th></tr></thead><tbody>${data.map((p) => `<tr><td>${p.k}台</td><td>${fmt(p.q)}台</td><td>時速${Math.round(p.v)}km</td><td>${p.stops > 0 ? 'あり' : 'なし'}</td></tr>`).join('')}</tbody></table>`;
+    }
+    function updChartDot(n, q) {
+      if (!dot || !xs) return;
+      dot.setAttribute('transform', `translate(${xs(clamp(n, X0, X1)).toFixed(1)},${ys(clamp(q, 0, Y1)).toFixed(1)})`);
+    }
+    $('flowTableBtn').addEventListener('click', () => {
+      const tb = $('flowTable');
+      tb.hidden = !tb.hidden;
+      $('flowTableBtn').setAttribute('aria-expanded', String(!tb.hidden));
+      $('flowTableBtn').textContent = tb.hidden ? 'グラフの数値を表で見る' : '表を閉じる';
+    });
+
+    cs.onResize = () => { view.layout(); drawChart(); };
+    let statT = 0;
+    const fig = {
+      el,
+      resize() { cs.resize(); },
+      update(dt) {
+        runner.advance(dt, onStep);
+        statT += dt;
+        if (statT > 0.25) { statT = 0; setLive(); }
+      },
+      draw() {
+        const ctx = cs.ctx;
+        view.drawBase(ctx);
+        view.drawJams(ctx, view.jams(40));
+        view.drawCars(ctx);
+        if (!runner.running) { ctx.fillStyle = 'rgba(14,20,27,0.5)'; ctx.fillRect(0, 0, cs.w, cs.h); }
+      }
+    };
+    reset();
+    cs.resize();
+    drawChart();
+    setLive();
+    addFig(fig);
+    return fig;
+  }
+
+  /* =========================================================
+   * 図5：ゆとり運転で波を消す（＋自由に試す）
+   * ========================================================= */
+  function fixFigure() {
+    const el = $('fix');
+    const canvas = $('fixCanvas');
+    const LEN = 1000;
+    const NOISES = [0, 0.08, 0.15, 0.3];
+    const NOISE_NAMES = ['なし', '小さい', 'ふつう', '大きい'];
+    const nIn = $('fxN'), tauIn = $('fxTau'), noIn = $('fxNoise');
+    const BOTTOM = 92;
+    let sim, hist = [], marks = [], nAbs = 0, lastLive = '', mean0 = null;
+    const runner = new Runner(new Sim({ ring: true, length: LEN, n: 26 }));
+    const cs = setupCanvas(canvas, (w) => (w < 700 ? clamp(w * 1.05, 340, 480) + BOTTOM : clamp(w * 0.34, 290, 380) + BOTTOM));
+    const view = new RingView(cs, runner, { padX: 60, padY: 40, bottom: BOTTOM });
+
+    function build(prerun) {
+      const n = parseInt(nIn.value, 10);
+      sim = new Sim({ ring: true, length: LEN, n, seed: 5, params: { noise: NOISES[parseInt(noIn.value, 10)], tau: parseFloat(tauIn.value) } });
+      hist = []; marks = [];
+      if (prerun) {
+        // 渋滞が育ちきるまで先に走らせておく（その間の記録もグラフに残す）。止まっている車がいる瞬間から始める
+        sim.brake(0, 3.0, 2.0);
+        let a = 0, lastStop = -1, se = sim.stopEvents;
+        while (sim.t < 480 && (sim.t < 240 || lastStop < sim.t - 3 || sim.minSpeed() > 0.5)) {
+          sim.step();
+          if (sim.stopEvents > se) { se = sim.stopEvents; lastStop = sim.t; }
+          a += sim.dt;
+          if (a >= 0.5) { a = 0; hist.push({ t: sim.t, min: sim.minSpeed(), mean: sim.meanSpeed(), stops: sim.stopEvents }); }
+        }
+        while (hist.length && hist[0].t < sim.t - 240) hist.shift();
+      }
+      runner.setSim(sim);
+      hist.push({ t: sim.t, min: sim.minSpeed(), mean: sim.meanSpeed(), stops: sim.stopEvents });
+      mean0 = null;
+      applyAbs(nAbs, true);
+      view.layout();
+    }
+    function applyAbs(k, silent) {
+      nAbs = k;
+      const n = sim.n;
+      for (let i = 0; i < n; i++) sim.setAbsorber(i, false);
+      for (let j = 0; j < k; j++) sim.setAbsorber((Math.floor((j * n) / k) + 3) % n, true);
+      if (!silent) marks.push({ t: sim.t, k });
+      document.querySelectorAll('#absSeg button').forEach((b) => b.setAttribute('aria-pressed', String(parseInt(b.dataset.n, 10) === k)));
+    }
+    document.querySelectorAll('#absSeg button').forEach((b) => b.addEventListener('click', () => {
+      runner.running = true;
+      if (mean0 == null) { const w = windowStats(60); mean0 = w ? w.mean : sim.meanSpeed(); }
+      applyAbs(parseInt(b.dataset.n, 10));
+    }));
+    $('fixReset').addEventListener('click', () => { runner.running = true; nAbs = 0; build(true); });
+    bindSpeedSeg('fix', runner);
+    function syncLabels() {
+      $('fxNV').textContent = `${nIn.value}台`;
+      $('fxTauV').textContent = `${parseFloat(tauIn.value).toFixed(1)}秒`;
+      $('fxNoiseV').textContent = NOISE_NAMES[parseInt(noIn.value, 10)];
+      [nIn, tauIn, noIn].forEach(setRangeFill);
+    }
+    nIn.addEventListener('input', () => { syncLabels(); runner.running = true; build(false); });
+    tauIn.addEventListener('input', () => { syncLabels(); sim.p.tau = parseFloat(tauIn.value); });
+    noIn.addEventListener('input', () => { syncLabels(); sim.p.noise = NOISES[parseInt(noIn.value, 10)]; });
+    canvas.addEventListener('pointerdown', (e) => {
+      const r = canvas.getBoundingClientRect();
+      const i = view.hit(e.clientX - r.left, e.clientY - r.top);
+      if (i < 0) return;
+      runner.running = true;
+      sim.brake(i, 3.0, 1.5);
+    });
+    canvas.style.cursor = 'pointer';
+
+    let acc = 0;
+    function onStep() {
+      acc += sim.dt;
+      if (acc >= 0.5) {
+        acc = 0;
+        hist.push({ t: sim.t, min: sim.minSpeed(), mean: sim.meanSpeed(), stops: sim.stopEvents });
+        while (hist.length && hist[0].t < sim.t - 240) hist.shift();
+      }
+    }
+    function windowStats(sec) {
+      const rows = hist.filter((r) => r.t >= sim.t - sec);
+      if (rows.length < 2) return null;
+      return {
+        mean: rows.reduce((a, r) => a + r.mean, 0) / rows.length,
+        stops: rows[rows.length - 1].stops - rows[0].stops,
+        span: rows[rows.length - 1].t - rows[0].t
+      };
+    }
+    function setLive() {
+      const w = windowStats(60);
+      const stops = w ? w.stops : 0;
+      const mean = w ? w.mean : sim.meanSpeed();
+      const sinceMark = marks.length ? sim.t - marks[marks.length - 1].t : Infinity;
+      let html;
+      const slow20 = hist.filter((r) => r.t >= sim.t - 20).reduce((m, r) => Math.min(m, r.min), Infinity);
+      if (nAbs === 0) {
+        html = stops > 0 || sim.minSpeed() < 10 / KMH
+          ? `渋滞の波が、道路を何周も回り続けています。下の「ゆとり運転の車」のボタンで、1〜3台入れてみましょう。`
+          : (sim.minSpeed() < 40 / KMH ? `速さが落ちている場所があります。下のボタンで、ゆとり運転の車を入れてみましょう。` : `いまは渋滞がありません。車をタップしてブレーキを踏ませることもできます。`);
+      } else if (stops > 0 || sinceMark < 25 || slow20 < 25 / KMH) {
+        html = `ゆとり運転の車（水色）が、前との車間を広くあけて、一定のペースで走っています。波が少しずつ削られていきます……`;
+      } else {
+        const up = mean0 != null ? Math.round((mean - mean0) * KMH) : 0;
+        html = `<span class="ok" style="color:#7fe0b0;font-weight:700">止まる車がいなくなりました。</span>平均の速さは時速${Math.round(mean * KMH)}km${up >= 4 ? `。渋滞していたときより${up}km/h速く流れています` : ''}。`;
+      }
+      if (html !== lastLive) { $('fixLive').innerHTML = html; lastLive = html; }
+      $('fsStops').innerHTML = w && w.span > 20 ? `${stops}<small>台</small>` : '<small>測定中…</small>';
+      $('fsMin').innerHTML = `${Math.round(sim.minSpeed() * KMH)}<small>km/h</small>`;
+      $('fsMean').innerHTML = `${Math.round(mean * KMH)}<small>km/h</small>`;
+    }
+
+    function drawSpark(ctx) {
+      const { w, h } = cs;
+      const top = h - BOTTOM + 14, bot = h - 22, left = 50, right = w - 16;
+      const font = getComputedStyle(document.body).fontFamily;
+      ctx.fillStyle = '#121a22';
+      ctx.fillRect(0, h - BOTTOM, w, BOTTOM);
+      ctx.font = `700 12px ${font}`; ctx.fillStyle = '#9fb0b6'; ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+      ctx.fillText('いちばん遅い車の速さ（直近4分）', left, h - BOTTOM + 8 + 2);
+      const yOf = (kmh) => bot - (clamp(kmh, 0, 100) / 100) * (bot - top);
+      ctx.font = `11.5px ${font}`; ctx.textAlign = 'right';
+      for (const g of [0, 40, 80]) {
+        ctx.fillStyle = 'rgba(255,255,255,0.1)'; ctx.fillRect(left, Math.round(yOf(g)), right - left, 1);
+        ctx.fillStyle = '#7f9198'; ctx.fillText(String(g), left - 6, yOf(g));
+      }
+      const t1 = sim.t, t0 = t1 - 240;
+      const xOf = (t) => left + ((t - t0) / 240) * (right - left);
+      ctx.beginPath();
+      let first = true;
+      for (const r of hist) {
+        if (r.t < t0) continue;
+        const x = xOf(r.t), y = yOf(r.min * KMH);
+        if (first) { ctx.moveTo(x, y); first = false; } else ctx.lineTo(x, y);
+      }
+      ctx.strokeStyle = '#f7931e'; ctx.lineWidth = 2; ctx.stroke();
+      ctx.font = `700 11px ${font}`; ctx.textAlign = 'left';
+      for (const m of marks) {
+        if (m.t < t0) continue;
+        const x = xOf(m.t);
+        ctx.fillStyle = CALM; ctx.fillRect(x, top - 2, 1.5, bot - top + 2);
+        const txt = `ゆとり${m.k}台`, tw = ctx.measureText(txt).width;
+        const lx = Math.min(x + 5, right - tw - 4), ly = top + (bot - top) * 0.42;
+        ctx.fillStyle = 'rgba(18,26,34,0.85)'; ctx.fillRect(lx - 3, ly - 8, tw + 6, 16);
+        ctx.fillStyle = CALM; ctx.fillText(txt, lx, ly);
+      }
+      ctx.textAlign = 'right'; ctx.fillStyle = '#7f9198'; ctx.font = `10.5px ${font}`;
+      ctx.fillText('いま', right, bot + 11);
+    }
+
+    cs.onResize = () => { view.layout(); };
+    let statT = 0;
+    const fig = {
+      el,
+      resize() { cs.resize(); },
+      update(dt) {
+        runner.advance(dt, onStep);
+        statT += dt;
+        if (statT > 0.25) { statT = 0; setLive(); }
+      },
+      draw() {
+        const ctx = cs.ctx;
+        view.drawBase(ctx);
+        view.drawJams(ctx, view.jams(40));
+        view.drawCars(ctx);
+        drawSpark(ctx);
+        if (!runner.running) { ctx.fillStyle = 'rgba(14,20,27,0.5)'; ctx.fillRect(0, 0, cs.w, cs.h); }
+      }
+    };
+    syncLabels();
+    cs.resize();
+    build(true);
+    setLive();
+    addFig(fig);
+    return fig;
+  }
+
+  /* ================= 起動 ================= */
+  function init() {
+    buildLegends();
+    heroFigure();
+    waveFigure();
+    chainFigure();
+    densityFigure();
+    fixFigure();
+    if ('ResizeObserver' in window) {
+      const ro = new ResizeObserver(queueResize);
+      figs.forEach((f) => ro.observe(f.el));
+    } else {
+      window.addEventListener('resize', queueResize);
+    }
+    if (reduceMotion) {
+      document.querySelectorAll('.fig').forEach((f) => {
+        const note = document.createElement('div');
+        note.className = 'fig-bar';
+        note.style.fontSize = '13px';
+        note.textContent = '「動きを減らす」設定のため、自動では動きません。ボタンやスライダーを操作すると動き出します。';
+        f.appendChild(note);
+      });
+    }
+    window.__figs = figs; // 確認用
+    requestAnimationFrame(frame);
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
+})();
+
+</script>
+</body>
+</html>

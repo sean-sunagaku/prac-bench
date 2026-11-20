@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Antigravity — Capability Overview Deck</title>
+  <style>
+    :root {
+      --dark-bg: #0b1020;
+      --dark-card: #131e38;
+      --dark-border: #24355a;
+      --light-bg: #f8fafc;
+      --white: #ffffff;
+      --slate-100: #f1f5f9;
+      --border: #e2e8f0;
+      --border-strong: #cbd5e1;
+      --ink: #0f172a;
+      --body: #334155;
+      --muted: #64748b;
+      --dark-muted: #94a3b8;
+      --cobalt: #2563eb;
+      --cobalt-lt: #eff6ff;
+      --cobalt-bd: #bfdbfe;
+      --blue-glow: #60a5fa;
+      --cyan: #0891b2;
+      --cyan-lt: #ecfeff;
+      --cyan-glow: #38bdf8;
+      --indigo: #4f46e5;
+      --indigo-lt: #eef2ff;
+      --indigo-glow: #818cf8;
+      --emerald: #059669;
+      --emerald-lt: #ecfdf5;
+      --font-sans: "Hiragino Sans", "Hiragino Kaku Gothic ProN", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --font-mono: "Menlo", "SFMono-Regular", Consolas, monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      background: #060913;
+      font-family: var(--font-sans);
+      color: var(--ink);
+      overflow: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .stage {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .deck-viewport {
+      width: 1280px;
+      height: 720px;
+      position: relative;
+      transform-origin: center center;
+      box-shadow: 0 28px 80px rgba(0, 0, 0, 0.65);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      width: 1280px;
+      height: 720px;
+      background: var(--light-bg);
+      padding: 34px 62px 44px;
+      display: flex;
+      flex-direction: column;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(8px);
+      transition: opacity 0.26s ease, transform 0.26s ease;
+    }
+
+    .slide.active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+      z-index: 2;
+    }
+
+    .slide::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 5px;
+      background: linear-gradient(90deg, var(--cobalt), var(--cyan), var(--indigo));
+    }
+
+    .slide.dark {
+      background: var(--dark-bg);
+      color: var(--white);
+    }
+
+    /* Header & Footer */
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      align-self: flex-start;
+      padding: 4px 14px;
+      border-radius: 999px;
+      font-size: 11.5px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      background: var(--cobalt-lt);
+      color: var(--cobalt);
+      border: 1px solid var(--cobalt-bd);
+      margin-bottom: 10px;
+    }
+
+    .dark .eyebrow {
+      background: var(--dark-card);
+      color: var(--blue-glow);
+      border-color: var(--cobalt);
+    }
+
+    .slide-title {
+      font-size: 27px;
+      font-weight: 800;
+      color: var(--ink);
+      line-height: 1.25;
+      letter-spacing: -0.01em;
+      margin-bottom: 6px;
+    }
+
+    .slide-sub {
+      font-size: 14.5px;
+      color: var(--body);
+      line-height: 1.4;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 20px;
+    }
+
+    .slide-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 0;
+    }
+
+    .slide-footer {
+      margin-top: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11.5px;
+      color: var(--muted);
+    }
+
+    /* Cards & Helpers */
+    .card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px 20px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card-top-bar {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 5px;
+    }
+
+    .card-left-bar {
+      position: absolute;
+      top: 0; bottom: 0; left: 0;
+      width: 6px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3px 11px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .mono { font-family: var(--font-mono); }
+
+    ul.clean-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+    }
+
+    ul.clean-list li {
+      font-size: 13.2px;
+      line-height: 1.45;
+      color: var(--body);
+      padding-left: 16px;
+      position: relative;
+    }
+
+    ul.clean-list li::before {
+      content: "▸";
+      position: absolute;
+      left: 0;
+      color: var(--cobalt);
+      font-weight: 700;
+    }
+
+    /* Controls */
+    .hud {
+      position: fixed;
+      bottom: 16px;
+      right: 22px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(15, 23, 42, 0.88);
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      backdrop-filter: blur(10px);
+      padding: 6px 12px;
+      border-radius: 999px;
+      z-index: 50;
+      color: #e2e8f0;
+      font-size: 12px;
+    }
+
+    .hud button {
+      background: transparent;
+      border: none;
+      color: #e2e8f0;
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .hud button:hover { background: rgba(255, 255, 255, 0.12); }
+
+    .notes-drawer {
+      position: fixed;
+      left: 24px;
+      bottom: 16px;
+      max-width: 640px;
+      background: rgba(15, 23, 42, 0.94);
+      border: 1px solid var(--cobalt);
+      color: #e2e8f0;
+      padding: 12px 16px;
+      border-radius: 10px;
+      font-size: 12.5px;
+      line-height: 1.5;
+      z-index: 50;
+      display: none;
+    }
+
+    .notes-drawer.open { display: block; }
+
+    @media print {
+      @page { size: 1280px 720px; margin: 0; }
+      html, body { overflow: visible; height: auto; background: #fff; }
+      .stage { display: block; width: auto; height: auto; }
+      .deck-viewport { width: 1280px; height: auto; transform: none !important; box-shadow: none; border-radius: 0; }
+      .slide {
+        position: relative;
+        opacity: 1 !important;
+        pointer-events: auto !important;
+        transform: none !important;
+        page-break-after: always;
+        break-after: page;
+      }
+      .hud, .notes-drawer { display: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="stage">
+    <div class="deck-viewport" id="viewport">
+
+      <!-- SLIDE 01: COVER -->
+      <section class="slide dark active" data-notes="Google DeepMindが設計したエージェンティックAIアシスタント「Antigravity」の能力紹介スライドです。対話にとどまらず、計画・マルチエージェント協調・検証済み成果物の納品まで自走します。">
+        <div style="flex:1; display:grid; grid-template-columns: 1.18fr 0.92fr; align-items:center; gap:36px;">
+          <div>
+            <div class="eyebrow" style="margin-bottom:18px;">GOOGLE DEEPMIND · AGENTIC AI PLATFORM</div>
+            <h1 style="font-size:58px; font-weight:800; letter-spacing:-0.02em; margin-bottom:12px;">Antigravity</h1>
+            <p style="font-size:32px; font-weight:800; color:#e2e8f0; line-height:1.3; margin-bottom:22px;">
+              対話を超え、自律的に<br/>創り上げるAIパートナー
+            </p>
+            <p style="font-size:15.5px; color:var(--dark-muted); line-height:1.65; margin-bottom:30px;">
+              深い推論・マルチエージェント協調・実環境ツール実行を統合。<br/>
+              構想の整理から検証済みの成果物納品までを一気通貫で完遂します。
+            </p>
+            <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:34px;">
+              <span class="pill" style="background:var(--dark-card); color:var(--blue-glow); border:1px solid var(--dark-border); padding:7px 14px; font-size:12px;">Deep Thinking &amp; Plan</span>
+              <span class="pill" style="background:var(--dark-card); color:var(--cyan-glow); border:1px solid var(--dark-border); padding:7px 14px; font-size:12px;">Multi-Agent Swarm</span>
+              <span class="pill" style="background:var(--dark-card); color:var(--indigo-glow); border:1px solid var(--dark-border); padding:7px 14px; font-size:12px;">Verified Execution</span>
+            </div>
+            <div style="border-top:1px solid var(--dark-border); padding-top:14px; font-size:12.5px; color:var(--muted);">
+              Capability Overview Deck &nbsp;|&nbsp; Powered by Gemini &nbsp;·&nbsp; 01 / 10
+            </div>
+          </div>
+          <div style="display:flex; flex-direction:column; align-items:center;">
+            <img src="./assets/hero_antigravity.png" alt="Antigravity Geometric Hero" style="width:490px; height:490px; object-fit:contain; border-radius:16px;" />
+            <span class="pill" style="margin-top:10px; background:var(--dark-card); color:var(--dark-muted); border:1px solid var(--dark-border);">
+              Generated via Subagent: image-generator
+            </span>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 02: PARADIGM SHIFT -->
+      <section class="slide" data-notes="従来のチャット型AIとAntigravityの本質的な違いを4つの観点で対比し、中核となる3つの柱を示します。">
+        <div class="eyebrow">01 · PARADIGM SHIFT</div>
+        <h2 class="slide-title">「答えるAI」から、実環境で自走し「完遂するAI」への進化</h2>
+        <p class="slide-sub">テキスト断片を返す補助ツールではなく、計画・実行・自己検証までを一気通貫で担う自律型エージェントです。</p>
+        <div class="slide-body">
+          <div style="display:grid; grid-template-columns: 1fr 48px 1.04fr; align-items:stretch; gap:12px; height:292px;">
+            <div class="card" style="background:var(--slate-100); border-color:var(--border-strong);">
+              <div style="display:flex; align-items:center; gap:10px; margin-bottom:14px;">
+                <span class="pill" style="background:#fff; color:var(--muted); border:1px solid var(--border-strong);">従来のチャット型AI</span>
+                <span style="font-size:13px; font-weight:700; color:var(--muted);">人間が実行と検証を仲介</span>
+              </div>
+              <ul class="clean-list" style="gap:12px;">
+                <li style="color:var(--muted);"><strong>対話範囲：</strong>単発プロンプトに対するコード断片や助言の提示</li>
+                <li style="color:var(--muted);"><strong>実行検証：</strong>人間が手元でコピペ・コマンド実行・エラー修正を代行</li>
+                <li style="color:var(--muted);"><strong>処理規模：</strong>単一スレッドのため大規模調査で文脈が飽和しやすい</li>
+                <li style="color:var(--muted);"><strong>成果形態：</strong>チャット欄のテキスト回答にとどまり納品物化に手間</li>
+              </ul>
+            </div>
+            <div style="display:flex; align-items:center; justify-content:center;">
+              <div style="width:42px; height:42px; border-radius:999px; background:var(--cobalt); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:18px;">→</div>
+            </div>
+            <div class="card" style="border:2px solid var(--cobalt);">
+              <div style="display:flex; align-items:center; gap:10px; margin-bottom:14px;">
+                <span class="pill" style="background:var(--cobalt); color:#fff;">Antigravity（自律型）</span>
+                <span style="font-size:13px; font-weight:700; color:var(--cobalt);">構想から検証済み成果物まで自走</span>
+              </div>
+              <ul class="clean-list" style="gap:12px;">
+                <li><strong>対話範囲：</strong>リポジトリ全体・画像・PDF・Webを横断理解し直接編集</li>
+                <li><strong>実行検証：</strong>ビルド・自動テスト・視覚レンダリング確認まで自ら完遂</li>
+                <li><strong>処理規模：</strong>Subagent・Swarm・Python Workflowで並列分業</li>
+                <li><strong>成果形態：</strong>動作検証済みコード・設計書・PPTX/PDF等の実ファイルを納品</li>
+              </ul>
+            </div>
+          </div>
+
+          <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:18px; margin-top:18px;">
+            <div class="card" style="padding:16px 18px;">
+              <div class="card-top-bar" style="background:var(--cobalt);"></div>
+              <div style="font-size:15px; font-weight:800; margin-bottom:6px;">01 &nbsp;思考と構造化 (Think &amp; Plan)</div>
+              <p style="font-size:12.8px; color:var(--body); line-height:1.5;">Deep Thinkingで曖昧な課題を構造化し、着手前に筋の通った実行計画を策定。</p>
+            </div>
+            <div class="card" style="padding:16px 18px;">
+              <div class="card-top-bar" style="background:var(--cyan);"></div>
+              <div style="font-size:15px; font-weight:800; margin-bottom:6px;">02 &nbsp;実践と自己検証 (Act &amp; Verify)</div>
+              <p style="font-size:12.8px; color:var(--body); line-height:1.5;">マルチモーダル読解と並列ツール実行を組み合わせ、テストと目視検査で品質を担保。</p>
+            </div>
+            <div class="card" style="padding:16px 18px;">
+              <div class="card-top-bar" style="background:var(--indigo);"></div>
+              <div style="font-size:15px; font-weight:800; margin-bottom:6px;">03 &nbsp;協調と専門拡張 (Scale &amp; Adapt)</div>
+              <p style="font-size:12.8px; color:var(--body); line-height:1.5;">マルチエージェント編成とSkills / MCP連携により、組織・プロジェクト専用に進化。</p>
+            </div>
+          </div>
+        </div>
+        <div class="slide-footer">
+          <span>Google DeepMind · Antigravity Capability Overview</span>
+          <strong>02 / 10</strong>
+        </div>
+      </section>
+
+      <!-- SLIDE 03: AUTONOMOUS EXECUTION LOOP -->
+      <section class="slide" data-notes="Antigravityの基本動作サイクルです。ツール実行して終わりではなく、出力された成果物を自らテスト・目視確認してフィードバックを回します。">
+        <div class="eyebrow">02 · EXECUTION ENGINE</div>
+        <h2 class="slide-title">計画から自己検証までを閉ループで回し、手戻りのない品質を実現</h2>
+        <p class="slide-sub">毎ターン並列で情報収集・編集・検証を実行し、課題が見つかれば自ら原因を特定して修正します。</p>
+        <div class="slide-body" style="display:grid; grid-template-columns: 0.92fr 1.08fr; gap:22px; align-items:stretch;">
+          <div class="card" style="display:flex; align-items:center; justify-content:center; padding:10px;">
+            <img src="./assets/loop_diagram.png" alt="Closed-Loop Execution Diagram" style="max-width:100%; max-height:446px; object-fit:contain;" />
+          </div>
+          <div style="display:flex; flex-direction:column; justify-content:space-between; gap:12px;">
+            <div class="card" style="padding:14px 18px 14px 22px;">
+              <div class="card-left-bar" style="background:var(--cobalt);"></div>
+              <div style="display:flex; align-items:center; gap:10px; margin-bottom:5px;">
+                <span class="pill" style="background:var(--cobalt-lt); color:var(--cobalt);">STEP 01</span>
+                <strong style="font-size:15px;">マルチモーダル文脈理解</strong>
+              </div>
+              <p style="font-size:12.8px; color:var(--body); line-height:1.45;">コード全文検索に加え、画像・PDF・音声・動画・過去ログを直接読解し前提条件を正確に把握。</p>
+            </div>
+            <div class="card" style="padding:14px 18px 14px 22px;">
+              <div class="card-left-bar" style="background:var(--indigo);"></div>
+              <div style="display:flex; align-items:center; gap:10px; margin-bottom:5px;">
+                <span class="pill" style="background:var(--indigo-lt); color:var(--indigo);">STEP 02</span>
+                <strong style="font-size:15px;">戦略的プランニング &amp; 合意形成</strong>
+              </div>
+              <p style="font-size:12.8px; color:var(--body); line-height:1.45;">変更の影響範囲を事前設計。解釈が分かれる要件は構造化された選択肢（ask_question）で確認。</p>
+            </div>
+            <div class="card" style="padding:14px 18px 14px 22px;">
+              <div class="card-left-bar" style="background:var(--cyan);"></div>
+              <div style="display:flex; align-items:center; gap:10px; margin-bottom:5px;">
+                <span class="pill" style="background:var(--cyan-lt); color:var(--cyan);">STEP 03</span>
+                <strong style="font-size:15px;">高効率バッチ &amp; ツール実行</strong>
+              </div>
+              <p style="font-size:12.8px; color:var(--body); line-height:1.45;">複数ファイル同時編集・シェル実行・Web検索を1ターンに並列集約し、最小ステップで推進。</p>
+            </div>
+            <div class="card" style="padding:14px 18px 14px 22px;">
+              <div class="card-left-bar" style="background:var(--emerald);"></div>
+              <div style="display:flex; align-items:center; gap:10px; margin-bottom:5px;">
+                <span class="pill" style="background:var(--emerald-lt); color:var(--emerald);">STEP 04</span>
+                <strong style="font-size:15px;">実環境テスト &amp; 視覚レンダリング検証</strong>
+              </div>
+              <p style="font-size:12.8px; color:var(--body); line-height:1.45;">単体テストやビルド検証に加え、生成したPDFや画像を自ら読み直して崩れや不備を自己修復。</p>
+            </div>
+          </div>
+        </div>
+        <div class="slide-footer">
+          <span>Google DeepMind · Antigravity Capability Overview</span>
+          <strong>03 / 10</strong>
+        </div>
+      </section>
+
+      <!-- SLIDE 04: MULTI-AGENT ORCHESTRATION -->
+      <section class="slide" data-notes="Subagents・Swarm・Python Workflowの3つのマルチエージェント編成により、単一AIの限界を突破します。">
+        <div class="eyebrow">03 · MULTI-AGENT ORCHESTRATION</div>
+        <h2 class="slide-title">タスクの規模と性質に応じ、3つのマルチエージェント編成を使い分け</h2>
+        <p class="slide-sub">専門調査の委譲から複数ワーカーの同時開発、大規模な定型パイプラインまで柔軟にスケールします。</p>
+        <div class="slide-body" style="display:grid; grid-template-columns: repeat(3, 1fr); gap:20px;">
+          <div class="card" style="display:flex; flex-direction:column; justify-content:space-between;">
+            <div class="card-top-bar" style="background:var(--cobalt);"></div>
+            <div>
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                <strong style="font-size:16.5px;">Subagents</strong>
+                <span class="pill" style="background:var(--cobalt-lt); color:var(--cobalt); font-size:10px;">DELEGATION</span>
+              </div>
+              <img src="./assets/topo_subagent.png" alt="Subagent Topology" style="width:100%; height:146px; object-fit:contain; margin-bottom:10px;" />
+              <div class="pill" style="width:100%; background:var(--cobalt-lt); color:var(--cobalt); margin-bottom:12px;">専門分業：独立リサーチ・画像生成・個別検証</div>
+              <ul class="clean-list">
+                <li>research（読取専用）や image-generator 等の専門家を起動</li>
+                <li>カスタムSubagentを動的定義し繰り返し活用</li>
+                <li>大量の探索ログを分離し親の文脈をクリーンに維持</li>
+              </ul>
+            </div>
+            <div class="pill mono" style="width:100%; background:var(--ink); color:var(--cyan-glow); padding:8px; margin-top:12px;">invoke_subagent / define_subagent</div>
+          </div>
+
+          <div class="card" style="display:flex; flex-direction:column; justify-content:space-between;">
+            <div class="card-top-bar" style="background:var(--cyan);"></div>
+            <div>
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                <strong style="font-size:16.5px;">Native Swarm</strong>
+                <span class="pill" style="background:var(--cyan-lt); color:var(--cyan); font-size:10px;">COLLABORATION</span>
+              </div>
+              <img src="./assets/topo_swarm.png" alt="Swarm Topology" style="width:100%; height:146px; object-fit:contain; margin-bottom:10px;" />
+              <div class="pill" style="width:100%; background:var(--cyan-lt); color:var(--cyan); margin-bottom:12px;">協調チーム：複数機能の並列実装・相互レビュー</div>
+              <ul class="clean-list">
+                <li>共有メッセージボード上で複数ワーカーが自律連携</li>
+                <li>workspace: "share" | "branch" で作業コピーを分離</li>
+                <li>ファイル競合を起こさず同時ビルド・統合を実現</li>
+              </ul>
+            </div>
+            <div class="pill mono" style="width:100%; background:var(--ink); color:var(--cyan-glow); padding:8px; margin-top:12px;">swarm(action="add", workspace="share")</div>
+          </div>
+
+          <div class="card" style="display:flex; flex-direction:column; justify-content:space-between;">
+            <div class="card-top-bar" style="background:var(--indigo);"></div>
+            <div>
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                <strong style="font-size:16.5px;">Dynamic Workflow</strong>
+                <span class="pill" style="background:var(--indigo-lt); color:var(--indigo); font-size:10px;">ORCHESTRATION</span>
+              </div>
+              <img src="./assets/topo_workflow.png" alt="Workflow Topology" style="width:100%; height:146px; object-fit:contain; margin-bottom:10px;" />
+              <div class="pill" style="width:100%; background:var(--indigo-lt); color:var(--indigo); margin-bottom:12px;">コード制御：大規模分析・多段パイプライン</div>
+              <ul class="clean-list">
+                <li>Pythonスクリプトでエージェント制御ロジックを記述</li>
+                <li>parallel 並列展開と pipeline 直列ステージを自在に結合</li>
+                <li>JSON Schema検証により構造化データとして確実に集約</li>
+              </ul>
+            </div>
+            <div class="pill mono" style="width:100%; background:var(--ink); color:var(--cyan-glow); padding:8px; margin-top:12px;">run_workflow( parallel / pipeline )</div>
+          </div>
+        </div>
+        <div class="slide-footer">
+          <span>Google DeepMind · Antigravity Capability Overview</span>
+          <strong>04 / 10</strong>
+        </div>
+      </section>
+
+      <!-- SLIDE 05: FOUR UNIFIED SURFACES -->
+      <section class="slide" data-notes="Antigravity 2.0、IDE、CLI、Python SDKの4つのインターフェースが同一の頭脳を共有します。">
+        <div class="eyebrow">04 · UNIFIED SURFACES</div>
+        <h2 class="slide-title">デスクトップ・IDE・CLI・SDKの4環境で同一のエージェント基盤を共有</h2>
+        <p class="slide-sub">対話型の企画からインライン開発、ターミナル操作、業務パイプライン組込までシームレスに連携します。</p>
+        <div class="slide-body" style="display:grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap:18px;">
+          <div class="card">
+            <div class="card-top-bar" style="background:var(--cobalt);"></div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+              <strong style="font-size:17px;">Antigravity 2.0</strong>
+              <span class="pill" style="background:var(--cobalt-lt); color:var(--cobalt);">DESKTOP APP</span>
+            </div>
+            <p style="font-size:12.8px; font-weight:700; color:var(--cobalt); margin-bottom:10px;">IDEに依存せず複数プロジェクトとエージェント活動を統括するデスクトップ環境</p>
+            <ul class="clean-list" style="gap:6px;">
+              <li>@メンションや画像ドラッグ＆ドロップで文脈を直感的に添付</li>
+              <li>Subagents・非同期タスク・変更差分・Artifactsを専用ペインで可視化</li>
+              <li>Cron定期実行タスクやモデル・権限設定をGUIで一元管理</li>
+            </ul>
+          </div>
+
+          <div class="card">
+            <div class="card-top-bar" style="background:var(--cyan);"></div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+              <strong style="font-size:17px;">Antigravity IDE</strong>
+              <span class="pill" style="background:var(--cyan-lt); color:var(--cyan);">AI-FIRST EDITOR</span>
+            </div>
+            <p style="font-size:12.8px; font-weight:700; color:var(--cyan); margin-bottom:10px;">受動予測・局所指示・自律協調の3モーダルを統合したAIネイティブ開発環境</p>
+            <ul class="clean-list" style="gap:6px;">
+              <li>Antigravity Tab：次の一手・複数行差分・自動Import・ジャンプ先を予測</li>
+              <li>Inline (⌘+I) &amp; Code Lens：選択箇所の改修やテスト生成を即座に実行</li>
+              <li>Visual Diff &amp; Auto-Fix：赤緑差分レビューとLint/ビルドエラー自動修復</li>
+            </ul>
+          </div>
+
+          <div class="card">
+            <div class="card-top-bar" style="background:var(--ink);"></div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+              <strong style="font-size:17px;">Antigravity CLI (agy)</strong>
+              <span class="pill" style="background:var(--slate-100); color:var(--ink);">TERMINAL TUI</span>
+            </div>
+            <p style="font-size:12.8px; font-weight:700; color:var(--cobalt); margin-bottom:10px;">ターミナルから即起動し、開発リズムを止めず高速対話できる軽量TUI</p>
+            <ul class="clean-list" style="gap:6px;">
+              <li>/plan・/grill-me・/boost・/teamwork・/goal で専門モードを即時起動</li>
+              <li>~/.gemini/antigravity-cli/settings.json による柔軟な環境カスタマイズ</li>
+              <li>リモート作業やシェル中心のエンジニアリングフローと高い親和性</li>
+            </ul>
+          </div>
+
+          <div class="card">
+            <div class="card-top-bar" style="background:var(--indigo);"></div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+              <strong style="font-size:17px;">Antigravity Python SDK</strong>
+              <span class="pill" style="background:var(--indigo-lt); color:var(--indigo);">PROGRAMMATIC API</span>
+            </div>
+            <p style="font-size:12.8px; font-weight:700; color:var(--indigo); margin-bottom:10px;">pip install google-antigravity でCI/CDや社内基盤へ容易に組込</p>
+            <ul class="clean-list" style="gap:6px;">
+              <li>async with Agent(config) による簡潔な非同期ライフサイクル管理</li>
+              <li>response.thoughts（推論過程）と tool_calls（実行履歴）をリアルタイム取得</li>
+              <li>既定の読取専用セーフモードから書込ツール解禁までコードで厳密制御</li>
+            </ul>
+          </div>
+        </div>
+        <div class="slide-footer">
+          <span>Google DeepMind · Antigravity Capability Overview</span>
+          <strong>05 / 10</strong>
+        </div>
+      </section>
+
+      <!-- SLIDE 06: PROGRESSIVE CUSTOMIZATION -->
+      <section class="slide" data-notes="Rules, Skills, MCP, Hooks, Pluginsの5層構造と、トークン効率を最大化するProgressive Disclosure（段階的開示）を解説します。">
+        <div class="eyebrow">05 · CUSTOMIZATION &amp; ECOSYSTEM</div>
+        <h2 class="slide-title">5層の拡張システムにより、コンテキストを圧迫せず専門知を定着</h2>
+        <p class="slide-sub">組織の規約・業務手順・外部ツール接続を .agents/ 配下に定義し、チーム全体でバージョン管理できます。</p>
+        <div class="slide-body" style="display:grid; grid-template-columns: 1.55fr 1fr; gap:22px;">
+          <div style="display:flex; flex-direction:column; justify-content:space-between; gap:10px;">
+            <div class="card" style="padding:12px 18px 12px 22px; display:grid; grid-template-columns: 220px 1fr; align-items:center; gap:14px;">
+              <div class="card-left-bar" style="background:var(--cobalt);"></div>
+              <div>
+                <div style="font-weight:800; font-size:15px; margin-bottom:4px;">Rules</div>
+                <span class="pill mono" style="background:var(--cobalt-lt); color:var(--cobalt); font-size:10.5px;">GEMINI.md / AGENTS.md</span>
+              </div>
+              <p style="font-size:13px; color:var(--body);">階層ディレクトリ単位で規約・設計方針・制約を自動適用</p>
+            </div>
+            <div class="card" style="padding:12px 18px 12px 22px; display:grid; grid-template-columns: 220px 1fr; align-items:center; gap:14px;">
+              <div class="card-left-bar" style="background:var(--cyan);"></div>
+              <div>
+                <div style="font-weight:800; font-size:15px; margin-bottom:4px;">Skills</div>
+                <span class="pill mono" style="background:var(--cyan-lt); color:var(--cyan); font-size:10.5px;">skills/&lt;name&gt;/SKILL.md</span>
+              </div>
+              <p style="font-size:13px; color:var(--body);">専門ワークフロー・手順書・スクリプトを必要時のみ注入</p>
+            </div>
+            <div class="card" style="padding:12px 18px 12px 22px; display:grid; grid-template-columns: 220px 1fr; align-items:center; gap:14px;">
+              <div class="card-left-bar" style="background:var(--indigo);"></div>
+              <div>
+                <div style="font-weight:800; font-size:15px; margin-bottom:4px;">MCP Servers</div>
+                <span class="pill mono" style="background:var(--indigo-lt); color:var(--indigo); font-size:10.5px;">mcp_config.json</span>
+              </div>
+              <p style="font-size:13px; color:var(--body);">DB・社内API・外部SaaSをMCP標準プロトコルで接続</p>
+            </div>
+            <div class="card" style="padding:12px 18px 12px 22px; display:grid; grid-template-columns: 220px 1fr; align-items:center; gap:14px;">
+              <div class="card-left-bar" style="background:var(--emerald);"></div>
+              <div>
+                <div style="font-weight:800; font-size:15px; margin-bottom:4px;">Hooks</div>
+                <span class="pill mono" style="background:var(--emerald-lt); color:var(--emerald); font-size:10.5px;">hooks.json</span>
+              </div>
+              <p style="font-size:13px; color:var(--body);">ツール実行前後のライフサイクルで検証処理を自動実行</p>
+            </div>
+            <div class="card" style="padding:12px 18px 12px 22px; display:grid; grid-template-columns: 220px 1fr; align-items:center; gap:14px;">
+              <div class="card-left-bar" style="background:var(--body);"></div>
+              <div>
+                <div style="font-weight:800; font-size:15px; margin-bottom:4px;">Plugins</div>
+                <span class="pill mono" style="background:var(--slate-100); color:var(--body); font-size:10.5px;">plugins/&lt;name&gt;/plugin.json</span>
+              </div>
+              <p style="font-size:13px; color:var(--body);">関連するRules・Skills・MCP設定を単一バンドルで配布</p>
+            </div>
+          </div>
+
+          <div class="card" style="background:var(--dark-bg); border:2px solid var(--cobalt); color:#fff; display:flex; flex-direction:column; justify-content:space-between; padding:22px;">
+            <div>
+              <span class="pill" style="background:var(--dark-card); color:var(--blue-glow); border:1px solid var(--dark-border); margin-bottom:12px;">PROGRESSIVE DISCLOSURE</span>
+              <h3 style="font-size:18.5px; line-height:1.35; margin-bottom:16px;">段階的開示で「広い知識」と<br/>「軽いコンテキスト」を両立</h3>
+              <div style="background:var(--dark-card); border:1px solid var(--dark-border); border-radius:10px; padding:12px 14px; margin-bottom:10px;">
+                <div style="font-size:13px; font-weight:700; color:var(--blue-glow); margin-bottom:4px;">1. 常駐ロード（最小限の目次）</div>
+                <p style="font-size:12px; color:var(--dark-muted); line-height:1.45;">初期状態ではスキルの「名前と概要」のみを保持し、コンテキスト消費を極小化。</p>
+              </div>
+              <div style="text-align:center; color:var(--cyan-glow); font-size:12px; font-weight:700; margin:8px 0;">↓ タスクに関連すると判断した瞬間のみ起動</div>
+              <div style="background:var(--dark-card); border:1px solid var(--cobalt); border-radius:10px; padding:12px 14px;">
+                <div style="font-size:13px; font-weight:700; color:#fff; margin-bottom:4px;">2. オンデマンド展開（専門手順の注入）</div>
+                <p style="font-size:12px; color:var(--dark-muted); line-height:1.45;">SKILL.md 全文と参照ドキュメントを動的に読込み、深い専門手順を正確に遂行。</p>
+              </div>
+            </div>
+            <div style="font-size:11px; color:var(--muted); border-top:1px solid var(--dark-border); padding-top:10px;">
+              優先度：Workspace (.agents/) ＞ Global (~/.gemini/) ＞ Built-in
+            </div>
+          </div>
+        </div>
+        <div class="slide-footer">
+          <span>Google DeepMind · Antigravity Capability Overview</span>
+          <strong>06 / 10</strong>
+        </div>
+      </section>
+
+      <!-- SLIDE 07: MULTIMODAL DELIVERABLES -->
+      <section class="slide" data-notes="ソフトウェア開発だけでなく、Artifactsや画像・スライド生成まで実ファイルとして完遂します。本スライド自体がその実証です。">
+        <div class="eyebrow">06 · MULTIMODAL DELIVERABLES</div>
+        <h2 class="slide-title">コード実装から調査レポート・プレゼン資料まで「使える成果物」を直納</h2>
+        <p class="slide-sub">チャット上の助言にとどまらず、実務にそのまま投入できる完成ファイル群を一気通貫で生成します。</p>
+        <div class="slide-body">
+          <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:16px; height:278px;">
+            <div class="card">
+              <div class="card-top-bar" style="background:var(--cobalt);"></div>
+              <span class="pill" style="background:var(--cobalt-lt); color:var(--cobalt); margin-bottom:12px;">01 · ENGINEERING</span>
+              <h3 style="font-size:16px; margin-bottom:10px;">ソフトウェア設計・実装</h3>
+              <p style="font-size:13px; color:var(--body); line-height:1.55;">新機能開発、大規模リファクタリング、DB設計、自動テスト作成、ビルドエラー解析まで自律完遂。</p>
+            </div>
+            <div class="card">
+              <div class="card-top-bar" style="background:var(--indigo);"></div>
+              <span class="pill" style="background:var(--indigo-lt); color:var(--indigo); margin-bottom:12px;">02 · ARTIFACTS</span>
+              <h3 style="font-size:16px; margin-bottom:10px;">構造化技術ドキュメント</h3>
+              <p style="font-size:13px; color:var(--body); line-height:1.55;">Mermaid図解・カルーセル比較・GFMアラートを備えた設計書や調査書を生成し、承認UIと連携。</p>
+            </div>
+            <div class="card">
+              <div class="card-top-bar" style="background:var(--cyan);"></div>
+              <span class="pill" style="background:var(--cyan-lt); color:var(--cyan); margin-bottom:12px;">03 · VISUAL &amp; SLIDES</span>
+              <h3 style="font-size:16px; margin-bottom:10px;">画像生成・スライド制作</h3>
+              <p style="font-size:13px; color:var(--body); line-height:1.55;">Subagentによる画像生成とPython/HTML組版を統合し、PPTX・PDF・Webスライドを同時出力。</p>
+            </div>
+            <div class="card">
+              <div class="card-top-bar" style="background:var(--emerald);"></div>
+              <span class="pill" style="background:var(--emerald-lt); color:var(--emerald); margin-bottom:12px;">04 · ASYNC OPS</span>
+              <h3 style="font-size:16px; margin-bottom:10px;">非同期タスク・定期運用</h3>
+              <p style="font-size:13px; color:var(--body); line-height:1.55;">バックグラウンドプロセス管理やCron/タイマー（schedule）により、継続監視や定期集計を自動化。</p>
+            </div>
+          </div>
+
+          <div class="card" style="background:var(--dark-bg); border:1.5px solid var(--cobalt); color:#fff; padding:18px 22px;">
+            <div style="display:flex; align-items:center; gap:12px; margin-bottom:14px;">
+              <span class="pill" style="background:var(--cobalt); color:#fff;">LIVE PROOF</span>
+              <strong style="font-size:14.5px;">本プレゼン資料そのものが Antigravity の自律制作パイプラインの実証です</strong>
+            </div>
+            <div style="display:grid; grid-template-columns: repeat(5, 1fr); gap:10px;">
+              <div style="background:var(--dark-card); border:1px solid var(--dark-border); border-radius:8px; padding:10px; text-align:center;">
+                <div style="font-size:12.5px; font-weight:700; color:var(--cyan-glow); margin-bottom:4px;">1. 仕様リサーチ</div>
+                <div style="font-size:11px; color:var(--dark-muted);">内蔵Skill・公式仕様の読解</div>
+              </div>
+              <div style="background:var(--dark-card); border:1px solid var(--dark-border); border-radius:8px; padding:10px; text-align:center;">
+                <div style="font-size:12.5px; font-weight:700; color:var(--cyan-glow); margin-bottom:4px;">2. 構成・情報設計</div>
+                <div style="font-size:11px; color:var(--dark-muted);">10枚のストーリー設計</div>
+              </div>
+              <div style="background:var(--dark-card); border:1px solid var(--dark-border); border-radius:8px; padding:10px; text-align:center;">
+                <div style="font-size:12.5px; font-weight:700; color:var(--cyan-glow); margin-bottom:4px;">3. ビジュアル生成</div>
+                <div style="font-size:11px; color:var(--dark-muted);">Subagent画像＋高解像度図解</div>
+              </div>
+              <div style="background:var(--dark-card); border:1px solid var(--dark-border); border-radius:8px; padding:10px; text-align:center;">
+                <div style="font-size:12.5px; font-weight:700; color:var(--cyan-glow); margin-bottom:4px;">4. 3形式同時出力</div>
+                <div style="font-size:11px; color:var(--dark-muted);">PPTX / PDF / Web HTML</div>
+              </div>
+              <div style="background:var(--dark-card); border:1px solid var(--dark-border); border-radius:8px; padding:10px; text-align:center;">
+                <div style="font-size:12.5px; font-weight:700; color:var(--cyan-glow); margin-bottom:4px;">5. 全頁レンダリング検査</div>
+                <div style="font-size:11px; color:var(--dark-muted);">画像化・目視チェック完遂</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="slide-footer">
+          <span>Google DeepMind · Antigravity Capability Overview</span>
+          <strong>07 / 10</strong>
+        </div>
+      </section>
+
+      <!-- SLIDE 08: SECURITY & GOVERNANCE -->
+      <section class="slide" data-notes="自律型エージェントを業務導入する上で不可欠なサンドボックス、アクセス制御、行動ガードレールを説明します。">
+        <div class="eyebrow">07 · SECURITY &amp; GOVERNANCE</div>
+        <h2 class="slide-title">サンドボックス隔離・細粒度権限・行動規範で「安全な自律性」を担保</h2>
+        <p class="slide-sub">強力な実行能力を備えながら、組織のセキュリティ境界とガバナンスを厳格に遵守する多層防御設計です。</p>
+        <div class="slide-body">
+          <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:20px; height:312px;">
+            <div class="card">
+              <div class="card-top-bar" style="background:var(--emerald);"></div>
+              <span class="pill" style="background:var(--emerald-lt); color:var(--emerald); margin-bottom:12px;">EXECUTION SAFETY</span>
+              <h3 style="font-size:16.5px; margin-bottom:12px;">実行ポリシー &amp; サンドボックス</h3>
+              <ul class="clean-list">
+                <li>隔離環境で安全にコマンドを走らせる Terminal Sandbox を搭載</li>
+                <li>always-proceed / proceed-in-sandbox / request-review / strict を選択可能</li>
+                <li>リスクの高い操作に対して人間の事前承認フローを強制</li>
+              </ul>
+            </div>
+            <div class="card">
+              <div class="card-top-bar" style="background:var(--cobalt);"></div>
+              <span class="pill" style="background:var(--cobalt-lt); color:var(--cobalt); margin-bottom:12px;">ACCESS BOUNDARY</span>
+              <h3 style="font-size:16.5px; margin-bottom:12px;">細粒度のリソース・通信境界</h3>
+              <ul class="clean-list">
+                <li>ワークスペース外ファイルへのアクセス制御（allow / ask / deny）</li>
+                <li>外部インターネット通信の遮断・許可とURL単位の権限設定</li>
+                <li>実行コマンド及びブラウザ接続先ドメインの Allowlist / Denylist 管理</li>
+              </ul>
+            </div>
+            <div class="card">
+              <div class="card-top-bar" style="background:var(--indigo);"></div>
+              <span class="pill" style="background:var(--indigo-lt); color:var(--indigo); margin-bottom:12px;">BEHAVIORAL TRUST</span>
+              <h3 style="font-size:16.5px; margin-bottom:12px;">透明性と厳格な行動ガードレール</h3>
+              <ul class="clean-list">
+                <li>認証・権限チェック・プロキシ制限・環境境界のバイパスを厳禁</li>
+                <li>CAPTCHAや人間確認ゲートの不正突破を試みず、即座に停止して報告</li>
+                <li>全ターンの推論過程とツール実行ログをトランスクリプトとして監査可能</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="card" style="background:var(--cobalt-lt); border-color:var(--cobalt-bd); display:grid; grid-template-columns: 300px 1fr; align-items:center; gap:24px; padding:18px 24px;">
+            <div>
+              <span class="pill" style="background:var(--cobalt); color:#fff; margin-bottom:8px;">2-TIER POLICY HIERARCHY</span>
+              <div style="font-size:16px; font-weight:800; line-height:1.3;">Global Settings ×<br/>Project-Level Override</div>
+            </div>
+            <p style="font-size:13.5px; color:var(--body); line-height:1.6;">
+              全社共通の <strong>Global Settings</strong> をベースラインとして適用しつつ、機密性の高いリポジトリでは <strong>Project-Level Settings</strong>（ネットワーク遮断・Sandbox強制・プロジェクト限定の Permission Grants）で厳格に上書き制御できます。
+            </p>
+          </div>
+        </div>
+        <div class="slide-footer">
+          <span>Google DeepMind · Antigravity Capability Overview</span>
+          <strong>08 / 10</strong>
+        </div>
+      </section>
+
+      <!-- SLIDE 09: PRACTICAL PLAYBOOKS -->
+      <section class="slide" data-notes="導入直後から成果を出しやすい4つの実践シナリオと、推奨スラッシュコマンドの組み合わせです。">
+        <div class="eyebrow">08 · PRACTICAL PLAYBOOKS</div>
+        <h2 class="slide-title">目的に応じたスラッシュコマンドで、複雑な実務を初日から高速化</h2>
+        <p class="slide-sub">曖昧な構想の壁打ちから並列チーム開発、長時間タスクの完遂まで最適なワークフローを即座に起動できます。</p>
+        <div class="slide-body" style="display:grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap:18px;">
+          <div class="card" style="padding-left:24px;">
+            <div class="card-left-bar" style="background:var(--cobalt);"></div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+              <strong style="font-size:16.5px;">要件整理・アーキテクチャ設計</strong>
+              <span class="pill mono" style="background:var(--ink); color:var(--cyan-glow);">/grill-me · /plan</span>
+            </div>
+            <div class="pill" style="width:100%; justify-content:flex-start; background:var(--cobalt-lt); color:var(--cobalt); margin-bottom:10px;">対象課題：仕様が曖昧なまま着手して手戻りが発生する</div>
+            <p style="font-size:13.2px; color:var(--body); line-height:1.55;">対話型インタビューで設計判断の論点を洗い出し、実装着手前に精緻なステップ計画とMermaid図解付きの設計Artifactを合意。</p>
+          </div>
+
+          <div class="card" style="padding-left:24px;">
+            <div class="card-left-bar" style="background:var(--indigo);"></div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+              <strong style="font-size:16.5px;">高難度バグ解析・コア機能開発</strong>
+              <span class="pill mono" style="background:var(--ink); color:var(--cyan-glow);">/boost</span>
+            </div>
+            <div class="pill" style="width:100%; justify-content:flex-start; background:var(--indigo-lt); color:var(--indigo); margin-bottom:10px;">対象課題：複雑な依存関係や再現困難な不具合で調査が難航する</div>
+            <p style="font-size:13.2px; color:var(--body); line-height:1.55;">深い推論・多角的な仮説検証・厳密な自動テスト実行を組み合わせ、場当たり的な修正ではなく根本原因の解決と品質保証を完遂。</p>
+          </div>
+
+          <div class="card" style="padding-left:24px;">
+            <div class="card-left-bar" style="background:var(--cyan);"></div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+              <strong style="font-size:16.5px;">大規模改修・マルチモジュール開発</strong>
+              <span class="pill mono" style="background:var(--ink); color:var(--cyan-glow);">/teamwork</span>
+            </div>
+            <div class="pill" style="width:100%; justify-content:flex-start; background:var(--cyan-lt); color:var(--cyan); margin-bottom:10px;">対象課題：変更対象が多岐にわたり単一AIでは時間がかかる</div>
+            <p style="font-size:13.2px; color:var(--body); line-height:1.55;">自律エージェントのチーム（Swarm）を編成し、分離されたワークスペース上で各モジュールの実装・テスト・レビューを並列推進。</p>
+          </div>
+
+          <div class="card" style="padding-left:24px;">
+            <div class="card-left-bar" style="background:var(--emerald);"></div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+              <strong style="font-size:16.5px;">長期ゴール完遂 &amp; 定期モニタリング</strong>
+              <span class="pill mono" style="background:var(--ink); color:var(--cyan-glow);">/goal · /schedule</span>
+            </div>
+            <div class="pill" style="width:100%; justify-content:flex-start; background:var(--emerald-lt); color:var(--emerald); margin-bottom:10px;">対象課題：網羅的な長期作業や日々の定点チェックを自動化したい</div>
+            <p style="font-size:13.2px; color:var(--body); line-height:1.55;">ゴール基準を満たすまで粘り強く自走する長期実行モードや、Cronスケジュールによる定期チェック・レポート生成で運用負荷を削減。</p>
+          </div>
+        </div>
+        <div class="slide-footer">
+          <span>Google DeepMind · Antigravity Capability Overview</span>
+          <strong>09 / 10</strong>
+        </div>
+      </section>
+
+      <!-- SLIDE 10: CLOSING -->
+      <section class="slide dark" data-notes="まとめスライドです。まずは /plan や /grill-me で壁打ちから始め、/boost や /teamwork で実装を加速し、SKILL.md に知見を蓄積していく流れを推奨します。">
+        <div style="flex:1; display:grid; grid-template-columns: 1.32fr 0.78fr; align-items:center; gap:36px;">
+          <div>
+            <div class="eyebrow" style="margin-bottom:18px;">READY TO COLLABORATE</div>
+            <h2 style="font-size:38px; font-weight:800; line-height:1.3; margin-bottom:18px;">
+              構想を伝えるだけで、<br/>思考・実装・検証が加速する。
+            </h2>
+            <p style="font-size:15px; color:var(--dark-muted); line-height:1.65; margin-bottom:28px;">
+              Antigravity は、あなたの意図を深く理解し、検証済みの成果物まで走り切るパートナーです。<br/>
+              まずは目の前の1タスクから、自律型AIとの新しい協働を始めましょう。
+            </p>
+            <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:14px; margin-bottom:26px;">
+              <div style="background:var(--dark-card); border:1px solid var(--dark-border); border-radius:12px; padding:16px;">
+                <div style="font-size:11.5px; font-weight:800; color:var(--blue-glow); margin-bottom:6px;">STEP 01</div>
+                <div style="font-size:15px; font-weight:700; margin-bottom:6px;">目的と前提を共有</div>
+                <p style="font-size:12px; color:var(--dark-muted); line-height:1.5;">/grill-me や /plan で設計の論点をすり合わせ</p>
+              </div>
+              <div style="background:var(--dark-card); border:1px solid var(--dark-border); border-radius:12px; padding:16px;">
+                <div style="font-size:11.5px; font-weight:800; color:var(--cyan-glow); margin-bottom:6px;">STEP 02</div>
+                <div style="font-size:15px; font-weight:700; margin-bottom:6px;">自律実行へ委任</div>
+                <p style="font-size:12px; color:var(--dark-muted); line-height:1.5;">/boost や /teamwork で実装から検証まで一気通貫</p>
+              </div>
+              <div style="background:var(--dark-card); border:1px solid var(--dark-border); border-radius:12px; padding:16px;">
+                <div style="font-size:11.5px; font-weight:800; color:var(--indigo-glow); margin-bottom:6px;">STEP 03</div>
+                <div style="font-size:15px; font-weight:700; margin-bottom:6px;">知見をチーム資産化</div>
+                <p style="font-size:12px; color:var(--dark-muted); line-height:1.5;">/learn や SKILL.md でプロジェクト標準として定着</p>
+              </div>
+            </div>
+            <div class="pill" style="background:var(--dark-card); color:var(--dark-muted); border:1px solid var(--dark-border); padding:9px 18px; font-size:12px;">
+              Delivered Formats: &nbsp; slides.pptx (Editable) &nbsp;·&nbsp; slides.pdf (Print/Share) &nbsp;·&nbsp; slides.html (Web)
+            </div>
+          </div>
+
+          <div style="display:flex; flex-direction:column; align-items:center;">
+            <img src="./assets/hero_antigravity.png" alt="Antigravity Artwork" style="width:360px; height:360px; object-fit:contain; margin-bottom:14px;" />
+            <div style="width:100%; background:var(--dark-card); border:1.5px solid var(--cobalt); border-radius:12px; padding:16px; text-align:center;">
+              <div style="font-size:16px; font-weight:800; margin-bottom:4px;">Google DeepMind · Antigravity</div>
+              <div style="font-size:12.5px; color:var(--blue-glow);">Beyond Chat, Into Autonomous Creation &nbsp;·&nbsp; 10 / 10</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <div class="notes-drawer" id="notesDrawer"></div>
+
+  <div class="hud">
+    <button id="prevBtn" title="Previous Slide (←)">◀</button>
+    <span id="counter">01 / 10</span>
+    <button id="nextBtn" title="Next Slide (→)">▶</button>
+    <span style="opacity:0.35;">|</span>
+    <button id="notesBtn" title="Toggle Speaker Notes (N)">Notes</button>
+    <button id="fsBtn" title="Fullscreen (F)">⛶</button>
+  </div>
+
+  <script>
+    const slides = Array.from(document.querySelectorAll('.slide'));
+    const counter = document.getElementById('counter');
+    const notesDrawer = document.getElementById('notesDrawer');
+    const viewport = document.getElementById('viewport');
+    let idx = 0;
+
+    function fitViewport() {
+      const scale = Math.min(window.innerWidth / 1320, window.innerHeight / 760);
+      viewport.style.transform = `scale(${Math.max(0.3, scale)})`;
+    }
+
+    function show(n) {
+      idx = (n + slides.length) % slides.length;
+      slides.forEach((s, i) => s.classList.toggle('active', i === idx));
+      counter.textContent = `${String(idx + 1).padStart(2, '0')} / ${slides.length}`;
+      notesDrawer.textContent = slides[idx].dataset.notes || '';
+    }
+
+    document.getElementById('prevBtn').onclick = () => show(idx - 1);
+    document.getElementById('nextBtn').onclick = () => show(idx + 1);
+    document.getElementById('notesBtn').onclick = () => notesDrawer.classList.toggle('open');
+    document.getElementById('fsBtn').onclick = () => {
+      if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+      else document.exitFullscreen();
+    };
+
+    window.addEventListener('keydown', (e) => {
+      if (['ArrowRight', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); show(idx + 1); }
+      if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); show(idx - 1); }
+      if (e.key === 'Home') show(0);
+      if (e.key === 'End') show(slides.length - 1);
+      if (e.key.toLowerCase() === 'n') notesDrawer.classList.toggle('open');
+      if (e.key.toLowerCase() === 'f') document.getElementById('fsBtn').click();
+    });
+
+    window.addEventListener('resize', fitViewport);
+    fitViewport();
+    show(0);
+  </script>
+</body>
+</html>

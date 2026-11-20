@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>軽トラ限界引っ越し 〜積んで・走って・きっちり精算！〜</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div id="app">
+    <!-- Fullscreen 2D Physics & Scenery Canvas -->
+    <canvas id="gameCanvas"></canvas>
+
+    <!-- Global Top Utility Bar -->
+    <header id="topBar" class="hud-panel hidden">
+      <div class="topbar-left">
+        <button id="btnBackToTitle" class="btn btn-ghost btn-sm" title="依頼選択に戻る">🏠 依頼一覧</button>
+        <div class="stage-pill">
+          <span id="hudStageCode" class="stage-code">STAGE 01</span>
+          <span id="hudStageName" class="stage-name">新生活！下町ワンルーム引越</span>
+        </div>
+      </div>
+
+      <!-- Course Progress (Visible during DRIVING) -->
+      <div id="driveProgressWrap" class="progress-wrap hidden">
+        <div class="progress-labels">
+          <span>営業所</span>
+          <span id="hudDistanceText">残り 125m</span>
+          <span>🏁新居</span>
+        </div>
+        <div class="progress-track">
+          <div id="hudProgressFill" class="progress-fill"></div>
+          <div id="hudProgressTruck" class="progress-truck">🚚</div>
+        </div>
+      </div>
+
+      <div class="topbar-right">
+        <button id="btnQuickRetryDrive" class="btn btn-ghost btn-sm hidden" title="同じ積み方で最初から走り直す">🔄 再走行</button>
+        <button id="btnBackToLoad" class="btn btn-ghost btn-sm hidden" title="積み込み画面に戻って手直しする">📦 積み直し</button>
+        <button id="btnHelpToggle" class="btn btn-ghost btn-sm" title="遊び方ヒント">❓ コツ</button>
+        <button id="btnAudioToggle" class="btn btn-ghost btn-sm" title="サウンド切替">🔊 音ON</button>
+      </div>
+    </header>
+
+    <!-- ==================== PHASE 0: TITLE & STAGE SELECT ==================== -->
+    <section id="titleScreen" class="overlay-screen">
+      <div class="title-container">
+        <div class="title-hero">
+          <div class="company-ribbon">有限会社 限界引越センター 配車係</div>
+          <h1 class="game-title">軽トラ<span>限界</span>引っ越し</h1>
+          <p class="game-subtitle">荷台にパズル積み！段差コースを慎重ドライブ！壊せば弁償、届けりゃ大儲け！</p>
+        </div>
+
+        <div class="how-to-strip">
+          <div class="howto-step">
+            <span class="step-num">1</span>
+            <div>
+              <strong>戦略的に積み込む</strong>
+              <p>重い家電は下＆前寄りへ！ふとん袋やソファの上にワレモノを乗せてロープで固定！</p>
+            </div>
+          </div>
+          <div class="howto-step">
+            <span class="step-num">2</span>
+            <div>
+              <strong>段差・急坂を走る</strong>
+              <p>標識を見て段差の手前でブレーキ減速！無謀な全開走行は荷崩れの大惨事に！</p>
+            </div>
+          </div>
+          <div class="howto-step">
+            <span class="step-num">3</span>
+            <div>
+              <strong>到着＆シビアな精算</strong>
+              <p>全荷物一発＆無傷なら高額ボーナス！落下・破損は報酬から弁償引き！</p>
+            </div>
+          </div>
+        </div>
+
+        <div id="stageCardsGrid" class="stage-grid">
+          <!-- Populated dynamically from GameData.STAGES -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== PHASE 1: LOADING UI ==================== -->
+    <section id="loadingUI" class="phase-ui hidden">
+      <!-- Packing Metrics & Controls Card -->
+      <div class="loading-side-panel">
+        <div class="metrics-card">
+          <div class="metrics-header">
+            <span>⚖️ 積載バランス診断</span>
+            <strong id="loadCountBadge">0 / 6 個</strong>
+          </div>
+          <div class="stability-meter-row">
+            <div class="stability-bar-bg">
+              <div id="stabilityBarFill" class="stability-bar-fill"></div>
+            </div>
+            <span id="stabilityScoreText" class="stability-score">--</span>
+          </div>
+          <div id="stabilityLabel" class="stability-status">下の荷物を選んで荷台へ積もう</div>
+          <div class="metrics-subrow">
+            <span>総重量: <strong id="totalMassText">0 kg</strong></span>
+            <span>最大報酬目安: <strong id="maxPayoutPreview">¥0</strong></span>
+          </div>
+        </div>
+
+        <!-- Manipulation Toolbar -->
+        <div class="load-toolbar">
+          <button id="btnRotateLeft" class="btn btn-tool" title="左へ90°回転 (Rキー)">↺ 90°回転 <kbd>R</kbd></button>
+          <button id="btnRotateFine" class="btn btn-tool" title="15°ずつ傾ける (Eキー)">↻ 微調整 <kbd>E</kbd></button>
+          <button id="btnRopeMode" class="btn btn-tool btn-rope" title="荷締めロープを張る">
+            🪢 ロープ <span id="ropeCountBadge">0/2</span>
+          </button>
+          <button id="btnAutoRope" class="btn btn-tool" title="荷山全体にロープを1本自動で掛ける">⚡ 簡単ロープ</button>
+          <button id="btnClearRopes" class="btn btn-tool btn-sm-txt hidden">ロープ解除</button>
+          <button id="btnResetLoad" class="btn btn-tool btn-danger-soft" title="全ての荷物を荷台から下ろす">🗑 全おろし</button>
+        </div>
+
+        <!-- Selected / Hovered Item Hint -->
+        <div id="itemHintBox" class="item-hint-box">
+          💡 <strong>操作方法：</strong>下の荷物カードを荷台の枠内へ<strong>ドラッグ</strong>（またはクリックで掴んでクリック配置）。荷台の上の荷物も掴んで積み直せます！
+        </div>
+      </div>
+
+      <!-- Bottom Cargo Manifest Tray & Big Start Button -->
+      <div class="cargo-dock-bar">
+        <div class="dock-header-col">
+          <div class="dock-title">📦 ご依頼の荷物一覧</div>
+          <div class="dock-sub">クリックかドラッグで積載</div>
+        </div>
+        <div id="cargoCardsList" class="cargo-cards-scroll">
+          <!-- Populated dynamically -->
+        </div>
+        <div class="depart-col">
+          <button id="btnStartDrive" class="btn btn-depart" disabled>
+            <span class="depart-main">🚚 出発進行！</span>
+            <span id="departSubText" class="depart-sub">荷物を1つ以上積もう</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Left-behind Confirmation Modal -->
+      <div id="leftBehindModal" class="mini-modal hidden">
+        <div class="mini-modal-box">
+          <h3>⚠ 積み残しの荷物があります！</h3>
+          <p id="leftBehindModalText">まだ積んでいない荷物には「別便手配料」が精算時に差し引かれます。このまま出発しますか？</p>
+          <div class="mini-modal-actions">
+            <button id="btnCancelDepart" class="btn btn-secondary">戻って全部積む</button>
+            <button id="btnConfirmDepart" class="btn btn-depart-sm">このまま出発！</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== PHASE 2: DRIVING UI ==================== -->
+    <section id="drivingUI" class="phase-ui hidden">
+      <!-- Live Telemetry & Estimated Settlement -->
+      <div class="driving-telemetry">
+        <div class="telemetry-box">
+          <span class="tele-label">速度</span>
+          <strong id="hudSpeed" class="tele-val">0 <small>km/h</small></strong>
+        </div>
+        <div class="telemetry-box">
+          <span class="tele-label">走行タイム</span>
+          <strong id="hudTimer" class="tele-val">0.0<small>s</small></strong>
+          <span id="hudTargetTime" class="tele-sub">目標 28s</span>
+        </div>
+        <div class="telemetry-box tele-payout">
+          <span class="tele-label">見込み精算額</span>
+          <strong id="hudLivePayout" class="tele-val">¥54,500</strong>
+        </div>
+      </div>
+
+      <!-- Live Cargo Condition Pills -->
+      <div id="drivingCargoStrip" class="driving-cargo-strip">
+        <!-- Live mini HP pills -->
+      </div>
+
+      <!-- Emergency Upright Button (only shown if truck flips/stalls badly) -->
+      <button id="btnEmergencyRecover" class="btn btn-emergency hidden">
+        🔧 レッカー車体起こし (-¥5,000)
+      </button>
+
+      <!-- Touch / Mouse Pedals & Keyboard Guide -->
+      <div class="driving-controls-bar">
+        <div class="pedal-group">
+          <button id="pedalBrake" class="pedal pedal-brake">
+            <span class="pedal-icon">◀</span>
+            <div>
+              <strong>ブレーキ / バック</strong>
+              <small>← または A キー</small>
+            </div>
+          </button>
+          <button id="pedalHandbrake" class="pedal pedal-handbrake">
+            <strong>停車固定</strong>
+            <small>Space</small>
+          </button>
+        </div>
+
+        <div class="drive-tip-pill">
+          ⚠ 段差・橋・急坂の手前ではアクセルを離してゆっくり通過しよう！
+        </div>
+
+        <div class="pedal-group">
+          <button id="pedalGas" class="pedal pedal-gas">
+            <div>
+              <strong>アクセル（前進）</strong>
+              <small>→ または D キー</small>
+            </div>
+            <span class="pedal-icon">▶</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Arrival Celebration Banner -->
+    <div id="goalBanner" class="goal-banner hidden">
+      <div class="goal-banner-inner">
+        <span class="goal-flag">🏁</span>
+        <div>
+          <h2>新居に到着〜！！オーライ！</h2>
+          <p>荷物の検品と最終精算を行います…</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== PHASE 3: SETTLEMENT RECEIPT ==================== -->
+    <section id="settlementScreen" class="overlay-screen hidden">
+      <div class="invoice-paper">
+        <!-- Red Hanko Evaluation Stamp -->
+        <div id="invoiceStamp" class="hanko-stamp rank-s">
+          <span id="stampRankChar" class="stamp-char">S</span>
+          <span id="stampRankSub" class="stamp-sub">引越王</span>
+        </div>
+
+        <div class="invoice-header">
+          <div>
+            <div class="invoice-doc-type">引越完了報告書 兼 御精算書</div>
+            <h2 id="invStageName" class="invoice-title">新生活！下町ワンルーム引越</h2>
+            <div id="invClientName" class="invoice-client">ご依頼主：春野さん 様</div>
+          </div>
+          <div class="invoice-meta">
+            <div>走行タイム：<strong id="invTimeText">20.9秒</strong> <span id="invTargetText">(目標 28秒)</span></div>
+            <div>お届け荷物：<strong id="invDeliveredCount">6 / 6 個</strong></div>
+          </div>
+        </div>
+
+        <div class="invoice-table-wrap">
+          <table class="invoice-table">
+            <thead>
+              <tr>
+                <th>お荷物名</th>
+                <th>到着時の状態</th>
+                <th class="num-col">運搬報酬</th>
+                <th class="num-col">弁償・差引</th>
+                <th class="num-col">小計</th>
+              </tr>
+            </thead>
+            <tbody id="invItemsBody">
+              <!-- Itemized rows -->
+            </tbody>
+          </table>
+        </div>
+
+        <div class="invoice-summary-grid">
+          <!-- Packing & Driving Diagnosis -->
+          <div class="diagnosis-box">
+            <h4>📋 配車係からの積み方・走行診断</h4>
+            <ul id="invCommentsList"></ul>
+          </div>
+
+          <!-- Financial Totals -->
+          <div class="totals-box">
+            <div class="total-row">
+              <span>基本契約料金</span>
+              <strong id="invBaseFee">¥15,000</strong>
+            </div>
+            <div class="total-row">
+              <span>荷物運搬報酬 計</span>
+              <strong id="invCargoFee">¥33,500</strong>
+            </div>
+            <div id="invAllBonusRow" class="total-row bonus-row">
+              <span>★ 一発完遂ボーナス</span>
+              <strong id="invAllBonus">+¥8,000</strong>
+            </div>
+            <div id="invPerfectBonusRow" class="total-row bonus-row">
+              <span>★ 無傷プロ職人ボーナス</span>
+              <strong id="invPerfectBonus">+¥6,000</strong>
+            </div>
+            <div class="total-row">
+              <span id="invTimeBonusLabel">早着タイムボーナス</span>
+              <strong id="invTimeBonus">+¥1,400</strong>
+            </div>
+            <div id="invDeductionRow" class="total-row deduct-row">
+              <span>破損弁償・別便手配等 差引</span>
+              <strong id="invDeductions">-¥0</strong>
+            </div>
+            <div class="grand-total-row">
+              <div>
+                <span class="grand-label">最終手取り精算額</span>
+                <span id="invRankTitle" class="grand-rank-title">伝説の軽トラ引越王</span>
+              </div>
+              <strong id="invFinalPayout" class="grand-amount">¥63,900</strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="invoice-actions">
+          <button id="btnSettleToTitle" class="btn btn-secondary">🏠 依頼選択へ</button>
+          <button id="btnSettleRepack" class="btn btn-secondary">📦 積み込みを手直し</button>
+          <button id="btnSettleRetryDrive" class="btn btn-secondary">🔄 同じ積み方で再走行</button>
+          <button id="btnSettleNextStage" class="btn btn-depart-sm">🚚 次の依頼へ進む ▶</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tips / Help Modal -->
+    <div id="helpModal" class="mini-modal hidden">
+      <div class="mini-modal-box help-box">
+        <h3>🚚 軽トラ限界引っ越し プロの極意</h3>
+        <ul class="help-list">
+          <li><strong>重い家電は「床・前寄り」へ：</strong>洗濯機(54kg)や冷蔵庫(48kg)を上に積むと高重心になり、坂道や段差で後ろへひっくり返ります！鳥居（前の壁）に寄せるか横に寝かせると抜群に安定します。</li>
+          <li><strong>ふとん袋＆L字ソファは神クッション：</strong>液晶テレビ・食器箱・骨董の壺は、ふとん袋の上やL字ソファの座面に乗せると衝撃ダメージを最大65%吸収します！</li>
+          <li><strong>「上積み厳禁」と「天地無用↑」：</strong>食器箱やテレビの上に重い家電を乗せると重みで潰れます。観葉植物や壺は横に倒すとダメージを受けるので真っ直ぐ立てましょう。</li>
+          <li><strong>荷締めロープを活用：</strong>「⚡簡単ロープ」または「🪢ロープ」で黄色いフックを2つ繋ぐと、段差での飛び出しを強力に抑えます！</li>
+        </ul>
+        <div class="mini-modal-actions">
+          <button id="btnCloseHelp" class="btn btn-depart-sm">わかった！</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Floating Toast Notification -->
+    <div id="toastContainer" class="toast-container"></div>
+  </div>
+
+  <!-- Local Self-Contained Scripts (Works on both file:// and http://) -->
+  <script src="./vendor/planck.min.js"></script>
+  <script src="./js/data.js"></script>
+  <script src="./js/physics.js"></script>
+  <script src="./js/audio.js"></script>
+  <script src="./js/renderer.js"></script>
+  <script src="./js/game.js"></script>
+</body>
+</html>

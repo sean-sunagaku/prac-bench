@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>軽トラ限界引っ越し</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='12' fill='%23e65c32'/><text x='32' y='44' font-size='36' text-anchor='middle'>🚚</text></svg>" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="app">
+    <div id="canvas-wrap">
+      <canvas id="game-canvas"></canvas>
+
+      <div id="drive-toast" class="drive-toast hidden"></div>
+
+      <!-- Loading Phase HUD -->
+      <div id="hud-loading" class="hud hidden">
+        <div class="top-bar loading-top">
+          <div class="bar-group left">
+            <button id="btn-back-title" class="btn btn-ghost btn-sm" title="案件選択に戻る">◀ 案件一覧</button>
+            <div class="stage-pill">
+              <span id="load-stage-code" class="badge-code">STAGE 1</span>
+              <span id="load-stage-title" class="stage-name">となりの町へ</span>
+            </div>
+            <div class="stat-chips">
+              <span class="chip">積載 <strong id="stat-count">0/8</strong></span>
+              <span class="chip">総重量 <strong id="stat-weight">0kg</strong></span>
+              <span class="chip chip-yen">予定額 <strong id="stat-value">¥0</strong></span>
+              <span class="chip" id="stat-balance-chip">バランス <strong id="stat-balance">良好</strong></span>
+            </div>
+          </div>
+          <div class="bar-group right">
+            <button id="btn-rotate" class="btn btn-secondary btn-sm" title="持っている荷物を90度回転 (Rキー / 右クリック)">↻ 回転 [R]</button>
+            <button id="btn-rope-mode" class="btn btn-rope btn-sm" title="荷台フックと荷物をロープで固定">🪢 ロープ縛り (<span id="rope-left">2</span>)</button>
+            <button id="btn-undo" class="btn btn-secondary btn-sm" title="最後に積んだ荷物を戻す">↩ 戻す</button>
+            <button id="btn-clear" class="btn btn-secondary btn-sm" title="荷台を空にする">全降ろし</button>
+            <button id="btn-mute-load" class="btn btn-ghost btn-sm icon-btn" title="サウンド切替">🔊</button>
+            <button id="btn-depart" class="btn btn-go" disabled>🚚 出発する！</button>
+          </div>
+        </div>
+
+        <div id="load-tip-bar" class="tip-bar">
+          <span id="load-tip-text">下の荷物をドラッグ（またはクリック）して軽トラの荷台に積もう！ Rキー／右クリックで90°回転できます。</span>
+        </div>
+
+        <div id="cargo-dock-wrap" class="dock-wrap">
+          <div id="dock-unload-hint" class="dock-unload-hint hidden">ここにドロップすると荷台から降ろせます</div>
+          <div id="cargo-dock" class="cargo-dock"></div>
+        </div>
+      </div>
+
+      <!-- Driving Phase HUD -->
+      <div id="hud-driving" class="hud hidden">
+        <div class="top-bar drive-top">
+          <div class="drive-progress-panel">
+            <div class="progress-meta">
+              <span id="drive-stage-name" class="drive-stage-name">STAGE 1 となりの町へ</span>
+              <span id="drive-dist-text" class="drive-dist">0m / 360m</span>
+              <span id="drive-timer" class="drive-timer">⏱ 01:15</span>
+            </div>
+            <canvas id="course-minimap" class="course-minimap" width="440" height="28"></canvas>
+            <div class="progress-track">
+              <div id="drive-progress-fill" class="progress-fill"></div>
+              <div id="drive-truck-marker" class="progress-truck">🚚</div>
+              <div class="progress-goal">🏡</div>
+            </div>
+          </div>
+
+          <div class="drive-status-panel">
+            <div class="drive-cargo-counts">
+              <span class="dc-pill ok">無傷 <strong id="dc-intact">0</strong></span>
+              <span class="dc-pill warn">破損 <strong id="dc-damaged">0</strong></span>
+              <span class="dc-pill bad">大破/落下 <strong id="dc-lost">0</strong></span>
+            </div>
+            <div class="drive-est-yen">予想精算 <strong id="drive-est-val">¥0</strong></div>
+            <button id="btn-retry-load" class="btn btn-secondary btn-sm" title="積み込み画面に戻ってやり直す">↻ 積み直す</button>
+            <button id="btn-mute-drive" class="btn btn-ghost btn-sm icon-btn" title="サウンド切替">🔊</button>
+          </div>
+        </div>
+
+        <div class="drive-bottom">
+          <div class="speed-cluster">
+            <div class="speedo">
+              <span id="drive-speed" class="speed-num">0</span>
+              <span class="speed-unit">km/h</span>
+            </div>
+            <div class="key-hint">操作: <strong>A / ←</strong> ブレーキ・バック ｜ <strong>D / →</strong> アクセル ｜ <strong>Space</strong> ホーン</div>
+          </div>
+
+          <div class="pedal-cluster">
+            <button id="pedal-brake" class="pedal pedal-brake" type="button">
+              <span class="pedal-main">◀ ブレーキ / バック</span>
+              <span class="pedal-sub">A / ←</span>
+            </button>
+            <button id="pedal-horn" class="pedal pedal-horn" type="button" title="クラクション (Space)">📯</button>
+            <button id="pedal-gas" class="pedal pedal-gas" type="button">
+              <span class="pedal-main">アクセル ▶</span>
+              <span class="pedal-sub">D / →</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Title & Stage Select Overlay -->
+      <div id="screen-title" class="overlay-screen">
+        <div class="title-card">
+          <div class="title-ribbon">安全運転・積載限界チャレンジ</div>
+          <h1 class="game-title">軽トラ限界引っ越し</h1>
+          <p class="game-lead">
+            荷台に家具を限界まで積み込み、段差だらけの街を走り抜けて新居へ届けろ！<br />
+            積み方とバランス、そして運転テクが最後の<strong>引っ越し精算額</strong>を左右する！
+          </p>
+
+          <div class="howto-strip">
+            <div class="howto-step">
+              <span class="step-num">1</span>
+              <div><strong>積む＆縛る</strong><br />重い物は下・前寄りに。ロープで固定！</div>
+            </div>
+            <div class="howto-arrow">▶</div>
+            <div class="howto-step">
+              <span class="step-num">2</span>
+              <div><strong>段差を走る</strong><br />踏切や急坂は減速！急ブレーキ注意</div>
+            </div>
+            <div class="howto-arrow">▶</div>
+            <div class="howto-step">
+              <span class="step-num">3</span>
+              <div><strong>ゴールで精算</strong><br />破損・落下は弁償…無傷完納を狙え！</div>
+            </div>
+          </div>
+
+          <div id="stage-cards" class="stage-cards"></div>
+        </div>
+      </div>
+
+      <!-- Settlement Receipt Overlay -->
+      <div id="screen-settlement" class="overlay-screen hidden">
+        <div class="receipt-card">
+          <div class="receipt-header">
+            <div>
+              <div class="receipt-sub">KEITORA GENKAI HIKKOSHI</div>
+              <h2 class="receipt-title">引っ越し精算書</h2>
+              <div id="settle-stage-label" class="receipt-stage">STAGE 1 となりの町へ</div>
+              <div id="settle-rank-title" class="receipt-rank-title">神業軽トラ職人</div>
+            </div>
+            <div id="settle-rank-stamp" class="rank-stamp rank-S">
+              <span id="settle-rank-letter" class="rank-letter">S</span>
+              <span id="settle-rank-sub" class="rank-sub">神業職人</span>
+            </div>
+          </div>
+
+          <div id="settle-comment" class="customer-quote">「素晴らしい仕事でした！」</div>
+
+          <div class="receipt-body">
+            <div class="receipt-items-head">
+              <span>荷物明細</span>
+              <span>状態</span>
+              <span>精算額</span>
+            </div>
+            <div id="settle-item-list" class="receipt-item-list"></div>
+          </div>
+
+          <div id="settle-summary" class="receipt-summary"></div>
+
+          <div class="receipt-total-bar">
+            <span>最終精算額</span>
+            <strong id="settle-final-total" class="final-yen">¥0</strong>
+          </div>
+
+          <div class="receipt-actions">
+            <button id="btn-settle-retry" class="btn btn-secondary">↻ 同じ案件で積み直す</button>
+            <button id="btn-settle-next" class="btn btn-go">次の案件へ ▶</button>
+            <button id="btn-settle-title" class="btn btn-ghost">案件一覧へ</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/items.js"></script>
+  <script src="js/stages.js"></script>
+  <script src="js/physics.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/renderer.js"></script>
+  <script src="js/game.js"></script>
+</body>
+</html>

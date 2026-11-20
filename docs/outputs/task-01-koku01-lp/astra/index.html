@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f3f0e9">
+  <meta name="description" content="SOU DESIGN LABの無画面デスクトップ集中タイマー KOKU-01。24灯のLEDリングと環境音を体験しながら、仕上げと先行予約価格をお選びいただけます。">
+  <title>KOKU-01｜無画面の集中タイマー｜SOU DESIGN LAB</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' fill='%2320201e'/%3E%3Cpath d='M10 10h6L8 30H2zm11 0h6l-8 20h-6zm11 0h6l-8 20h-6z' fill='%23f25224'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="timer.js"></script>
+  <script defer src="reservation.js"></script>
+</head>
+<body id="top">
+  <svg class="symbols" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <defs>
+      <symbol id="i-northeast" viewBox="0 0 24 24"><path d="M5 19 19 5M6.5 5H19v12.5"/></symbol>
+      <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M3 12h17m-7-7 7 7-7 7"/></symbol>
+      <symbol id="i-up" viewBox="0 0 24 24"><path d="M12 20V4m-7 7 7-7 7 7"/></symbol>
+      <symbol id="i-play" viewBox="0 0 24 24"><path d="M6 3.8 21 12 6 20.2Z" fill="currentColor" stroke="none"/></symbol>
+      <symbol id="i-pause" viewBox="0 0 24 24"><path d="M5 4h5v16H5zm9 0h5v16h-5z" fill="currentColor" stroke="none"/></symbol>
+      <symbol id="i-reset" viewBox="0 0 24 24"><path d="M20 10a8.5 8.5 0 1 0-1.4 7M20 4v6h-6"/></symbol>
+      <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m5 9 7 7 7-7"/></symbol>
+      <symbol id="i-close" viewBox="0 0 24 24"><path d="m5 5 14 14M19 5 5 19"/></symbol>
+      <!-- Six emitters per quadrant. The same 24-light ring fits both photographic views. -->
+      <path id="emitter" d="M0 -98.4v-3.2"/>
+      <g id="six-emitters">
+        <use href="#emitter"/><use href="#emitter" transform="rotate(15)"/>
+        <use href="#emitter" transform="rotate(30)"/><use href="#emitter" transform="rotate(45)"/>
+        <use href="#emitter" transform="rotate(60)"/><use href="#emitter" transform="rotate(75)"/>
+      </g>
+      <g id="photo-ring" fill="none" stroke-linecap="round">
+        <use href="#six-emitters"/><use href="#six-emitters" transform="rotate(90)"/>
+        <use href="#six-emitters" transform="rotate(180)"/><use href="#six-emitters" transform="rotate(270)"/>
+      </g>
+      <filter id="light-halo" x="-10%" y="-10%" width="120%" height="120%" color-interpolation-filters="sRGB"><feGaussianBlur stdDeviation="1.1"/></filter>
+      <g id="lit-bezel">
+        <use href="#photo-ring" filter="url(#light-halo)" stroke="#ffa449" stroke-width="3.2" opacity=".84"/>
+        <use href="#photo-ring" stroke="#ffd397" stroke-width="1.7"/>
+        <use href="#photo-ring" stroke="#fff5dc" stroke-width="1.13"/>
+      </g>
+    </defs>
+  </svg>
+  <a class="skip-link" href="#main">本文へ移動</a>
+  <header class="site-header">
+    <div class="header-inner wrap">
+      <a class="brand" href="#top" aria-label="SOU DESIGN LAB ページ先頭へ">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span>SOU DESIGN LAB</span>
+      </a>
+      <nav class="main-nav" id="main-nav" aria-label="メインナビゲーション">
+        <a href="#specs">製品について</a>
+        <a href="#experience">タイマー体験</a>
+      </nav>
+      <a class="header-reserve" href="#reserve">先行予約 <svg class="icon" aria-hidden="true"><use href="#i-northeast"/></svg></a>
+      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="main-nav" aria-label="メニューを開く"><span></span><span></span></button>
+    </div>
+  </header>
+  <main id="main">
+    <section class="hero" aria-labelledby="product-heading">
+      <div class="wrap">
+        <div class="hero-layout">
+          <div class="hero-content">
+            <div class="hero-intro">
+              <h1 id="product-heading">KOKU-01</h1>
+              <p class="hero-tagline">集中は、指先から。</p>
+              <p class="hero-description">ダイヤルを回して、そっと押す。<br><span>光と環境音で集中に寄り添う、</span><wbr><span>無画面のデスクトップタイマー。</span></p>
+            </div>
+            <div class="hero-offer">
+              <div class="hero-actions">
+                <a class="button primary" href="#reserve">先行予約する <svg class="icon" aria-hidden="true"><use href="#i-northeast"/></svg></a>
+                <a class="button outline" href="#experience"><svg class="icon play-icon" aria-hidden="true"><use href="#i-play"/></svg> タイマーを試す</a>
+              </div>
+              <p class="offer-note"><span>早割 <strong>¥14,800</strong>（税込）</span><span class="note-divider" aria-hidden="true">/</span><span>2027年3月順次発送</span></p>
+            </div>
+          </div>
+          <figure class="hero-art" aria-label="アルマイトシルバーのKOKU-01">
+            <div class="hero-plate">
+              <img class="hero-photo" src="assets/koku-hero.webp" width="1400" height="1050" fetchpriority="high" alt="天面のLEDリングが暖かく光る、削り出しアルミニウムの円形ダイヤル">
+              <svg class="callout-lines" viewBox="0 0 1000 750" aria-hidden="true">
+                <use href="#lit-bezel" transform="translate(499.6 278.6) scale(2.889 1.764)"/>
+                <g><path d="m690 149 56-61h34"/><circle cx="690" cy="149" r="4.4"/><path d="m259 506-64 88h-63"/><circle cx="259" cy="506" r="4.4"/></g>
+              </svg>
+              <span class="callout callout-led" aria-hidden="true">LED RING</span>
+              <span class="callout callout-metal" aria-hidden="true">CNC ALUMINUM</span>
+            </div>
+          </figure>
+        </div>
+        <ul class="spec-strip" aria-label="KOKU-01の主な仕様">
+          <li>
+            <svg class="spec-icon" viewBox="0 0 60 60" aria-hidden="true"><circle cx="30" cy="30" r="22" stroke-width="7" stroke-dasharray="1.5 4.26"/></svg>
+            <div><p class="measure">24 <span>灯</span></p><p class="measure-name">LEDリング</p></div>
+          </li>
+          <li>
+            <svg class="spec-icon" viewBox="0 0 60 60" aria-hidden="true"><path d="M3 45h10v-7h10v-7h10v-7h10v-7h13"/></svg>
+            <div><p class="measure">36 <span>ステップ</span></p><p class="measure-name">磁気ラチェット</p></div>
+          </li>
+          <li>
+            <svg class="spec-icon" viewBox="0 0 60 60" aria-hidden="true"><circle cx="30" cy="30" r="22"/><path d="m16 44 28-28m-7 0h7v7m-28 14v7h7"/></svg>
+            <div><p class="measure">78 <span class="latin-unit">mm</span></p><p class="measure-name">本体直径</p></div>
+          </li>
+          <li>
+            <svg class="spec-icon" viewBox="0 0 60 60" aria-hidden="true"><rect x="5" y="17" width="44" height="26" rx="2"/><path d="M49 24h5v12h-5m-33-14v16m10-16v16m10-16v16"/></svg>
+            <div><p class="measure">30 <span>日</span></p><p class="measure-name">最大稼働日数</p></div>
+          </li>
+        </ul>
+      </div>
+    </section>
+    <section id="experience" class="experience section-pad" aria-labelledby="experience-heading">
+      <div class="wrap">
+        <div class="section-heading with-mark">
+          <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+          <div>
+            <h2 id="experience-heading">タイマーを体験する</h2>
+            <p><span>ダイヤルを回して時間を決め、</span><wbr><span>天面を押してスタート。</span></p>
+          </div>
+        </div>
+        <div class="timer-layout">
+          <figure class="dial-stage">
+            <span class="register top-left" aria-hidden="true"></span><span class="register top-right" aria-hidden="true"></span>
+            <span class="register bottom-left" aria-hidden="true"></span><span class="register bottom-right" aria-hidden="true"></span>
+            <div class="dial-sizing" aria-hidden="true"><span>⌀78 mm</span></div>
+            <button type="button" class="dial" id="dial" aria-label="ダイヤルの天面を押してスタート" aria-describedby="dial-help">
+              <img src="assets/koku-dial.webp" width="850" height="850" loading="lazy" draggable="false" alt="">
+              <span id="led-ring" class="led-ring" aria-hidden="true"></span>
+            </button>
+            <figcaption id="dial-help"><span class="pointer-help">ドラッグで回す・クリックで押す</span><span class="touch-help">なぞって回す・タップで押す</span></figcaption>
+          </figure>
+          <div class="timer-controls" id="timer-controls" data-state="ready">
+            <p id="timer-status" class="timer-status" role="status" aria-atomic="true">待機中</p>
+            <p class="clock" id="clock" role="timer" aria-live="off" aria-label="残り時間 25分">25:00</p>
+            <fieldset class="time-settings" id="time-settings">
+              <legend class="sr-only">設定時間</legend>
+              <div class="presets">
+                <button type="button" data-minutes="5" aria-pressed="false">5分</button>
+                <button type="button" data-minutes="15" aria-pressed="false">15分</button>
+                <button type="button" data-minutes="25" aria-pressed="true">25分</button>
+                <button type="button" data-minutes="45" aria-pressed="false">45分</button>
+                <button type="button" data-minutes="0" aria-pressed="false">10秒体験</button>
+              </div>
+              <div class="slider-wrap">
+                <label for="duration" class="sr-only">ダイヤルの設定時間</label>
+                <input type="range" id="duration" min="0" max="60" step="1" value="25" aria-valuetext="25分">
+                <div class="slider-scale" aria-hidden="true"><span>10秒</span><span>15</span><span>30</span><span>45</span><span>60分</span></div>
+              </div>
+            </fieldset>
+            <fieldset class="audio-settings">
+              <legend class="sr-only">環境音</legend>
+              <span class="sound-title" aria-hidden="true">環境音</span>
+              <div class="sound-choices">
+                <label><input type="radio" name="ambience" value="silent" checked>無音</label>
+                <label><input type="radio" name="ambience" value="rain">雨音</label>
+                <label><input type="radio" name="ambience" value="white">ホワイトノイズ</label>
+              </div>
+            </fieldset>
+            <p id="sound-notice" class="sound-notice" role="status" hidden>環境音を再生できませんでした。タイマーは引き続き使えます。</p>
+            <div class="timer-actions">
+              <button type="button" class="button primary" id="timer-toggle"><svg class="icon" aria-hidden="true"><use href="#i-play"/></svg><span>スタート</span></button>
+              <button type="button" class="button dark-outline" id="timer-reset" disabled><svg class="icon" aria-hidden="true"><use href="#i-reset"/></svg>リセット</button>
+            </div>
+          </div>
+        </div>
+        <noscript><p class="noscript">タイマーを体験するには、ブラウザのJavaScriptを有効にしてください。</p></noscript>
+      </div>
+    </section>
+    <section id="reserve" class="reservation section-pad" aria-labelledby="reserve-heading">
+      <div class="wrap">
+        <div class="section-heading">
+          <h2 id="reserve-heading"><span class="model-name">KOKU-01</span> を先行予約</h2>
+          <p><span>仕上げとオプションを選んで、</span><wbr><span>価格をお確かめください。</span></p>
+        </div>
+        <div class="reserve-layout">
+          <figure class="finish-preview">
+            <div class="finish-frame">
+              <img id="finish-photo" src="assets/koku-silver.webp" width="1100" height="1100" alt="フェルトの上に置いたアルマイトシルバーのKOKU-01" loading="lazy">
+              <svg class="finish-lights" viewBox="0 0 1000 1000" aria-hidden="true"><use href="#lit-bezel" transform="translate(494 391.4) scale(2.709 1.888)"/></svg>
+            </div>
+            <figcaption><span class="preview-name"><i class="swatch silver" id="preview-swatch" aria-hidden="true"></i><span id="finish-caption">アルマイトシルバー</span></span><span class="photo-note">写真のデスクマットは別売です。</span></figcaption>
+          </figure>
+          <form id="configurator" class="configurator">
+            <fieldset class="config-group finish-group">
+              <legend>カラー</legend>
+              <label class="choice">
+                <input type="radio" name="finish" value="silver" data-name="アルマイトシルバー" data-price="0" data-photo="assets/koku-silver.webp" checked>
+                <i class="swatch silver" aria-hidden="true"></i><span>アルマイトシルバー</span>
+              </label>
+              <label class="choice unavailable">
+                <input type="radio" name="finish" value="black" data-name="マットブラック" data-price="0" disabled>
+                <i class="swatch black" aria-hidden="true"></i><span>マットブラック</span><small class="choice-end stock-note">在庫切れ</small>
+              </label>
+              <label class="choice">
+                <input type="radio" name="finish" value="brass" data-name="真鍮リミテッド" data-price="3000" data-photo="assets/koku-brass.webp">
+                <i class="swatch brass" aria-hidden="true"></i><span>真鍮リミテッド</span><span class="choice-end price-extra">+¥3,000</span>
+              </label>
+            </fieldset>
+            <fieldset class="config-group">
+              <legend>プラン</legend>
+              <label class="choice">
+                <input type="radio" name="plan" value="early" data-name="先行予約早割" data-price="14800" checked>
+                <span>先行予約早割</span><small class="discount">20% OFF</small><span class="choice-end price-extra">¥14,800</span>
+              </label>
+              <label class="choice">
+                <input type="radio" name="plan" value="regular" data-name="一般販売（予定）" data-price="18500">
+                <span>一般販売（予定）</span><span class="choice-end price-extra">¥18,500</span>
+              </label>
+            </fieldset>
+            <fieldset class="config-group">
+              <legend>オプション</legend>
+              <label class="choice">
+                <input type="checkbox" name="mat" value="felt" data-name="専用フェルトデスクマット" data-price="2400">
+                <span>専用フェルトデスクマット</span><span class="choice-end price-extra">+¥2,400</span>
+              </label>
+            </fieldset>
+            <div class="price-row">
+              <span>合計 <small>（税込）</small></span>
+              <output id="total" aria-label="合計金額（税込）" aria-live="polite">¥14,800</output>
+            </div>
+            <div class="reserve-actions">
+              <p id="plan-note">2027年3月順次発送</p>
+              <button class="button primary" type="submit" id="review-button"><span>予約内容を確認する</span><svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></button>
+            </div>
+            <p class="simulator-note">この購入シミュレーターでは、デモ用の在庫で予約を体験できます。</p>
+          </form>
+        </div>
+        <noscript><p class="noscript">価格の試算には、ブラウザのJavaScriptを有効にしてください。</p></noscript>
+        <details id="specs" class="spec-details">
+          <summary>製品仕様 <svg class="icon" aria-hidden="true"><use href="#i-chevron"/></svg></summary>
+          <dl class="spec-table">
+            <div><dt>製品</dt><dd>KOKU-01 ／ SOU DESIGN LAB</dd></div>
+            <div><dt>サイズ・重量</dt><dd>直径78 mm × 高さ26 mm ／ 210 g</dd></div>
+            <div><dt>筐体</dt><dd>CNC削り出しアルミニウム</dd></div>
+            <div><dt>ダイヤル</dt><dd>36ステップ磁気ラチェットクリック機構</dd></div>
+            <div><dt>時間表示</dt><dd>外周の24灯LEDリング</dd></div>
+            <div><dt>環境音</dt><dd>内蔵スピーカー ／ 無音・雨音・ホワイトノイズ</dd></div>
+            <div><dt>充電・稼働</dt><dd>USB-C充電 ／ 最大30日稼働</dd></div>
+            <div><dt>スマホアプリ連携</dt><dd>非対応</dd></div>
+            <div><dt>保証期間</dt><dd>1年</dd></div>
+          </dl>
+        </details>
+      </div>
+    </section>
+  </main>
+  <footer class="site-footer wrap">
+    <a class="brand" href="#top" aria-label="SOU DESIGN LAB ページ先頭へ"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span><span>SOU DESIGN LAB</span></a>
+    <a class="back-top" href="#top">ページの先頭へ <svg class="icon" aria-hidden="true"><use href="#i-up"/></svg></a>
+  </footer>
+
+  <dialog id="review-dialog" class="review-dialog" aria-labelledby="review-heading" aria-describedby="review-description">
+    <div class="review-body">
+      <button type="button" class="close-dialog" aria-label="閉じる"><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></button>
+      <span class="review-model">KOKU-01</span>
+      <h2 id="review-heading" tabindex="-1">予約内容の確認</h2>
+      <p id="review-description">この内容で先行予約の流れを体験できます。</p>
+      <dl class="review-lines">
+        <div><dt>プラン</dt><dd><span id="review-plan"></span><strong id="review-base"></strong></dd></div>
+        <div><dt>カラー</dt><dd><span id="review-finish"></span><strong id="review-color-price"></strong></dd></div>
+        <div><dt>オプション</dt><dd><span id="review-mat"></span><strong id="review-mat-price"></strong></dd></div>
+      </dl>
+      <div class="price-row review-total"><span>合計 <small>（税込）</small></span><strong id="review-total"></strong></div>
+      <p class="review-shipping" id="review-shipping">2027年3月順次発送</p>
+      <div class="dialog-actions">
+        <button type="button" class="button outline" id="edit-config">選び直す</button>
+        <button type="button" class="button primary" id="confirm-demo"><span>この内容で予約を体験</span><svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></button>
+      </div>
+    </div>
+  </dialog>
+</body>
+</html>

@@ -1,0 +1,576 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>KOKU-01｜画面のない集中タイマー｜SOU DESIGN LAB</title>
+  <meta name="description" content="回して時間を決め、天面を押して開始。外周の24灯LEDリングが残り時間を示す、画面のないデスクトップ集中タイマー＆環境音ダイヤル。先行予約早割 ¥14,800（税込）、2027年3月より順次発送。">
+  <meta name="theme-color" content="#e2e4e3">
+  <meta property="og:title" content="KOKU-01｜画面のない集中タイマー">
+  <meta property="og:description" content="回して、押す。残り時間は24灯のLEDリングが示します。SOU DESIGN LAB の集中タイマー＆環境音ダイヤル。">
+  <meta property="og:type" content="product">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%23c9ccce'/%3E%3Ccircle cx='32' cy='32' r='25' fill='%23e8eaeb'/%3E%3Cg fill='%23ffb04f'%3E%3Ccircle cx='32' cy='12' r='2.6'/%3E%3Ccircle cx='42' cy='14.7' r='2.6'/%3E%3Ccircle cx='49.3' cy='22' r='2.6'/%3E%3Ccircle cx='52' cy='32' r='2.6'/%3E%3C/g%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">本文へスキップ</a>
+
+  <header class="site-header" id="site-header">
+    <a class="brand" href="#top" aria-label="KOKU-01 ページの先頭へ">
+      <span class="brand__ring" aria-hidden="true" data-progress-ring></span>
+      <span class="brand__text">
+        <span class="brand__lab">SOU DESIGN LAB</span>
+        <span class="brand__product">KOKU-01</span>
+      </span>
+    </a>
+    <nav class="site-nav" aria-label="ページ内の案内">
+      <a href="#demo">体験デモ</a>
+      <a href="#craft">つくり</a>
+      <a href="#spec">仕様</a>
+      <a href="#faq">よくある質問</a>
+    </nav>
+    <a class="btn btn--ink btn--small" href="#reserve">先行予約</a>
+  </header>
+
+  <main id="main">
+    <!-- ============ HERO ============ -->
+    <section class="hero" id="top" aria-labelledby="hero-name">
+      <p class="hero__catch" aria-hidden="true"><span>時間を、</span><span>手で刻む。</span></p>
+
+      <div class="hero__stage">
+        <div class="puck puck--persp puck--hero" data-finish="black" data-k="0.5" data-hsr="0.2887" id="hero-puck" aria-hidden="true">
+          <div class="puck__shadow"></div>
+          <div class="puck__side"><svg class="puck__knurl" preserveAspectRatio="none" focusable="false"></svg></div>
+          <div class="puck__top">
+            <div class="puck__ring"><div class="puck__ticks"></div></div>
+            <div class="puck__face"><div class="puck__leds"></div></div>
+          </div>
+        </div>
+        <div class="finish-picker" role="group" aria-label="本体の色を切り替えて見る">
+          <button type="button" class="finish-dot swatch--silver" data-finish="silver" aria-pressed="false" aria-label="アルマイトシルバー"></button>
+          <button type="button" class="finish-dot swatch--black" data-finish="black" aria-pressed="true" aria-label="マットブラック"></button>
+          <button type="button" class="finish-dot swatch--brass" data-finish="brass" aria-pressed="false" aria-label="真鍮リミテッド（+¥3,000）"></button>
+          <span class="finish-picker__name" id="hero-finish-name" aria-live="polite">マットブラック</span>
+        </div>
+      </div>
+
+      <div class="hero__meta">
+        <h1 class="hero__name" id="hero-name">
+          <span class="hero__product">KOKU-01</span>
+          <span class="hero__kind">画面のない集中タイマー＆環境音ダイヤル</span>
+        </h1>
+        <p class="sr-only">時間を、手で刻む。</p>
+        <p class="hero__lead">回して時間を決め、天面を押して開始。残り時間は、外周に並ぶ24灯のLEDリングが静かに示します。</p>
+        <div class="hero__price">
+          <p class="hero__price-main"><span class="hero__price-label">先行予約早割</span><span class="hero__price-num">¥14,800</span><span class="hero__price-tax">税込</span></p>
+          <p class="hero__price-sub">一般予定価格 <s>¥18,500</s> から20%OFF</p>
+        </div>
+        <div class="hero__actions">
+          <a class="btn btn--ink" href="#reserve">先行予約する</a>
+          <a class="btn btn--line" href="#demo-stage">デモを触ってみる</a>
+        </div>
+        <p class="hero__ship">2027年3月より順次発送</p>
+      </div>
+    </section>
+
+    <!-- ============ MANIFESTO ============ -->
+    <section class="manifesto" aria-labelledby="manifesto-title">
+      <div class="manifesto__inner">
+        <h2 class="manifesto__title" id="manifesto-title">画面がないから、<br>時間に追われない。</h2>
+        <div class="manifesto__body">
+          <p>タイマーをかけようとスマホを開くと、通知が目に入る。返信をひとつ済ませるうちに、さっきまでの集中はどこかへ行ってしまう。</p>
+          <p>KOKU-01には画面がありません。スマホアプリとも連携しません。リングを回して、天面を押す。あとは減っていく灯りを、ときどき目の端で感じるだけです。</p>
+        </div>
+        <ul class="manifesto__facts" aria-label="KOKU-01の使い方">
+          <li>
+            <svg class="fact__icon" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="19"/><circle cx="24" cy="24" r="13.5" class="thin"/><path d="M8.6 15.5A18 18 0 0 1 24 5.6" class="arrow"/><path d="M20.2 2.6l4 3-3.4 3.6" class="arrow"/></svg>
+            <span class="fact__verb">回す</span><span class="fact__text">36ステップの磁気ラチェットで、時間を決める</span>
+          </li>
+          <li>
+            <svg class="fact__icon" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="19"/><circle cx="24" cy="24" r="13.5" class="thin"/><circle cx="24" cy="24" r="3.2" class="fill"/><circle cx="24" cy="24" r="8" class="ripple"/></svg>
+            <span class="fact__verb">押す</span><span class="fact__text">天面を押して、集中をはじめる</span>
+          </li>
+          <li>
+            <svg class="fact__icon" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="19"/><g class="dots"><circle cx="24.00" cy="9.00" r="1.35" class="lit"/><circle cx="27.88" cy="9.51" r="1.35" class="lit"/><circle cx="31.50" cy="11.01" r="1.35" class="lit"/><circle cx="34.61" cy="13.39" r="1.35" class="lit"/><circle cx="36.99" cy="16.50" r="1.35" class="lit"/><circle cx="38.49" cy="20.12" r="1.35" class="lit"/><circle cx="39.00" cy="24.00" r="1.35" class="lit"/><circle cx="38.49" cy="27.88" r="1.35" class="lit"/><circle cx="36.99" cy="31.50" r="1.35" class="lit"/><circle cx="34.61" cy="34.61" r="1.35"/><circle cx="31.50" cy="36.99" r="1.35"/><circle cx="27.88" cy="38.49" r="1.35"/><circle cx="24.00" cy="39.00" r="1.35"/><circle cx="20.12" cy="38.49" r="1.35"/><circle cx="16.50" cy="36.99" r="1.35"/><circle cx="13.39" cy="34.61" r="1.35"/><circle cx="11.01" cy="31.50" r="1.35"/><circle cx="9.51" cy="27.88" r="1.35"/><circle cx="9.00" cy="24.00" r="1.35"/><circle cx="9.51" cy="20.12" r="1.35"/><circle cx="11.01" cy="16.50" r="1.35"/><circle cx="13.39" cy="13.39" r="1.35"/><circle cx="16.50" cy="11.01" r="1.35"/><circle cx="20.12" cy="9.51" r="1.35"/></g></svg>
+            <span class="fact__verb">灯る</span><span class="fact__text">24灯のLEDリングが、残り時間を示す</span>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ============ DEMO 1 : FOCUS TIMER ============ -->
+    <section class="demo" id="demo" aria-labelledby="demo-title" data-phase="idle">
+      <div class="demo__glow" aria-hidden="true"></div>
+      <div class="demo__inner">
+        <header class="demo__head">
+          <h2 class="demo__title" id="demo-title">回して、押して、<br>灯りが消えるまで。</h2>
+          <p class="demo__lead">このKOKU-01は、ページの上で実際に操作できます。外周のリングをなぞるように回して時間を決め、天面を押すとはじまります。体験しやすいよう、はじめは時間を60倍の速さで進めています（1分が1秒）。</p>
+        </header>
+
+        <div class="demo__grid" id="demo-stage">
+          <div class="demo__device">
+            <div class="device-wrap" id="device-wrap">
+              <svg class="hold-ring" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+                <circle class="hold-ring__track" cx="50" cy="50" r="48.5"></circle>
+                <circle class="hold-ring__bar" cx="50" cy="50" r="48.5" pathLength="100"></circle>
+              </svg>
+              <div class="puck puck--top puck--demo" data-finish="silver" id="demo-puck"
+                   role="slider" tabindex="0"
+                   aria-label="KOKU-01 本体。リングを回して時間を設定します"
+                   aria-valuemin="0" aria-valuemax="120" aria-valuenow="0" aria-valuetext="0分"
+                   aria-describedby="demo-keys">
+                <div class="puck__shadow"></div>
+                <div class="puck__top">
+                  <div class="puck__ring"><div class="puck__ticks"></div></div>
+                  <div class="puck__face"><div class="puck__leds"></div></div>
+                </div>
+              </div>
+              <p class="device-hint" aria-hidden="true">リングをなぞって回す</p>
+            </div>
+
+            <div class="readout" id="readout">
+              <div class="readout__main" id="readout-main">
+                <p class="readout__label" id="readout-label">リングを右に回して、時間を決めてください</p>
+                <p class="readout__value" id="readout-value" aria-hidden="true"></p>
+              </div>
+              <div class="readout__done" id="readout-done" hidden>
+                <p class="readout__done-title">おつかれさまでした。</p>
+                <p class="readout__done-text" id="done-text">集中の時間が終わりました。</p>
+                <div class="readout__done-actions">
+                  <button type="button" class="btn btn--lamp btn--small" id="done-again">同じ時間でもう一度</button>
+                  <a class="btn btn--line-light btn--small" href="#reserve">先行予約を見る</a>
+                </div>
+              </div>
+              <p class="readout__note">実機には画面がありません。数字はこのページだけの補助表示です。</p>
+            </div>
+
+            <div class="device-buttons" role="group" aria-label="ボタンで操作する">
+              <button type="button" class="dbtn" data-action="ccw" aria-label="リングを左に1クリック回す（5分減らす）">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 7H4V3M4.6 7A8 8 0 1 1 4 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <span>左に回す</span>
+              </button>
+              <button type="button" class="dbtn dbtn--press" data-action="press">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="7.5" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12" r="2.4" fill="currentColor"/></svg>
+                <span id="press-label">天面を押す</span>
+              </button>
+              <button type="button" class="dbtn" data-action="cw" aria-label="リングを右に1クリック回す（5分増やす）">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 7h4V3M19.4 7A8 8 0 1 0 20 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <span>右に回す</span>
+              </button>
+              <button type="button" class="dbtn dbtn--cancel" data-action="cancel" hidden>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7L7 17" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+                <span>中止</span>
+              </button>
+            </div>
+            <p class="device-keys" id="demo-keys">キーボードでは、本体を選んで ← → で回し、Enter で押します。動作中は Esc で中止できます。</p>
+          </div>
+
+          <div class="demo__side">
+            <ol class="steps" id="demo-steps">
+              <li class="step" data-step="1">
+                <span class="step__no" aria-hidden="true">1</span>
+                <div class="step__body">
+                  <h3 class="step__title">リングを回して、時間を決める</h3>
+                  <p class="step__text">右に回すと灯りが増えます。1クリックで5分、灯りひとつが5分です（24灯で120分）。</p>
+                </div>
+              </li>
+              <li class="step" data-step="2">
+                <span class="step__no" aria-hidden="true">2</span>
+                <div class="step__body">
+                  <h3 class="step__title">天面を押して、はじめる</h3>
+                  <p class="step__text">動作中にもう一度押すと一時停止。長押しすると中止します。</p>
+                </div>
+              </li>
+              <li class="step" data-step="3">
+                <span class="step__no" aria-hidden="true">3</span>
+                <div class="step__body">
+                  <h3 class="step__title">灯りが消えたら、おしまい</h3>
+                  <p class="step__text">灯りは端からゆっくり消えていきます。残っている灯りの数が、残り時間です。</p>
+                </div>
+              </li>
+            </ol>
+
+            <div class="controls">
+              <fieldset class="seg" id="ambient-control">
+                <legend class="seg__legend">環境音</legend>
+                <div class="seg__options">
+                  <label class="seg__opt"><input type="radio" name="ambient" value="off" checked><span>無音</span></label>
+                  <label class="seg__opt"><input type="radio" name="ambient" value="rain"><span>雨音</span></label>
+                  <label class="seg__opt"><input type="radio" name="ambient" value="white"><span>ホワイトノイズ</span></label>
+                </div>
+                <p class="seg__help">選ぶと数秒だけ試聴できます。タイマーの動作中は流れ続けます。</p>
+              </fieldset>
+
+              <fieldset class="seg" id="speed-control">
+                <legend class="seg__legend">時間の進み</legend>
+                <div class="seg__options">
+                  <label class="seg__opt"><input type="radio" name="speed" value="60" checked><span>60倍速</span></label>
+                  <label class="seg__opt"><input type="radio" name="speed" value="1"><span>実際の時間</span></label>
+                </div>
+                <p class="seg__help">実際の時間にすると、このページをそのまま集中タイマーとして使えます。</p>
+              </fieldset>
+
+              <div class="switches">
+                <button type="button" class="switch" role="switch" aria-checked="true" id="sound-switch">
+                  <span class="switch__track" aria-hidden="true"><span class="switch__thumb"></span></span>
+                  <span class="switch__label">クリック音と通知音</span>
+                </button>
+                <button type="button" class="switch" role="switch" aria-checked="true" id="numbers-switch">
+                  <span class="switch__track" aria-hidden="true"><span class="switch__thumb"></span></span>
+                  <span class="switch__label">数字の補助表示</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <p class="demo__note">※ 体験デモは実機の操作を再現したものです。時間の刻み方や音は、製品と異なる場合があります。</p>
+        <p class="sr-only" aria-live="polite" id="demo-status"></p>
+        <noscript><p class="demo__noscript">体験デモを動かすには JavaScript を有効にしてください。</p></noscript>
+      </div>
+    </section>
+
+    <!-- ============ CRAFT ============ -->
+    <section class="craft" id="craft" aria-labelledby="craft-title">
+      <div class="craft__inner">
+        <header class="craft__head">
+          <h2 class="craft__title" id="craft-title">アルミの塊から削り出した、<br>手のひらの道具。</h2>
+          <p class="craft__lead">直径78mm、高さ26mm、重さ210g。CNCで削り出したアルミニウムの筐体に、時間を決めて知らせる仕組みと、環境音のためのスピーカーを収めました。</p>
+        </header>
+
+        <div class="craft__grid">
+          <figure class="drawing">
+            <svg class="drawing__svg" viewBox="0 0 560 560" role="img" aria-labelledby="drawing-title drawing-desc">
+              <title id="drawing-title">KOKU-01 の寸法図</title>
+              <desc id="drawing-desc">上から見た図と横から見た図。直径78mm、高さ26mm。外周に24灯のLEDリング、回転リングに36ステップのクリック。</desc>
+              <g class="dw-center">
+                <line x1="50" y1="215" x2="410" y2="215"/>
+                <line x1="230" y1="40" x2="230" y2="390"/>
+              </g>
+              <g class="dw-body">
+                <circle cx="230" cy="215" r="160"/>
+                <circle cx="230" cy="215" r="137.6" class="dw-thin"/>
+              </g>
+              <g class="dw-ticks" id="dw-ticks"></g>
+              <g class="dw-leds" id="dw-leds"></g>
+              <!-- dimension: diameter -->
+              <g class="dw-dim">
+                <line x1="70" y1="215" x2="70" y2="22" class="dw-ext"/>
+                <line x1="390" y1="215" x2="390" y2="22" class="dw-ext"/>
+                <line x1="74" y1="30" x2="386" y2="30"/>
+                <path d="M70 30l9 -3.2v6.4z M390 30l-9 -3.2v6.4z" class="dw-arrow"/>
+                <text x="230" y="22" text-anchor="middle">φ78</text>
+              </g>
+              <!-- side view -->
+              <g class="dw-body">
+                <rect x="70" y="440" width="320" height="106.7" rx="7"/>
+                <line x1="76" y1="532" x2="384" y2="532" class="dw-thin"/>
+              </g>
+              <g class="dw-knurl" id="dw-knurl"></g>
+              <g class="dw-dim">
+                <line x1="390" y1="440" x2="440" y2="440" class="dw-ext"/>
+                <line x1="390" y1="546.7" x2="440" y2="546.7" class="dw-ext"/>
+                <line x1="432" y1="444" x2="432" y2="542.7"/>
+                <path d="M432 440l-3.2 9h6.4z M432 546.7l-3.2 -9h6.4z" class="dw-arrow"/>
+                <text x="446" y="498">26</text>
+              </g>
+              <!-- callouts -->
+              <g class="dw-callout">
+                <polyline points="336,109 418,62 470,62"/>
+                <circle cx="336" cy="109" r="2.4" class="dw-dot"/>
+                <circle cx="486" cy="62" r="13"/><text x="486" y="67" text-anchor="middle">1</text>
+              </g>
+              <g class="dw-callout">
+                <polyline points="290,170 418,160 470,160"/>
+                <circle cx="290" cy="170" r="2.4" class="dw-dot"/>
+                <circle cx="486" cy="160" r="13"/><text x="486" y="165" text-anchor="middle">2</text>
+              </g>
+              <g class="dw-callout">
+                <polyline points="348.5,248.5 418,300 470,300"/>
+                <circle cx="486" cy="300" r="13"/><text x="486" y="305" text-anchor="middle">3</text>
+              </g>
+              <g class="dw-callout">
+                <polyline points="330,470 470,470"/>
+                <circle cx="330" cy="470" r="2.4" class="dw-dot"/>
+                <circle cx="486" cy="470" r="13"/><text x="486" y="475" text-anchor="middle">4</text>
+              </g>
+            </svg>
+            <figcaption class="drawing__cap">寸法図（単位：mm）。上が天面、下が側面。</figcaption>
+          </figure>
+
+          <ol class="callouts">
+            <li class="callout">
+              <span class="callout__no" aria-hidden="true">1</span>
+              <div>
+                <h3 class="callout__title">回転リング</h3>
+                <p>1周36ステップの磁気ラチェット。回すたびに、カチッという確かな手応えが指先に返ってきます。</p>
+              </div>
+            </li>
+            <li class="callout">
+              <span class="callout__no" aria-hidden="true">2</span>
+              <div>
+                <h3 class="callout__title">天面</h3>
+                <p>時間を決めたら、天面を押して開始。スタートボタンを探す必要はありません。</p>
+              </div>
+            </li>
+            <li class="callout">
+              <span class="callout__no" aria-hidden="true">3</span>
+              <div>
+                <h3 class="callout__title">24灯のLEDリング</h3>
+                <p>外周に並んだ24の灯りが、残り時間を示します。数字を読まなくても、灯りの量で時間がわかります。</p>
+              </div>
+            </li>
+            <li class="callout">
+              <span class="callout__no" aria-hidden="true">4</span>
+              <div>
+                <h3 class="callout__title">アルミニウム削り出しの筐体</h3>
+                <p>CNCで削り出したアルミニウム。直径78mm、高さ26mmの中に、210gの重みが詰まっています。</p>
+              </div>
+            </li>
+          </ol>
+        </div>
+
+        <div class="traits">
+          <div class="trait">
+            <h3 class="trait__title">環境音は、3つのモード</h3>
+            <p>内蔵スピーカーで、雨音とホワイトノイズを流せます。音がいらない日は無音モードで。</p>
+            <div class="trait__sounds" role="group" aria-label="環境音を試聴する">
+              <button type="button" class="chip" data-preview="rain" aria-pressed="false">雨音を聴く</button>
+              <button type="button" class="chip" data-preview="white" aria-pressed="false">ホワイトノイズを聴く</button>
+            </div>
+            <p class="trait__note" id="chip-note" role="status"></p>
+          </div>
+          <div class="trait">
+            <h3 class="trait__title">充電は<span class="nowrap">USB-C</span>、最大30日</h3>
+            <p>一度の充電で最大30日稼働。ふだんはケーブルを外したまま使えます。</p>
+            <div class="trait__days" aria-hidden="true"></div>
+          </div>
+          <div class="trait">
+            <h3 class="trait__title">アプリとは、つながらない</h3>
+            <p>スマホアプリとの連携には対応していません。時間を決めるのも、はじめるのも、この本体だけで完結します。</p>
+          </div>
+        </div>
+
+        <div class="spec" id="spec">
+          <h2 class="spec__title">仕様</h2>
+          <table class="spec__table">
+            <tbody>
+              <tr><th scope="row">製品名</th><td>KOKU-01</td></tr>
+              <tr><th scope="row">種類</th><td>無画面デスクトップ集中タイマー＆環境音ダイヤル</td></tr>
+              <tr><th scope="row">サイズ</th><td>直径78mm × 高さ26mm</td></tr>
+              <tr><th scope="row">重さ</th><td>210g</td></tr>
+              <tr><th scope="row">筐体</th><td>CNC削り出しアルミニウム</td></tr>
+              <tr><th scope="row">操作</th><td>回して時間を設定、天面を押して開始<br>36ステップ磁気ラチェットクリック機構</td></tr>
+              <tr><th scope="row">表示</th><td>外周の24灯LEDリング（残り時間を表示）</td></tr>
+              <tr><th scope="row">環境音</th><td>内蔵スピーカー。無音、雨音、ホワイトノイズの3モード</td></tr>
+              <tr><th scope="row">充電</th><td><span class="nowrap">USB-C</span>（最大30日稼働）</td></tr>
+              <tr><th scope="row">スマホアプリ連携</th><td>非対応</td></tr>
+              <tr><th scope="row">カラー</th><td>アルマイトシルバー、マットブラック、真鍮リミテッド<span class="nowrap">（+¥3,000）</span></td></tr>
+              <tr><th scope="row">保証</th><td>1年</td></tr>
+              <tr><th scope="row">価格</th><td>先行予約早割 <span class="nowrap">¥14,800</span>（税込、一般予定価格 <span class="nowrap">¥18,500</span> から20%OFF）</td></tr>
+              <tr><th scope="row">オプション</th><td>専用フェルトデスクマット <span class="nowrap">+¥2,400</span></td></tr>
+              <tr><th scope="row">発送</th><td>2027年3月より順次発送</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ DEMO 2 : RESERVE SIMULATOR ============ -->
+    <section class="reserve" id="reserve" aria-labelledby="reserve-title">
+      <div class="reserve__inner">
+        <header class="reserve__head">
+          <h2 class="reserve__title" id="reserve-title">先行予約</h2>
+          <p class="reserve__lead">プラン、カラー、オプションを選ぶと、合計金額がその場で変わります。完売した組み合わせは選べません。</p>
+        </header>
+
+        <div class="reserve__grid">
+          <div class="reserve__preview">
+            <div class="preview">
+              <div class="preview__stage">
+                <div class="puck puck--persp puck--preview" data-finish="silver" data-k="0.56" data-hsr="0.2763" id="preview-puck" aria-hidden="true">
+                  <div class="puck__mat" id="preview-mat"></div>
+                  <div class="puck__shadow"></div>
+                  <div class="puck__side"><svg class="puck__knurl" preserveAspectRatio="none" focusable="false"></svg></div>
+                  <div class="puck__top">
+                    <div class="puck__ring"><div class="puck__ticks"></div></div>
+                    <div class="puck__face"><div class="puck__leds"></div></div>
+                  </div>
+                </div>
+              </div>
+              <p class="preview__caption"><span id="preview-name">アルマイトシルバー</span><span id="preview-mat-label" hidden>＋ 専用フェルトデスクマット</span></p>
+            </div>
+          </div>
+
+          <form class="config" id="config" novalidate>
+            <fieldset class="config__group" data-group="plan">
+              <legend class="config__legend"><span class="config__no" aria-hidden="true">1</span>プラン</legend>
+              <div class="config__options config__options--2">
+                <label class="opt">
+                  <input type="radio" name="plan" value="early" checked aria-describedby="stock-plan-early">
+                  <span class="opt__body">
+                    <span class="opt__name">先行予約早割</span>
+                    <span class="opt__price">¥14,800</span>
+                    <span class="opt__note">一般予定価格から20%OFF</span>
+                    <span class="opt__stock" id="stock-plan-early"></span>
+                  </span>
+                </label>
+                <label class="opt">
+                  <input type="radio" name="plan" value="regular" aria-describedby="stock-plan-regular">
+                  <span class="opt__body">
+                    <span class="opt__name">一般予約</span>
+                    <span class="opt__price">¥18,500</span>
+                    <span class="opt__note">一般予定価格でのご予約</span>
+                    <span class="opt__stock" id="stock-plan-regular"></span>
+                  </span>
+                </label>
+              </div>
+              <p class="config__message" data-msg="plan" role="status"></p>
+            </fieldset>
+
+            <fieldset class="config__group" data-group="color">
+              <legend class="config__legend"><span class="config__no" aria-hidden="true">2</span>カラー</legend>
+              <div class="config__options config__options--3">
+                <label class="opt opt--color">
+                  <input type="radio" name="color" value="silver" checked aria-describedby="stock-color-silver">
+                  <span class="opt__body">
+                    <span class="swatch swatch--silver" aria-hidden="true"></span>
+                    <span class="opt__name">アルマイトシルバー</span>
+                    <span class="opt__delta">基本価格</span>
+                    <span class="opt__stock" id="stock-color-silver"></span>
+                  </span>
+                </label>
+                <label class="opt opt--color">
+                  <input type="radio" name="color" value="black" aria-describedby="stock-color-black">
+                  <span class="opt__body">
+                    <span class="swatch swatch--black" aria-hidden="true"></span>
+                    <span class="opt__name">マットブラック</span>
+                    <span class="opt__delta">基本価格</span>
+                    <span class="opt__stock" id="stock-color-black"></span>
+                  </span>
+                </label>
+                <label class="opt opt--color">
+                  <input type="radio" name="color" value="brass" aria-describedby="stock-color-brass">
+                  <span class="opt__body">
+                    <span class="swatch swatch--brass" aria-hidden="true"></span>
+                    <span class="opt__name">真鍮リミテッド</span>
+                    <span class="opt__delta">+¥3,000</span>
+                    <span class="opt__stock" id="stock-color-brass"></span>
+                  </span>
+                </label>
+              </div>
+              <p class="config__message" data-msg="color" role="status"></p>
+            </fieldset>
+
+            <fieldset class="config__group" data-group="option">
+              <legend class="config__legend"><span class="config__no" aria-hidden="true">3</span>オプション</legend>
+              <label class="opt opt--check">
+                <input type="checkbox" name="mat" value="mat" aria-describedby="stock-mat">
+                <span class="opt__body">
+                  <span class="opt__checkbox" aria-hidden="true"></span>
+                  <span class="opt__name">専用フェルトデスクマット</span>
+                  <span class="opt__delta">+¥2,400</span>
+                  <span class="opt__stock" id="stock-mat"></span>
+                </span>
+              </label>
+            </fieldset>
+
+            <div class="summary" id="summary">
+              <dl class="summary__lines" id="summary-lines"></dl>
+              <div class="summary__total">
+                <span class="summary__total-label">合計<small>（税込）</small></span>
+                <output class="summary__total-num" id="total" for="config" aria-live="off">¥14,800</output>
+              </div>
+              <p class="summary__save" id="summary-save"></p>
+              <p class="summary__ship">2027年3月より順次発送。保証は1年です。</p>
+              <button type="submit" class="btn btn--ink btn--block" id="reserve-submit">この内容で予約する</button>
+              <p class="summary__note">※ 在庫と早割枠の表示はシミュレーションです。</p>
+              <p class="sr-only" aria-live="polite" id="total-sr"></p>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="sticky-total" id="sticky-total" aria-hidden="true">
+        <span class="sticky-total__label">合計（税込）</span>
+        <span class="sticky-total__num" id="sticky-total-num">¥14,800</span>
+        <a class="btn btn--ink btn--small" href="#summary" tabindex="-1">内訳を見る</a>
+      </div>
+    </section>
+
+    <!-- ============ FAQ ============ -->
+    <section class="faq" id="faq" aria-labelledby="faq-title">
+      <div class="faq__inner">
+        <h2 class="faq__title" id="faq-title">よくある質問</h2>
+        <div class="faq__list">
+          <details class="qa">
+            <summary>スマホと連携できますか？</summary>
+            <p>スマホアプリとの連携には対応していません。時間の設定から開始まで、本体だけで操作します。</p>
+          </details>
+          <details class="qa">
+            <summary>画面がないのに、残り時間はわかりますか？</summary>
+            <p>外周の24灯のLEDリングが残り時間を示します。灯りの量で、おおよその残り時間がひと目でわかります。</p>
+          </details>
+          <details class="qa">
+            <summary>充電はどのくらい持ちますか？</summary>
+            <p>USB-Cで充電し、最大30日稼働します。</p>
+          </details>
+          <details class="qa">
+            <summary>どんな音が出ますか？</summary>
+            <p>内蔵スピーカーで、雨音とホワイトノイズの環境音を流せます。音を出さない無音モードもあります。</p>
+          </details>
+          <details class="qa">
+            <summary>カラーで価格は変わりますか？</summary>
+            <p>アルマイトシルバーとマットブラックは基本価格です。真鍮リミテッドは基本価格に ¥3,000 を加えた価格になります（先行予約早割なら ¥17,800、税込）。</p>
+          </details>
+          <details class="qa">
+            <summary>いつ届きますか？</summary>
+            <p>2027年3月より順次発送します。</p>
+          </details>
+          <details class="qa">
+            <summary>保証はありますか？</summary>
+            <p>1年間の保証が付きます。</p>
+          </details>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="site-footer__inner">
+      <div class="footer-cta">
+        <p class="footer-cta__catch">灯りが消えるまで、<br>ここにいる。</p>
+        <div class="footer-cta__side">
+          <p class="footer-cta__price">先行予約早割 <strong>¥14,800</strong>（税込）</p>
+          <a class="btn btn--ink" href="#reserve">先行予約する</a>
+        </div>
+      </div>
+      <div class="footer-meta">
+        <p class="footer-meta__brand">SOU DESIGN LAB</p>
+        <p class="footer-meta__note">このページの予約手続きと在庫表示はデモです。実際の予約や決済は行われません。</p>
+        <p class="footer-meta__copy"><small>© 2026 SOU DESIGN LAB</small></p>
+      </div>
+    </div>
+  </footer>
+
+  <dialog class="dialog" id="reserve-dialog" aria-labelledby="dialog-title">
+    <form method="dialog" class="dialog__inner">
+      <h2 class="dialog__title" id="dialog-title">予約内容の確認</h2>
+      <dl class="dialog__lines" id="dialog-lines"></dl>
+      <div class="dialog__total"><span>合計（税込）</span><strong id="dialog-total"></strong></div>
+      <p class="dialog__ship">2027年3月より順次発送します。</p>
+      <p class="dialog__note">このページはデモのため、実際の予約や決済は行われません。</p>
+      <button type="submit" class="btn btn--ink btn--block" value="close">閉じる</button>
+    </form>
+  </dialog>
+
+  <script src="assets/js/sound.js" defer></script>
+  <script src="assets/js/puck.js" defer></script>
+  <script src="assets/js/demo-timer.js" defer></script>
+  <script src="assets/js/configurator.js" defer></script>
+  <script src="assets/js/main.js" defer></script>
+</body>
+</html>
