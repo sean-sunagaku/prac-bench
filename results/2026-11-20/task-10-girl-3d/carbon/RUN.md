@@ -2,9 +2,8 @@
 
 - 実施日: 2026-11-20（13:56:15–14:26:20 JST）
 - 実装時間: 30分05秒
-- 終了状態: agy の30分印刷タイムアウトで打ち切り（成果物は打ち切り時点のもの）
+- 終了状態: 打ち切り（成果物は打ち切り時点のもの）
 - トークン使用量: 取得不可（Antigravity CLI の会話記録にトークン内訳が残らない形式のため）
-- コスト推定: 取得不可（トークン不明のため）
 - 成果物ファイル数: 20（ランナー生成物・node_modules・支給 input を除く）
 
 ## 主な成果物
@@ -25,4 +24,4 @@
 - textures/Skin_BaseColor_2K.png
 
 ## 検証結果
-最も不足。build.py と character.blend のみで、レンダーは0枚、README・scene-report.json もない（30分打ち切り時点の状態）。
+最も不足。build.py と character.blend のみで、レンダーは0枚、README・scene-report.json もない（打ち切り時点の状態）。

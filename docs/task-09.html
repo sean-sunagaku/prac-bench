@@ -46,18 +46,17 @@ main{padding-bottom:16px}
 <header><p class='nav'><a href='index.html'>← 結果トップへ</a></p>
 <h1>枠9：自由制作「実力を見せる最高の動画」</h1>
 <p class='sub'>動画だけの自由制作。枠8と対になる「映像一本勝負」の枠で、テーマ・長さ・手法（実写風／アニメーション／3Dなど）・形式はすべてモデルの判断に委ねる。モデルが自分の強みをどう自己演出するか、得意分野の選び方まで含めて個性を見る。</p>
-<p class='note'>運営の所見（comparison.md より）：opus が最長126秒で完成、carbon 48秒・astra 45.5秒・sol 28秒も完成。**neon は Blender のフレームレンダリング途中で30分打ち切りとなり完成動画なし**。</p>
+<p class='note'>運営の所見（comparison.md より）：opus が最長126秒で完成、carbon 48秒・astra 45.5秒・sol 28秒も完成。**neon は Blender のフレームレンダリング途中で打ち切りとなり完成動画なし**。</p>
 <p class='sub'><a href='https://github.com/sean-sunagaku/prac-bench/tree/main/results/2026-11-20/task-09-free-video' target='_blank' rel='noopener'>この枠の全ファイル（GitHub）</a></p></header><main><div class="controls"><span class="lbl">モデル切替:</span><button data-mode="one" data-model="neon">Neon <span class='badge b-bad'>未達（完成動画なし）</span> 30:05</button><button data-mode="one" data-model="carbon">Carbon <span class='badge b-ok'>充足</span> 29:12</button><button data-mode="one" data-model="astra">Astra <span class='badge b-ok'>充足</span> 13:08</button><button data-mode="one" data-model="sol">Sol <span class='badge b-ok'>充足</span> 13:08</button><button data-mode="one" data-model="opus">Opus <span class='badge b-ok'>充足</span> 77:17</button><button data-mode="all">横並びで比較</button></div><div class="panels" id="panels"><section class="card panel" data-model="neon" id="neon">
 <h3 style='margin-top:0'>Neon（Gemini 4 Neon / agy・xhigh） <span class="badge b-bad">未達（完成動画なし）</span></h3>
 <table class='meta'>
 <tr><td>判定</td><td>未達（完成動画なし）</td></tr>
 <tr><td>実装時間</td><td>30:05</td></tr>
 <tr><td>トークン（入力/出力）</td><td>取得不可</td></tr>
-<tr><td>コスト推定</td><td>取得不可</td></tr>
-<tr><td>終了状態</td><td>agy の30分印刷タイムアウトで打ち切り（成果物は打ち切り時点のもの）</td></tr>
+<tr><td>終了状態</td><td>打ち切り（成果物は打ち切り時点のもの）</td></tr>
 <tr><td>実施日時</td><td>2026-11-20（16:17:10–16:47:15 JST）</td></tr>
 </table>
-<p class='note'>完成動画なし（Blender のフレームレンダリング途中で30分打ち切り）。ベンチマーク画像と音声マスターは下記で確認できる。</p>
+<p class='note'>完成動画なし（Blender のフレームレンダリング途中で打ち切り）。ベンチマーク画像と音声マスターは下記で確認できる。</p>
 <p class='klabel'>音声：project/audio/kairos_master.wav（12.7 MB）</p>
 <audio controls preload='none' src='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-09-free-video/neon/project/audio/kairos_master.wav'></audio>
 <p class='klabel'>画像</p><div class='gal'>
@@ -70,19 +69,15 @@ main{padding-bottom:16px}
 </div>
 <p class='klabel'>検証結果（RUN.md より）</p>
 <div class='verify'>【検証結果】
-未完成。Blender で5幕構成・全1,056フレーム（44秒@24fps）を計画し、ルック開発・カメラ設計・音声マスターまで進んだが、フレームレンダリング途中で30分打ち切り。完成動画はなし（レンダリング済みフレームのみ）。
-【備考】
-試行3回。1回目（初回バッチ）の成果物は運営側アーカイブに退避、2回目は agy クォータ上限（429）で失敗、3回目（クォータ復旧後）が本記録。</div>
+未完成。Blender で5幕構成・全1,056フレーム（44秒@24fps）を計画し、ルック開発・カメラ設計・音声マスターまで進んだが、フレームレンダリング途中で打ち切り。完成動画はなし（レンダリング済みフレームのみ）。</div>
 <p><a href='https://github.com/sean-sunagaku/prac-bench/tree/main/results/2026-11-20/task-09-free-video/neon' target='_blank' rel='noopener'>このモデルの全ファイルを GitHub で見る</a> ／ <a href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-09-free-video/neon/RUN.md' target='_blank' rel='noopener'>RUN.md</a></p>
 <details><summary>テキスト成果物（全文）</summary><h3>neon</h3>
 <details><summary>RUN.md（運営の実施記録）</summary><pre style="white-space:pre-wrap;word-break:break-word"># RUN — task-09-free-video / neon
 
 - 実施日: 2026-11-20（16:17:10–16:47:15 JST）
 - 実装時間: 30分05秒
-- 終了状態: agy の30分印刷タイムアウトで打ち切り（成果物は打ち切り時点のもの）
-- 試行回数: 2回（本記録は最終試行）
+- 終了状態: 打ち切り（成果物は打ち切り時点のもの）
 - トークン使用量: 取得不可（Antigravity CLI の会話記録にトークン内訳が残らない形式のため）
-- コスト推定: 取得不可（トークン不明のため）
 - 成果物ファイル数: 2984（ランナー生成物・node_modules・支給 input を除く）
 
 ## 主な成果物
@@ -103,10 +98,7 @@ main{padding-bottom:16px}
 - project/.venv/bin/python
 
 ## 検証結果
-未完成。Blender で5幕構成・全1,056フレーム（44秒@24fps）を計画し、ルック開発・カメラ設計・音声マスターまで進んだが、フレームレンダリング途中で30分打ち切り。完成動画はなし（レンダリング済みフレームのみ）。
-
-## 備考
-試行3回。1回目（初回バッチ）の成果物は運営側アーカイブに退避、2回目は agy クォータ上限（429）で失敗、3回目（クォータ復旧後）が本記録。
+未完成。Blender で5幕構成・全1,056フレーム（44秒@24fps）を計画し、ルック開発・カメラ設計・音声マスターまで進んだが、フレームレンダリング途中で打ち切り。完成動画はなし（レンダリング済みフレームのみ）。
 </pre></details>
 <details><summary>project/.venv/lib/python3.14/site-packages/numpy-2.5.5.dist-info/entry_points.txt</summary><pre style="white-space:pre-wrap;word-break:break-word">[pkg_config]
 numpy = numpy._core.lib.pkgconfig
@@ -3796,8 +3788,7 @@ License: LGPL-2.1-or-later
 <tr><td>判定</td><td>充足</td></tr>
 <tr><td>実装時間</td><td>29:12</td></tr>
 <tr><td>トークン（入力/出力）</td><td>取得不可</td></tr>
-<tr><td>コスト推定</td><td>取得不可</td></tr>
-<tr><td>終了状態</td><td>agy の30分印刷タイムアウトで打ち切り（成果物は打ち切り時点のもの）</td></tr>
+<tr><td>終了状態</td><td>打ち切り（成果物は打ち切り時点のもの）</td></tr>
 <tr><td>実施日時</td><td>2026-11-20（15:47:57–16:17:09 JST）</td></tr>
 </table>
 <p class='note'>完成動画 singularity_showcase.mp4（204MB）は GitHub Releases に原物のまま収録した。下のプレイヤーでそのまま再生できる。</p><video controls preload="metadata" src="https://github.com/sean-sunagaku/prac-bench/releases/download/media-2026-11-20/singularity_showcase.mp4" style="max-width:100%;width:720px"></video><p></p>
@@ -3805,19 +3796,15 @@ License: LGPL-2.1-or-later
 <audio controls preload='none' src='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-09-free-video/carbon/build/score.wav'></audio>
 <p class='klabel'>検証結果（RUN.md より）</p>
 <div class='verify'>【検証結果】
-完成。singularity_showcase.mp4（1920×1080、48.0秒）。自作 Swift/Metal エンジンで描画し、音声も合成。
-【備考】
-試行3回。1回目（初回バッチ）の成果物は運営側アーカイブに退避、2回目は agy クォータ上限（429）で失敗、3回目（クォータ復旧後）が本記録。</div>
+完成。singularity_showcase.mp4（1920×1080、48.0秒）。自作 Swift/Metal エンジンで描画し、音声も合成。</div>
 <p><a href='https://github.com/sean-sunagaku/prac-bench/tree/main/results/2026-11-20/task-09-free-video/carbon' target='_blank' rel='noopener'>このモデルの全ファイルを GitHub で見る</a> ／ <a href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-09-free-video/carbon/RUN.md' target='_blank' rel='noopener'>RUN.md</a></p>
 <details><summary>テキスト成果物（全文）</summary><h3>carbon</h3>
 <details><summary>RUN.md（運営の実施記録）</summary><pre style="white-space:pre-wrap;word-break:break-word"># RUN — task-09-free-video / carbon
 
 - 実施日: 2026-11-20（15:47:57–16:17:09 JST）
 - 実装時間: 29分12秒
-- 終了状態: agy の30分印刷タイムアウトで打ち切り（成果物は打ち切り時点のもの）
-- 試行回数: 2回（本記録は最終試行）
+- 終了状態: 打ち切り（成果物は打ち切り時点のもの）
 - トークン使用量: 取得不可（Antigravity CLI の会話記録にトークン内訳が残らない形式のため）
-- コスト推定: 取得不可（トークン不明のため）
 - 成果物ファイル数: 8（ランナー生成物・node_modules・支給 input を除く）
 
 ## 主な成果物
@@ -3832,9 +3819,6 @@ License: LGPL-2.1-or-later
 
 ## 検証結果
 完成。singularity_showcase.mp4（1920×1080、48.0秒）。自作 Swift/Metal エンジンで描画し、音声も合成。
-
-## 備考
-試行3回。1回目（初回バッチ）の成果物は運営側アーカイブに退避、2回目は agy クォータ上限（429）で失敗、3回目（クォータ復旧後）が本記録。
 </pre></details>
 </details><div class=klabel>音声</div><p>carbon — score.wav</p><audio controls preload="metadata" src="outputs/task-09-free-video/carbon/score.wav" style="width:100%"></audio>
 </section></section><section class="card panel" data-model="astra" id="astra">
@@ -3843,7 +3827,6 @@ License: LGPL-2.1-or-later
 <tr><td>判定</td><td>充足</td></tr>
 <tr><td>実装時間</td><td>13:08</td></tr>
 <tr><td>トークン（入力/出力）</td><td>7,158,907/67,614</td></tr>
-<tr><td>コスト推定</td><td>$6.17</td></tr>
 <tr><td>終了状態</td><td>自然終了</td></tr>
 <tr><td>実施日時</td><td>2026-11-20（12:55:11–13:08:19 JST）</td></tr>
 </table>
@@ -3861,7 +3844,6 @@ License: LGPL-2.1-or-later
 - 実装時間: 13分08秒
 - 終了状態: 自然終了
 - トークン使用量: 入力 7,158,907（うちキャッシュ 7,033,216） / 出力 67,614
-- コスト推定: $6.17（API単価前提による換算。単価の前提は ../comparison.md 参照。実際の課金形態とは異なる）
 - 成果物ファイル数: 1（ランナー生成物・node_modules・支給 input を除く）
 
 ## 主な成果物
@@ -3876,7 +3858,6 @@ License: LGPL-2.1-or-later
 <tr><td>判定</td><td>充足</td></tr>
 <tr><td>実装時間</td><td>13:08</td></tr>
 <tr><td>トークン（入力/出力）</td><td>7,246,051/63,871</td></tr>
-<tr><td>コスト推定</td><td>$6.19</td></tr>
 <tr><td>終了状態</td><td>自然終了</td></tr>
 <tr><td>実施日時</td><td>2026-11-20（13:08:27–13:21:35 JST）</td></tr>
 </table>
@@ -3894,7 +3875,6 @@ License: LGPL-2.1-or-later
 - 実装時間: 13分08秒
 - 終了状態: 自然終了
 - トークン使用量: 入力 7,246,051（うちキャッシュ 7,101,184） / 出力 63,871
-- コスト推定: $6.19（API単価前提による換算。単価の前提は ../comparison.md 参照。実際の課金形態とは異なる）
 - 成果物ファイル数: 5（ランナー生成物・node_modules・支給 input を除く）
 
 ## 主な成果物
@@ -3913,7 +3893,6 @@ License: LGPL-2.1-or-later
 <tr><td>判定</td><td>充足</td></tr>
 <tr><td>実装時間</td><td>77:17</td></tr>
 <tr><td>トークン（入力/出力）</td><td>68,388,022/760,531</td></tr>
-<tr><td>コスト推定</td><td>$174.14</td></tr>
 <tr><td>終了状態</td><td>自然終了</td></tr>
 <tr><td>実施日時</td><td>2026-11-20（13:13:43–14:31:00 JST）</td></tr>
 </table>
@@ -3935,7 +3914,6 @@ License: LGPL-2.1-or-later
 - 実装時間: 77分17秒
 - 終了状態: 自然終了
 - トークン使用量: 入力 504 / キャッシュ作成 841,406 / キャッシュ読込 67,546,112 / 出力 760,531
-- コスト推定: $174.14（API単価前提による換算。単価の前提は ../comparison.md 参照。実際の課金形態とは異なる）
 - 成果物ファイル数: 36（ランナー生成物・node_modules・支給 input を除く）
 
 ## 主な成果物

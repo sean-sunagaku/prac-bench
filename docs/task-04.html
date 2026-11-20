@@ -46,15 +46,14 @@ main{padding-bottom:16px}
 <header><p class='nav'><a href='index.html'>← 結果トップへ</a></p>
 <h1>枠4：3D造形「カピバラの雪見露天風呂」（共通スタジオ＆チェックリスト）</h1>
 <p class='sub'>雪見露天風呂に浸かるカピバラ（頭の上に柚子）の3Dジオラマ。全作品を運営側の共通スタジオ（カメラ・照明・背景を固定した撮影環境）で撮影し、題材に合わせた10〜12項目のチェックリストで採点する。Carbonの題材案と、Opusの「共通スタジオ＋チェックリスト」方式、Neonの接触要件の観点を統合した枠。</p>
-<p class='note'>運営の所見（comparison.md より）：opus が最も完全（検証付きGLB・ビューア・多角度プレビュー）。neon は Web 3D アプリとして完成。astra・sol は最小構成（GLB+プレビュー）。**carbon は成果物の形式確認を求める返信をして停止し、成果物なし**（再実行せず記録）。</p>
+<p class='note'>運営の所見（comparison.md より）：opus が最も完全（検証付きGLB・ビューア・多角度プレビュー）。neon は Web 3D アプリとして完成。astra・sol は最小構成（GLB+プレビュー）。**carbon は成果物の形式確認を求める返信をして停止し、成果物なし**。</p>
 <p class='sub'><a href='https://github.com/sean-sunagaku/prac-bench/tree/main/results/2026-11-20/task-04-capybara-onsen-3d' target='_blank' rel='noopener'>この枠の全ファイル（GitHub）</a></p></header><main><div class="controls"><span class="lbl">モデル切替:</span><button data-mode="one" data-model="neon">Neon <span class='badge b-ok'>充足</span> 30:05</button><button data-mode="one" data-model="carbon">Carbon <span class='badge b-bad'>成果物なし（質問で停止）</span> 1:03</button><button data-mode="one" data-model="astra">Astra <span class='badge b-ok'>充足（最小構成）</span> 12:09</button><button data-mode="one" data-model="sol">Sol <span class='badge b-ok'>充足（最小構成）</span> 6:37</button><button data-mode="one" data-model="opus">Opus <span class='badge b-ok'>充足</span> 63:32</button><button data-mode="all">横並びで比較</button></div><div class="panels" id="panels"><section class="card panel" data-model="neon" id="neon">
 <h3 style='margin-top:0'>Neon（Gemini 4 Neon / agy・xhigh） <span class="badge b-ok">充足</span></h3>
 <table class='meta'>
 <tr><td>判定</td><td>充足</td></tr>
 <tr><td>実装時間</td><td>30:05</td></tr>
 <tr><td>トークン（入力/出力）</td><td>取得不可</td></tr>
-<tr><td>コスト推定</td><td>取得不可</td></tr>
-<tr><td>終了状態</td><td>agy の30分印刷タイムアウトで打ち切り（成果物は打ち切り時点のもの）</td></tr>
+<tr><td>終了状態</td><td>打ち切り（成果物は打ち切り時点のもの）</td></tr>
 <tr><td>実施日時</td><td>2026-11-20（10:51:43–11:21:48 JST）</td></tr>
 </table>
 <p class='klabel'>Web成果物：dist/index.html</p>
@@ -69,9 +68,8 @@ main{padding-bottom:16px}
 
 - 実施日: 2026-11-20（10:51:43–11:21:48 JST）
 - 実装時間: 30分05秒
-- 終了状態: agy の30分印刷タイムアウトで打ち切り（成果物は打ち切り時点のもの）
+- 終了状態: 打ち切り（成果物は打ち切り時点のもの）
 - トークン使用量: 取得不可（Antigravity CLI の会話記録にトークン内訳が残らない形式のため）
-- コスト推定: 取得不可（トークン不明のため）
 - 成果物ファイル数: 16（ランナー生成物・node_modules・支給 input を除く）
 
 ## 主な成果物
@@ -100,16 +98,13 @@ main{padding-bottom:16px}
 <tr><td>判定</td><td>成果物なし（質問で停止）</td></tr>
 <tr><td>実装時間</td><td>1:03</td></tr>
 <tr><td>トークン（入力/出力）</td><td>取得不可</td></tr>
-<tr><td>コスト推定</td><td>取得不可</td></tr>
 <tr><td>終了状態</td><td>モデルの確認質問で停止（成果物なし）</td></tr>
 <tr><td>実施日時</td><td>2026-11-20（11:13:14–11:14:17 JST）</td></tr>
 </table>
-<p class='note'>成果物なし（成果物の形式確認を求める返信をして停止したため。再実行せず記録）。</p>
+<p class='note'>成果物なし（成果物の形式確認を求める返信をして停止したため）。</p>
 <p class='klabel'>検証結果（RUN.md より）</p>
 <div class='verify'>【検証結果】
-成果物なし。成果物の形式やチェックリストの確認を求める返信をして停止した。条件を揃えるため運営からは回答せず、この応答自体を結果として記録する（再実行なし）。
-【備考】
-モデルが確認質問を返して停止したケース。条件統一のため再実行していない。</div>
+成果物なし。成果物の形式やチェックリストの確認を求める返信をして停止した。運営からは回答せず、この応答自体を結果として記録する。</div>
 <p><a href='https://github.com/sean-sunagaku/prac-bench/tree/main/results/2026-11-20/task-04-capybara-onsen-3d/carbon' target='_blank' rel='noopener'>このモデルの全ファイルを GitHub で見る</a> ／ <a href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-04-capybara-onsen-3d/carbon/RUN.md' target='_blank' rel='noopener'>RUN.md</a></p>
 <details><summary>テキスト成果物（全文）</summary><h3>carbon</h3>
 <details><summary>RUN.md（運営の実施記録）</summary><pre style="white-space:pre-wrap;word-break:break-word"># RUN — task-04-capybara-onsen-3d / carbon
@@ -118,16 +113,12 @@ main{padding-bottom:16px}
 - 実装時間: 1分03秒
 - 終了状態: モデルの確認質問で停止（成果物なし）
 - トークン使用量: 取得不可（Antigravity CLI の会話記録にトークン内訳が残らない形式のため）
-- コスト推定: 取得不可（トークン不明のため）
 - 成果物ファイル数: 0（ランナー生成物・node_modules・支給 input を除く）
 
 ## 主な成果物
 
 ## 検証結果
-成果物なし。成果物の形式やチェックリストの確認を求める返信をして停止した。条件を揃えるため運営からは回答せず、この応答自体を結果として記録する（再実行なし）。
-
-## 備考
-モデルが確認質問を返して停止したケース。条件統一のため再実行していない。
+成果物なし。成果物の形式やチェックリストの確認を求める返信をして停止した。運営からは回答せず、この応答自体を結果として記録する。
 </pre></details>
 </details></section><section class="card panel" data-model="astra" id="astra">
 <h3 style='margin-top:0'>Astra（GPT-6.2 Astra / Codex） <span class="badge b-ok">充足（最小構成）</span></h3>
@@ -135,7 +126,6 @@ main{padding-bottom:16px}
 <tr><td>判定</td><td>充足（最小構成）</td></tr>
 <tr><td>実装時間</td><td>12:09</td></tr>
 <tr><td>トークン（入力/出力）</td><td>10,940,651/99,035</td></tr>
-<tr><td>コスト推定</td><td>$9.20</td></tr>
 <tr><td>終了状態</td><td>自然終了</td></tr>
 <tr><td>実施日時</td><td>2026-11-20（12:01:36–12:13:45 JST）</td></tr>
 </table>
@@ -155,7 +145,6 @@ main{padding-bottom:16px}
 - 実装時間: 12分09秒
 - 終了状態: 自然終了
 - トークン使用量: 入力 10,940,651（うちキャッシュ 10,771,456） / 出力 99,035
-- コスト推定: $9.20（API単価前提による換算。単価の前提は ../comparison.md 参照。実際の課金形態とは異なる）
 - 成果物ファイル数: 4（ランナー生成物・node_modules・支給 input を除く）
 
 ## 主な成果物
@@ -173,7 +162,6 @@ main{padding-bottom:16px}
 <tr><td>判定</td><td>充足（最小構成）</td></tr>
 <tr><td>実装時間</td><td>6:37</td></tr>
 <tr><td>トークン（入力/出力）</td><td>4,184,631/61,597</td></tr>
-<tr><td>コスト推定</td><td>$4.54</td></tr>
 <tr><td>終了状態</td><td>自然終了</td></tr>
 <tr><td>実施日時</td><td>2026-11-20（12:02:22–12:08:59 JST）</td></tr>
 </table>
@@ -193,7 +181,6 @@ astra と同型。生成スクリプト+scene.glb+プレビュー画像で完成
 - 実装時間: 6分37秒
 - 終了状態: 自然終了
 - トークン使用量: 入力 4,184,631（うちキャッシュ 4,050,304） / 出力 61,597
-- コスト推定: $4.54（API単価前提による換算。単価の前提は ../comparison.md 参照。実際の課金形態とは異なる）
 - 成果物ファイル数: 4（ランナー生成物・node_modules・支給 input を除く）
 
 ## 主な成果物
@@ -211,7 +198,6 @@ astra と同型。生成スクリプト+scene.glb+プレビュー画像で完成
 <tr><td>判定</td><td>充足</td></tr>
 <tr><td>実装時間</td><td>63:32</td></tr>
 <tr><td>トークン（入力/出力）</td><td>105,343,676/1,001,026</td></tr>
-<tr><td>コスト推定</td><td>$260.23</td></tr>
 <tr><td>終了状態</td><td>自然終了</td></tr>
 <tr><td>実施日時</td><td>2026-11-20（11:40:17–12:43:49 JST）</td></tr>
 </table>
@@ -246,7 +232,6 @@ astra と同型。生成スクリプト+scene.glb+プレビュー画像で完成
 - 実装時間: 63分32秒
 - 終了状態: 自然終了
 - トークン使用量: 入力 754 / キャッシュ作成 1,572,758 / キャッシュ読込 103,770,164 / 出力 1,001,026
-- コスト推定: $260.23（API単価前提による換算。単価の前提は ../comparison.md 参照。実際の課金形態とは異なる）
 - 成果物ファイル数: 46（ランナー生成物・node_modules・支給 input を除く）
 
 ## 主な成果物

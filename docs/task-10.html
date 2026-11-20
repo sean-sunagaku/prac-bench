@@ -46,15 +46,14 @@ main{padding-bottom:16px}
 <header><p class='nav'><a href='index.html'>← 結果トップへ</a></p>
 <h1>枠10：女の子の3D</h1>
 <p class='sub'>参照写真をもとに、Blenderで実在感のある女の子の3D上半身ポートレートを作る。条件と進め方は、別プロジェクトとして実施実績のある AI Girl 3D Benchmark の方式をそのまま流用する。当初は「視点で見え方が変わるトリック彫刻」が条件付き候補だったが、主催者の判断で外れ、シンプルな造形の正面比較である本枠に差し替わった。枠4が「シーン造形」なら、こちらは「キャラクター造形」の枠。</p>
-<p class='note'>運営の所見（comparison.md より）：astra・sol・opus がチェックリスト全項目を充足（astra 約20分、sol 約15分、opus 104分）。neon は beauty レンダーのみ、carbon はレンダー0枚で、どちらも30分打ち切り時点の部分成果。</p>
+<p class='note'>運営の所見（comparison.md より）：astra・sol・opus がチェックリスト全項目を充足（astra 約20分、sol 約15分、opus 104分）。neon は beauty レンダーのみ、carbon はレンダー0枚で、どちらも打ち切り時点の部分成果。</p>
 <p class='sub'><a href='https://github.com/sean-sunagaku/prac-bench/tree/main/results/2026-11-20/task-10-girl-3d' target='_blank' rel='noopener'>この枠の全ファイル（GitHub）</a></p></header><main><div class="controls"><span class="lbl">モデル切替:</span><button data-mode="one" data-model="neon">Neon <span class='badge b-part'>部分（レンダー1/5）</span> 30:06</button><button data-mode="one" data-model="carbon">Carbon <span class='badge b-part'>部分（レンダー0/5）</span> 30:05</button><button data-mode="one" data-model="astra">Astra <span class='badge b-ok'>充足</span> 19:39</button><button data-mode="one" data-model="sol">Sol <span class='badge b-ok'>充足</span> 14:38</button><button data-mode="one" data-model="opus">Opus <span class='badge b-ok'>充足</span> 104:24</button><button data-mode="all">横並びで比較</button></div><div class="panels" id="panels"><section class="card panel" data-model="neon" id="neon">
 <h3 style='margin-top:0'>Neon（Gemini 4 Neon / agy・xhigh） <span class="badge b-part">部分（レンダー1/5）</span></h3>
 <table class='meta'>
 <tr><td>判定</td><td>部分（レンダー1/5）</td></tr>
 <tr><td>実装時間</td><td>30:06</td></tr>
 <tr><td>トークン（入力/出力）</td><td>取得不可</td></tr>
-<tr><td>コスト推定</td><td>取得不可</td></tr>
-<tr><td>終了状態</td><td>agy の30分印刷タイムアウトで打ち切り（成果物は打ち切り時点のもの）</td></tr>
+<tr><td>終了状態</td><td>打ち切り（成果物は打ち切り時点のもの）</td></tr>
 <tr><td>実施日時</td><td>2026-11-20（13:52:15–14:22:21 JST）</td></tr>
 </table>
 <p class='klabel'>画像</p><div class='gal'>
@@ -68,16 +67,15 @@ main{padding-bottom:16px}
 <p><a class='btn' href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-10-girl-3d/neon/input/ASSET-LICENSE.md' target='_blank' rel='noopener'>レポート：input/ASSET-LICENSE.md</a></p>
 <p class='klabel'>検証結果（RUN.md より）</p>
 <div class='verify'>【検証結果】
-部分的。build.py と character.blend はあるが、レンダーは beauty（960×1040）のみで4方向が欠落、README と scene-report.json もない（30分打ち切り時点の状態）。</div>
+部分的。build.py と character.blend はあるが、レンダーは beauty（960×1040）のみで4方向が欠落、README と scene-report.json もない（打ち切り時点の状態）。</div>
 <p><a href='https://github.com/sean-sunagaku/prac-bench/tree/main/results/2026-11-20/task-10-girl-3d/neon' target='_blank' rel='noopener'>このモデルの全ファイルを GitHub で見る</a> ／ <a href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-10-girl-3d/neon/RUN.md' target='_blank' rel='noopener'>RUN.md</a></p>
 <details><summary>テキスト成果物（全文）</summary><h3>neon</h3>
 <details><summary>RUN.md（運営の実施記録）</summary><pre style="white-space:pre-wrap;word-break:break-word"># RUN — task-10-girl-3d / neon
 
 - 実施日: 2026-11-20（13:52:15–14:22:21 JST）
 - 実装時間: 30分06秒
-- 終了状態: agy の30分印刷タイムアウトで打ち切り（成果物は打ち切り時点のもの）
+- 終了状態: 打ち切り（成果物は打ち切り時点のもの）
 - トークン使用量: 取得不可（Antigravity CLI の会話記録にトークン内訳が残らない形式のため）
-- コスト推定: 取得不可（トークン不明のため）
 - 成果物ファイル数: 30（ランナー生成物・node_modules・支給 input を除く）
 
 ## 主な成果物
@@ -98,7 +96,7 @@ main{padding-bottom:16px}
 - scratch/testB.png
 
 ## 検証結果
-部分的。build.py と character.blend はあるが、レンダーは beauty（960×1040）のみで4方向が欠落、README と scene-report.json もない（30分打ち切り時点の状態）。
+部分的。build.py と character.blend はあるが、レンダーは beauty（960×1040）のみで4方向が欠落、README と scene-report.json もない（打ち切り時点の状態）。
 </pre></details>
 </details><div class=klabel>レンダー画像（実物）</div><div class=gal>neon
 <img loading="lazy" src="outputs/task-10-girl-3d/neon/beauty.png" alt="neon beauty.png" style="max-width:320px;margin:4px">
@@ -108,8 +106,7 @@ main{padding-bottom:16px}
 <tr><td>判定</td><td>部分（レンダー0/5）</td></tr>
 <tr><td>実装時間</td><td>30:05</td></tr>
 <tr><td>トークン（入力/出力）</td><td>取得不可</td></tr>
-<tr><td>コスト推定</td><td>取得不可</td></tr>
-<tr><td>終了状態</td><td>agy の30分印刷タイムアウトで打ち切り（成果物は打ち切り時点のもの）</td></tr>
+<tr><td>終了状態</td><td>打ち切り（成果物は打ち切り時点のもの）</td></tr>
 <tr><td>実施日時</td><td>2026-11-20（13:56:15–14:26:20 JST）</td></tr>
 </table>
 <p class='klabel'>画像</p><div class='gal'>
@@ -122,16 +119,15 @@ main{padding-bottom:16px}
 <p><a class='btn' href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-10-girl-3d/carbon/input/ASSET-LICENSE.md' target='_blank' rel='noopener'>レポート：input/ASSET-LICENSE.md</a></p>
 <p class='klabel'>検証結果（RUN.md より）</p>
 <div class='verify'>【検証結果】
-最も不足。build.py と character.blend のみで、レンダーは0枚、README・scene-report.json もない（30分打ち切り時点の状態）。</div>
+最も不足。build.py と character.blend のみで、レンダーは0枚、README・scene-report.json もない（打ち切り時点の状態）。</div>
 <p><a href='https://github.com/sean-sunagaku/prac-bench/tree/main/results/2026-11-20/task-10-girl-3d/carbon' target='_blank' rel='noopener'>このモデルの全ファイルを GitHub で見る</a> ／ <a href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-10-girl-3d/carbon/RUN.md' target='_blank' rel='noopener'>RUN.md</a></p>
 <details><summary>テキスト成果物（全文）</summary><h3>carbon</h3>
 <details><summary>RUN.md（運営の実施記録）</summary><pre style="white-space:pre-wrap;word-break:break-word"># RUN — task-10-girl-3d / carbon
 
 - 実施日: 2026-11-20（13:56:15–14:26:20 JST）
 - 実装時間: 30分05秒
-- 終了状態: agy の30分印刷タイムアウトで打ち切り（成果物は打ち切り時点のもの）
+- 終了状態: 打ち切り（成果物は打ち切り時点のもの）
 - トークン使用量: 取得不可（Antigravity CLI の会話記録にトークン内訳が残らない形式のため）
-- コスト推定: 取得不可（トークン不明のため）
 - 成果物ファイル数: 20（ランナー生成物・node_modules・支給 input を除く）
 
 ## 主な成果物
@@ -152,7 +148,7 @@ main{padding-bottom:16px}
 - textures/Skin_BaseColor_2K.png
 
 ## 検証結果
-最も不足。build.py と character.blend のみで、レンダーは0枚、README・scene-report.json もない（30分打ち切り時点の状態）。
+最も不足。build.py と character.blend のみで、レンダーは0枚、README・scene-report.json もない（打ち切り時点の状態）。
 </pre></details>
 </details></section><section class="card panel" data-model="astra" id="astra">
 <h3 style='margin-top:0'>Astra（GPT-6.2 Astra / Codex） <span class="badge b-ok">充足</span></h3>
@@ -160,7 +156,6 @@ main{padding-bottom:16px}
 <tr><td>判定</td><td>充足</td></tr>
 <tr><td>実装時間</td><td>19:39</td></tr>
 <tr><td>トークン（入力/出力）</td><td>19,608,243/127,833</td></tr>
-<tr><td>コスト推定</td><td>$15.50</td></tr>
 <tr><td>終了状態</td><td>自然終了</td></tr>
 <tr><td>実施日時</td><td>2026-11-20（13:21:43–13:41:22 JST）</td></tr>
 </table>
@@ -184,7 +179,6 @@ main{padding-bottom:16px}
 - 実装時間: 19分39秒
 - 終了状態: 自然終了
 - トークン使用量: 入力 19,608,243（うちキャッシュ 19,193,728） / 出力 127,833
-- コスト推定: $15.50（API単価前提による換算。単価の前提は ../comparison.md 参照。実際の課金形態とは異なる）
 - 成果物ファイル数: 30（ランナー生成物・node_modules・支給 input を除く）
 
 ## 主な成果物
@@ -506,7 +500,6 @@ MakeHuman hm08 is a CC0 asset. The source header credits Data Collection AB, Joe
 <tr><td>判定</td><td>充足</td></tr>
 <tr><td>実装時間</td><td>14:38</td></tr>
 <tr><td>トークン（入力/出力）</td><td>12,118,678/102,170</td></tr>
-<tr><td>コスト推定</td><td>$10.69</td></tr>
 <tr><td>終了状態</td><td>自然終了</td></tr>
 <tr><td>実施日時</td><td>2026-11-20（13:41:29–13:56:07 JST）</td></tr>
 </table>
@@ -529,7 +522,6 @@ MakeHuman hm08 is a CC0 asset. The source header credits Data Collection AB, Joe
 - 実装時間: 14分38秒
 - 終了状態: 自然終了
 - トークン使用量: 入力 12,118,678（うちキャッシュ 11,770,496） / 出力 102,170
-- コスト推定: $10.69（API単価前提による換算。単価の前提は ../comparison.md 参照。実際の課金形態とは異なる）
 - 成果物ファイル数: 16（ランナー生成物・node_modules・支給 input を除く）
 
 ## 主な成果物
@@ -996,7 +988,6 @@ The sculpt and hands adapt MakeHuman's **hm08** CC0 base mesh at commit `a8bc2d5
 <tr><td>判定</td><td>充足</td></tr>
 <tr><td>実装時間</td><td>104:24</td></tr>
 <tr><td>トークン（入力/出力）</td><td>112,634,431/880,396</td></tr>
-<tr><td>コスト推定</td><td>$252.41</td></tr>
 <tr><td>終了状態</td><td>自然終了</td></tr>
 <tr><td>実施日時</td><td>2026-11-20（14:01:00–15:45:24 JST）</td></tr>
 </table>
@@ -1020,7 +1011,6 @@ The sculpt and hands adapt MakeHuman's **hm08** CC0 base mesh at commit `a8bc2d5
 - 実装時間: 104分24秒
 - 終了状態: 自然終了
 - トークン使用量: 入力 650 / キャッシュ作成 1,010,109 / キャッシュ読込 111,623,672 / 出力 880,396
-- コスト推定: $252.41（API単価前提による換算。単価の前提は ../comparison.md 参照。実際の課金形態とは異なる）
 - 成果物ファイル数: 182（ランナー生成物・node_modules・支給 input を除く）
 
 ## 主な成果物

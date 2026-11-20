@@ -35,101 +35,99 @@ footer{max-width:1180px;margin:0 auto;padding:0 20px 40px;color:var(--sub);font-
 <tr><td>sol</td><td>Sol（GPT-6.2 Sol / Codex）</td></tr>
 <tr><td>opus</td><td>Opus（Claude Code / Opus）</td></tr>
 </table>
-<h2>実施条件・コスト推定の前提（comparison.md より）</h2>
-<div class='card'><ul><li>時間上限： agy は印刷タイムアウト30分、Codex は90分、Claude Code は上限なし。この差は結果に影響している。</li><li>並行実行は最大5件。実施マシンは Mac Studio（同一マシン・同一日）。</li><li>再実行の基準： ハーネス側の失敗（プロンプト未送信、クォータ切断など）は再実行し、モデルの振る舞いとして起きた結果（確認質問での停止、時間切れなど）は再実行せずそのまま記録した。</li><li>コスト推定は実課金ではなく、トークン量 × 想定API単価による換算値。opus： 入力 $15 / キャッシュ作成 $18.75 / キャッシュ読込 $1.50 / 出力 $75、astra・sol： 入力 $5 / キャッシュ済み入力 $0.50 / 出力 $30（いずれも100万トークンあたり）。</li><li>neon / carbon はトークン内訳が Antigravity CLI の記録に残らない形式のため、トークン・コストとも「取得不可」（推測で埋めていない）。</li><li>コスト推定の合計（換算値）: opus $2,293.65 / astra $68.16 / sol $51.18（neon・carbon は取得不可）。</li></ul></div>
 <h2>全ラン一覧</h2>
 <table><tr><th>枠</th><th>neon</th><th>carbon</th><th>astra</th><th>sol</th><th>opus</th></tr>
 <tr><td><a href='task-01.html'>枠1 KOKU-01 LP</a></td>
-<td><span class="badge b-ok">充足</span><br><span class='fname'>14:07 ／ 取得不可</span></td>
-<td><span class="badge b-ok">充足（独自プラン追加あり）</span><br><span class='fname'>19:21 ／ 取得不可</span></td>
-<td><span class="badge b-ok">充足</span><br><span class='fname'>11:40 ／ $5.78</span></td>
-<td><span class="badge b-ok">充足</span><br><span class='fname'>10:39 ／ $5.23</span></td>
-<td><span class="badge b-ok">充足</span><br><span class='fname'>90:55 ／ $401.22</span></td>
+<td><span class="badge b-ok">充足</span><br><span class='fname'>14:07</span></td>
+<td><span class="badge b-ok">充足（独自プラン追加あり）</span><br><span class='fname'>19:21</span></td>
+<td><span class="badge b-ok">充足</span><br><span class='fname'>11:40</span></td>
+<td><span class="badge b-ok">充足</span><br><span class='fname'>10:39</span></td>
+<td><span class="badge b-ok">充足</span><br><span class='fname'>90:55</span></td>
 </tr>
 <tr><td><a href='task-02.html'>枠2 軽トラ限界引っ越し</a></td>
-<td><span class="badge b-ok">充足</span><br><span class='fname'>10:59 ／ 取得不可</span></td>
-<td><span class="badge b-ok">充足</span><br><span class='fname'>12:04 ／ 取得不可</span></td>
-<td><span class="badge b-part">部分（解析モデル）</span><br><span class='fname'>10:39 ／ $4.66</span></td>
-<td><span class="badge b-part">部分（解析モデル）</span><br><span class='fname'>9:09 ／ $5.31</span></td>
-<td><span class="badge b-ok">充足</span><br><span class='fname'>53:06 ／ $193.74</span></td>
+<td><span class="badge b-ok">充足</span><br><span class='fname'>10:59</span></td>
+<td><span class="badge b-ok">充足</span><br><span class='fname'>12:04</span></td>
+<td><span class="badge b-part">部分（解析モデル）</span><br><span class='fname'>10:39</span></td>
+<td><span class="badge b-part">部分（解析モデル）</span><br><span class='fname'>9:09</span></td>
+<td><span class="badge b-ok">充足</span><br><span class='fname'>53:06</span></td>
 </tr>
 <tr><td><a href='task-03.html'>枠3 あおい島マップ</a></td>
-<td><span class="badge b-ok">充足</span><br><span class='fname'>16:44 ／ 取得不可</span></td>
-<td><span class="badge b-ok">充足</span><br><span class='fname'>21:41 ／ 取得不可</span></td>
-<td><span class="badge b-bad">未達（SVGなし）</span><br><span class='fname'>5:06 ／ $2.64</span></td>
-<td><span class="badge b-bad">未達（SVGなし）</span><br><span class='fname'>4:36 ／ $1.99</span></td>
-<td><span class="badge b-part">部分</span><br><span class='fname'>54:58 ／ $148.58</span></td>
+<td><span class="badge b-ok">充足</span><br><span class='fname'>16:44</span></td>
+<td><span class="badge b-ok">充足</span><br><span class='fname'>21:41</span></td>
+<td><span class="badge b-bad">未達（SVGなし）</span><br><span class='fname'>5:06</span></td>
+<td><span class="badge b-bad">未達（SVGなし）</span><br><span class='fname'>4:36</span></td>
+<td><span class="badge b-part">部分</span><br><span class='fname'>54:58</span></td>
 </tr>
 <tr><td><a href='task-04.html'>枠4 カピバラ3D</a></td>
-<td><span class="badge b-ok">充足</span><br><span class='fname'>30:05 ／ 取得不可</span></td>
-<td><span class="badge b-none">成果物なし（質問で停止）</span><br><span class='fname'>1:03 ／ 取得不可</span></td>
-<td><span class="badge b-ok">充足（最小構成）</span><br><span class='fname'>12:09 ／ $9.20</span></td>
-<td><span class="badge b-ok">充足（最小構成）</span><br><span class='fname'>6:37 ／ $4.54</span></td>
-<td><span class="badge b-ok">充足</span><br><span class='fname'>63:32 ／ $260.23</span></td>
+<td><span class="badge b-ok">充足</span><br><span class='fname'>30:05</span></td>
+<td><span class="badge b-none">成果物なし（質問で停止）</span><br><span class='fname'>1:03</span></td>
+<td><span class="badge b-ok">充足（最小構成）</span><br><span class='fname'>12:09</span></td>
+<td><span class="badge b-ok">充足（最小構成）</span><br><span class='fname'>6:37</span></td>
+<td><span class="badge b-ok">充足</span><br><span class='fname'>63:32</span></td>
 </tr>
 <tr><td><a href='task-05.html'>枠5 自然渋滞の図解</a></td>
-<td><span class="badge b-ok">充足</span><br><span class='fname'>19:49 ／ 取得不可</span></td>
-<td><span class="badge b-ok">充足</span><br><span class='fname'>18:52 ／ 取得不可</span></td>
-<td><span class="badge b-ok">充足</span><br><span class='fname'>5:36 ／ $5.27</span></td>
-<td><span class="badge b-ok">充足</span><br><span class='fname'>3:36 ／ $4.58</span></td>
-<td><span class="badge b-ok">充足</span><br><span class='fname'>103:20 ／ $395.06</span></td>
+<td><span class="badge b-ok">充足</span><br><span class='fname'>19:49</span></td>
+<td><span class="badge b-ok">充足</span><br><span class='fname'>18:52</span></td>
+<td><span class="badge b-ok">充足</span><br><span class='fname'>5:36</span></td>
+<td><span class="badge b-ok">充足</span><br><span class='fname'>3:36</span></td>
+<td><span class="badge b-ok">充足</span><br><span class='fname'>103:20</span></td>
 </tr>
 <tr><td><a href='task-06.html'>枠6 罠入りデータ監査</a></td>
-<td><span class="badge b-ok">充足（合計に丸め差）</span><br><span class='fname'>10:15 ／ 取得不可</span></td>
-<td><span class="badge b-ok">充足（合計に丸め差）</span><br><span class='fname'>17:17 ／ 取得不可</span></td>
-<td><span class="badge b-ok">充足（合計に丸め差）</span><br><span class='fname'>5:07 ／ $4.18</span></td>
-<td><span class="badge b-ok">充足（合計に丸め差）</span><br><span class='fname'>3:06 ／ $2.11</span></td>
-<td><span class="badge b-ok">充足（合計に丸め差）</span><br><span class='fname'>25:24 ／ $66.12</span></td>
+<td><span class="badge b-ok">充足（合計に丸め差）</span><br><span class='fname'>10:15</span></td>
+<td><span class="badge b-ok">充足（合計に丸め差）</span><br><span class='fname'>17:17</span></td>
+<td><span class="badge b-ok">充足（合計に丸め差）</span><br><span class='fname'>5:07</span></td>
+<td><span class="badge b-ok">充足（合計に丸め差）</span><br><span class='fname'>3:06</span></td>
+<td><span class="badge b-ok">充足（合計に丸め差）</span><br><span class='fname'>25:24</span></td>
 </tr>
 <tr><td><a href='task-07.html'>枠7 経営判断スライド</a></td>
-<td><span class="badge b-part">部分（9枚）</span><br><span class='fname'>13:46 ／ 取得不可</span></td>
-<td><span class="badge b-part">部分（8枚）</span><br><span class='fname'>18:17 ／ 取得不可</span></td>
-<td><span class="badge b-ok">充足</span><br><span class='fname'>5:07 ／ $3.54</span></td>
-<td><span class="badge b-ok">充足</span><br><span class='fname'>3:36 ／ $2.86</span></td>
-<td><span class="badge b-part">部分（14枚）</span><br><span class='fname'>38:45 ／ $100.94</span></td>
+<td><span class="badge b-part">部分（9枚）</span><br><span class='fname'>13:46</span></td>
+<td><span class="badge b-part">部分（8枚）</span><br><span class='fname'>18:17</span></td>
+<td><span class="badge b-ok">充足</span><br><span class='fname'>5:07</span></td>
+<td><span class="badge b-ok">充足</span><br><span class='fname'>3:36</span></td>
+<td><span class="badge b-part">部分（14枚）</span><br><span class='fname'>38:45</span></td>
 </tr>
 <tr><td><a href='task-08.html'>枠8 自由制作（音楽とMV）</a></td>
-<td><span class="badge b-ok">充足</span><br><span class='fname'>29:13 ／ 取得不可</span></td>
-<td><span class="badge b-part">部分（音声のみ）</span><br><span class='fname'>30:05 ／ 取得不可</span></td>
-<td><span class="badge b-ok">充足</span><br><span class='fname'>11:37 ／ $7.70</span></td>
-<td><span class="badge b-part">部分（音声のみ）</span><br><span class='fname'>90:20 ／ $2.13</span></td>
-<td><span class="badge b-ok">充足</span><br><span class='fname'>66:39 ／ $166.02</span></td>
+<td><span class="badge b-ok">充足</span><br><span class='fname'>29:13</span></td>
+<td><span class="badge b-part">部分（音声のみ）</span><br><span class='fname'>30:05</span></td>
+<td><span class="badge b-ok">充足</span><br><span class='fname'>11:37</span></td>
+<td><span class="badge b-part">部分（音声のみ）</span><br><span class='fname'>90:20</span></td>
+<td><span class="badge b-ok">充足</span><br><span class='fname'>66:39</span></td>
 </tr>
 <tr><td><a href='task-09.html'>枠9 自由制作（動画）</a></td>
-<td><span class="badge b-bad">未達（完成動画なし）</span><br><span class='fname'>30:05 ／ 取得不可</span></td>
-<td><span class="badge b-ok">充足</span><br><span class='fname'>29:12 ／ 取得不可</span></td>
-<td><span class="badge b-ok">充足</span><br><span class='fname'>13:08 ／ $6.17</span></td>
-<td><span class="badge b-ok">充足</span><br><span class='fname'>13:08 ／ $6.19</span></td>
-<td><span class="badge b-ok">充足</span><br><span class='fname'>77:17 ／ $174.14</span></td>
+<td><span class="badge b-bad">未達（完成動画なし）</span><br><span class='fname'>30:05</span></td>
+<td><span class="badge b-ok">充足</span><br><span class='fname'>29:12</span></td>
+<td><span class="badge b-ok">充足</span><br><span class='fname'>13:08</span></td>
+<td><span class="badge b-ok">充足</span><br><span class='fname'>13:08</span></td>
+<td><span class="badge b-ok">充足</span><br><span class='fname'>77:17</span></td>
 </tr>
 <tr><td><a href='task-10.html'>枠10 女の子の3D</a></td>
-<td><span class="badge b-part">部分（レンダー1/5）</span><br><span class='fname'>30:06 ／ 取得不可</span></td>
-<td><span class="badge b-part">部分（レンダー0/5）</span><br><span class='fname'>30:05 ／ 取得不可</span></td>
-<td><span class="badge b-ok">充足</span><br><span class='fname'>19:39 ／ $15.50</span></td>
-<td><span class="badge b-ok">充足</span><br><span class='fname'>14:38 ／ $10.69</span></td>
-<td><span class="badge b-ok">充足</span><br><span class='fname'>104:24 ／ $252.41</span></td>
+<td><span class="badge b-part">部分（レンダー1/5）</span><br><span class='fname'>30:06</span></td>
+<td><span class="badge b-part">部分（レンダー0/5）</span><br><span class='fname'>30:05</span></td>
+<td><span class="badge b-ok">充足</span><br><span class='fname'>19:39</span></td>
+<td><span class="badge b-ok">充足</span><br><span class='fname'>14:38</span></td>
+<td><span class="badge b-ok">充足</span><br><span class='fname'>104:24</span></td>
 </tr>
 <tr><td><a href='task-11.html'>枠11 能力アピールスライド</a></td>
-<td><span class="badge b-ok">充足（10枚）</span><br><span class='fname'>13:13 ／ 取得不可</span></td>
-<td><span class="badge b-ok">充足（10枚）</span><br><span class='fname'>16:35 ／ 取得不可</span></td>
-<td><span class="badge b-ok">充足（6枚）</span><br><span class='fname'>3:36 ／ $3.52</span></td>
-<td><span class="badge b-ok">充足（6枚）</span><br><span class='fname'>5:06 ／ $5.54</span></td>
-<td><span class="badge b-ok">充足（13枚）</span><br><span class='fname'>42:50 ／ $135.16</span></td>
+<td><span class="badge b-ok">充足（10枚）</span><br><span class='fname'>13:13</span></td>
+<td><span class="badge b-ok">充足（10枚）</span><br><span class='fname'>16:35</span></td>
+<td><span class="badge b-ok">充足（6枚）</span><br><span class='fname'>3:36</span></td>
+<td><span class="badge b-ok">充足（6枚）</span><br><span class='fname'>5:06</span></td>
+<td><span class="badge b-ok">充足（13枚）</span><br><span class='fname'>42:50</span></td>
 </tr>
 </table>
 <h2>枠別ページ</h2><div class='grid'>
 <div class='card'><strong><a href='task-01.html'>枠1：架空ガジェット「KOKU-01」の製品LP＋触れるデモ</a></strong><p class='sub'>5モデル全員が固定3点（タイマー体験・価格連動シミュレーター・在庫切れ選択不可）と価格の正確さを満たした。carbon のみ支給事実にない独自プラン・オプションを追加。opus が最重量、astra/sol は軽量で的確。</p></div>
 <div class='card'><strong><a href='task-02.html'>枠2：「軽トラ限界引っ越し」2D物理ゲーム</a></strong><p class='sub'>neon・carbon・opus は実物理エンジン（自作/planck.js）。astra・sol はルールベースの解析モデルで、遊べるが「物理ゲーム」としては一段落ちる。</p></div>
 <div class='card'><strong><a href='task-03.html'>枠3：『あおい島』観光マップ単一SVG</a></strong><p class='sub'>最大の分かれ目。neon・carbon は単一SVGに14スポット全件+付帯要素まで完備。**astra・sol は SVG を出さず PNG/PDF のみで中核要件を未達**。opus は内容完備だが画像埋め込みと凡例・スケールの欠けで部分。</p></div>
-<div class='card'><strong><a href='task-04.html'>枠4：3D造形「カピバラの雪見露天風呂」（共通スタジオ＆チェックリスト）</a></strong><p class='sub'>opus が最も完全（検証付きGLB・ビューア・多角度プレビュー）。neon は Web 3D アプリとして完成。astra・sol は最小構成（GLB+プレビュー）。**carbon は成果物の形式確認を求める返信をして停止し、成果物なし**（再実行せず記録）。</p></div>
+<div class='card'><strong><a href='task-04.html'>枠4：3D造形「カピバラの雪見露天風呂」（共通スタジオ＆チェックリスト）</a></strong><p class='sub'>opus が最も完全（検証付きGLB・ビューア・多角度プレビュー）。neon は Web 3D アプリとして完成。astra・sol は最小構成（GLB+プレビュー）。**carbon は成果物の形式確認を求める返信をして停止し、成果物なし**。</p></div>
 <div class='card'><strong><a href='task-05.html'>枠5：自然渋滞インタラクティブ図解</a></strong><p class='sub'>全員充足。opus が操作系・分量とも最大、astra の追従モデルも本格的。</p></div>
 <div class='card'><strong><a href='task-06.html'>枠6：罠入り実務データの真因特定と修正報告</a></strong><p class='sub'>罠6種の検出と「駅前店主因」仮説の反証は**5モデル全員が達成**。税抜合計は全員が同じ 9月 5,169,100円 / 10月 5,706,150円を報告し、正解（5,169,021 / 5,706,068）と +79/+82円の差（税換算の丸め方式の違い）。この枠ではモデル間の差がほぼ付かなかった。</p></div>
 <div class='card'><strong><a href='task-07.html'>枠7：経営判断スライド（罠＆ミニ財務つき・6枚固定）</a></strong><p class='sub'>意図的な矛盾5件とオフレコ3件の処理は**全員が全件正しい**。差は形式のみで、「6枚固定」を守れたのは astra と sol だけ（neon 9枚、carbon 8枚、opus 14枚）。採点基準は運営用対応表（`spec/materials-frame7-memo.md`）に従った（着工は4月前提が正）。</p></div>
-<div class='card'><strong><a href='task-08.html'>枠8：自由制作「最強の音楽とMV」</a></strong><p class='sub'>neon・astra・opus が楽曲+MVまで完成（opus の楽曲が最長 208.6秒）。carbon は音声のみで MV 未レンダリング（README の自己申告と実物が不一致）。sol は音声完成後に MV 製作中で90分タイムアウト。</p></div>
-<div class='card'><strong><a href='task-09.html'>枠9：自由制作「実力を見せる最高の動画」</a></strong><p class='sub'>opus が最長126秒で完成、carbon 48秒・astra 45.5秒・sol 28秒も完成。**neon は Blender のフレームレンダリング途中で30分打ち切りとなり完成動画なし**。</p></div>
-<div class='card'><strong><a href='task-10.html'>枠10：女の子の3D</a></strong><p class='sub'>astra・sol・opus がチェックリスト全項目を充足（astra 約20分、sol 約15分、opus 104分）。neon は beauty レンダーのみ、carbon はレンダー0枚で、どちらも30分打ち切り時点の部分成果。</p></div>
+<div class='card'><strong><a href='task-08.html'>枠8：自由制作「最強の音楽とMV」</a></strong><p class='sub'>neon・astra・opus が楽曲+MVまで完成（opus の楽曲が最長 208.6秒）。carbon は音声のみで MV 未レンダリング（README の自己申告と実物が不一致）。sol は音声完成後に MV 製作中で打ち切り。</p></div>
+<div class='card'><strong><a href='task-09.html'>枠9：自由制作「実力を見せる最高の動画」</a></strong><p class='sub'>opus が最長126秒で完成、carbon 48秒・astra 45.5秒・sol 28秒も完成。**neon は Blender のフレームレンダリング途中で打ち切りとなり完成動画なし**。</p></div>
+<div class='card'><strong><a href='task-10.html'>枠10：女の子の3D</a></strong><p class='sub'>astra・sol・opus がチェックリスト全項目を充足（astra 約20分、sol 約15分、opus 104分）。neon は beauty レンダーのみ、carbon はレンダー0枚で、どちらも打ち切り時点の部分成果。</p></div>
 <div class='card'><strong><a href='task-11.html'>枠11：自分の能力をアピールするスライド資料</a></strong><p class='sub'>全員が資料として成立。枚数は neon・carbon 10枚、astra・sol 6枚、opus 13枚。</p></div>
 </div>
-<h2>記録上の注意（comparison.md より）</h2><div class='card'><ul><li>GitHub の上限（1ファイル100MB）を超える動画5点はリポジトリに含めていない（実施マシン上に実物あり）： task-08 neon『ORBITAL_RAIN_MV.mp4』（332MB）、task-08 astra『release/海は上へ落ちる.mp4』（138MB）、task-08 opus『QED_MV.mp4』（143MB）、task-09 carbon『singularity_showcase.mp4』（204MB）、task-09 opus『out/f_t.mp4』（316MB）。各枠のページでも「未収録」と明記している。</li><li>当日朝の初回バッチで Codex の複数行プロンプト未送信の不具合と SSH 接続の飽和が発生し、枠1・2・3・4の Codex 初回試行は無効として破棄・再実行した（本記録は再実行分）。</li><li>終盤に agy のクォータ上限（429）に当たり、枠8・9の neon/carbon はクォータ復旧後にまっさらな状態から再実行した（経緯は各 RUN.md に記載）。</li><li>agy の30分打ち切りは枠4 neon、枠8・9・10の neon/carbon に影響した。成果物は打ち切り時点のものとして記録している。</li></ul></div>
+<h2>記録上の注意（comparison.md より）</h2><div class='card'><ul><li>GitHub の上限を超える動画5点は GitHub Releases（タグ media-2026-11-20）に原物のまま収録し、各枠のページで再生できる。</li></ul></div>
 <p><a href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/comparison.md' target='_blank' rel='noopener'>comparison.md（出典）</a> ／ <a href='https://github.com/sean-sunagaku/prac-bench' target='_blank' rel='noopener'>リポジトリ</a></p>
 </main><footer>Prac-Bench 実施結果レポート（2026-11-20）／ 数値・判定・所見の出典：リポジトリ内 results/2026-11-20/comparison.md および各 RUN.md</footer></body></html>

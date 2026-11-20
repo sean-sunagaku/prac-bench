@@ -46,15 +46,14 @@ main{padding-bottom:16px}
 <header><p class='nav'><a href='index.html'>← 結果トップへ</a></p>
 <h1>枠8：自由制作「最強の音楽とMV」</h1>
 <p class='sub'>音楽とMV（ミュージックビデオ）の自由制作。当初は制約の多い音楽制作案が候補だったが、主催者の指定で「一文だけ渡し、条件を入れない」形に差し替えた。音声をモデル自身が合成してもよく、ジャンル・長さ・映像の作り方・形式はすべてモデルの判断に委ねる。「何を最強と考えるか」という解釈そのものの差を見る枠。</p>
-<p class='note'>運営の所見（comparison.md より）：neon・astra・opus が楽曲+MVまで完成（opus の楽曲が最長 208.6秒）。carbon は音声のみで MV 未レンダリング（README の自己申告と実物が不一致）。sol は音声完成後に MV 製作中で90分タイムアウト。</p>
+<p class='note'>運営の所見（comparison.md より）：neon・astra・opus が楽曲+MVまで完成（opus の楽曲が最長 208.6秒）。carbon は音声のみで MV 未レンダリング（README の自己申告と実物が不一致）。sol は音声完成後に MV 製作中で打ち切り。</p>
 <p class='sub'><a href='https://github.com/sean-sunagaku/prac-bench/tree/main/results/2026-11-20/task-08-free-music-mv' target='_blank' rel='noopener'>この枠の全ファイル（GitHub）</a></p></header><main><div class="controls"><span class="lbl">モデル切替:</span><button data-mode="one" data-model="neon">Neon <span class='badge b-ok'>充足</span> 29:13</button><button data-mode="one" data-model="carbon">Carbon <span class='badge b-part'>部分（音声のみ）</span> 30:05</button><button data-mode="one" data-model="astra">Astra <span class='badge b-ok'>充足</span> 11:37</button><button data-mode="one" data-model="sol">Sol <span class='badge b-part'>部分（音声のみ）</span> 90:20</button><button data-mode="one" data-model="opus">Opus <span class='badge b-ok'>充足</span> 66:39</button><button data-mode="all">横並びで比較</button></div><div class="panels" id="panels"><section class="card panel" data-model="neon" id="neon">
 <h3 style='margin-top:0'>Neon（Gemini 4 Neon / agy・xhigh） <span class="badge b-ok">充足</span></h3>
 <table class='meta'>
 <tr><td>判定</td><td>充足</td></tr>
 <tr><td>実装時間</td><td>29:13</td></tr>
 <tr><td>トークン（入力/出力）</td><td>取得不可</td></tr>
-<tr><td>コスト推定</td><td>取得不可</td></tr>
-<tr><td>終了状態</td><td>agy の30分印刷タイムアウトで打ち切り（成果物は打ち切り時点のもの）</td></tr>
+<tr><td>終了状態</td><td>打ち切り（成果物は打ち切り時点のもの）</td></tr>
 <tr><td>実施日時</td><td>2026-11-20（15:47:57–16:17:10 JST）</td></tr>
 </table>
 <p class='note'>MV本編 ORBITAL_RAIN_MV.mp4（332MB）は GitHub Releases に原物のまま収録した。下のプレイヤーでそのまま再生できる。</p><video controls preload="metadata" src="https://github.com/sean-sunagaku/prac-bench/releases/download/media-2026-11-20/ORBITAL_RAIN_MV.mp4" style="max-width:100%;width:720px"></video><p></p>
@@ -70,19 +69,15 @@ main{padding-bottom:16px}
 </div>
 <p class='klabel'>検証結果（RUN.md より）</p>
 <div class='verify'>【検証結果】
-完成。楽曲 154.0秒（マスター wav/mp3+ステム10本）+ MV（1920×1080、154.0秒）。Python パイプラインで合成・レンダリング。
-【備考】
-試行3回。1回目（初回バッチ）の成果物は運営側アーカイブに退避、2回目は agy クォータ上限（429）で失敗、3回目（クォータ復旧後）が本記録。</div>
+完成。楽曲 154.0秒（マスター wav/mp3+ステム10本）+ MV（1920×1080、154.0秒）。Python パイプラインで合成・レンダリング。</div>
 <p><a href='https://github.com/sean-sunagaku/prac-bench/tree/main/results/2026-11-20/task-08-free-music-mv/neon' target='_blank' rel='noopener'>このモデルの全ファイルを GitHub で見る</a> ／ <a href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-08-free-music-mv/neon/RUN.md' target='_blank' rel='noopener'>RUN.md</a></p>
 <details><summary>テキスト成果物（全文）</summary><h3>neon</h3>
 <details><summary>RUN.md（運営の実施記録）</summary><pre style="white-space:pre-wrap;word-break:break-word"># RUN — task-08-free-music-mv / neon
 
 - 実施日: 2026-11-20（15:47:57–16:17:10 JST）
 - 実装時間: 29分13秒
-- 終了状態: agy の30分印刷タイムアウトで打ち切り（成果物は打ち切り時点のもの）
-- 試行回数: 2回（本記録は最終試行）
+- 終了状態: 打ち切り（成果物は打ち切り時点のもの）
 - トークン使用量: 取得不可（Antigravity CLI の会話記録にトークン内訳が残らない形式のため）
-- コスト推定: 取得不可（トークン不明のため）
 - 成果物ファイル数: 2572（ランナー生成物・node_modules・支給 input を除く）
 
 ## 主な成果物
@@ -104,9 +99,6 @@ main{padding-bottom:16px}
 
 ## 検証結果
 完成。楽曲 154.0秒（マスター wav/mp3+ステム10本）+ MV（1920×1080、154.0秒）。Python パイプラインで合成・レンダリング。
-
-## 備考
-試行3回。1回目（初回バッチ）の成果物は運営側アーカイブに退避、2回目は agy クォータ上限（429）で失敗、3回目（クォータ復旧後）が本記録。
 </pre></details>
 <details><summary>.venv/lib/python3.14/site-packages/numpy-2.5.5.dist-info/entry_points.txt</summary><pre style="white-space:pre-wrap;word-break:break-word">[pkg_config]
 numpy = numpy._core.lib.pkgconfig
@@ -3803,8 +3795,7 @@ License: LGPL-2.1-or-later
 <tr><td>判定</td><td>部分（音声のみ）</td></tr>
 <tr><td>実装時間</td><td>30:05</td></tr>
 <tr><td>トークン（入力/出力）</td><td>取得不可</td></tr>
-<tr><td>コスト推定</td><td>取得不可</td></tr>
-<tr><td>終了状態</td><td>agy の30分印刷タイムアウトで打ち切り（成果物は打ち切り時点のもの）</td></tr>
+<tr><td>終了状態</td><td>打ち切り（成果物は打ち切り時点のもの）</td></tr>
 <tr><td>実施日時</td><td>2026-11-20（16:17:10–16:47:15 JST）</td></tr>
 </table>
 <p class='klabel'>音声：singularity_bloom_master.m4a（511 KB）</p>
@@ -3819,19 +3810,15 @@ License: LGPL-2.1-or-later
 </div>
 <p class='klabel'>検証結果（RUN.md より）</p>
 <div class='verify'>【検証結果】
-音声のみ完成（146.0秒）。MV はフレームプレビュー8枚とレンダラー binary までで、mp4 は存在しない。なお README は MV ファイルを成果物として記載しているが実物がない（自己申告と実物の不一致）。
-【備考】
-試行3回。1回目（初回バッチ）の成果物は運営側アーカイブに退避、2回目は agy クォータ上限（429）で失敗、3回目（クォータ復旧後）が本記録。</div>
+音声のみ完成（146.0秒）。MV はフレームプレビュー8枚とレンダラー binary までで、mp4 は存在しない。なお README は MV ファイルを成果物として記載しているが実物がない（自己申告と実物の不一致）。</div>
 <p><a href='https://github.com/sean-sunagaku/prac-bench/tree/main/results/2026-11-20/task-08-free-music-mv/carbon' target='_blank' rel='noopener'>このモデルの全ファイルを GitHub で見る</a> ／ <a href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-08-free-music-mv/carbon/RUN.md' target='_blank' rel='noopener'>RUN.md</a></p>
 <details><summary>テキスト成果物（全文）</summary><h3>carbon</h3>
 <details><summary>RUN.md（運営の実施記録）</summary><pre style="white-space:pre-wrap;word-break:break-word"># RUN — task-08-free-music-mv / carbon
 
 - 実施日: 2026-11-20（16:17:10–16:47:15 JST）
 - 実装時間: 30分05秒
-- 終了状態: agy の30分印刷タイムアウトで打ち切り（成果物は打ち切り時点のもの）
-- 試行回数: 2回（本記録は最終試行）
+- 終了状態: 打ち切り（成果物は打ち切り時点のもの）
 - トークン使用量: 取得不可（Antigravity CLI の会話記録にトークン内訳が残らない形式のため）
-- コスト推定: 取得不可（トークン不明のため）
 - 成果物ファイル数: 23（ランナー生成物・node_modules・支給 input を除く）
 
 ## 主な成果物
@@ -3853,9 +3840,6 @@ License: LGPL-2.1-or-later
 
 ## 検証結果
 音声のみ完成（146.0秒）。MV はフレームプレビュー8枚とレンダラー binary までで、mp4 は存在しない。なお README は MV ファイルを成果物として記載しているが実物がない（自己申告と実物の不一致）。
-
-## 備考
-試行3回。1回目（初回バッチ）の成果物は運営側アーカイブに退避、2回目は agy クォータ上限（429）で失敗、3回目（クォータ復旧後）が本記録。
 </pre></details>
 <details><summary>README.md</summary><pre style="white-space:pre-wrap;word-break:break-word"># SINGULARITY BLOOM — 零度の花、光の果て —
 
@@ -3967,7 +3951,6 @@ swiftc -O src/mv_renderer.swift -framework Metal -framework CoreGraphics -framew
 <tr><td>判定</td><td>充足</td></tr>
 <tr><td>実装時間</td><td>11:37</td></tr>
 <tr><td>トークン（入力/出力）</td><td>9,665,366/71,909</td></tr>
-<tr><td>コスト推定</td><td>$7.70</td></tr>
 <tr><td>終了状態</td><td>自然終了</td></tr>
 <tr><td>実施日時</td><td>2026-11-20（12:43:26–12:55:03 JST）</td></tr>
 </table>
@@ -4002,7 +3985,6 @@ swiftc -O src/mv_renderer.swift -framework Metal -framework CoreGraphics -framew
 - 実装時間: 11分37秒
 - 終了状態: 自然終了
 - トークン使用量: 入力 9,665,366（うちキャッシュ 9,508,480） / 出力 71,909
-- コスト推定: $7.70（API単価前提による換算。単価の前提は ../comparison.md 参照。実際の課金形態とは異なる）
 - 成果物ファイル数: 98（ランナー生成物・node_modules・支給 input を除く）
 
 ## 主な成果物
@@ -4095,8 +4077,7 @@ THE SEA FALLS UP
 <tr><td>判定</td><td>部分（音声のみ）</td></tr>
 <tr><td>実装時間</td><td>90:20</td></tr>
 <tr><td>トークン（入力/出力）</td><td>1,508,297/32,358</td></tr>
-<tr><td>コスト推定</td><td>$2.13</td></tr>
-<tr><td>終了状態</td><td>90分タイムアウトで打ち切り</td></tr>
+<tr><td>終了状態</td><td>打ち切り</td></tr>
 <tr><td>実施日時</td><td>2026-11-20（12:48:26–14:18:46 JST）</td></tr>
 </table>
 <p class='klabel'>音声：.studio/review/audio-preview.wav（563 KB）</p>
@@ -4111,18 +4092,15 @@ THE SEA FALLS UP
 </div>
 <p class='klabel'>検証結果（RUN.md より）</p>
 <div class='verify'>【検証結果】
-音声のみ完成（142.5秒）。MV レンダラー（Swift/Metal）を製作中に 90分タイムアウト到達し、動画は未完成。
-【備考】
-Codex の90分上限に到達（rc=2）。打ち切り時点の成果物を記録。</div>
+音声のみ完成（142.5秒）。MV レンダラー（Swift/Metal）を製作中に打ち切りとなり、動画は未完成。</div>
 <p><a href='https://github.com/sean-sunagaku/prac-bench/tree/main/results/2026-11-20/task-08-free-music-mv/sol' target='_blank' rel='noopener'>このモデルの全ファイルを GitHub で見る</a> ／ <a href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-08-free-music-mv/sol/RUN.md' target='_blank' rel='noopener'>RUN.md</a></p>
 <details><summary>テキスト成果物（全文）</summary><h3>sol</h3>
 <details><summary>RUN.md（運営の実施記録）</summary><pre style="white-space:pre-wrap;word-break:break-word"># RUN — task-08-free-music-mv / sol
 
 - 実施日: 2026-11-20（12:48:26–14:18:46 JST）
 - 実装時間: 90分20秒
-- 終了状態: 90分タイムアウトで打ち切り
+- 終了状態: 打ち切り
 - トークン使用量: 入力 1,508,297（うちキャッシュ 1,417,344） / 出力 32,358
-- コスト推定: $2.13（API単価前提による換算。単価の前提は ../comparison.md 参照。実際の課金形態とは異なる）
 - 成果物ファイル数: 2392（ランナー生成物・node_modules・支給 input を除く）
 
 ## 主な成果物
@@ -4143,10 +4121,7 @@ Codex の90分上限に到達（rc=2）。打ち切り時点の成果物を記�
 - .studio/review/plates.jpg
 
 ## 検証結果
-音声のみ完成（142.5秒）。MV レンダラー（Swift/Metal）を製作中に 90分タイムアウト到達し、動画は未完成。
-
-## 備考
-Codex の90分上限に到達（rc=2）。打ち切り時点の成果物を記録。
+音声のみ完成（142.5秒）。MV レンダラー（Swift/Metal）を製作中に打ち切りとなり、動画は未完成。
 </pre></details>
 <details><summary>.studio/venv/lib/python3.12/site-packages/numpy-2.5.5.dist-info/entry_points.txt</summary><pre style="white-space:pre-wrap;word-break:break-word">[pkg_config]
 numpy = numpy._core.lib.pkgconfig
@@ -7835,7 +7810,6 @@ License: LGPL-2.1-or-later
 <tr><td>判定</td><td>充足</td></tr>
 <tr><td>実装時間</td><td>66:39</td></tr>
 <tr><td>トークン（入力/出力）</td><td>63,913,041/739,334</td></tr>
-<tr><td>コスト推定</td><td>$166.02</td></tr>
 <tr><td>終了状態</td><td>自然終了</td></tr>
 <tr><td>実施日時</td><td>2026-11-20（12:54:11–14:00:50 JST）</td></tr>
 </table>
@@ -7860,7 +7834,6 @@ License: LGPL-2.1-or-later
 - 実装時間: 66分39秒
 - 終了状態: 自然終了
 - トークン使用量: 入力 440 / キャッシュ作成 852,105 / キャッシュ読込 63,060,496 / 出力 739,334
-- コスト推定: $166.02（API単価前提による換算。単価の前提は ../comparison.md 参照。実際の課金形態とは異なる）
 - 成果物ファイル数: 20（ランナー生成物・node_modules・支給 input を除く）
 
 ## 主な成果物
