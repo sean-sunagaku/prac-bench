@@ -25,20 +25,29 @@ iframe.pdf{width:100%;height:460px;border:1px solid var(--line);border-radius:8p
 .klabel{font-weight:700;margin:14px 0 4px;font-size:14.5px}
 footer{max-width:1180px;margin:0 auto;padding:0 20px 40px;color:var(--sub);font-size:13px}
 .nav{font-size:14px;margin:10px 0}.fname{font-size:12.5px;color:var(--sub);word-break:break-all}
-</style></head><body>
+</style>
+<style>
+header{padding-top:14px}h1{font-size:22px}
+.controls{position:sticky;top:0;z-index:60;background:var(--bg);padding:10px 0;border-bottom:1px solid var(--line);display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.controls .lbl{font-size:13px;color:var(--sub);margin-right:2px}
+.controls button{background:var(--card);color:var(--tx);border:1px solid var(--line);border-radius:99px;padding:6px 14px;font-size:13.5px;cursor:pointer}
+.controls button.on{border-color:var(--acc);color:var(--acc);font-weight:700}
+.panels{display:grid;gap:14px;margin-top:14px}
+.panels.compare{grid-template-columns:repeat(5,minmax(300px,1fr));overflow-x:auto;padding-bottom:6px}
+.panels.single{grid-template-columns:minmax(0,1fr)}
+.panel{margin:0;max-height:calc(100dvh - 178px);overflow-y:auto;overscroll-behavior:contain}
+.panels.single .panel{display:none}
+.panels.single .panel.active{display:block}
+.panel iframe.preview{height:min(48vh,500px)}
+.panel .gal{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
+main{padding-bottom:16px}
+</style>
+</head><body>
 <header><p class='nav'><a href='index.html'>← 結果トップへ</a></p>
 <h1>枠5：自然渋滞インタラクティブ図解</h1>
 <p class='sub'>事故も工事もない高速道路で自然渋滞が生まれる仕組みを、読者が触って確かめられるインタラクティブ図解にする。円周道路の車の流れをシミュレーションし、1台のブレーキをきっかけに渋滞の波が後方へ伝わる様子を再現する。Neonの提案で、トップ3票こそなかったが4モデル全員の最終選定セットに入った枠。</p>
 <p class='note'>運営の所見（comparison.md より）：全員充足。opus が操作系・分量とも最大、astra の追従モデルも本格的。</p>
-<p class='sub'><a href='https://github.com/sean-sunagaku/prac-bench/tree/main/results/2026-11-20/task-05-traffic-explainer' target='_blank' rel='noopener'>この枠の全ファイル（GitHub）</a></p></header><main>
-<table><tr><th>モデル</th><th>判定</th><th>実装時間</th><th>トークン 入力/出力</th><th>コスト推定</th></tr>
-<tr><td><a href='#neon'>neon</a></td><td><span class="badge b-ok">充足</span></td><td>19:49</td><td>取得不可</td><td>取得不可</td></tr>
-<tr><td><a href='#carbon'>carbon</a></td><td><span class="badge b-ok">充足</span></td><td>18:52</td><td>取得不可</td><td>取得不可</td></tr>
-<tr><td><a href='#astra'>astra</a></td><td><span class="badge b-ok">充足</span></td><td>5:36</td><td>4,742,612/71,433</td><td>$5.27</td></tr>
-<tr><td><a href='#sol'>sol</a></td><td><span class="badge b-ok">充足</span></td><td>3:36</td><td>3,991,977/61,320</td><td>$4.58</td></tr>
-<tr><td><a href='#opus'>opus</a></td><td><span class="badge b-ok">充足</span></td><td>103:20</td><td>184,155,544/1,016,684</td><td>$395.06</td></tr>
-</table>
-<section class="card" id="neon">
+<p class='sub'><a href='https://github.com/sean-sunagaku/prac-bench/tree/main/results/2026-11-20/task-05-traffic-explainer' target='_blank' rel='noopener'>この枠の全ファイル（GitHub）</a></p></header><main><div class="controls"><span class="lbl">モデル切替:</span><button data-mode="one" data-model="neon">Neon <span class='badge b-ok'>充足</span> 19:49</button><button data-mode="one" data-model="carbon">Carbon <span class='badge b-ok'>充足</span> 18:52</button><button data-mode="one" data-model="astra">Astra <span class='badge b-ok'>充足</span> 5:36</button><button data-mode="one" data-model="sol">Sol <span class='badge b-ok'>充足</span> 3:36</button><button data-mode="one" data-model="opus">Opus <span class='badge b-ok'>充足</span> 103:20</button><button data-mode="all">横並びで比較</button></div><div class="panels" id="panels"><section class="card panel" data-model="neon" id="neon">
 <h3 style='margin-top:0'>Neon（Gemini 4 Neon / agy・xhigh） <span class="badge b-ok">充足</span></h3>
 <table class='meta'>
 <tr><td>判定</td><td>充足</td></tr>
@@ -57,99 +66,7 @@ footer{max-width:1180px;margin:0 auto;padding:0 20px 40px;color:var(--sub);font-
 【備考】
 試行2回（1回目は当日の初回バッチ分）。本記録は再実行分。</div>
 <p><a href='https://github.com/sean-sunagaku/prac-bench/tree/main/results/2026-11-20/task-05-traffic-explainer/neon' target='_blank' rel='noopener'>このモデルの全ファイルを GitHub で見る</a> ／ <a href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-05-traffic-explainer/neon/RUN.md' target='_blank' rel='noopener'>RUN.md</a></p>
-</section>
-<section class="card" id="carbon">
-<h3 style='margin-top:0'>Carbon（Gemini 4 Carbon / agy・high） <span class="badge b-ok">充足</span></h3>
-<table class='meta'>
-<tr><td>判定</td><td>充足</td></tr>
-<tr><td>実装時間</td><td>18:52</td></tr>
-<tr><td>トークン（入力/出力）</td><td>取得不可</td></tr>
-<tr><td>コスト推定</td><td>取得不可</td></tr>
-<tr><td>終了状態</td><td>自然終了</td></tr>
-<tr><td>実施日時</td><td>2026-11-20（12:06:52–12:25:44 JST）</td></tr>
-</table>
-<p class='klabel'>Web成果物：index.html</p>
-<iframe class='preview' loading='lazy' src='outputs/task-05-traffic-explainer/carbon/index.html'></iframe>
-<p><a class='btn' href='outputs/task-05-traffic-explainer/carbon/index.html' target='_blank' rel='noopener'>大きく開く</a><a class='btn' href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-05-traffic-explainer/carbon/index.html' target='_blank' rel='noopener'>GitHubで見る</a></p>
-<p class='klabel'>検証結果（RUN.md より）</p>
-<div class='verify'>【検証結果】
-検証Pass。simulation.js 79.7KB が中核。スライダー4本・ボタン28個、ファントム渋滞への言及あり。
-【備考】
-試行2回（1回目は当日の初回バッチ分）。本記録は再実行分。</div>
-<p><a href='https://github.com/sean-sunagaku/prac-bench/tree/main/results/2026-11-20/task-05-traffic-explainer/carbon' target='_blank' rel='noopener'>このモデルの全ファイルを GitHub で見る</a> ／ <a href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-05-traffic-explainer/carbon/RUN.md' target='_blank' rel='noopener'>RUN.md</a></p>
-</section>
-<section class="card" id="astra">
-<h3 style='margin-top:0'>Astra（GPT-6.2 Astra / Codex） <span class="badge b-ok">充足</span></h3>
-<table class='meta'>
-<tr><td>判定</td><td>充足</td></tr>
-<tr><td>実装時間</td><td>5:36</td></tr>
-<tr><td>トークン（入力/出力）</td><td>4,742,612/71,433</td></tr>
-<tr><td>コスト推定</td><td>$5.27</td></tr>
-<tr><td>終了状態</td><td>自然終了</td></tr>
-<tr><td>実施日時</td><td>2026-11-20（12:03:07–12:08:43 JST）</td></tr>
-</table>
-<p class='klabel'>Web成果物：index.html</p>
-<iframe class='preview' loading='lazy' src='outputs/task-05-traffic-explainer/astra/index.html'></iframe>
-<p><a class='btn' href='outputs/task-05-traffic-explainer/astra/index.html' target='_blank' rel='noopener'>大きく開く</a><a class='btn' href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-05-traffic-explainer/astra/index.html' target='_blank' rel='noopener'>GitHubで見る</a></p>
-<p class='klabel'>Web成果物：flow-lab.html</p>
-<iframe class='preview' loading='lazy' src='outputs/task-05-traffic-explainer/astra/flow-lab.html'></iframe>
-<p><a class='btn' href='outputs/task-05-traffic-explainer/astra/flow-lab.html' target='_blank' rel='noopener'>大きく開く</a><a class='btn' href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-05-traffic-explainer/astra/flow-lab.html' target='_blank' rel='noopener'>GitHubで見る</a></p>
-<p class='klabel'>検証結果（RUN.md より）</p>
-<div class='verify'>【検証結果】
-検証Pass。全長420mの周回路で車間時間・反応遅れを扱う追従モデルが本格的。ボタン操作中心（スライダーなし）。
-【備考】
-試行2回（1回目は当日の初回バッチ分）。本記録は再実行分。</div>
-<p><a href='https://github.com/sean-sunagaku/prac-bench/tree/main/results/2026-11-20/task-05-traffic-explainer/astra' target='_blank' rel='noopener'>このモデルの全ファイルを GitHub で見る</a> ／ <a href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-05-traffic-explainer/astra/RUN.md' target='_blank' rel='noopener'>RUN.md</a></p>
-</section>
-<section class="card" id="sol">
-<h3 style='margin-top:0'>Sol（GPT-6.2 Sol / Codex） <span class="badge b-ok">充足</span></h3>
-<table class='meta'>
-<tr><td>判定</td><td>充足</td></tr>
-<tr><td>実装時間</td><td>3:36</td></tr>
-<tr><td>トークン（入力/出力）</td><td>3,991,977/61,320</td></tr>
-<tr><td>コスト推定</td><td>$4.58</td></tr>
-<tr><td>終了状態</td><td>自然終了</td></tr>
-<tr><td>実施日時</td><td>2026-11-20（12:03:07–12:06:43 JST）</td></tr>
-</table>
-<p class='klabel'>Web成果物：index.html</p>
-<iframe class='preview' loading='lazy' src='outputs/task-05-traffic-explainer/sol/index.html'></iframe>
-<p><a class='btn' href='outputs/task-05-traffic-explainer/sol/index.html' target='_blank' rel='noopener'>大きく開く</a><a class='btn' href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-05-traffic-explainer/sol/index.html' target='_blank' rel='noopener'>GitHubで見る</a></p>
-<p class='klabel'>Web成果物：traffic-explainer.html</p>
-<iframe class='preview' loading='lazy' src='outputs/task-05-traffic-explainer/sol/traffic-explainer.html'></iframe>
-<p><a class='btn' href='outputs/task-05-traffic-explainer/sol/traffic-explainer.html' target='_blank' rel='noopener'>大きく開く</a><a class='btn' href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-05-traffic-explainer/sol/traffic-explainer.html' target='_blank' rel='noopener'>GitHubで見る</a></p>
-<p class='klabel'>検証結果（RUN.md より）</p>
-<div class='verify'>【検証結果】
-検証Pass。Canvas 描画+rAF、スライダー2本。自作 RUN.md 付き。
-【備考】
-試行2回（1回目は当日の初回バッチ分）。本記録は再実行分。</div>
-<p><a href='https://github.com/sean-sunagaku/prac-bench/tree/main/results/2026-11-20/task-05-traffic-explainer/sol' target='_blank' rel='noopener'>このモデルの全ファイルを GitHub で見る</a> ／ <a href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-05-traffic-explainer/sol/RUN.md' target='_blank' rel='noopener'>RUN.md</a></p>
-</section>
-<section class="card" id="opus">
-<h3 style='margin-top:0'>Opus（Claude Code / Opus） <span class="badge b-ok">充足</span></h3>
-<table class='meta'>
-<tr><td>判定</td><td>充足</td></tr>
-<tr><td>実装時間</td><td>103:20</td></tr>
-<tr><td>トークン（入力/出力）</td><td>184,155,544/1,016,684</td></tr>
-<tr><td>コスト推定</td><td>$395.06</td></tr>
-<tr><td>終了状態</td><td>自然終了</td></tr>
-<tr><td>実施日時</td><td>2026-11-20（12:08:52–13:52:12 JST）</td></tr>
-</table>
-<p class='klabel'>Web成果物：index.html</p>
-<iframe class='preview' loading='lazy' src='outputs/task-05-traffic-explainer/opus/index.html'></iframe>
-<p><a class='btn' href='outputs/task-05-traffic-explainer/opus/index.html' target='_blank' rel='noopener'>大きく開く</a><a class='btn' href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-05-traffic-explainer/opus/index.html' target='_blank' rel='noopener'>GitHubで見る</a></p>
-<p class='klabel'>画像</p><div class='gal'>
-<figure><a href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-05-traffic-explainer/opus/screenshots/d01-hero.png' target='_blank' rel='noopener'><img loading='lazy' src='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-05-traffic-explainer/opus/screenshots/d01-hero.png' alt='screenshots/d01-hero.png'></a><figcaption>screenshots/d01-hero.png</figcaption></figure>
-<figure><a href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-05-traffic-explainer/opus/screenshots/d02-hero-jam.png' target='_blank' rel='noopener'><img loading='lazy' src='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-05-traffic-explainer/opus/screenshots/d02-hero-jam.png' alt='screenshots/d02-hero-jam.png'></a><figcaption>screenshots/d02-hero-jam.png</figcaption></figure>
-<figure><a href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-05-traffic-explainer/opus/screenshots/d03-wave.png' target='_blank' rel='noopener'><img loading='lazy' src='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-05-traffic-explainer/opus/screenshots/d03-wave.png' alt='screenshots/d03-wave.png'></a><figcaption>screenshots/d03-wave.png</figcaption></figure>
-<figure><a href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-05-traffic-explainer/opus/screenshots/d04-chain.png' target='_blank' rel='noopener'><img loading='lazy' src='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-05-traffic-explainer/opus/screenshots/d04-chain.png' alt='screenshots/d04-chain.png'></a><figcaption>screenshots/d04-chain.png</figcaption></figure>
-</div>
-<p class='klabel'>検証結果（RUN.md より）</p>
-<div class='verify'>【検証結果】
-検証Pass。単一HTML 141KB にシミュレーション内蔵。スライダー12本・ボタン54個と操作系が最多で、検証用スクリーンショットと調整ツール付き。</div>
-<p><a href='https://github.com/sean-sunagaku/prac-bench/tree/main/results/2026-11-20/task-05-traffic-explainer/opus' target='_blank' rel='noopener'>このモデルの全ファイルを GitHub で見る</a> ／ <a href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-05-traffic-explainer/opus/RUN.md' target='_blank' rel='noopener'>RUN.md</a></p>
-</section>
-</main><footer>Prac-Bench 実施結果レポート（2026-11-20）／ 数値・判定・所見の出典：リポジトリ内 results/2026-11-20/comparison.md および各 RUN.md</footer><section><h2>テキスト成果物（全文）</h2><p>各モデルの文書系テキスト成果物と運営の実施記録（RUN.md）を全文収録する。コードやバイナリはリポジトリと outputs/ を参照。</p>
-<h3>neon</h3>
+<details><summary>テキスト成果物（全文）</summary><h3>neon</h3>
 <details><summary>RUN.md（運営の実施記録）</summary><pre style="white-space:pre-wrap;word-break:break-word"># RUN — task-05-traffic-explainer / neon
 
 - 実施日: 2026-11-20（12:04:07–12:23:56 JST）
@@ -172,7 +89,26 @@ footer{max-width:1180px;margin:0 auto;padding:0 20px 40px;color:var(--sub);font-
 ## 備考
 試行2回（1回目は当日の初回バッチ分）。本記録は再実行分。
 </pre></details>
-<h3>carbon</h3>
+</details></section><section class="card panel" data-model="carbon" id="carbon">
+<h3 style='margin-top:0'>Carbon（Gemini 4 Carbon / agy・high） <span class="badge b-ok">充足</span></h3>
+<table class='meta'>
+<tr><td>判定</td><td>充足</td></tr>
+<tr><td>実装時間</td><td>18:52</td></tr>
+<tr><td>トークン（入力/出力）</td><td>取得不可</td></tr>
+<tr><td>コスト推定</td><td>取得不可</td></tr>
+<tr><td>終了状態</td><td>自然終了</td></tr>
+<tr><td>実施日時</td><td>2026-11-20（12:06:52–12:25:44 JST）</td></tr>
+</table>
+<p class='klabel'>Web成果物：index.html</p>
+<iframe class='preview' loading='lazy' src='outputs/task-05-traffic-explainer/carbon/index.html'></iframe>
+<p><a class='btn' href='outputs/task-05-traffic-explainer/carbon/index.html' target='_blank' rel='noopener'>大きく開く</a><a class='btn' href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-05-traffic-explainer/carbon/index.html' target='_blank' rel='noopener'>GitHubで見る</a></p>
+<p class='klabel'>検証結果（RUN.md より）</p>
+<div class='verify'>【検証結果】
+検証Pass。simulation.js 79.7KB が中核。スライダー4本・ボタン28個、ファントム渋滞への言及あり。
+【備考】
+試行2回（1回目は当日の初回バッチ分）。本記録は再実行分。</div>
+<p><a href='https://github.com/sean-sunagaku/prac-bench/tree/main/results/2026-11-20/task-05-traffic-explainer/carbon' target='_blank' rel='noopener'>このモデルの全ファイルを GitHub で見る</a> ／ <a href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-05-traffic-explainer/carbon/RUN.md' target='_blank' rel='noopener'>RUN.md</a></p>
+<details><summary>テキスト成果物（全文）</summary><h3>carbon</h3>
 <details><summary>RUN.md（運営の実施記録）</summary><pre style="white-space:pre-wrap;word-break:break-word"># RUN — task-05-traffic-explainer / carbon
 
 - 実施日: 2026-11-20（12:06:52–12:25:44 JST）
@@ -194,7 +130,29 @@ footer{max-width:1180px;margin:0 auto;padding:0 20px 40px;color:var(--sub);font-
 ## 備考
 試行2回（1回目は当日の初回バッチ分）。本記録は再実行分。
 </pre></details>
-<h3>astra</h3>
+</details></section><section class="card panel" data-model="astra" id="astra">
+<h3 style='margin-top:0'>Astra（GPT-6.2 Astra / Codex） <span class="badge b-ok">充足</span></h3>
+<table class='meta'>
+<tr><td>判定</td><td>充足</td></tr>
+<tr><td>実装時間</td><td>5:36</td></tr>
+<tr><td>トークン（入力/出力）</td><td>4,742,612/71,433</td></tr>
+<tr><td>コスト推定</td><td>$5.27</td></tr>
+<tr><td>終了状態</td><td>自然終了</td></tr>
+<tr><td>実施日時</td><td>2026-11-20（12:03:07–12:08:43 JST）</td></tr>
+</table>
+<p class='klabel'>Web成果物：index.html</p>
+<iframe class='preview' loading='lazy' src='outputs/task-05-traffic-explainer/astra/index.html'></iframe>
+<p><a class='btn' href='outputs/task-05-traffic-explainer/astra/index.html' target='_blank' rel='noopener'>大きく開く</a><a class='btn' href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-05-traffic-explainer/astra/index.html' target='_blank' rel='noopener'>GitHubで見る</a></p>
+<p class='klabel'>Web成果物：flow-lab.html</p>
+<iframe class='preview' loading='lazy' src='outputs/task-05-traffic-explainer/astra/flow-lab.html'></iframe>
+<p><a class='btn' href='outputs/task-05-traffic-explainer/astra/flow-lab.html' target='_blank' rel='noopener'>大きく開く</a><a class='btn' href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-05-traffic-explainer/astra/flow-lab.html' target='_blank' rel='noopener'>GitHubで見る</a></p>
+<p class='klabel'>検証結果（RUN.md より）</p>
+<div class='verify'>【検証結果】
+検証Pass。全長420mの周回路で車間時間・反応遅れを扱う追従モデルが本格的。ボタン操作中心（スライダーなし）。
+【備考】
+試行2回（1回目は当日の初回バッチ分）。本記録は再実行分。</div>
+<p><a href='https://github.com/sean-sunagaku/prac-bench/tree/main/results/2026-11-20/task-05-traffic-explainer/astra' target='_blank' rel='noopener'>このモデルの全ファイルを GitHub で見る</a> ／ <a href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-05-traffic-explainer/astra/RUN.md' target='_blank' rel='noopener'>RUN.md</a></p>
+<details><summary>テキスト成果物（全文）</summary><h3>astra</h3>
 <details><summary>RUN.md（運営の実施記録）</summary><pre style="white-space:pre-wrap;word-break:break-word"># RUN — task-05-traffic-explainer / astra
 
 - 実施日: 2026-11-20（12:03:07–12:08:43 JST）
@@ -322,7 +280,29 @@ DAMAGES, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 FROM, OUT OF THE USE OR INABILITY TO USE THE FONT SOFTWARE OR FROM
 OTHER DEALINGS IN THE FONT SOFTWARE.
 </pre></details>
-<h3>sol</h3>
+</details></section><section class="card panel" data-model="sol" id="sol">
+<h3 style='margin-top:0'>Sol（GPT-6.2 Sol / Codex） <span class="badge b-ok">充足</span></h3>
+<table class='meta'>
+<tr><td>判定</td><td>充足</td></tr>
+<tr><td>実装時間</td><td>3:36</td></tr>
+<tr><td>トークン（入力/出力）</td><td>3,991,977/61,320</td></tr>
+<tr><td>コスト推定</td><td>$4.58</td></tr>
+<tr><td>終了状態</td><td>自然終了</td></tr>
+<tr><td>実施日時</td><td>2026-11-20（12:03:07–12:06:43 JST）</td></tr>
+</table>
+<p class='klabel'>Web成果物：index.html</p>
+<iframe class='preview' loading='lazy' src='outputs/task-05-traffic-explainer/sol/index.html'></iframe>
+<p><a class='btn' href='outputs/task-05-traffic-explainer/sol/index.html' target='_blank' rel='noopener'>大きく開く</a><a class='btn' href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-05-traffic-explainer/sol/index.html' target='_blank' rel='noopener'>GitHubで見る</a></p>
+<p class='klabel'>Web成果物：traffic-explainer.html</p>
+<iframe class='preview' loading='lazy' src='outputs/task-05-traffic-explainer/sol/traffic-explainer.html'></iframe>
+<p><a class='btn' href='outputs/task-05-traffic-explainer/sol/traffic-explainer.html' target='_blank' rel='noopener'>大きく開く</a><a class='btn' href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-05-traffic-explainer/sol/traffic-explainer.html' target='_blank' rel='noopener'>GitHubで見る</a></p>
+<p class='klabel'>検証結果（RUN.md より）</p>
+<div class='verify'>【検証結果】
+検証Pass。Canvas 描画+rAF、スライダー2本。自作 RUN.md 付き。
+【備考】
+試行2回（1回目は当日の初回バッチ分）。本記録は再実行分。</div>
+<p><a href='https://github.com/sean-sunagaku/prac-bench/tree/main/results/2026-11-20/task-05-traffic-explainer/sol' target='_blank' rel='noopener'>このモデルの全ファイルを GitHub で見る</a> ／ <a href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-05-traffic-explainer/sol/RUN.md' target='_blank' rel='noopener'>RUN.md</a></p>
+<details><summary>テキスト成果物（全文）</summary><h3>sol</h3>
 <details><summary>RUN.md（運営の実施記録）</summary><pre style="white-space:pre-wrap;word-break:break-word"># RUN — task-05-traffic-explainer / sol
 
 - 実施日: 2026-11-20（12:03:07–12:06:43 JST）
@@ -350,7 +330,30 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
 ## 備考
 試行2回（1回目は当日の初回バッチ分）。本記録は再実行分。
 </pre></details>
-<h3>opus</h3>
+</details></section><section class="card panel" data-model="opus" id="opus">
+<h3 style='margin-top:0'>Opus（Claude Code / Opus） <span class="badge b-ok">充足</span></h3>
+<table class='meta'>
+<tr><td>判定</td><td>充足</td></tr>
+<tr><td>実装時間</td><td>103:20</td></tr>
+<tr><td>トークン（入力/出力）</td><td>184,155,544/1,016,684</td></tr>
+<tr><td>コスト推定</td><td>$395.06</td></tr>
+<tr><td>終了状態</td><td>自然終了</td></tr>
+<tr><td>実施日時</td><td>2026-11-20（12:08:52–13:52:12 JST）</td></tr>
+</table>
+<p class='klabel'>Web成果物：index.html</p>
+<iframe class='preview' loading='lazy' src='outputs/task-05-traffic-explainer/opus/index.html'></iframe>
+<p><a class='btn' href='outputs/task-05-traffic-explainer/opus/index.html' target='_blank' rel='noopener'>大きく開く</a><a class='btn' href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-05-traffic-explainer/opus/index.html' target='_blank' rel='noopener'>GitHubで見る</a></p>
+<p class='klabel'>画像</p><div class='gal'>
+<figure><a href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-05-traffic-explainer/opus/screenshots/d01-hero.png' target='_blank' rel='noopener'><img loading='lazy' src='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-05-traffic-explainer/opus/screenshots/d01-hero.png' alt='screenshots/d01-hero.png'></a><figcaption>screenshots/d01-hero.png</figcaption></figure>
+<figure><a href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-05-traffic-explainer/opus/screenshots/d02-hero-jam.png' target='_blank' rel='noopener'><img loading='lazy' src='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-05-traffic-explainer/opus/screenshots/d02-hero-jam.png' alt='screenshots/d02-hero-jam.png'></a><figcaption>screenshots/d02-hero-jam.png</figcaption></figure>
+<figure><a href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-05-traffic-explainer/opus/screenshots/d03-wave.png' target='_blank' rel='noopener'><img loading='lazy' src='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-05-traffic-explainer/opus/screenshots/d03-wave.png' alt='screenshots/d03-wave.png'></a><figcaption>screenshots/d03-wave.png</figcaption></figure>
+<figure><a href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-05-traffic-explainer/opus/screenshots/d04-chain.png' target='_blank' rel='noopener'><img loading='lazy' src='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-05-traffic-explainer/opus/screenshots/d04-chain.png' alt='screenshots/d04-chain.png'></a><figcaption>screenshots/d04-chain.png</figcaption></figure>
+</div>
+<p class='klabel'>検証結果（RUN.md より）</p>
+<div class='verify'>【検証結果】
+検証Pass。単一HTML 141KB にシミュレーション内蔵。スライダー12本・ボタン54個と操作系が最多で、検証用スクリーンショットと調整ツール付き。</div>
+<p><a href='https://github.com/sean-sunagaku/prac-bench/tree/main/results/2026-11-20/task-05-traffic-explainer/opus' target='_blank' rel='noopener'>このモデルの全ファイルを GitHub で見る</a> ／ <a href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-05-traffic-explainer/opus/RUN.md' target='_blank' rel='noopener'>RUN.md</a></p>
+<details><summary>テキスト成果物（全文）</summary><h3>opus</h3>
 <details><summary>RUN.md（運営の実施記録）</summary><pre style="white-space:pre-wrap;word-break:break-word"># RUN — task-05-traffic-explainer / opus
 
 - 実施日: 2026-11-20（12:08:52–13:52:12 JST）
@@ -380,5 +383,32 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
 ## 検証結果
 検証Pass。単一HTML 141KB にシミュレーション内蔵。スライダー12本・ボタン54個と操作系が最多で、検証用スクリーンショットと調整ツール付き。
 </pre></details>
-</section>
+</section></details></section></div></main><footer>Prac-Bench 実施結果レポート（2026-11-20）／ 数値・判定・所見の出典：リポジトリ内 results/2026-11-20/comparison.md および各 RUN.md</footer>
+
+<script>
+(function(){
+  var MODELS = ["neon","carbon","astra","sol","opus"];
+  var panels = Array.prototype.slice.call(document.querySelectorAll(".panel"));
+  var wrap = document.getElementById("panels");
+  var btns = Array.prototype.slice.call(document.querySelectorAll(".controls button"));
+  function show(mode, model){
+    btns.forEach(function(b){ b.classList.toggle("on", b.dataset.mode===mode && (mode==="all" || b.dataset.model===model)); });
+    if(mode==="all"){ wrap.className="panels compare"; panels.forEach(function(p){ p.classList.remove("active"); }); }
+    else { wrap.className="panels single"; panels.forEach(function(p){ p.classList.toggle("active", p.dataset.model===model); }); }
+    try{ history.replaceState(null,"", mode!=="all" ? "#"+model : "#all"); }catch(e){}
+  }
+  btns.forEach(function(b){ b.addEventListener("click", function(){ show(b.dataset.mode, b.dataset.model); }); });
+  document.addEventListener("keydown", function(e){
+    if(wrap.className.indexOf("single")<0) return;
+    var cur = -1;
+    panels.forEach(function(p,i){ if(p.classList.contains("active")) cur=i; });
+    if(e.key==="ArrowRight" && cur>=0 && cur<panels.length-1) show("one", panels[cur+1].dataset.model);
+    if(e.key==="ArrowLeft" && cur>0) show("one", panels[cur-1].dataset.model);
+  });
+  var h = (location.hash||"").replace("#","");
+  if(MODELS.indexOf(h)>=0) show("one", h);
+  else if(window.innerWidth>=1150) show("all");
+  else show("one", MODELS[0]);
+})();
+</script>
 </body></html>

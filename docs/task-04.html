@@ -25,20 +25,29 @@ iframe.pdf{width:100%;height:460px;border:1px solid var(--line);border-radius:8p
 .klabel{font-weight:700;margin:14px 0 4px;font-size:14.5px}
 footer{max-width:1180px;margin:0 auto;padding:0 20px 40px;color:var(--sub);font-size:13px}
 .nav{font-size:14px;margin:10px 0}.fname{font-size:12.5px;color:var(--sub);word-break:break-all}
-</style></head><body>
+</style>
+<style>
+header{padding-top:14px}h1{font-size:22px}
+.controls{position:sticky;top:0;z-index:60;background:var(--bg);padding:10px 0;border-bottom:1px solid var(--line);display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.controls .lbl{font-size:13px;color:var(--sub);margin-right:2px}
+.controls button{background:var(--card);color:var(--tx);border:1px solid var(--line);border-radius:99px;padding:6px 14px;font-size:13.5px;cursor:pointer}
+.controls button.on{border-color:var(--acc);color:var(--acc);font-weight:700}
+.panels{display:grid;gap:14px;margin-top:14px}
+.panels.compare{grid-template-columns:repeat(5,minmax(300px,1fr));overflow-x:auto;padding-bottom:6px}
+.panels.single{grid-template-columns:minmax(0,1fr)}
+.panel{margin:0;max-height:calc(100dvh - 178px);overflow-y:auto;overscroll-behavior:contain}
+.panels.single .panel{display:none}
+.panels.single .panel.active{display:block}
+.panel iframe.preview{height:min(48vh,500px)}
+.panel .gal{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
+main{padding-bottom:16px}
+</style>
+</head><body>
 <header><p class='nav'><a href='index.html'>← 結果トップへ</a></p>
 <h1>枠4：3D造形「カピバラの雪見露天風呂」（共通スタジオ＆チェックリスト）</h1>
 <p class='sub'>雪見露天風呂に浸かるカピバラ（頭の上に柚子）の3Dジオラマ。全作品を運営側の共通スタジオ（カメラ・照明・背景を固定した撮影環境）で撮影し、題材に合わせた10〜12項目のチェックリストで採点する。Carbonの題材案と、Opusの「共通スタジオ＋チェックリスト」方式、Neonの接触要件の観点を統合した枠。</p>
 <p class='note'>運営の所見（comparison.md より）：opus が最も完全（検証付きGLB・ビューア・多角度プレビュー）。neon は Web 3D アプリとして完成。astra・sol は最小構成（GLB+プレビュー）。**carbon は成果物の形式確認を求める返信をして停止し、成果物なし**（再実行せず記録）。</p>
-<p class='sub'><a href='https://github.com/sean-sunagaku/prac-bench/tree/main/results/2026-11-20/task-04-capybara-onsen-3d' target='_blank' rel='noopener'>この枠の全ファイル（GitHub）</a></p></header><main>
-<table><tr><th>モデル</th><th>判定</th><th>実装時間</th><th>トークン 入力/出力</th><th>コスト推定</th></tr>
-<tr><td><a href='#neon'>neon</a></td><td><span class="badge b-ok">充足</span></td><td>30:05</td><td>取得不可</td><td>取得不可</td></tr>
-<tr><td><a href='#carbon'>carbon</a></td><td><span class="badge b-none">成果物なし（質問で停止）</span></td><td>1:03</td><td>取得不可</td><td>取得不可</td></tr>
-<tr><td><a href='#astra'>astra</a></td><td><span class="badge b-ok">充足（最小構成）</span></td><td>12:09</td><td>10,940,651/99,035</td><td>$9.20</td></tr>
-<tr><td><a href='#sol'>sol</a></td><td><span class="badge b-ok">充足（最小構成）</span></td><td>6:37</td><td>4,184,631/61,597</td><td>$4.54</td></tr>
-<tr><td><a href='#opus'>opus</a></td><td><span class="badge b-ok">充足</span></td><td>63:32</td><td>105,343,676/1,001,026</td><td>$260.23</td></tr>
-</table>
-<section class="card" id="neon">
+<p class='sub'><a href='https://github.com/sean-sunagaku/prac-bench/tree/main/results/2026-11-20/task-04-capybara-onsen-3d' target='_blank' rel='noopener'>この枠の全ファイル（GitHub）</a></p></header><main><div class="controls"><span class="lbl">モデル切替:</span><button data-mode="one" data-model="neon">Neon <span class='badge b-ok'>充足</span> 30:05</button><button data-mode="one" data-model="carbon">Carbon <span class='badge b-bad'>成果物なし（質問で停止）</span> 1:03</button><button data-mode="one" data-model="astra">Astra <span class='badge b-ok'>充足（最小構成）</span> 12:09</button><button data-mode="one" data-model="sol">Sol <span class='badge b-ok'>充足（最小構成）</span> 6:37</button><button data-mode="one" data-model="opus">Opus <span class='badge b-ok'>充足</span> 63:32</button><button data-mode="all">横並びで比較</button></div><div class="panels" id="panels"><section class="card panel" data-model="neon" id="neon">
 <h3 style='margin-top:0'>Neon（Gemini 4 Neon / agy・xhigh） <span class="badge b-ok">充足</span></h3>
 <table class='meta'>
 <tr><td>判定</td><td>充足</td></tr>
@@ -55,8 +64,37 @@ footer{max-width:1180px;margin:0 auto;padding:0 20px 40px;color:var(--sub);font-
 <div class='verify'>【検証結果】
 完成。Vite+Three.js の Web 3D アプリ（ビルド済み dist 付き、JS 8モジュール）。</div>
 <p><a href='https://github.com/sean-sunagaku/prac-bench/tree/main/results/2026-11-20/task-04-capybara-onsen-3d/neon' target='_blank' rel='noopener'>このモデルの全ファイルを GitHub で見る</a> ／ <a href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-04-capybara-onsen-3d/neon/RUN.md' target='_blank' rel='noopener'>RUN.md</a></p>
-</section>
-<section class="card" id="carbon">
+<details><summary>テキスト成果物（全文）</summary><h3>neon</h3>
+<details><summary>RUN.md（運営の実施記録）</summary><pre style="white-space:pre-wrap;word-break:break-word"># RUN — task-04-capybara-onsen-3d / neon
+
+- 実施日: 2026-11-20（10:51:43–11:21:48 JST）
+- 実装時間: 30分05秒
+- 終了状態: agy の30分印刷タイムアウトで打ち切り（成果物は打ち切り時点のもの）
+- トークン使用量: 取得不可（Antigravity CLI の会話記録にトークン内訳が残らない形式のため）
+- コスト推定: 取得不可（トークン不明のため）
+- 成果物ファイル数: 16（ランナー生成物・node_modules・支給 input を除く）
+
+## 主な成果物
+- dist/assets/index-BSMdTOVG.js
+- dist/assets/index-CfjII_KM.css
+- dist/index.html
+- index.html
+- package-lock.json
+- package.json
+- src/atmosphere.js
+- src/capybara.js
+- src/environment.js
+- src/garden.js
+- src/main.js
+- src/onsen.js
+- src/textures.js
+- src/ui.js
+- style.css
+
+## 検証結果
+完成。Vite+Three.js の Web 3D アプリ（ビルド済み dist 付き、JS 8モジュール）。
+</pre></details>
+</details></section><section class="card panel" data-model="carbon" id="carbon">
 <h3 style='margin-top:0'>Carbon（Gemini 4 Carbon / agy・high） <span class="badge b-none">成果物なし（質問で停止）</span></h3>
 <table class='meta'>
 <tr><td>判定</td><td>成果物なし（質問で停止）</td></tr>
@@ -73,8 +111,25 @@ footer{max-width:1180px;margin:0 auto;padding:0 20px 40px;color:var(--sub);font-
 【備考】
 モデルが確認質問を返して停止したケース。条件統一のため再実行していない。</div>
 <p><a href='https://github.com/sean-sunagaku/prac-bench/tree/main/results/2026-11-20/task-04-capybara-onsen-3d/carbon' target='_blank' rel='noopener'>このモデルの全ファイルを GitHub で見る</a> ／ <a href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-04-capybara-onsen-3d/carbon/RUN.md' target='_blank' rel='noopener'>RUN.md</a></p>
-</section>
-<section class="card" id="astra">
+<details><summary>テキスト成果物（全文）</summary><h3>carbon</h3>
+<details><summary>RUN.md（運営の実施記録）</summary><pre style="white-space:pre-wrap;word-break:break-word"># RUN — task-04-capybara-onsen-3d / carbon
+
+- 実施日: 2026-11-20（11:13:14–11:14:17 JST）
+- 実装時間: 1分03秒
+- 終了状態: モデルの確認質問で停止（成果物なし）
+- トークン使用量: 取得不可（Antigravity CLI の会話記録にトークン内訳が残らない形式のため）
+- コスト推定: 取得不可（トークン不明のため）
+- 成果物ファイル数: 0（ランナー生成物・node_modules・支給 input を除く）
+
+## 主な成果物
+
+## 検証結果
+成果物なし。成果物の形式やチェックリストの確認を求める返信をして停止した。条件を揃えるため運営からは回答せず、この応答自体を結果として記録する（再実行なし）。
+
+## 備考
+モデルが確認質問を返して停止したケース。条件統一のため再実行していない。
+</pre></details>
+</details></section><section class="card panel" data-model="astra" id="astra">
 <h3 style='margin-top:0'>Astra（GPT-6.2 Astra / Codex） <span class="badge b-ok">充足（最小構成）</span></h3>
 <table class='meta'>
 <tr><td>判定</td><td>充足（最小構成）</td></tr>
@@ -93,8 +148,26 @@ footer{max-width:1180px;margin:0 auto;padding:0 20px 40px;color:var(--sub);font-
 <div class='verify'>【検証結果】
 最小構成で完成。生成スクリプト+scene.glb+プレビュー画像の4ファイル。</div>
 <p><a href='https://github.com/sean-sunagaku/prac-bench/tree/main/results/2026-11-20/task-04-capybara-onsen-3d/astra' target='_blank' rel='noopener'>このモデルの全ファイルを GitHub で見る</a> ／ <a href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-04-capybara-onsen-3d/astra/RUN.md' target='_blank' rel='noopener'>RUN.md</a></p>
-</section>
-<section class="card" id="sol">
+<details><summary>テキスト成果物（全文）</summary><h3>astra</h3>
+<details><summary>RUN.md（運営の実施記録）</summary><pre style="white-space:pre-wrap;word-break:break-word"># RUN — task-04-capybara-onsen-3d / astra
+
+- 実施日: 2026-11-20（12:01:36–12:13:45 JST）
+- 実装時間: 12分09秒
+- 終了状態: 自然終了
+- トークン使用量: 入力 10,940,651（うちキャッシュ 10,771,456） / 出力 99,035
+- コスト推定: $9.20（API単価前提による換算。単価の前提は ../comparison.md 参照。実際の課金形態とは異なる）
+- 成果物ファイル数: 4（ランナー生成物・node_modules・支給 input を除く）
+
+## 主な成果物
+- RUN.md
+- generate_scene.py
+- preview.png
+- scene.glb
+
+## 検証結果
+最小構成で完成。生成スクリプト+scene.glb+プレビュー画像の4ファイル。
+</pre></details>
+</details></section><section class="card panel" data-model="sol" id="sol">
 <h3 style='margin-top:0'>Sol（GPT-6.2 Sol / Codex） <span class="badge b-ok">充足（最小構成）</span></h3>
 <table class='meta'>
 <tr><td>判定</td><td>充足（最小構成）</td></tr>
@@ -113,8 +186,26 @@ footer{max-width:1180px;margin:0 auto;padding:0 20px 40px;color:var(--sub);font-
 <div class='verify'>【検証結果】
 astra と同型。生成スクリプト+scene.glb+プレビュー画像で完成。</div>
 <p><a href='https://github.com/sean-sunagaku/prac-bench/tree/main/results/2026-11-20/task-04-capybara-onsen-3d/sol' target='_blank' rel='noopener'>このモデルの全ファイルを GitHub で見る</a> ／ <a href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-04-capybara-onsen-3d/sol/RUN.md' target='_blank' rel='noopener'>RUN.md</a></p>
-</section>
-<section class="card" id="opus">
+<details><summary>テキスト成果物（全文）</summary><h3>sol</h3>
+<details><summary>RUN.md（運営の実施記録）</summary><pre style="white-space:pre-wrap;word-break:break-word"># RUN — task-04-capybara-onsen-3d / sol
+
+- 実施日: 2026-11-20（12:02:22–12:08:59 JST）
+- 実装時間: 6分37秒
+- 終了状態: 自然終了
+- トークン使用量: 入力 4,184,631（うちキャッシュ 4,050,304） / 出力 61,597
+- コスト推定: $4.54（API単価前提による換算。単価の前提は ../comparison.md 参照。実際の課金形態とは異なる）
+- 成果物ファイル数: 4（ランナー生成物・node_modules・支給 input を除く）
+
+## 主な成果物
+- RUN.md
+- build_scene.py
+- scene.glb
+- snowbound-yuzu-bath.png
+
+## 検証結果
+astra と同型。生成スクリプト+scene.glb+プレビュー画像で完成。
+</pre></details>
+</details></section><section class="card panel" data-model="opus" id="opus">
 <h3 style='margin-top:0'>Opus（Claude Code / Opus） <span class="badge b-ok">充足</span></h3>
 <table class='meta'>
 <tr><td>判定</td><td>充足</td></tr>
@@ -148,95 +239,7 @@ astra と同型。生成スクリプト+scene.glb+プレビュー画像で完成
 <div class='verify'>【検証結果】
 最も完全。検証レポート付き GLB、Web ビューア、多角度プレビュー20枚超、ターンテーブル動画まで付属。モデル自身が RUN.md と metrics.json も作成した。</div>
 <p><a href='https://github.com/sean-sunagaku/prac-bench/tree/main/results/2026-11-20/task-04-capybara-onsen-3d/opus' target='_blank' rel='noopener'>このモデルの全ファイルを GitHub で見る</a> ／ <a href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-04-capybara-onsen-3d/opus/RUN.md' target='_blank' rel='noopener'>RUN.md</a></p>
-</section>
-</main><footer>Prac-Bench 実施結果レポート（2026-11-20）／ 数値・判定・所見の出典：リポジトリ内 results/2026-11-20/comparison.md および各 RUN.md</footer><section><h2>テキスト成果物（全文）</h2><p>各モデルの文書系テキスト成果物と運営の実施記録（RUN.md）を全文収録する。コードやバイナリはリポジトリと outputs/ を参照。</p>
-<h3>neon</h3>
-<details><summary>RUN.md（運営の実施記録）</summary><pre style="white-space:pre-wrap;word-break:break-word"># RUN — task-04-capybara-onsen-3d / neon
-
-- 実施日: 2026-11-20（10:51:43–11:21:48 JST）
-- 実装時間: 30分05秒
-- 終了状態: agy の30分印刷タイムアウトで打ち切り（成果物は打ち切り時点のもの）
-- トークン使用量: 取得不可（Antigravity CLI の会話記録にトークン内訳が残らない形式のため）
-- コスト推定: 取得不可（トークン不明のため）
-- 成果物ファイル数: 16（ランナー生成物・node_modules・支給 input を除く）
-
-## 主な成果物
-- dist/assets/index-BSMdTOVG.js
-- dist/assets/index-CfjII_KM.css
-- dist/index.html
-- index.html
-- package-lock.json
-- package.json
-- src/atmosphere.js
-- src/capybara.js
-- src/environment.js
-- src/garden.js
-- src/main.js
-- src/onsen.js
-- src/textures.js
-- src/ui.js
-- style.css
-
-## 検証結果
-完成。Vite+Three.js の Web 3D アプリ（ビルド済み dist 付き、JS 8モジュール）。
-</pre></details>
-<h3>carbon</h3>
-<details><summary>RUN.md（運営の実施記録）</summary><pre style="white-space:pre-wrap;word-break:break-word"># RUN — task-04-capybara-onsen-3d / carbon
-
-- 実施日: 2026-11-20（11:13:14–11:14:17 JST）
-- 実装時間: 1分03秒
-- 終了状態: モデルの確認質問で停止（成果物なし）
-- トークン使用量: 取得不可（Antigravity CLI の会話記録にトークン内訳が残らない形式のため）
-- コスト推定: 取得不可（トークン不明のため）
-- 成果物ファイル数: 0（ランナー生成物・node_modules・支給 input を除く）
-
-## 主な成果物
-
-## 検証結果
-成果物なし。成果物の形式やチェックリストの確認を求める返信をして停止した。条件を揃えるため運営からは回答せず、この応答自体を結果として記録する（再実行なし）。
-
-## 備考
-モデルが確認質問を返して停止したケース。条件統一のため再実行していない。
-</pre></details>
-<h3>astra</h3>
-<details><summary>RUN.md（運営の実施記録）</summary><pre style="white-space:pre-wrap;word-break:break-word"># RUN — task-04-capybara-onsen-3d / astra
-
-- 実施日: 2026-11-20（12:01:36–12:13:45 JST）
-- 実装時間: 12分09秒
-- 終了状態: 自然終了
-- トークン使用量: 入力 10,940,651（うちキャッシュ 10,771,456） / 出力 99,035
-- コスト推定: $9.20（API単価前提による換算。単価の前提は ../comparison.md 参照。実際の課金形態とは異なる）
-- 成果物ファイル数: 4（ランナー生成物・node_modules・支給 input を除く）
-
-## 主な成果物
-- RUN.md
-- generate_scene.py
-- preview.png
-- scene.glb
-
-## 検証結果
-最小構成で完成。生成スクリプト+scene.glb+プレビュー画像の4ファイル。
-</pre></details>
-<h3>sol</h3>
-<details><summary>RUN.md（運営の実施記録）</summary><pre style="white-space:pre-wrap;word-break:break-word"># RUN — task-04-capybara-onsen-3d / sol
-
-- 実施日: 2026-11-20（12:02:22–12:08:59 JST）
-- 実装時間: 6分37秒
-- 終了状態: 自然終了
-- トークン使用量: 入力 4,184,631（うちキャッシュ 4,050,304） / 出力 61,597
-- コスト推定: $4.54（API単価前提による換算。単価の前提は ../comparison.md 参照。実際の課金形態とは異なる）
-- 成果物ファイル数: 4（ランナー生成物・node_modules・支給 input を除く）
-
-## 主な成果物
-- RUN.md
-- build_scene.py
-- scene.glb
-- snowbound-yuzu-bath.png
-
-## 検証結果
-astra と同型。生成スクリプト+scene.glb+プレビュー画像で完成。
-</pre></details>
-<h3>opus</h3>
+<details><summary>テキスト成果物（全文）</summary><h3>opus</h3>
 <details><summary>RUN.md（運営の実施記録）</summary><pre style="white-space:pre-wrap;word-break:break-word"># RUN — task-04-capybara-onsen-3d / opus
 
 - 実施日: 2026-11-20（11:40:17–12:43:49 JST）
@@ -334,5 +337,32 @@ astra と同型。生成スクリプト+scene.glb+プレビュー画像で完成
 - ビルド: ルートで `node viewer/build.mjs`（最新の scene.glb / metrics.json を埋め込んだ自己完結 index.html を出力。依存は /tmp/capy-work/viewer-build、無ければ自動で npm install。別ディレクトリからは `node &lt;root&gt;/viewer/build.mjs &lt;root&gt;`）
 - 撮影: `node viewer/shoot.mjs [--turntable N] [--ui]` → previews/web_*.png（1280x960、コンソールの error/warning も集計）、`--turntable N` は /tmp/capy-work/tt_web/frame_###.png
 </pre></details>
-</section>
+</section></details></section></div></main><footer>Prac-Bench 実施結果レポート（2026-11-20）／ 数値・判定・所見の出典：リポジトリ内 results/2026-11-20/comparison.md および各 RUN.md</footer>
+
+<script>
+(function(){
+  var MODELS = ["neon","carbon","astra","sol","opus"];
+  var panels = Array.prototype.slice.call(document.querySelectorAll(".panel"));
+  var wrap = document.getElementById("panels");
+  var btns = Array.prototype.slice.call(document.querySelectorAll(".controls button"));
+  function show(mode, model){
+    btns.forEach(function(b){ b.classList.toggle("on", b.dataset.mode===mode && (mode==="all" || b.dataset.model===model)); });
+    if(mode==="all"){ wrap.className="panels compare"; panels.forEach(function(p){ p.classList.remove("active"); }); }
+    else { wrap.className="panels single"; panels.forEach(function(p){ p.classList.toggle("active", p.dataset.model===model); }); }
+    try{ history.replaceState(null,"", mode!=="all" ? "#"+model : "#all"); }catch(e){}
+  }
+  btns.forEach(function(b){ b.addEventListener("click", function(){ show(b.dataset.mode, b.dataset.model); }); });
+  document.addEventListener("keydown", function(e){
+    if(wrap.className.indexOf("single")<0) return;
+    var cur = -1;
+    panels.forEach(function(p,i){ if(p.classList.contains("active")) cur=i; });
+    if(e.key==="ArrowRight" && cur>=0 && cur<panels.length-1) show("one", panels[cur+1].dataset.model);
+    if(e.key==="ArrowLeft" && cur>0) show("one", panels[cur-1].dataset.model);
+  });
+  var h = (location.hash||"").replace("#","");
+  if(MODELS.indexOf(h)>=0) show("one", h);
+  else if(window.innerWidth>=1150) show("all");
+  else show("one", MODELS[0]);
+})();
+</script>
 </body></html>

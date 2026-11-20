@@ -25,20 +25,29 @@ iframe.pdf{width:100%;height:460px;border:1px solid var(--line);border-radius:8p
 .klabel{font-weight:700;margin:14px 0 4px;font-size:14.5px}
 footer{max-width:1180px;margin:0 auto;padding:0 20px 40px;color:var(--sub);font-size:13px}
 .nav{font-size:14px;margin:10px 0}.fname{font-size:12.5px;color:var(--sub);word-break:break-all}
-</style></head><body>
+</style>
+<style>
+header{padding-top:14px}h1{font-size:22px}
+.controls{position:sticky;top:0;z-index:60;background:var(--bg);padding:10px 0;border-bottom:1px solid var(--line);display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.controls .lbl{font-size:13px;color:var(--sub);margin-right:2px}
+.controls button{background:var(--card);color:var(--tx);border:1px solid var(--line);border-radius:99px;padding:6px 14px;font-size:13.5px;cursor:pointer}
+.controls button.on{border-color:var(--acc);color:var(--acc);font-weight:700}
+.panels{display:grid;gap:14px;margin-top:14px}
+.panels.compare{grid-template-columns:repeat(5,minmax(300px,1fr));overflow-x:auto;padding-bottom:6px}
+.panels.single{grid-template-columns:minmax(0,1fr)}
+.panel{margin:0;max-height:calc(100dvh - 178px);overflow-y:auto;overscroll-behavior:contain}
+.panels.single .panel{display:none}
+.panels.single .panel.active{display:block}
+.panel iframe.preview{height:min(48vh,500px)}
+.panel .gal{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
+main{padding-bottom:16px}
+</style>
+</head><body>
 <header><p class='nav'><a href='index.html'>← 結果トップへ</a></p>
 <h1>枠3：『あおい島』観光マップ単一SVG</h1>
 <p class='sub'>架空の離島「あおい島」の観光マップ。地形・観光スポット10か所・バス路線2系統をまとめた島データを全モデルに同じく渡し、そのデータをもとに地図を描く。この枠だけは例外として、データの渡し方をプロンプト内で指示する。レビュー平均90.25点、3モデルがトップ3に挙げた。</p>
 <p class='note'>運営の所見（comparison.md より）：最大の分かれ目。neon・carbon は単一SVGに14スポット全件+付帯要素まで完備。**astra・sol は SVG を出さず PNG/PDF のみで中核要件を未達**。opus は内容完備だが画像埋め込みと凡例・スケールの欠けで部分。</p>
-<p class='sub'><a href='https://github.com/sean-sunagaku/prac-bench/tree/main/results/2026-11-20/task-03-aoi-island-map' target='_blank' rel='noopener'>この枠の全ファイル（GitHub）</a></p></header><main>
-<table><tr><th>モデル</th><th>判定</th><th>実装時間</th><th>トークン 入力/出力</th><th>コスト推定</th></tr>
-<tr><td><a href='#neon'>neon</a></td><td><span class="badge b-ok">充足</span></td><td>16:44</td><td>取得不可</td><td>取得不可</td></tr>
-<tr><td><a href='#carbon'>carbon</a></td><td><span class="badge b-ok">充足</span></td><td>21:41</td><td>取得不可</td><td>取得不可</td></tr>
-<tr><td><a href='#astra'>astra</a></td><td><span class="badge b-bad">未達（SVGなし）</span></td><td>5:06</td><td>1,856,863/40,324</td><td>$2.64</td></tr>
-<tr><td><a href='#sol'>sol</a></td><td><span class="badge b-bad">未達（SVGなし）</span></td><td>4:36</td><td>1,186,893/32,841</td><td>$1.99</td></tr>
-<tr><td><a href='#opus'>opus</a></td><td><span class="badge b-part">部分</span></td><td>54:58</td><td>52,778,139/739,038</td><td>$148.58</td></tr>
-</table>
-<section class="card" id="neon">
+<p class='sub'><a href='https://github.com/sean-sunagaku/prac-bench/tree/main/results/2026-11-20/task-03-aoi-island-map' target='_blank' rel='noopener'>この枠の全ファイル（GitHub）</a></p></header><main><div class="controls"><span class="lbl">モデル切替:</span><button data-mode="one" data-model="neon">Neon <span class='badge b-ok'>充足</span> 16:44</button><button data-mode="one" data-model="carbon">Carbon <span class='badge b-ok'>充足</span> 21:41</button><button data-mode="one" data-model="astra">Astra <span class='badge b-bad'>未達（SVGなし）</span> 5:06</button><button data-mode="one" data-model="sol">Sol <span class='badge b-bad'>未達（SVGなし）</span> 4:36</button><button data-mode="one" data-model="opus">Opus <span class='badge b-part'>部分</span> 54:58</button><button data-mode="all">横並びで比較</button></div><div class="panels" id="panels"><section class="card panel" data-model="neon" id="neon">
 <h3 style='margin-top:0'>Neon（Gemini 4 Neon / agy・xhigh） <span class="badge b-ok">充足</span></h3>
 <table class='meta'>
 <tr><td>判定</td><td>充足</td></tr>
@@ -62,99 +71,7 @@ footer{max-width:1180px;margin:0 auto;padding:0 20px 40px;color:var(--sub);font-
 <div class='verify'>【検証結果】
 検証Pass。単一SVG（54KB）にスポット14/14を正式名称で収録、バス路線・フェリー・凡例・方位・スケールも完備。script/image 埋め込みなし。</div>
 <p><a href='https://github.com/sean-sunagaku/prac-bench/tree/main/results/2026-11-20/task-03-aoi-island-map/neon' target='_blank' rel='noopener'>このモデルの全ファイルを GitHub で見る</a> ／ <a href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-03-aoi-island-map/neon/RUN.md' target='_blank' rel='noopener'>RUN.md</a></p>
-</section>
-<section class="card" id="carbon">
-<h3 style='margin-top:0'>Carbon（Gemini 4 Carbon / agy・high） <span class="badge b-ok">充足</span></h3>
-<table class='meta'>
-<tr><td>判定</td><td>充足</td></tr>
-<tr><td>実装時間</td><td>21:41</td></tr>
-<tr><td>トークン（入力/出力）</td><td>取得不可</td></tr>
-<tr><td>コスト推定</td><td>取得不可</td></tr>
-<tr><td>終了状態</td><td>自然終了</td></tr>
-<tr><td>実施日時</td><td>2026-11-20（10:20:41–10:42:22 JST）</td></tr>
-</table>
-<p class='klabel'>Web成果物：aoi-island-map.html</p>
-<iframe class='preview' loading='lazy' src='outputs/task-03-aoi-island-map/carbon/aoi-island-map.html'></iframe>
-<p><a class='btn' href='outputs/task-03-aoi-island-map/carbon/aoi-island-map.html' target='_blank' rel='noopener'>大きく開く</a><a class='btn' href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-03-aoi-island-map/carbon/aoi-island-map.html' target='_blank' rel='noopener'>GitHubで見る</a></p>
-<p class='klabel'>画像</p><div class='gal'>
-<figure><a href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-03-aoi-island-map/carbon/aoi-island-map.png' target='_blank' rel='noopener'><img loading='lazy' src='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-03-aoi-island-map/carbon/aoi-island-map.png' alt='aoi-island-map.png'></a><figcaption>aoi-island-map.png</figcaption></figure>
-<figure><a href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-03-aoi-island-map/carbon/aoi-island-map.svg' target='_blank' rel='noopener'><img loading='lazy' src='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-03-aoi-island-map/carbon/aoi-island-map.svg' alt='aoi-island-map.svg'></a><figcaption>aoi-island-map.svg</figcaption></figure>
-</div>
-<p class='klabel'>ドキュメント / データ</p>
-<p><a class='btn' href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-03-aoi-island-map/carbon/aoi-island-map.pdf' target='_blank' rel='noopener'>aoi-island-map.pdf</a><a class='btn' href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-03-aoi-island-map/carbon/aoi-island-map.pdf' target='_blank' rel='noopener'>直接開く</a> <span class='fname'>3.4 MB</span></p>
-<iframe class='pdf' loading='lazy' src='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-03-aoi-island-map/carbon/aoi-island-map.pdf'></iframe>
-<p class='klabel'>検証結果（RUN.md より）</p>
-<div class='verify'>【検証結果】
-検証Pass。単一SVG（70KB）に14/14収録、付帯要素も完備。script/image 埋め込みなし。</div>
-<p><a href='https://github.com/sean-sunagaku/prac-bench/tree/main/results/2026-11-20/task-03-aoi-island-map/carbon' target='_blank' rel='noopener'>このモデルの全ファイルを GitHub で見る</a> ／ <a href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-03-aoi-island-map/carbon/RUN.md' target='_blank' rel='noopener'>RUN.md</a></p>
-</section>
-<section class="card" id="astra">
-<h3 style='margin-top:0'>Astra（GPT-6.2 Astra / Codex） <span class="badge b-bad">未達（SVGなし）</span></h3>
-<table class='meta'>
-<tr><td>判定</td><td>未達（SVGなし）</td></tr>
-<tr><td>実装時間</td><td>5:06</td></tr>
-<tr><td>トークン（入力/出力）</td><td>1,856,863/40,324</td></tr>
-<tr><td>コスト推定</td><td>$2.64</td></tr>
-<tr><td>終了状態</td><td>自然終了</td></tr>
-<tr><td>実施日時</td><td>2026-11-20（11:52:21–11:57:27 JST）</td></tr>
-</table>
-<p class='klabel'>画像</p><div class='gal'>
-<figure><a href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-03-aoi-island-map/astra/aoi-island-map.png' target='_blank' rel='noopener'><img loading='lazy' src='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-03-aoi-island-map/astra/aoi-island-map.png' alt='aoi-island-map.png'></a><figcaption>aoi-island-map.png</figcaption></figure>
-</div>
-<p class='klabel'>ドキュメント / データ</p>
-<p><a class='btn' href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-03-aoi-island-map/astra/aoi-island-map.pdf' target='_blank' rel='noopener'>aoi-island-map.pdf</a><a class='btn' href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-03-aoi-island-map/astra/aoi-island-map.pdf' target='_blank' rel='noopener'>直接開く</a> <span class='fname'>6.4 MB</span></p>
-<iframe class='pdf' loading='lazy' src='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-03-aoi-island-map/astra/aoi-island-map.pdf'></iframe>
-<p class='klabel'>検証結果（RUN.md より）</p>
-<div class='verify'>【検証結果】
-検証Fail。SVG が存在せず、成果物は PNG と PDF のみ。「単一SVG」という中核要件を外した。</div>
-<p><a href='https://github.com/sean-sunagaku/prac-bench/tree/main/results/2026-11-20/task-03-aoi-island-map/astra' target='_blank' rel='noopener'>このモデルの全ファイルを GitHub で見る</a> ／ <a href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-03-aoi-island-map/astra/RUN.md' target='_blank' rel='noopener'>RUN.md</a></p>
-</section>
-<section class="card" id="sol">
-<h3 style='margin-top:0'>Sol（GPT-6.2 Sol / Codex） <span class="badge b-bad">未達（SVGなし）</span></h3>
-<table class='meta'>
-<tr><td>判定</td><td>未達（SVGなし）</td></tr>
-<tr><td>実装時間</td><td>4:36</td></tr>
-<tr><td>トークン（入力/出力）</td><td>1,186,893/32,841</td></tr>
-<tr><td>コスト推定</td><td>$1.99</td></tr>
-<tr><td>終了状態</td><td>自然終了</td></tr>
-<tr><td>実施日時</td><td>2026-11-20（11:57:36–12:02:12 JST）</td></tr>
-</table>
-<p class='klabel'>画像</p><div class='gal'>
-<figure><a href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-03-aoi-island-map/sol/%E3%81%82%E3%81%8A%E3%81%84%E5%B3%B6_%E8%A6%B3%E5%85%89%E3%83%9E%E3%83%83%E3%83%97.png' target='_blank' rel='noopener'><img loading='lazy' src='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-03-aoi-island-map/sol/%E3%81%82%E3%81%8A%E3%81%84%E5%B3%B6_%E8%A6%B3%E5%85%89%E3%83%9E%E3%83%83%E3%83%97.png' alt='あおい島_観光マップ.png'></a><figcaption>あおい島_観光マップ.png</figcaption></figure>
-</div>
-<p class='klabel'>ドキュメント / データ</p>
-<p><a class='btn' href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-03-aoi-island-map/sol/%E3%81%82%E3%81%8A%E3%81%84%E5%B3%B6_%E8%A6%B3%E5%85%89%E3%83%9E%E3%83%83%E3%83%97.pdf' target='_blank' rel='noopener'>あおい島_観光マップ.pdf</a><a class='btn' href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-03-aoi-island-map/sol/%E3%81%82%E3%81%8A%E3%81%84%E5%B3%B6_%E8%A6%B3%E5%85%89%E3%83%9E%E3%83%83%E3%83%97.pdf' target='_blank' rel='noopener'>直接開く</a> <span class='fname'>3.8 MB</span></p>
-<iframe class='pdf' loading='lazy' src='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-03-aoi-island-map/sol/%E3%81%82%E3%81%8A%E3%81%84%E5%B3%B6_%E8%A6%B3%E5%85%89%E3%83%9E%E3%83%83%E3%83%97.pdf'></iframe>
-<p class='klabel'>検証結果（RUN.md より）</p>
-<div class='verify'>【検証結果】
-検証Fail。astra と同様に SVG がなく PNG/PDF のみ。</div>
-<p><a href='https://github.com/sean-sunagaku/prac-bench/tree/main/results/2026-11-20/task-03-aoi-island-map/sol' target='_blank' rel='noopener'>このモデルの全ファイルを GitHub で見る</a> ／ <a href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-03-aoi-island-map/sol/RUN.md' target='_blank' rel='noopener'>RUN.md</a></p>
-</section>
-<section class="card" id="opus">
-<h3 style='margin-top:0'>Opus（Claude Code / Opus） <span class="badge b-part">部分</span></h3>
-<table class='meta'>
-<tr><td>判定</td><td>部分</td></tr>
-<tr><td>実装時間</td><td>54:58</td></tr>
-<tr><td>トークン（入力/出力）</td><td>52,778,139/739,038</td></tr>
-<tr><td>コスト推定</td><td>$148.58</td></tr>
-<tr><td>終了状態</td><td>自然終了</td></tr>
-<tr><td>実施日時</td><td>2026-11-20（10:45:13–11:40:11 JST）</td></tr>
-</table>
-<p class='klabel'>画像</p><div class='gal'>
-<figure><a href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-03-aoi-island-map/opus/aoi-island-map.png' target='_blank' rel='noopener'><img loading='lazy' src='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-03-aoi-island-map/opus/aoi-island-map.png' alt='aoi-island-map.png'></a><figcaption>aoi-island-map.png</figcaption></figure>
-<figure><a href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-03-aoi-island-map/opus/aoi-island-map.svg' target='_blank' rel='noopener'><img loading='lazy' src='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-03-aoi-island-map/opus/aoi-island-map.svg' alt='aoi-island-map.svg'></a><figcaption>aoi-island-map.svg</figcaption></figure>
-<figure><a href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-03-aoi-island-map/opus/docs/preview.jpg' target='_blank' rel='noopener'><img loading='lazy' src='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-03-aoi-island-map/opus/docs/preview.jpg' alt='docs/preview.jpg'></a><figcaption>docs/preview.jpg</figcaption></figure>
-</div>
-<p class='klabel'>ドキュメント / データ</p>
-<p><a class='btn' href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-03-aoi-island-map/opus/aoi-island-map_print.pdf' target='_blank' rel='noopener'>aoi-island-map_print.pdf</a><a class='btn' href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-03-aoi-island-map/opus/aoi-island-map_print.pdf' target='_blank' rel='noopener'>直接開く</a> <span class='fname'>5.5 MB</span></p>
-<iframe class='pdf' loading='lazy' src='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-03-aoi-island-map/opus/aoi-island-map_print.pdf'></iframe>
-<p class='klabel'>検証結果（RUN.md より）</p>
-<div class='verify'>【検証結果】
-検証Partial。SVG（1.14MB）に14/14収録しバス・方位もあるが、base64 の画像埋め込みが1件あり、凡例とスケールバーのテキストが見つからない。</div>
-<p><a href='https://github.com/sean-sunagaku/prac-bench/tree/main/results/2026-11-20/task-03-aoi-island-map/opus' target='_blank' rel='noopener'>このモデルの全ファイルを GitHub で見る</a> ／ <a href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-03-aoi-island-map/opus/RUN.md' target='_blank' rel='noopener'>RUN.md</a></p>
-</section>
-</main><footer>Prac-Bench 実施結果レポート（2026-11-20）／ 数値・判定・所見の出典：リポジトリ内 results/2026-11-20/comparison.md および各 RUN.md</footer><section><h2>テキスト成果物（全文）</h2><p>各モデルの文書系テキスト成果物と運営の実施記録（RUN.md）を全文収録する。コードやバイナリはリポジトリと outputs/ を参照。</p>
-<h3>neon</h3>
+<details><summary>テキスト成果物（全文）</summary><h3>neon</h3>
 <details><summary>RUN.md（運営の実施記録）</summary><pre style="white-space:pre-wrap;word-break:break-word"># RUN — task-03-aoi-island-map / neon
 
 - 実施日: 2026-11-20（10:19:56–10:36:40 JST）
@@ -331,7 +248,31 @@ footer{max-width:1180px;margin:0 auto;padding:0 20px 40px;color:var(--sub);font-
 
 作成日：2026-11-20
 </pre></details>
-<h3>carbon</h3>
+</details></section><section class="card panel" data-model="carbon" id="carbon">
+<h3 style='margin-top:0'>Carbon（Gemini 4 Carbon / agy・high） <span class="badge b-ok">充足</span></h3>
+<table class='meta'>
+<tr><td>判定</td><td>充足</td></tr>
+<tr><td>実装時間</td><td>21:41</td></tr>
+<tr><td>トークン（入力/出力）</td><td>取得不可</td></tr>
+<tr><td>コスト推定</td><td>取得不可</td></tr>
+<tr><td>終了状態</td><td>自然終了</td></tr>
+<tr><td>実施日時</td><td>2026-11-20（10:20:41–10:42:22 JST）</td></tr>
+</table>
+<p class='klabel'>Web成果物：aoi-island-map.html</p>
+<iframe class='preview' loading='lazy' src='outputs/task-03-aoi-island-map/carbon/aoi-island-map.html'></iframe>
+<p><a class='btn' href='outputs/task-03-aoi-island-map/carbon/aoi-island-map.html' target='_blank' rel='noopener'>大きく開く</a><a class='btn' href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-03-aoi-island-map/carbon/aoi-island-map.html' target='_blank' rel='noopener'>GitHubで見る</a></p>
+<p class='klabel'>画像</p><div class='gal'>
+<figure><a href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-03-aoi-island-map/carbon/aoi-island-map.png' target='_blank' rel='noopener'><img loading='lazy' src='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-03-aoi-island-map/carbon/aoi-island-map.png' alt='aoi-island-map.png'></a><figcaption>aoi-island-map.png</figcaption></figure>
+<figure><a href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-03-aoi-island-map/carbon/aoi-island-map.svg' target='_blank' rel='noopener'><img loading='lazy' src='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-03-aoi-island-map/carbon/aoi-island-map.svg' alt='aoi-island-map.svg'></a><figcaption>aoi-island-map.svg</figcaption></figure>
+</div>
+<p class='klabel'>ドキュメント / データ</p>
+<p><a class='btn' href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-03-aoi-island-map/carbon/aoi-island-map.pdf' target='_blank' rel='noopener'>aoi-island-map.pdf</a><a class='btn' href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-03-aoi-island-map/carbon/aoi-island-map.pdf' target='_blank' rel='noopener'>直接開く</a> <span class='fname'>3.4 MB</span></p>
+<iframe class='pdf' loading='lazy' src='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-03-aoi-island-map/carbon/aoi-island-map.pdf'></iframe>
+<p class='klabel'>検証結果（RUN.md より）</p>
+<div class='verify'>【検証結果】
+検証Pass。単一SVG（70KB）に14/14収録、付帯要素も完備。script/image 埋め込みなし。</div>
+<p><a href='https://github.com/sean-sunagaku/prac-bench/tree/main/results/2026-11-20/task-03-aoi-island-map/carbon' target='_blank' rel='noopener'>このモデルの全ファイルを GitHub で見る</a> ／ <a href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-03-aoi-island-map/carbon/RUN.md' target='_blank' rel='noopener'>RUN.md</a></p>
+<details><summary>テキスト成果物（全文）</summary><h3>carbon</h3>
 <details><summary>RUN.md（運営の実施記録）</summary><pre style="white-space:pre-wrap;word-break:break-word"># RUN — task-03-aoi-island-map / carbon
 
 - 実施日: 2026-11-20（10:20:41–10:42:22 JST）
@@ -508,7 +449,27 @@ footer{max-width:1180px;margin:0 auto;padding:0 20px 40px;color:var(--sub);font-
 
 作成日：2026-11-20
 </pre></details>
-<h3>astra</h3>
+</details></section><section class="card panel" data-model="astra" id="astra">
+<h3 style='margin-top:0'>Astra（GPT-6.2 Astra / Codex） <span class="badge b-bad">未達（SVGなし）</span></h3>
+<table class='meta'>
+<tr><td>判定</td><td>未達（SVGなし）</td></tr>
+<tr><td>実装時間</td><td>5:06</td></tr>
+<tr><td>トークン（入力/出力）</td><td>1,856,863/40,324</td></tr>
+<tr><td>コスト推定</td><td>$2.64</td></tr>
+<tr><td>終了状態</td><td>自然終了</td></tr>
+<tr><td>実施日時</td><td>2026-11-20（11:52:21–11:57:27 JST）</td></tr>
+</table>
+<p class='klabel'>画像</p><div class='gal'>
+<figure><a href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-03-aoi-island-map/astra/aoi-island-map.png' target='_blank' rel='noopener'><img loading='lazy' src='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-03-aoi-island-map/astra/aoi-island-map.png' alt='aoi-island-map.png'></a><figcaption>aoi-island-map.png</figcaption></figure>
+</div>
+<p class='klabel'>ドキュメント / データ</p>
+<p><a class='btn' href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-03-aoi-island-map/astra/aoi-island-map.pdf' target='_blank' rel='noopener'>aoi-island-map.pdf</a><a class='btn' href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-03-aoi-island-map/astra/aoi-island-map.pdf' target='_blank' rel='noopener'>直接開く</a> <span class='fname'>6.4 MB</span></p>
+<iframe class='pdf' loading='lazy' src='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-03-aoi-island-map/astra/aoi-island-map.pdf'></iframe>
+<p class='klabel'>検証結果（RUN.md より）</p>
+<div class='verify'>【検証結果】
+検証Fail。SVG が存在せず、成果物は PNG と PDF のみ。「単一SVG」という中核要件を外した。</div>
+<p><a href='https://github.com/sean-sunagaku/prac-bench/tree/main/results/2026-11-20/task-03-aoi-island-map/astra' target='_blank' rel='noopener'>このモデルの全ファイルを GitHub で見る</a> ／ <a href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-03-aoi-island-map/astra/RUN.md' target='_blank' rel='noopener'>RUN.md</a></p>
+<details><summary>テキスト成果物（全文）</summary><h3>astra</h3>
 <details><summary>RUN.md（運営の実施記録）</summary><pre style="white-space:pre-wrap;word-break:break-word"># RUN — task-03-aoi-island-map / astra
 
 - 実施日: 2026-11-20（11:52:21–11:57:27 JST）
@@ -683,7 +644,27 @@ footer{max-width:1180px;margin:0 auto;padding:0 20px 40px;color:var(--sub);font-
 
 作成日：2026-11-20
 </pre></details>
-<h3>sol</h3>
+</details></section><section class="card panel" data-model="sol" id="sol">
+<h3 style='margin-top:0'>Sol（GPT-6.2 Sol / Codex） <span class="badge b-bad">未達（SVGなし）</span></h3>
+<table class='meta'>
+<tr><td>判定</td><td>未達（SVGなし）</td></tr>
+<tr><td>実装時間</td><td>4:36</td></tr>
+<tr><td>トークン（入力/出力）</td><td>1,186,893/32,841</td></tr>
+<tr><td>コスト推定</td><td>$1.99</td></tr>
+<tr><td>終了状態</td><td>自然終了</td></tr>
+<tr><td>実施日時</td><td>2026-11-20（11:57:36–12:02:12 JST）</td></tr>
+</table>
+<p class='klabel'>画像</p><div class='gal'>
+<figure><a href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-03-aoi-island-map/sol/%E3%81%82%E3%81%8A%E3%81%84%E5%B3%B6_%E8%A6%B3%E5%85%89%E3%83%9E%E3%83%83%E3%83%97.png' target='_blank' rel='noopener'><img loading='lazy' src='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-03-aoi-island-map/sol/%E3%81%82%E3%81%8A%E3%81%84%E5%B3%B6_%E8%A6%B3%E5%85%89%E3%83%9E%E3%83%83%E3%83%97.png' alt='あおい島_観光マップ.png'></a><figcaption>あおい島_観光マップ.png</figcaption></figure>
+</div>
+<p class='klabel'>ドキュメント / データ</p>
+<p><a class='btn' href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-03-aoi-island-map/sol/%E3%81%82%E3%81%8A%E3%81%84%E5%B3%B6_%E8%A6%B3%E5%85%89%E3%83%9E%E3%83%83%E3%83%97.pdf' target='_blank' rel='noopener'>あおい島_観光マップ.pdf</a><a class='btn' href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-03-aoi-island-map/sol/%E3%81%82%E3%81%8A%E3%81%84%E5%B3%B6_%E8%A6%B3%E5%85%89%E3%83%9E%E3%83%83%E3%83%97.pdf' target='_blank' rel='noopener'>直接開く</a> <span class='fname'>3.8 MB</span></p>
+<iframe class='pdf' loading='lazy' src='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-03-aoi-island-map/sol/%E3%81%82%E3%81%8A%E3%81%84%E5%B3%B6_%E8%A6%B3%E5%85%89%E3%83%9E%E3%83%83%E3%83%97.pdf'></iframe>
+<p class='klabel'>検証結果（RUN.md より）</p>
+<div class='verify'>【検証結果】
+検証Fail。astra と同様に SVG がなく PNG/PDF のみ。</div>
+<p><a href='https://github.com/sean-sunagaku/prac-bench/tree/main/results/2026-11-20/task-03-aoi-island-map/sol' target='_blank' rel='noopener'>このモデルの全ファイルを GitHub で見る</a> ／ <a href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-03-aoi-island-map/sol/RUN.md' target='_blank' rel='noopener'>RUN.md</a></p>
+<details><summary>テキスト成果物（全文）</summary><h3>sol</h3>
 <details><summary>RUN.md（運営の実施記録）</summary><pre style="white-space:pre-wrap;word-break:break-word"># RUN — task-03-aoi-island-map / sol
 
 - 実施日: 2026-11-20（11:57:36–12:02:12 JST）
@@ -858,7 +839,29 @@ footer{max-width:1180px;margin:0 auto;padding:0 20px 40px;color:var(--sub);font-
 
 作成日：2026-11-20
 </pre></details>
-<h3>opus</h3>
+</details></section><section class="card panel" data-model="opus" id="opus">
+<h3 style='margin-top:0'>Opus（Claude Code / Opus） <span class="badge b-part">部分</span></h3>
+<table class='meta'>
+<tr><td>判定</td><td>部分</td></tr>
+<tr><td>実装時間</td><td>54:58</td></tr>
+<tr><td>トークン（入力/出力）</td><td>52,778,139/739,038</td></tr>
+<tr><td>コスト推定</td><td>$148.58</td></tr>
+<tr><td>終了状態</td><td>自然終了</td></tr>
+<tr><td>実施日時</td><td>2026-11-20（10:45:13–11:40:11 JST）</td></tr>
+</table>
+<p class='klabel'>画像</p><div class='gal'>
+<figure><a href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-03-aoi-island-map/opus/aoi-island-map.png' target='_blank' rel='noopener'><img loading='lazy' src='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-03-aoi-island-map/opus/aoi-island-map.png' alt='aoi-island-map.png'></a><figcaption>aoi-island-map.png</figcaption></figure>
+<figure><a href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-03-aoi-island-map/opus/aoi-island-map.svg' target='_blank' rel='noopener'><img loading='lazy' src='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-03-aoi-island-map/opus/aoi-island-map.svg' alt='aoi-island-map.svg'></a><figcaption>aoi-island-map.svg</figcaption></figure>
+<figure><a href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-03-aoi-island-map/opus/docs/preview.jpg' target='_blank' rel='noopener'><img loading='lazy' src='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-03-aoi-island-map/opus/docs/preview.jpg' alt='docs/preview.jpg'></a><figcaption>docs/preview.jpg</figcaption></figure>
+</div>
+<p class='klabel'>ドキュメント / データ</p>
+<p><a class='btn' href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-03-aoi-island-map/opus/aoi-island-map_print.pdf' target='_blank' rel='noopener'>aoi-island-map_print.pdf</a><a class='btn' href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-03-aoi-island-map/opus/aoi-island-map_print.pdf' target='_blank' rel='noopener'>直接開く</a> <span class='fname'>5.5 MB</span></p>
+<iframe class='pdf' loading='lazy' src='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-03-aoi-island-map/opus/aoi-island-map_print.pdf'></iframe>
+<p class='klabel'>検証結果（RUN.md より）</p>
+<div class='verify'>【検証結果】
+検証Partial。SVG（1.14MB）に14/14収録しバス・方位もあるが、base64 の画像埋め込みが1件あり、凡例とスケールバーのテキストが見つからない。</div>
+<p><a href='https://github.com/sean-sunagaku/prac-bench/tree/main/results/2026-11-20/task-03-aoi-island-map/opus' target='_blank' rel='noopener'>このモデルの全ファイルを GitHub で見る</a> ／ <a href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-03-aoi-island-map/opus/RUN.md' target='_blank' rel='noopener'>RUN.md</a></p>
+<details><summary>テキスト成果物（全文）</summary><h3>opus</h3>
 <details><summary>RUN.md（運営の実施記録）</summary><pre style="white-space:pre-wrap;word-break:break-word"># RUN — task-03-aoi-island-map / opus
 
 - 実施日: 2026-11-20（10:45:13–11:40:11 JST）
@@ -2374,5 +2377,32 @@ Pillow
 fonttools
 brotli
 </pre></details>
-</section>
+</section></details></section></div></main><footer>Prac-Bench 実施結果レポート（2026-11-20）／ 数値・判定・所見の出典：リポジトリ内 results/2026-11-20/comparison.md および各 RUN.md</footer>
+
+<script>
+(function(){
+  var MODELS = ["neon","carbon","astra","sol","opus"];
+  var panels = Array.prototype.slice.call(document.querySelectorAll(".panel"));
+  var wrap = document.getElementById("panels");
+  var btns = Array.prototype.slice.call(document.querySelectorAll(".controls button"));
+  function show(mode, model){
+    btns.forEach(function(b){ b.classList.toggle("on", b.dataset.mode===mode && (mode==="all" || b.dataset.model===model)); });
+    if(mode==="all"){ wrap.className="panels compare"; panels.forEach(function(p){ p.classList.remove("active"); }); }
+    else { wrap.className="panels single"; panels.forEach(function(p){ p.classList.toggle("active", p.dataset.model===model); }); }
+    try{ history.replaceState(null,"", mode!=="all" ? "#"+model : "#all"); }catch(e){}
+  }
+  btns.forEach(function(b){ b.addEventListener("click", function(){ show(b.dataset.mode, b.dataset.model); }); });
+  document.addEventListener("keydown", function(e){
+    if(wrap.className.indexOf("single")<0) return;
+    var cur = -1;
+    panels.forEach(function(p,i){ if(p.classList.contains("active")) cur=i; });
+    if(e.key==="ArrowRight" && cur>=0 && cur<panels.length-1) show("one", panels[cur+1].dataset.model);
+    if(e.key==="ArrowLeft" && cur>0) show("one", panels[cur-1].dataset.model);
+  });
+  var h = (location.hash||"").replace("#","");
+  if(MODELS.indexOf(h)>=0) show("one", h);
+  else if(window.innerWidth>=1150) show("all");
+  else show("one", MODELS[0]);
+})();
+</script>
 </body></html>

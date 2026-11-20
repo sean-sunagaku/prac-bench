@@ -25,20 +25,29 @@ iframe.pdf{width:100%;height:460px;border:1px solid var(--line);border-radius:8p
 .klabel{font-weight:700;margin:14px 0 4px;font-size:14.5px}
 footer{max-width:1180px;margin:0 auto;padding:0 20px 40px;color:var(--sub);font-size:13px}
 .nav{font-size:14px;margin:10px 0}.fname{font-size:12.5px;color:var(--sub);word-break:break-all}
-</style></head><body>
+</style>
+<style>
+header{padding-top:14px}h1{font-size:22px}
+.controls{position:sticky;top:0;z-index:60;background:var(--bg);padding:10px 0;border-bottom:1px solid var(--line);display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.controls .lbl{font-size:13px;color:var(--sub);margin-right:2px}
+.controls button{background:var(--card);color:var(--tx);border:1px solid var(--line);border-radius:99px;padding:6px 14px;font-size:13.5px;cursor:pointer}
+.controls button.on{border-color:var(--acc);color:var(--acc);font-weight:700}
+.panels{display:grid;gap:14px;margin-top:14px}
+.panels.compare{grid-template-columns:repeat(5,minmax(300px,1fr));overflow-x:auto;padding-bottom:6px}
+.panels.single{grid-template-columns:minmax(0,1fr)}
+.panel{margin:0;max-height:calc(100dvh - 178px);overflow-y:auto;overscroll-behavior:contain}
+.panels.single .panel{display:none}
+.panels.single .panel.active{display:block}
+.panel iframe.preview{height:min(48vh,500px)}
+.panel .gal{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
+main{padding-bottom:16px}
+</style>
+</head><body>
 <header><p class='nav'><a href='index.html'>← 結果トップへ</a></p>
 <h1>枠1：架空ガジェット「KOKU-01」の製品LP＋触れるデモ</h1>
 <p class='sub'>架空の無画面集中タイマー「KOKU-01」の製品発表・先行予約LP。ページ内で実際に触れるデモを2つ（集中タイマーの体験デモ、色・プラン・オプションで価格が変わる購入シミュレーター）用意する。ラウンド2ではレビュー平均92.25点で全候補1位、全モデルがトップ3に挙げた看板タスク。</p>
 <p class='note'>運営の所見（comparison.md より）：5モデル全員が固定3点（タイマー体験・価格連動シミュレーター・在庫切れ選択不可）と価格の正確さを満たした。carbon のみ支給事実にない独自プラン・オプションを追加。opus が最重量、astra/sol は軽量で的確。</p>
-<p class='sub'><a href='https://github.com/sean-sunagaku/prac-bench/tree/main/results/2026-11-20/task-01-koku01-lp' target='_blank' rel='noopener'>この枠の全ファイル（GitHub）</a></p></header><main>
-<table><tr><th>モデル</th><th>判定</th><th>実装時間</th><th>トークン 入力/出力</th><th>コスト推定</th></tr>
-<tr><td><a href='#neon'>neon</a></td><td><span class="badge b-ok">充足</span></td><td>14:07</td><td>取得不可</td><td>取得不可</td></tr>
-<tr><td><a href='#carbon'>carbon</a></td><td><span class="badge b-ok">充足（独自プラン追加あり）</span></td><td>19:21</td><td>取得不可</td><td>取得不可</td></tr>
-<tr><td><a href='#astra'>astra</a></td><td><span class="badge b-ok">充足</span></td><td>11:40</td><td>6,256,895/61,837</td><td>$5.78</td></tr>
-<tr><td><a href='#sol'>sol</a></td><td><span class="badge b-ok">充足</span></td><td>10:39</td><td>4,671,641/53,054</td><td>$5.23</td></tr>
-<tr><td><a href='#opus'>opus</a></td><td><span class="badge b-ok">充足</span></td><td>90:55</td><td>161,117,066/1,520,283</td><td>$401.22</td></tr>
-</table>
-<section class="card" id="neon">
+<p class='sub'><a href='https://github.com/sean-sunagaku/prac-bench/tree/main/results/2026-11-20/task-01-koku01-lp' target='_blank' rel='noopener'>この枠の全ファイル（GitHub）</a></p></header><main><div class="controls"><span class="lbl">モデル切替:</span><button data-mode="one" data-model="neon">Neon <span class='badge b-ok'>充足</span> 14:07</button><button data-mode="one" data-model="carbon">Carbon <span class='badge b-ok'>充足（独自プラン追加あり）</span> 19:21</button><button data-mode="one" data-model="astra">Astra <span class='badge b-ok'>充足</span> 11:40</button><button data-mode="one" data-model="sol">Sol <span class='badge b-ok'>充足</span> 10:39</button><button data-mode="one" data-model="opus">Opus <span class='badge b-ok'>充足</span> 90:55</button><button data-mode="all">横並びで比較</button></div><div class="panels" id="panels"><section class="card panel" data-model="neon" id="neon">
 <h3 style='margin-top:0'>Neon（Gemini 4 Neon / agy・xhigh） <span class="badge b-ok">充足</span></h3>
 <table class='meta'>
 <tr><td>判定</td><td>充足</td></tr>
@@ -55,85 +64,7 @@ footer{max-width:1180px;margin:0 auto;padding:0 20px 40px;color:var(--sub);font-
 <div class='verify'>【検証結果】
 検証Pass。rAF+setInterval+performance.now()のタイマー、選択に応じた価格再計算、在庫切れの disabled+aria 無効化を確認。指定4価格はすべて正確。</div>
 <p><a href='https://github.com/sean-sunagaku/prac-bench/tree/main/results/2026-11-20/task-01-koku01-lp/neon' target='_blank' rel='noopener'>このモデルの全ファイルを GitHub で見る</a> ／ <a href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-01-koku01-lp/neon/RUN.md' target='_blank' rel='noopener'>RUN.md</a></p>
-</section>
-<section class="card" id="carbon">
-<h3 style='margin-top:0'>Carbon（Gemini 4 Carbon / agy・high） <span class="badge b-ok">充足（独自プラン追加あり）</span></h3>
-<table class='meta'>
-<tr><td>判定</td><td>充足（独自プラン追加あり）</td></tr>
-<tr><td>実装時間</td><td>19:21</td></tr>
-<tr><td>トークン（入力/出力）</td><td>取得不可</td></tr>
-<tr><td>コスト推定</td><td>取得不可</td></tr>
-<tr><td>終了状態</td><td>自然終了</td></tr>
-<tr><td>実施日時</td><td>2026-11-20（08:49:34–09:08:55 JST）</td></tr>
-</table>
-<p class='klabel'>Web成果物：index.html</p>
-<iframe class='preview' loading='lazy' src='outputs/task-01-koku01-lp/carbon/index.html'></iframe>
-<p><a class='btn' href='outputs/task-01-koku01-lp/carbon/index.html' target='_blank' rel='noopener'>大きく開く</a><a class='btn' href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-01-koku01-lp/carbon/index.html' target='_blank' rel='noopener'>GitHubで見る</a></p>
-<p class='klabel'>検証結果（RUN.md より）</p>
-<div class='verify'>【検証結果】
-検証Pass。価格再計算と在庫切れ無効化を確認。ただし支給事実にない独自プラン「超早割 ¥13,875」と「ケーブル ¥1,800」を追加している（指定価格自体は正確）。</div>
-<p><a href='https://github.com/sean-sunagaku/prac-bench/tree/main/results/2026-11-20/task-01-koku01-lp/carbon' target='_blank' rel='noopener'>このモデルの全ファイルを GitHub で見る</a> ／ <a href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-01-koku01-lp/carbon/RUN.md' target='_blank' rel='noopener'>RUN.md</a></p>
-</section>
-<section class="card" id="astra">
-<h3 style='margin-top:0'>Astra（GPT-6.2 Astra / Codex） <span class="badge b-ok">充足</span></h3>
-<table class='meta'>
-<tr><td>判定</td><td>充足</td></tr>
-<tr><td>実装時間</td><td>11:40</td></tr>
-<tr><td>トークン（入力/出力）</td><td>6,256,895/61,837</td></tr>
-<tr><td>コスト推定</td><td>$5.78</td></tr>
-<tr><td>終了状態</td><td>自然終了</td></tr>
-<tr><td>実施日時</td><td>2026-11-20（11:52:20–12:04:00 JST）</td></tr>
-</table>
-<p class='klabel'>Web成果物：index.html</p>
-<iframe class='preview' loading='lazy' src='outputs/task-01-koku01-lp/astra/index.html'></iframe>
-<p><a class='btn' href='outputs/task-01-koku01-lp/astra/index.html' target='_blank' rel='noopener'>大きく開く</a><a class='btn' href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-01-koku01-lp/astra/index.html' target='_blank' rel='noopener'>GitHubで見る</a></p>
-<p class='klabel'>検証結果（RUN.md より）</p>
-<div class='verify'>【検証結果】
-検証Pass。Date.now()+125ms tick の実カウントダウン、data-price 属性の合算、disabled 選択肢の自動切替。5件で最も軽量な構成。
-【備考】
-試行2回。1回目はプロンプトが未送信のまま残るハーネスの不具合で無効となり、記録は修正後の再実行分。</div>
-<p><a href='https://github.com/sean-sunagaku/prac-bench/tree/main/results/2026-11-20/task-01-koku01-lp/astra' target='_blank' rel='noopener'>このモデルの全ファイルを GitHub で見る</a> ／ <a href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-01-koku01-lp/astra/RUN.md' target='_blank' rel='noopener'>RUN.md</a></p>
-</section>
-<section class="card" id="sol">
-<h3 style='margin-top:0'>Sol（GPT-6.2 Sol / Codex） <span class="badge b-ok">充足</span></h3>
-<table class='meta'>
-<tr><td>判定</td><td>充足</td></tr>
-<tr><td>実装時間</td><td>10:39</td></tr>
-<tr><td>トークン（入力/出力）</td><td>4,671,641/53,054</td></tr>
-<tr><td>コスト推定</td><td>$5.23</td></tr>
-<tr><td>終了状態</td><td>自然終了</td></tr>
-<tr><td>実施日時</td><td>2026-11-20（11:52:20–12:02:59 JST）</td></tr>
-</table>
-<p class='klabel'>Web成果物：index.html</p>
-<iframe class='preview' loading='lazy' src='outputs/task-01-koku01-lp/sol/index.html'></iframe>
-<p><a class='btn' href='outputs/task-01-koku01-lp/sol/index.html' target='_blank' rel='noopener'>大きく開く</a><a class='btn' href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-01-koku01-lp/sol/index.html' target='_blank' rel='noopener'>GitHubで見る</a></p>
-<p class='klabel'>検証結果（RUN.md より）</p>
-<div class='verify'>【検証結果】
-検証Pass。PLANS 定数に早割14,800/一般18,500、加算3,000/2,400を明記し合計計算を確認。最小構成だが固定3点を充足。
-【備考】
-試行2回。1回目はプロンプトが未送信のまま残るハーネスの不具合で無効となり、記録は修正後の再実行分。</div>
-<p><a href='https://github.com/sean-sunagaku/prac-bench/tree/main/results/2026-11-20/task-01-koku01-lp/sol' target='_blank' rel='noopener'>このモデルの全ファイルを GitHub で見る</a> ／ <a href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-01-koku01-lp/sol/RUN.md' target='_blank' rel='noopener'>RUN.md</a></p>
-</section>
-<section class="card" id="opus">
-<h3 style='margin-top:0'>Opus（Claude Code / Opus） <span class="badge b-ok">充足</span></h3>
-<table class='meta'>
-<tr><td>判定</td><td>充足</td></tr>
-<tr><td>実装時間</td><td>90:55</td></tr>
-<tr><td>トークン（入力/出力）</td><td>161,117,066/1,520,283</td></tr>
-<tr><td>コスト推定</td><td>$401.22</td></tr>
-<tr><td>終了状態</td><td>自然終了</td></tr>
-<tr><td>実施日時</td><td>2026-11-20（08:49:34–10:20:29 JST）</td></tr>
-</table>
-<p class='klabel'>Web成果物：index.html</p>
-<iframe class='preview' loading='lazy' src='outputs/task-01-koku01-lp/opus/index.html'></iframe>
-<p><a class='btn' href='outputs/task-01-koku01-lp/opus/index.html' target='_blank' rel='noopener'>大きく開く</a><a class='btn' href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-01-koku01-lp/opus/index.html' target='_blank' rel='noopener'>GitHubで見る</a></p>
-<p class='klabel'>検証結果（RUN.md より）</p>
-<div class='verify'>【検証結果】
-検証Pass。プラン×カラーの組み合わせ単位で在庫状態を管理し、価格はアニメーション付きで更新。タイマーは rAF+watchdog の本格実装で最重量。</div>
-<p><a href='https://github.com/sean-sunagaku/prac-bench/tree/main/results/2026-11-20/task-01-koku01-lp/opus' target='_blank' rel='noopener'>このモデルの全ファイルを GitHub で見る</a> ／ <a href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-01-koku01-lp/opus/RUN.md' target='_blank' rel='noopener'>RUN.md</a></p>
-</section>
-</main><footer>Prac-Bench 実施結果レポート（2026-11-20）／ 数値・判定・所見の出典：リポジトリ内 results/2026-11-20/comparison.md および各 RUN.md</footer><section><h2>テキスト成果物（全文）</h2><p>各モデルの文書系テキスト成果物と運営の実施記録（RUN.md）を全文収録する。コードやバイナリはリポジトリと outputs/ を参照。</p>
-<h3>neon</h3>
+<details><summary>テキスト成果物（全文）</summary><h3>neon</h3>
 <details><summary>RUN.md（運営の実施記録）</summary><pre style="white-space:pre-wrap;word-break:break-word"># RUN — task-01-koku01-lp / neon
 
 - 実施日: 2026-11-20（08:49:34–09:03:41 JST）
@@ -167,7 +98,24 @@ footer{max-width:1180px;margin:0 auto;padding:0 20px 40px;color:var(--sub);font-
 
 （Prac-Bench 枠1の支給資料。作成日：2026-11-20）
 </pre></details>
-<h3>carbon</h3>
+</details></section><section class="card panel" data-model="carbon" id="carbon">
+<h3 style='margin-top:0'>Carbon（Gemini 4 Carbon / agy・high） <span class="badge b-ok">充足（独自プラン追加あり）</span></h3>
+<table class='meta'>
+<tr><td>判定</td><td>充足（独自プラン追加あり）</td></tr>
+<tr><td>実装時間</td><td>19:21</td></tr>
+<tr><td>トークン（入力/出力）</td><td>取得不可</td></tr>
+<tr><td>コスト推定</td><td>取得不可</td></tr>
+<tr><td>終了状態</td><td>自然終了</td></tr>
+<tr><td>実施日時</td><td>2026-11-20（08:49:34–09:08:55 JST）</td></tr>
+</table>
+<p class='klabel'>Web成果物：index.html</p>
+<iframe class='preview' loading='lazy' src='outputs/task-01-koku01-lp/carbon/index.html'></iframe>
+<p><a class='btn' href='outputs/task-01-koku01-lp/carbon/index.html' target='_blank' rel='noopener'>大きく開く</a><a class='btn' href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-01-koku01-lp/carbon/index.html' target='_blank' rel='noopener'>GitHubで見る</a></p>
+<p class='klabel'>検証結果（RUN.md より）</p>
+<div class='verify'>【検証結果】
+検証Pass。価格再計算と在庫切れ無効化を確認。ただし支給事実にない独自プラン「超早割 ¥13,875」と「ケーブル ¥1,800」を追加している（指定価格自体は正確）。</div>
+<p><a href='https://github.com/sean-sunagaku/prac-bench/tree/main/results/2026-11-20/task-01-koku01-lp/carbon' target='_blank' rel='noopener'>このモデルの全ファイルを GitHub で見る</a> ／ <a href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-01-koku01-lp/carbon/RUN.md' target='_blank' rel='noopener'>RUN.md</a></p>
+<details><summary>テキスト成果物（全文）</summary><h3>carbon</h3>
 <details><summary>RUN.md（運営の実施記録）</summary><pre style="white-space:pre-wrap;word-break:break-word"># RUN — task-01-koku01-lp / carbon
 
 - 実施日: 2026-11-20（08:49:34–09:08:55 JST）
@@ -198,7 +146,26 @@ footer{max-width:1180px;margin:0 auto;padding:0 20px 40px;color:var(--sub);font-
 
 （Prac-Bench 枠1の支給資料。作成日：2026-11-20）
 </pre></details>
-<h3>astra</h3>
+</details></section><section class="card panel" data-model="astra" id="astra">
+<h3 style='margin-top:0'>Astra（GPT-6.2 Astra / Codex） <span class="badge b-ok">充足</span></h3>
+<table class='meta'>
+<tr><td>判定</td><td>充足</td></tr>
+<tr><td>実装時間</td><td>11:40</td></tr>
+<tr><td>トークン（入力/出力）</td><td>6,256,895/61,837</td></tr>
+<tr><td>コスト推定</td><td>$5.78</td></tr>
+<tr><td>終了状態</td><td>自然終了</td></tr>
+<tr><td>実施日時</td><td>2026-11-20（11:52:20–12:04:00 JST）</td></tr>
+</table>
+<p class='klabel'>Web成果物：index.html</p>
+<iframe class='preview' loading='lazy' src='outputs/task-01-koku01-lp/astra/index.html'></iframe>
+<p><a class='btn' href='outputs/task-01-koku01-lp/astra/index.html' target='_blank' rel='noopener'>大きく開く</a><a class='btn' href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-01-koku01-lp/astra/index.html' target='_blank' rel='noopener'>GitHubで見る</a></p>
+<p class='klabel'>検証結果（RUN.md より）</p>
+<div class='verify'>【検証結果】
+検証Pass。Date.now()+125ms tick の実カウントダウン、data-price 属性の合算、disabled 選択肢の自動切替。5件で最も軽量な構成。
+【備考】
+試行2回。1回目はプロンプトが未送信のまま残るハーネスの不具合で無効となり、記録は修正後の再実行分。</div>
+<p><a href='https://github.com/sean-sunagaku/prac-bench/tree/main/results/2026-11-20/task-01-koku01-lp/astra' target='_blank' rel='noopener'>このモデルの全ファイルを GitHub で見る</a> ／ <a href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-01-koku01-lp/astra/RUN.md' target='_blank' rel='noopener'>RUN.md</a></p>
+<details><summary>テキスト成果物（全文）</summary><h3>astra</h3>
 <details><summary>RUN.md（運営の実施記録）</summary><pre style="white-space:pre-wrap;word-break:break-word"># RUN — task-01-koku01-lp / astra
 
 - 実施日: 2026-11-20（11:52:20–12:04:00 JST）
@@ -332,7 +299,26 @@ DAMAGES, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 FROM, OUT OF THE USE OR INABILITY TO USE THE FONT SOFTWARE OR FROM
 OTHER DEALINGS IN THE FONT SOFTWARE.
 </pre></details>
-<h3>sol</h3>
+</details></section><section class="card panel" data-model="sol" id="sol">
+<h3 style='margin-top:0'>Sol（GPT-6.2 Sol / Codex） <span class="badge b-ok">充足</span></h3>
+<table class='meta'>
+<tr><td>判定</td><td>充足</td></tr>
+<tr><td>実装時間</td><td>10:39</td></tr>
+<tr><td>トークン（入力/出力）</td><td>4,671,641/53,054</td></tr>
+<tr><td>コスト推定</td><td>$5.23</td></tr>
+<tr><td>終了状態</td><td>自然終了</td></tr>
+<tr><td>実施日時</td><td>2026-11-20（11:52:20–12:02:59 JST）</td></tr>
+</table>
+<p class='klabel'>Web成果物：index.html</p>
+<iframe class='preview' loading='lazy' src='outputs/task-01-koku01-lp/sol/index.html'></iframe>
+<p><a class='btn' href='outputs/task-01-koku01-lp/sol/index.html' target='_blank' rel='noopener'>大きく開く</a><a class='btn' href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-01-koku01-lp/sol/index.html' target='_blank' rel='noopener'>GitHubで見る</a></p>
+<p class='klabel'>検証結果（RUN.md より）</p>
+<div class='verify'>【検証結果】
+検証Pass。PLANS 定数に早割14,800/一般18,500、加算3,000/2,400を明記し合計計算を確認。最小構成だが固定3点を充足。
+【備考】
+試行2回。1回目はプロンプトが未送信のまま残るハーネスの不具合で無効となり、記録は修正後の再実行分。</div>
+<p><a href='https://github.com/sean-sunagaku/prac-bench/tree/main/results/2026-11-20/task-01-koku01-lp/sol' target='_blank' rel='noopener'>このモデルの全ファイルを GitHub で見る</a> ／ <a href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-01-koku01-lp/sol/RUN.md' target='_blank' rel='noopener'>RUN.md</a></p>
+<details><summary>テキスト成果物（全文）</summary><h3>sol</h3>
 <details><summary>RUN.md（運営の実施記録）</summary><pre style="white-space:pre-wrap;word-break:break-word"># RUN — task-01-koku01-lp / sol
 
 - 実施日: 2026-11-20（11:52:20–12:02:59 JST）
@@ -370,7 +356,24 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
 
 （Prac-Bench 枠1の支給資料。作成日：2026-11-20）
 </pre></details>
-<h3>opus</h3>
+</details></section><section class="card panel" data-model="opus" id="opus">
+<h3 style='margin-top:0'>Opus（Claude Code / Opus） <span class="badge b-ok">充足</span></h3>
+<table class='meta'>
+<tr><td>判定</td><td>充足</td></tr>
+<tr><td>実装時間</td><td>90:55</td></tr>
+<tr><td>トークン（入力/出力）</td><td>161,117,066/1,520,283</td></tr>
+<tr><td>コスト推定</td><td>$401.22</td></tr>
+<tr><td>終了状態</td><td>自然終了</td></tr>
+<tr><td>実施日時</td><td>2026-11-20（08:49:34–10:20:29 JST）</td></tr>
+</table>
+<p class='klabel'>Web成果物：index.html</p>
+<iframe class='preview' loading='lazy' src='outputs/task-01-koku01-lp/opus/index.html'></iframe>
+<p><a class='btn' href='outputs/task-01-koku01-lp/opus/index.html' target='_blank' rel='noopener'>大きく開く</a><a class='btn' href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-01-koku01-lp/opus/index.html' target='_blank' rel='noopener'>GitHubで見る</a></p>
+<p class='klabel'>検証結果（RUN.md より）</p>
+<div class='verify'>【検証結果】
+検証Pass。プラン×カラーの組み合わせ単位で在庫状態を管理し、価格はアニメーション付きで更新。タイマーは rAF+watchdog の本格実装で最重量。</div>
+<p><a href='https://github.com/sean-sunagaku/prac-bench/tree/main/results/2026-11-20/task-01-koku01-lp/opus' target='_blank' rel='noopener'>このモデルの全ファイルを GitHub で見る</a> ／ <a href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-01-koku01-lp/opus/RUN.md' target='_blank' rel='noopener'>RUN.md</a></p>
+<details><summary>テキスト成果物（全文）</summary><h3>opus</h3>
 <details><summary>RUN.md（運営の実施記録）</summary><pre style="white-space:pre-wrap;word-break:break-word"># RUN — task-01-koku01-lp / opus
 
 - 実施日: 2026-11-20（08:49:34–10:20:29 JST）
@@ -409,5 +412,32 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
 
 （Prac-Bench 枠1の支給資料。作成日：2026-11-20）
 </pre></details>
-</section>
+</section></details></section></div></main><footer>Prac-Bench 実施結果レポート（2026-11-20）／ 数値・判定・所見の出典：リポジトリ内 results/2026-11-20/comparison.md および各 RUN.md</footer>
+
+<script>
+(function(){
+  var MODELS = ["neon","carbon","astra","sol","opus"];
+  var panels = Array.prototype.slice.call(document.querySelectorAll(".panel"));
+  var wrap = document.getElementById("panels");
+  var btns = Array.prototype.slice.call(document.querySelectorAll(".controls button"));
+  function show(mode, model){
+    btns.forEach(function(b){ b.classList.toggle("on", b.dataset.mode===mode && (mode==="all" || b.dataset.model===model)); });
+    if(mode==="all"){ wrap.className="panels compare"; panels.forEach(function(p){ p.classList.remove("active"); }); }
+    else { wrap.className="panels single"; panels.forEach(function(p){ p.classList.toggle("active", p.dataset.model===model); }); }
+    try{ history.replaceState(null,"", mode!=="all" ? "#"+model : "#all"); }catch(e){}
+  }
+  btns.forEach(function(b){ b.addEventListener("click", function(){ show(b.dataset.mode, b.dataset.model); }); });
+  document.addEventListener("keydown", function(e){
+    if(wrap.className.indexOf("single")<0) return;
+    var cur = -1;
+    panels.forEach(function(p,i){ if(p.classList.contains("active")) cur=i; });
+    if(e.key==="ArrowRight" && cur>=0 && cur<panels.length-1) show("one", panels[cur+1].dataset.model);
+    if(e.key==="ArrowLeft" && cur>0) show("one", panels[cur-1].dataset.model);
+  });
+  var h = (location.hash||"").replace("#","");
+  if(MODELS.indexOf(h)>=0) show("one", h);
+  else if(window.innerWidth>=1150) show("all");
+  else show("one", MODELS[0]);
+})();
+</script>
 </body></html>

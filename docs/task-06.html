@@ -25,20 +25,29 @@ iframe.pdf{width:100%;height:460px;border:1px solid var(--line);border-radius:8p
 .klabel{font-weight:700;margin:14px 0 4px;font-size:14.5px}
 footer{max-width:1180px;margin:0 auto;padding:0 20px 40px;color:var(--sub);font-size:13px}
 .nav{font-size:14px;margin:10px 0}.fname{font-size:12.5px;color:var(--sub);word-break:break-all}
-</style></head><body>
+</style>
+<style>
+header{padding-top:14px}h1{font-size:22px}
+.controls{position:sticky;top:0;z-index:60;background:var(--bg);padding:10px 0;border-bottom:1px solid var(--line);display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.controls .lbl{font-size:13px;color:var(--sub);margin-right:2px}
+.controls button{background:var(--card);color:var(--tx);border:1px solid var(--line);border-radius:99px;padding:6px 14px;font-size:13.5px;cursor:pointer}
+.controls button.on{border-color:var(--acc);color:var(--acc);font-weight:700}
+.panels{display:grid;gap:14px;margin-top:14px}
+.panels.compare{grid-template-columns:repeat(5,minmax(300px,1fr));overflow-x:auto;padding-bottom:6px}
+.panels.single{grid-template-columns:minmax(0,1fr)}
+.panel{margin:0;max-height:calc(100dvh - 178px);overflow-y:auto;overscroll-behavior:contain}
+.panels.single .panel{display:none}
+.panels.single .panel.active{display:block}
+.panel iframe.preview{height:min(48vh,500px)}
+.panel .gal{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
+main{padding-bottom:16px}
+</style>
+</head><body>
 <header><p class='nav'><a href='index.html'>← 結果トップへ</a></p>
 <h1>枠6：罠入り実務データの真因特定と修正報告</h1>
 <p class='sub'>数字の不整合が混ざった会社の売上データ一式を全ファイル突き合わせ、合わない原因をすべて特定して、正しい数字と根拠を示した報告を作る。題材は架空の雑貨チェーン（店舗4店＋EC＋卸）の2026年9〜10月売上。罠は6種（表記ゆれ、重複行と訂正・取消、日時の解釈、税込・税抜と税率区分の混在、集計対象外データの混入、証言で裏づける外れ値）に厳選し、依頼者の誤った仮説への反証も仕掛けに含む。実施素材は [spec/materials-frame6-traps.md](spec/materials-frame6-traps.md)。</p>
 <p class='note'>運営の所見（comparison.md より）：罠6種の検出と「駅前店主因」仮説の反証は**5モデル全員が達成**。税抜合計は全員が同じ 9月 5,169,100円 / 10月 5,706,150円を報告し、正解（5,169,021 / 5,706,068）と +79/+82円の差（税換算の丸め方式の違い）。この枠ではモデル間の差がほぼ付かなかった。</p>
-<p class='sub'><a href='https://github.com/sean-sunagaku/prac-bench/tree/main/results/2026-11-20/task-06-trap-data-audit' target='_blank' rel='noopener'>この枠の全ファイル（GitHub）</a></p></header><main>
-<table><tr><th>モデル</th><th>判定</th><th>実装時間</th><th>トークン 入力/出力</th><th>コスト推定</th></tr>
-<tr><td><a href='#neon'>neon</a></td><td><span class="badge b-ok">充足（合計に丸め差）</span></td><td>10:15</td><td>取得不可</td><td>取得不可</td></tr>
-<tr><td><a href='#carbon'>carbon</a></td><td><span class="badge b-ok">充足（合計に丸め差）</span></td><td>17:17</td><td>取得不可</td><td>取得不可</td></tr>
-<tr><td><a href='#astra'>astra</a></td><td><span class="badge b-ok">充足（合計に丸め差）</span></td><td>5:07</td><td>4,404,203/46,764</td><td>$4.18</td></tr>
-<tr><td><a href='#sol'>sol</a></td><td><span class="badge b-ok">充足（合計に丸め差）</span></td><td>3:06</td><td>1,349,895/30,180</td><td>$2.11</td></tr>
-<tr><td><a href='#opus'>opus</a></td><td><span class="badge b-ok">充足（合計に丸め差）</span></td><td>25:24</td><td>17,599,479/387,138</td><td>$66.12</td></tr>
-</table>
-<section class="card" id="neon">
+<p class='sub'><a href='https://github.com/sean-sunagaku/prac-bench/tree/main/results/2026-11-20/task-06-trap-data-audit' target='_blank' rel='noopener'>この枠の全ファイル（GitHub）</a></p></header><main><div class="controls"><span class="lbl">モデル切替:</span><button data-mode="one" data-model="neon">Neon <span class='badge b-ok'>充足（合計に丸め差）</span> 10:15</button><button data-mode="one" data-model="carbon">Carbon <span class='badge b-ok'>充足（合計に丸め差）</span> 17:17</button><button data-mode="one" data-model="astra">Astra <span class='badge b-ok'>充足（合計に丸め差）</span> 5:07</button><button data-mode="one" data-model="sol">Sol <span class='badge b-ok'>充足（合計に丸め差）</span> 3:06</button><button data-mode="one" data-model="opus">Opus <span class='badge b-ok'>充足（合計に丸め差）</span> 25:24</button><button data-mode="all">横並びで比較</button></div><div class="panels" id="panels"><section class="card panel" data-model="neon" id="neon">
 <h3 style='margin-top:0'>Neon（Gemini 4 Neon / agy・xhigh） <span class="badge b-ok">充足（合計に丸め差）</span></h3>
 <table class='meta'>
 <tr><td>判定</td><td>充足（合計に丸め差）</td></tr>
@@ -53,86 +62,7 @@ footer{max-width:1180px;margin:0 auto;padding:0 20px 40px;color:var(--sub);font-
 <div class='verify'>【検証結果】
 報告ファイル sales_audit_report.md。税抜合計は 9月 5,169,100円 / 10月 5,706,150円（正解 5,169,021 / 5,706,068、正解との差 +79/+82円＝税換算の丸め方式差）。駅前店は −4.15% の微減として仮説を明確に反証。罠は6種すべて検出。</div>
 <p><a href='https://github.com/sean-sunagaku/prac-bench/tree/main/results/2026-11-20/task-06-trap-data-audit/neon' target='_blank' rel='noopener'>このモデルの全ファイルを GitHub で見る</a> ／ <a href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-06-trap-data-audit/neon/RUN.md' target='_blank' rel='noopener'>RUN.md</a></p>
-</section>
-<section class="card" id="carbon">
-<h3 style='margin-top:0'>Carbon（Gemini 4 Carbon / agy・high） <span class="badge b-ok">充足（合計に丸め差）</span></h3>
-<table class='meta'>
-<tr><td>判定</td><td>充足（合計に丸め差）</td></tr>
-<tr><td>実装時間</td><td>17:17</td></tr>
-<tr><td>トークン（入力/出力）</td><td>取得不可</td></tr>
-<tr><td>コスト推定</td><td>取得不可</td></tr>
-<tr><td>終了状態</td><td>自然終了</td></tr>
-<tr><td>実施日時</td><td>2026-11-20（12:17:08–12:34:25 JST）</td></tr>
-</table>
-<p><a class='btn' href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-06-trap-data-audit/carbon/report.md' target='_blank' rel='noopener'>レポート：report.md</a></p>
-<p class='klabel'>検証結果（RUN.md より）</p>
-<div class='verify'>【検証結果】
-報告ファイル report.md（税込も併記）。税抜合計は全モデル共通の 5,169,100 / 5,706,150（丸め差 +79/+82円）。駅前店の半減は表記ゆれが原因と明示し仮説を棄却。罠6種すべて検出。</div>
-<p><a href='https://github.com/sean-sunagaku/prac-bench/tree/main/results/2026-11-20/task-06-trap-data-audit/carbon' target='_blank' rel='noopener'>このモデルの全ファイルを GitHub で見る</a> ／ <a href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-06-trap-data-audit/carbon/RUN.md' target='_blank' rel='noopener'>RUN.md</a></p>
-</section>
-<section class="card" id="astra">
-<h3 style='margin-top:0'>Astra（GPT-6.2 Astra / Codex） <span class="badge b-ok">充足（合計に丸め差）</span></h3>
-<table class='meta'>
-<tr><td>判定</td><td>充足（合計に丸め差）</td></tr>
-<tr><td>実装時間</td><td>5:07</td></tr>
-<tr><td>トークン（入力/出力）</td><td>4,404,203/46,764</td></tr>
-<tr><td>コスト推定</td><td>$4.18</td></tr>
-<tr><td>終了状態</td><td>自然終了</td></tr>
-<tr><td>実施日時</td><td>2026-11-20（12:09:07–12:14:14 JST）</td></tr>
-</table>
-<p class='klabel'>ドキュメント / データ</p>
-<p><a class='btn' href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-06-trap-data-audit/astra/outputs/2026-11-20-sales-audit/%E5%A3%B2%E4%B8%8A%E7%85%A7%E5%90%88%E6%98%8E%E7%B4%B0.xlsx' target='_blank' rel='noopener'>outputs/2026-11-20-sales-audit/売上照合明細.xlsx</a><a class='btn' href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-06-trap-data-audit/astra/outputs/2026-11-20-sales-audit/%E5%A3%B2%E4%B8%8A%E7%85%A7%E5%90%88%E6%98%8E%E7%B4%B0.xlsx' target='_blank' rel='noopener'>直接開く</a> <span class='fname'>78 KB</span></p>
-<p><a class='btn' href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-06-trap-data-audit/astra/%E5%A3%B2%E4%B8%8A%E7%85%A7%E5%90%88%E5%A0%B1%E5%91%8A%E6%9B%B8.md' target='_blank' rel='noopener'>レポート：売上照合報告書.md</a></p>
-<p class='klabel'>検証結果（RUN.md より）</p>
-<div class='verify'>【検証結果】
-報告ファイル 売上照合報告書.md。税抜合計は共通値（丸め差 +79/+82円）。駅前店の減少は 7,650円（4.15%）にとどまると反証。罠6種すべて検出（税率の導出過程まで明示）。</div>
-<p><a href='https://github.com/sean-sunagaku/prac-bench/tree/main/results/2026-11-20/task-06-trap-data-audit/astra' target='_blank' rel='noopener'>このモデルの全ファイルを GitHub で見る</a> ／ <a href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-06-trap-data-audit/astra/RUN.md' target='_blank' rel='noopener'>RUN.md</a></p>
-</section>
-<section class="card" id="sol">
-<h3 style='margin-top:0'>Sol（GPT-6.2 Sol / Codex） <span class="badge b-ok">充足（合計に丸め差）</span></h3>
-<table class='meta'>
-<tr><td>判定</td><td>充足（合計に丸め差）</td></tr>
-<tr><td>実装時間</td><td>3:06</td></tr>
-<tr><td>トークン（入力/出力）</td><td>1,349,895/30,180</td></tr>
-<tr><td>コスト推定</td><td>$2.11</td></tr>
-<tr><td>終了状態</td><td>自然終了</td></tr>
-<tr><td>実施日時</td><td>2026-11-20（12:13:53–12:16:59 JST）</td></tr>
-</table>
-<p><a class='btn' href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-06-trap-data-audit/sol/sales_audit_report.md' target='_blank' rel='noopener'>レポート：sales_audit_report.md</a></p>
-<p class='klabel'>検証結果（RUN.md より）</p>
-<div class='verify'>【検証結果】
-報告ファイル sales_audit_report.md。税抜合計は共通値（丸め差 +79/+82円）。駅前店主因説は支持されないと結論。罠6種すべて検出、除外・保留26行の内訳まで明示。</div>
-<p><a href='https://github.com/sean-sunagaku/prac-bench/tree/main/results/2026-11-20/task-06-trap-data-audit/sol' target='_blank' rel='noopener'>このモデルの全ファイルを GitHub で見る</a> ／ <a href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-06-trap-data-audit/sol/RUN.md' target='_blank' rel='noopener'>RUN.md</a></p>
-</section>
-<section class="card" id="opus">
-<h3 style='margin-top:0'>Opus（Claude Code / Opus） <span class="badge b-ok">充足（合計に丸め差）</span></h3>
-<table class='meta'>
-<tr><td>判定</td><td>充足（合計に丸め差）</td></tr>
-<tr><td>実装時間</td><td>25:24</td></tr>
-<tr><td>トークン（入力/出力）</td><td>17,599,479/387,138</td></tr>
-<tr><td>コスト推定</td><td>$66.12</td></tr>
-<tr><td>終了状態</td><td>自然終了</td></tr>
-<tr><td>実施日時</td><td>2026-11-20（12:24:09–12:49:33 JST）</td></tr>
-</table>
-<p class='klabel'>画像</p><div class='gal'>
-<figure><a href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-06-trap-data-audit/opus/figures/fig1_gap_breakdown.svg' target='_blank' rel='noopener'><img loading='lazy' src='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-06-trap-data-audit/opus/figures/fig1_gap_breakdown.svg' alt='figures/fig1_gap_breakdown.svg'></a><figcaption>figures/fig1_gap_breakdown.svg</figcaption></figure>
-<figure><a href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-06-trap-data-audit/opus/figures/fig2_ekimae_store_names.svg' target='_blank' rel='noopener'><img loading='lazy' src='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-06-trap-data-audit/opus/figures/fig2_ekimae_store_names.svg' alt='figures/fig2_ekimae_store_names.svg'></a><figcaption>figures/fig2_ekimae_store_names.svg</figcaption></figure>
-</div>
-<p class='klabel'>ドキュメント / データ</p>
-<p><a class='btn' href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-06-trap-data-audit/opus/output/anomalies.csv' target='_blank' rel='noopener'>output/anomalies.csv</a><a class='btn' href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-06-trap-data-audit/opus/output/anomalies.csv' target='_blank' rel='noopener'>直接開く</a> <span class='fname'>14 KB</span></p>
-<p><a class='btn' href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-06-trap-data-audit/opus/output/bridge.csv' target='_blank' rel='noopener'>output/bridge.csv</a><a class='btn' href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-06-trap-data-audit/opus/output/bridge.csv' target='_blank' rel='noopener'>直接開く</a> <span class='fname'>1 KB</span></p>
-<p><a class='btn' href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-06-trap-data-audit/opus/output/monthly_by_channel.csv' target='_blank' rel='noopener'>output/monthly_by_channel.csv</a><a class='btn' href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-06-trap-data-audit/opus/output/monthly_by_channel.csv' target='_blank' rel='noopener'>直接開く</a> <span class='fname'>0 KB</span></p>
-<p><a class='btn' href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-06-trap-data-audit/opus/output/pos_by_store.csv' target='_blank' rel='noopener'>output/pos_by_store.csv</a><a class='btn' href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-06-trap-data-audit/opus/output/pos_by_store.csv' target='_blank' rel='noopener'>直接開く</a> <span class='fname'>0 KB</span></p>
-<p><a class='btn' href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-06-trap-data-audit/opus/output/pos_by_store_raw_names.csv' target='_blank' rel='noopener'>output/pos_by_store_raw_names.csv</a><a class='btn' href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-06-trap-data-audit/opus/output/pos_by_store_raw_names.csv' target='_blank' rel='noopener'>直接開く</a> <span class='fname'>0 KB</span></p>
-<p><a class='btn' href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-06-trap-data-audit/opus/output/records_all_flagged.csv' target='_blank' rel='noopener'>output/records_all_flagged.csv</a><a class='btn' href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-06-trap-data-audit/opus/output/records_all_flagged.csv' target='_blank' rel='noopener'>直接開く</a> <span class='fname'>82 KB</span></p>
-<p><a class='btn' href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-06-trap-data-audit/opus/report.md' target='_blank' rel='noopener'>レポート：report.md</a></p>
-<p class='klabel'>検証結果（RUN.md より）</p>
-<div class='verify'>【検証結果】
-報告ファイル report.md（税込併記、分析コードと図表付き）。税抜合計は共通値（丸め差 +79/+82円）。仮説はデータで支持されないと反証。罠6種すべて検出。</div>
-<p><a href='https://github.com/sean-sunagaku/prac-bench/tree/main/results/2026-11-20/task-06-trap-data-audit/opus' target='_blank' rel='noopener'>このモデルの全ファイルを GitHub で見る</a> ／ <a href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-06-trap-data-audit/opus/RUN.md' target='_blank' rel='noopener'>RUN.md</a></p>
-</section>
-</main><footer>Prac-Bench 実施結果レポート（2026-11-20）／ 数値・判定・所見の出典：リポジトリ内 results/2026-11-20/comparison.md および各 RUN.md</footer><section><h2>テキスト成果物（全文）</h2><p>各モデルの文書系テキスト成果物と運営の実施記録（RUN.md）を全文収録する。コードやバイナリはリポジトリと outputs/ を参照。</p>
-<h3>neon</h3>
+<details><summary>テキスト成果物（全文）</summary><h3>neon</h3>
 <details><summary>RUN.md（運営の実施記録）</summary><pre style="white-space:pre-wrap;word-break:break-word"># RUN — task-06-trap-data-audit / neon
 
 - 実施日: 2026-11-20（12:14:23–12:24:38 JST）
@@ -463,7 +393,22 @@ footer{max-width:1180px;margin:0 auto;padding:0 20px 40px;color:var(--sub);font-
    - 全売上エクスポートファイルに「税抜金額」「消費税率（8%/10%）」「消費税額」「税込金額」を列として保持し、月次報告は**税抜統一**を原則とする。
    - POSデータにトランザクションID（レシート番号）を付与し、重複取り込みをキー制約で防止する。
 </pre></details>
-<h3>carbon</h3>
+</details></section><section class="card panel" data-model="carbon" id="carbon">
+<h3 style='margin-top:0'>Carbon（Gemini 4 Carbon / agy・high） <span class="badge b-ok">充足（合計に丸め差）</span></h3>
+<table class='meta'>
+<tr><td>判定</td><td>充足（合計に丸め差）</td></tr>
+<tr><td>実装時間</td><td>17:17</td></tr>
+<tr><td>トークン（入力/出力）</td><td>取得不可</td></tr>
+<tr><td>コスト推定</td><td>取得不可</td></tr>
+<tr><td>終了状態</td><td>自然終了</td></tr>
+<tr><td>実施日時</td><td>2026-11-20（12:17:08–12:34:25 JST）</td></tr>
+</table>
+<p><a class='btn' href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-06-trap-data-audit/carbon/report.md' target='_blank' rel='noopener'>レポート：report.md</a></p>
+<p class='klabel'>検証結果（RUN.md より）</p>
+<div class='verify'>【検証結果】
+報告ファイル report.md（税込も併記）。税抜合計は全モデル共通の 5,169,100 / 5,706,150（丸め差 +79/+82円）。駅前店の半減は表記ゆれが原因と明示し仮説を棄却。罠6種すべて検出。</div>
+<p><a href='https://github.com/sean-sunagaku/prac-bench/tree/main/results/2026-11-20/task-06-trap-data-audit/carbon' target='_blank' rel='noopener'>このモデルの全ファイルを GitHub で見る</a> ／ <a href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-06-trap-data-audit/carbon/RUN.md' target='_blank' rel='noopener'>RUN.md</a></p>
+<details><summary>テキスト成果物（全文）</summary><h3>carbon</h3>
 <details><summary>RUN.md（運営の実施記録）</summary><pre style="white-space:pre-wrap;word-break:break-word"># RUN — task-06-trap-data-audit / carbon
 
 - 実施日: 2026-11-20（12:17:08–12:34:25 JST）
@@ -824,7 +769,24 @@ footer{max-width:1180px;margin:0 auto;padding:0 20px 40px;color:var(--sub);font-
    - 卸売データは伝票番号単位で最新状態を集約するロジック（`取消` 伝票は元伝票ごと除外、`訂正` 伝票は `状態="訂正"` の行のみ採用）および税率マスタ（食品8%・雑貨10%）に基づく税抜／税込併記をシステム化すること。
    - ECデータは抽出または集計時に必ず **UTCからJST（+9時間）へ変換した上で月次締め** を行い、本番環境からテストアカウント・テスト商品（`テスト` / `99999`）を分離・除外すること。
 </pre></details>
-<h3>astra</h3>
+</details></section><section class="card panel" data-model="astra" id="astra">
+<h3 style='margin-top:0'>Astra（GPT-6.2 Astra / Codex） <span class="badge b-ok">充足（合計に丸め差）</span></h3>
+<table class='meta'>
+<tr><td>判定</td><td>充足（合計に丸め差）</td></tr>
+<tr><td>実装時間</td><td>5:07</td></tr>
+<tr><td>トークン（入力/出力）</td><td>4,404,203/46,764</td></tr>
+<tr><td>コスト推定</td><td>$4.18</td></tr>
+<tr><td>終了状態</td><td>自然終了</td></tr>
+<tr><td>実施日時</td><td>2026-11-20（12:09:07–12:14:14 JST）</td></tr>
+</table>
+<p class='klabel'>ドキュメント / データ</p>
+<p><a class='btn' href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-06-trap-data-audit/astra/outputs/2026-11-20-sales-audit/%E5%A3%B2%E4%B8%8A%E7%85%A7%E5%90%88%E6%98%8E%E7%B4%B0.xlsx' target='_blank' rel='noopener'>outputs/2026-11-20-sales-audit/売上照合明細.xlsx</a><a class='btn' href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-06-trap-data-audit/astra/outputs/2026-11-20-sales-audit/%E5%A3%B2%E4%B8%8A%E7%85%A7%E5%90%88%E6%98%8E%E7%B4%B0.xlsx' target='_blank' rel='noopener'>直接開く</a> <span class='fname'>78 KB</span></p>
+<p><a class='btn' href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-06-trap-data-audit/astra/%E5%A3%B2%E4%B8%8A%E7%85%A7%E5%90%88%E5%A0%B1%E5%91%8A%E6%9B%B8.md' target='_blank' rel='noopener'>レポート：売上照合報告書.md</a></p>
+<p class='klabel'>検証結果（RUN.md より）</p>
+<div class='verify'>【検証結果】
+報告ファイル 売上照合報告書.md。税抜合計は共通値（丸め差 +79/+82円）。駅前店の減少は 7,650円（4.15%）にとどまると反証。罠6種すべて検出（税率の導出過程まで明示）。</div>
+<p><a href='https://github.com/sean-sunagaku/prac-bench/tree/main/results/2026-11-20/task-06-trap-data-audit/astra' target='_blank' rel='noopener'>このモデルの全ファイルを GitHub で見る</a> ／ <a href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-06-trap-data-audit/astra/RUN.md' target='_blank' rel='noopener'>RUN.md</a></p>
+<details><summary>テキスト成果物（全文）</summary><h3>astra</h3>
 <details><summary>RUN.md（運営の実施記録）</summary><pre style="white-space:pre-wrap;word-break:break-word"># RUN — task-06-trap-data-audit / astra
 
 - 実施日: 2026-11-20（12:09:07–12:14:14 JST）
@@ -1044,7 +1006,22 @@ POSはCP932（Windows-31J）で読み込み、スラッシュ区切り141行と�
 
 各原票の金額から求めた税抜・税込額を、別途「採用数量×同じ商品コードの卸税抜単価」で再計算した。計上449行すべてで日付、符号付き数量、税抜額、税込額が一致した。付表の「照合明細」には保留・除外を含む475行の原票位置、数量、金額、処理理由を、「月別集計」にはその明細を参照する集計式を載せた。[照合明細（Excel）](outputs/2026-11-20-sales-audit/売上照合明細.xlsx)
 </pre></details>
-<h3>sol</h3>
+</details></section><section class="card panel" data-model="sol" id="sol">
+<h3 style='margin-top:0'>Sol（GPT-6.2 Sol / Codex） <span class="badge b-ok">充足（合計に丸め差）</span></h3>
+<table class='meta'>
+<tr><td>判定</td><td>充足（合計に丸め差）</td></tr>
+<tr><td>実装時間</td><td>3:06</td></tr>
+<tr><td>トークン（入力/出力）</td><td>1,349,895/30,180</td></tr>
+<tr><td>コスト推定</td><td>$2.11</td></tr>
+<tr><td>終了状態</td><td>自然終了</td></tr>
+<tr><td>実施日時</td><td>2026-11-20（12:13:53–12:16:59 JST）</td></tr>
+</table>
+<p><a class='btn' href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-06-trap-data-audit/sol/sales_audit_report.md' target='_blank' rel='noopener'>レポート：sales_audit_report.md</a></p>
+<p class='klabel'>検証結果（RUN.md より）</p>
+<div class='verify'>【検証結果】
+報告ファイル sales_audit_report.md。税抜合計は共通値（丸め差 +79/+82円）。駅前店主因説は支持されないと結論。罠6種すべて検出、除外・保留26行の内訳まで明示。</div>
+<p><a href='https://github.com/sean-sunagaku/prac-bench/tree/main/results/2026-11-20/task-06-trap-data-audit/sol' target='_blank' rel='noopener'>このモデルの全ファイルを GitHub で見る</a> ／ <a href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-06-trap-data-audit/sol/RUN.md' target='_blank' rel='noopener'>RUN.md</a></p>
+<details><summary>テキスト成果物（全文）</summary><h3>sol</h3>
 <details><summary>RUN.md（運営の実施記録）</summary><pre style="white-space:pre-wrap;word-break:break-word"># RUN — task-06-trap-data-audit / sol
 
 - 実施日: 2026-11-20（12:13:53–12:16:59 JST）
@@ -1290,7 +1267,33 @@ ECの注文IDは141件すべて一意だった。UTC表記で月を切ると、�
 
 別方式でも原票を読み直し、月別・チャネル別の採用件数と税込・税抜の金額、駅前店の月次売上が一致することを確認した。
 </pre></details>
-<h3>opus</h3>
+</details></section><section class="card panel" data-model="opus" id="opus">
+<h3 style='margin-top:0'>Opus（Claude Code / Opus） <span class="badge b-ok">充足（合計に丸め差）</span></h3>
+<table class='meta'>
+<tr><td>判定</td><td>充足（合計に丸め差）</td></tr>
+<tr><td>実装時間</td><td>25:24</td></tr>
+<tr><td>トークン（入力/出力）</td><td>17,599,479/387,138</td></tr>
+<tr><td>コスト推定</td><td>$66.12</td></tr>
+<tr><td>終了状態</td><td>自然終了</td></tr>
+<tr><td>実施日時</td><td>2026-11-20（12:24:09–12:49:33 JST）</td></tr>
+</table>
+<p class='klabel'>画像</p><div class='gal'>
+<figure><a href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-06-trap-data-audit/opus/figures/fig1_gap_breakdown.svg' target='_blank' rel='noopener'><img loading='lazy' src='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-06-trap-data-audit/opus/figures/fig1_gap_breakdown.svg' alt='figures/fig1_gap_breakdown.svg'></a><figcaption>figures/fig1_gap_breakdown.svg</figcaption></figure>
+<figure><a href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-06-trap-data-audit/opus/figures/fig2_ekimae_store_names.svg' target='_blank' rel='noopener'><img loading='lazy' src='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-06-trap-data-audit/opus/figures/fig2_ekimae_store_names.svg' alt='figures/fig2_ekimae_store_names.svg'></a><figcaption>figures/fig2_ekimae_store_names.svg</figcaption></figure>
+</div>
+<p class='klabel'>ドキュメント / データ</p>
+<p><a class='btn' href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-06-trap-data-audit/opus/output/anomalies.csv' target='_blank' rel='noopener'>output/anomalies.csv</a><a class='btn' href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-06-trap-data-audit/opus/output/anomalies.csv' target='_blank' rel='noopener'>直接開く</a> <span class='fname'>14 KB</span></p>
+<p><a class='btn' href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-06-trap-data-audit/opus/output/bridge.csv' target='_blank' rel='noopener'>output/bridge.csv</a><a class='btn' href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-06-trap-data-audit/opus/output/bridge.csv' target='_blank' rel='noopener'>直接開く</a> <span class='fname'>1 KB</span></p>
+<p><a class='btn' href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-06-trap-data-audit/opus/output/monthly_by_channel.csv' target='_blank' rel='noopener'>output/monthly_by_channel.csv</a><a class='btn' href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-06-trap-data-audit/opus/output/monthly_by_channel.csv' target='_blank' rel='noopener'>直接開く</a> <span class='fname'>0 KB</span></p>
+<p><a class='btn' href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-06-trap-data-audit/opus/output/pos_by_store.csv' target='_blank' rel='noopener'>output/pos_by_store.csv</a><a class='btn' href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-06-trap-data-audit/opus/output/pos_by_store.csv' target='_blank' rel='noopener'>直接開く</a> <span class='fname'>0 KB</span></p>
+<p><a class='btn' href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-06-trap-data-audit/opus/output/pos_by_store_raw_names.csv' target='_blank' rel='noopener'>output/pos_by_store_raw_names.csv</a><a class='btn' href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-06-trap-data-audit/opus/output/pos_by_store_raw_names.csv' target='_blank' rel='noopener'>直接開く</a> <span class='fname'>0 KB</span></p>
+<p><a class='btn' href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-06-trap-data-audit/opus/output/records_all_flagged.csv' target='_blank' rel='noopener'>output/records_all_flagged.csv</a><a class='btn' href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-06-trap-data-audit/opus/output/records_all_flagged.csv' target='_blank' rel='noopener'>直接開く</a> <span class='fname'>82 KB</span></p>
+<p><a class='btn' href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-06-trap-data-audit/opus/report.md' target='_blank' rel='noopener'>レポート：report.md</a></p>
+<p class='klabel'>検証結果（RUN.md より）</p>
+<div class='verify'>【検証結果】
+報告ファイル report.md（税込併記、分析コードと図表付き）。税抜合計は共通値（丸め差 +79/+82円）。仮説はデータで支持されないと反証。罠6種すべて検出。</div>
+<p><a href='https://github.com/sean-sunagaku/prac-bench/tree/main/results/2026-11-20/task-06-trap-data-audit/opus' target='_blank' rel='noopener'>このモデルの全ファイルを GitHub で見る</a> ／ <a href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-06-trap-data-audit/opus/RUN.md' target='_blank' rel='noopener'>RUN.md</a></p>
+<details><summary>テキスト成果物（全文）</summary><h3>opus</h3>
 <details><summary>RUN.md（運営の実施記録）</summary><pre style="white-space:pre-wrap;word-break:break-word"># RUN — task-06-trap-data-audit / opus
 
 - 実施日: 2026-11-20（12:24:09–12:49:33 JST）
@@ -1799,5 +1802,32 @@ python3 -I analysis/charts.py output/summary.json figures   # 図の作成
 | `analysis/charts.py` | 図を作るスクリプト |
 | `analysis/xlsx_dump.py` | Excelの中身をセルの型つきで確認するスクリプト |
 </pre></details>
-</section>
+</section></details></section></div></main><footer>Prac-Bench 実施結果レポート（2026-11-20）／ 数値・判定・所見の出典：リポジトリ内 results/2026-11-20/comparison.md および各 RUN.md</footer>
+
+<script>
+(function(){
+  var MODELS = ["neon","carbon","astra","sol","opus"];
+  var panels = Array.prototype.slice.call(document.querySelectorAll(".panel"));
+  var wrap = document.getElementById("panels");
+  var btns = Array.prototype.slice.call(document.querySelectorAll(".controls button"));
+  function show(mode, model){
+    btns.forEach(function(b){ b.classList.toggle("on", b.dataset.mode===mode && (mode==="all" || b.dataset.model===model)); });
+    if(mode==="all"){ wrap.className="panels compare"; panels.forEach(function(p){ p.classList.remove("active"); }); }
+    else { wrap.className="panels single"; panels.forEach(function(p){ p.classList.toggle("active", p.dataset.model===model); }); }
+    try{ history.replaceState(null,"", mode!=="all" ? "#"+model : "#all"); }catch(e){}
+  }
+  btns.forEach(function(b){ b.addEventListener("click", function(){ show(b.dataset.mode, b.dataset.model); }); });
+  document.addEventListener("keydown", function(e){
+    if(wrap.className.indexOf("single")<0) return;
+    var cur = -1;
+    panels.forEach(function(p,i){ if(p.classList.contains("active")) cur=i; });
+    if(e.key==="ArrowRight" && cur>=0 && cur<panels.length-1) show("one", panels[cur+1].dataset.model);
+    if(e.key==="ArrowLeft" && cur>0) show("one", panels[cur-1].dataset.model);
+  });
+  var h = (location.hash||"").replace("#","");
+  if(MODELS.indexOf(h)>=0) show("one", h);
+  else if(window.innerWidth>=1150) show("all");
+  else show("one", MODELS[0]);
+})();
+</script>
 </body></html>

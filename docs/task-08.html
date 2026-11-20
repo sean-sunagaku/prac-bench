@@ -25,20 +25,29 @@ iframe.pdf{width:100%;height:460px;border:1px solid var(--line);border-radius:8p
 .klabel{font-weight:700;margin:14px 0 4px;font-size:14.5px}
 footer{max-width:1180px;margin:0 auto;padding:0 20px 40px;color:var(--sub);font-size:13px}
 .nav{font-size:14px;margin:10px 0}.fname{font-size:12.5px;color:var(--sub);word-break:break-all}
-</style></head><body>
+</style>
+<style>
+header{padding-top:14px}h1{font-size:22px}
+.controls{position:sticky;top:0;z-index:60;background:var(--bg);padding:10px 0;border-bottom:1px solid var(--line);display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.controls .lbl{font-size:13px;color:var(--sub);margin-right:2px}
+.controls button{background:var(--card);color:var(--tx);border:1px solid var(--line);border-radius:99px;padding:6px 14px;font-size:13.5px;cursor:pointer}
+.controls button.on{border-color:var(--acc);color:var(--acc);font-weight:700}
+.panels{display:grid;gap:14px;margin-top:14px}
+.panels.compare{grid-template-columns:repeat(5,minmax(300px,1fr));overflow-x:auto;padding-bottom:6px}
+.panels.single{grid-template-columns:minmax(0,1fr)}
+.panel{margin:0;max-height:calc(100dvh - 178px);overflow-y:auto;overscroll-behavior:contain}
+.panels.single .panel{display:none}
+.panels.single .panel.active{display:block}
+.panel iframe.preview{height:min(48vh,500px)}
+.panel .gal{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
+main{padding-bottom:16px}
+</style>
+</head><body>
 <header><p class='nav'><a href='index.html'>← 結果トップへ</a></p>
 <h1>枠8：自由制作「最強の音楽とMV」</h1>
 <p class='sub'>音楽とMV（ミュージックビデオ）の自由制作。当初は制約の多い音楽制作案が候補だったが、主催者の指定で「一文だけ渡し、条件を入れない」形に差し替えた。音声をモデル自身が合成してもよく、ジャンル・長さ・映像の作り方・形式はすべてモデルの判断に委ねる。「何を最強と考えるか」という解釈そのものの差を見る枠。</p>
 <p class='note'>運営の所見（comparison.md より）：neon・astra・opus が楽曲+MVまで完成（opus の楽曲が最長 208.6秒）。carbon は音声のみで MV 未レンダリング（README の自己申告と実物が不一致）。sol は音声完成後に MV 製作中で90分タイムアウト。</p>
-<p class='sub'><a href='https://github.com/sean-sunagaku/prac-bench/tree/main/results/2026-11-20/task-08-free-music-mv' target='_blank' rel='noopener'>この枠の全ファイル（GitHub）</a></p></header><main>
-<table><tr><th>モデル</th><th>判定</th><th>実装時間</th><th>トークン 入力/出力</th><th>コスト推定</th></tr>
-<tr><td><a href='#neon'>neon</a></td><td><span class="badge b-ok">充足</span></td><td>29:13</td><td>取得不可</td><td>取得不可</td></tr>
-<tr><td><a href='#carbon'>carbon</a></td><td><span class="badge b-part">部分（音声のみ）</span></td><td>30:05</td><td>取得不可</td><td>取得不可</td></tr>
-<tr><td><a href='#astra'>astra</a></td><td><span class="badge b-ok">充足</span></td><td>11:37</td><td>9,665,366/71,909</td><td>$7.70</td></tr>
-<tr><td><a href='#sol'>sol</a></td><td><span class="badge b-part">部分（音声のみ）</span></td><td>90:20</td><td>1,508,297/32,358</td><td>$2.13</td></tr>
-<tr><td><a href='#opus'>opus</a></td><td><span class="badge b-ok">充足</span></td><td>66:39</td><td>63,913,041/739,334</td><td>$166.02</td></tr>
-</table>
-<section class="card" id="neon">
+<p class='sub'><a href='https://github.com/sean-sunagaku/prac-bench/tree/main/results/2026-11-20/task-08-free-music-mv' target='_blank' rel='noopener'>この枠の全ファイル（GitHub）</a></p></header><main><div class="controls"><span class="lbl">モデル切替:</span><button data-mode="one" data-model="neon">Neon <span class='badge b-ok'>充足</span> 29:13</button><button data-mode="one" data-model="carbon">Carbon <span class='badge b-part'>部分（音声のみ）</span> 30:05</button><button data-mode="one" data-model="astra">Astra <span class='badge b-ok'>充足</span> 11:37</button><button data-mode="one" data-model="sol">Sol <span class='badge b-part'>部分（音声のみ）</span> 90:20</button><button data-mode="one" data-model="opus">Opus <span class='badge b-ok'>充足</span> 66:39</button><button data-mode="all">横並びで比較</button></div><div class="panels" id="panels"><section class="card panel" data-model="neon" id="neon">
 <h3 style='margin-top:0'>Neon（Gemini 4 Neon / agy・xhigh） <span class="badge b-ok">充足</span></h3>
 <table class='meta'>
 <tr><td>判定</td><td>充足</td></tr>
@@ -65,123 +74,7 @@ footer{max-width:1180px;margin:0 auto;padding:0 20px 40px;color:var(--sub);font-
 【備考】
 試行3回。1回目（初回バッチ）の成果物は運営側アーカイブに退避、2回目は agy クォータ上限（429）で失敗、3回目（クォータ復旧後）が本記録。</div>
 <p><a href='https://github.com/sean-sunagaku/prac-bench/tree/main/results/2026-11-20/task-08-free-music-mv/neon' target='_blank' rel='noopener'>このモデルの全ファイルを GitHub で見る</a> ／ <a href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-08-free-music-mv/neon/RUN.md' target='_blank' rel='noopener'>RUN.md</a></p>
-</section>
-<section class="card" id="carbon">
-<h3 style='margin-top:0'>Carbon（Gemini 4 Carbon / agy・high） <span class="badge b-part">部分（音声のみ）</span></h3>
-<table class='meta'>
-<tr><td>判定</td><td>部分（音声のみ）</td></tr>
-<tr><td>実装時間</td><td>30:05</td></tr>
-<tr><td>トークン（入力/出力）</td><td>取得不可</td></tr>
-<tr><td>コスト推定</td><td>取得不可</td></tr>
-<tr><td>終了状態</td><td>agy の30分印刷タイムアウトで打ち切り（成果物は打ち切り時点のもの）</td></tr>
-<tr><td>実施日時</td><td>2026-11-20（16:17:10–16:47:15 JST）</td></tr>
-</table>
-<p class='klabel'>音声：singularity_bloom_master.m4a（511 KB）</p>
-<audio controls preload='none' src='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/carbon/singularity_bloom_master.m4a'></audio>
-<p class='klabel'>画像</p><div class='gal'>
-<figure><a href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/carbon/frames_preview/01_title_cathedral.png' target='_blank' rel='noopener'><img loading='lazy' src='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/carbon/frames_preview/01_title_cathedral.png' alt='frames_preview/01_title_cathedral.png'></a><figcaption>frames_preview/01_title_cathedral.png</figcaption></figure>
-<figure><a href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/carbon/frames_preview/02_cyber_tunnel_3d.png' target='_blank' rel='noopener'><img loading='lazy' src='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/carbon/frames_preview/02_cyber_tunnel_3d.png' alt='frames_preview/02_cyber_tunnel_3d.png'></a><figcaption>frames_preview/02_cyber_tunnel_3d.png</figcaption></figure>
-<figure><a href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/carbon/frames_preview/03_singularity_3d.png' target='_blank' rel='noopener'><img loading='lazy' src='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/carbon/frames_preview/03_singularity_3d.png' alt='frames_preview/03_singularity_3d.png'></a><figcaption>frames_preview/03_singularity_3d.png</figcaption></figure>
-<figure><a href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/carbon/frames_preview/04_silence_bloom.png' target='_blank' rel='noopener'><img loading='lazy' src='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/carbon/frames_preview/04_silence_bloom.png' alt='frames_preview/04_silence_bloom.png'></a><figcaption>frames_preview/04_silence_bloom.png</figcaption></figure>
-<figure><a href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/carbon/frames_preview/05_drop1_hypernova.png' target='_blank' rel='noopener'><img loading='lazy' src='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/carbon/frames_preview/05_drop1_hypernova.png' alt='frames_preview/05_drop1_hypernova.png'></a><figcaption>frames_preview/05_drop1_hypernova.png</figcaption></figure>
-<figure><a href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/carbon/frames_preview/06_split_montage.png' target='_blank' rel='noopener'><img loading='lazy' src='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/carbon/frames_preview/06_split_montage.png' alt='frames_preview/06_split_montage.png'></a><figcaption>frames_preview/06_split_montage.png</figcaption></figure>
-</div>
-<p class='klabel'>検証結果（RUN.md より）</p>
-<div class='verify'>【検証結果】
-音声のみ完成（146.0秒）。MV はフレームプレビュー8枚とレンダラー binary までで、mp4 は存在しない。なお README は MV ファイルを成果物として記載しているが実物がない（自己申告と実物の不一致）。
-【備考】
-試行3回。1回目（初回バッチ）の成果物は運営側アーカイブに退避、2回目は agy クォータ上限（429）で失敗、3回目（クォータ復旧後）が本記録。</div>
-<p><a href='https://github.com/sean-sunagaku/prac-bench/tree/main/results/2026-11-20/task-08-free-music-mv/carbon' target='_blank' rel='noopener'>このモデルの全ファイルを GitHub で見る</a> ／ <a href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-08-free-music-mv/carbon/RUN.md' target='_blank' rel='noopener'>RUN.md</a></p>
-</section>
-<section class="card" id="astra">
-<h3 style='margin-top:0'>Astra（GPT-6.2 Astra / Codex） <span class="badge b-ok">充足</span></h3>
-<table class='meta'>
-<tr><td>判定</td><td>充足</td></tr>
-<tr><td>実装時間</td><td>11:37</td></tr>
-<tr><td>トークン（入力/出力）</td><td>9,665,366/71,909</td></tr>
-<tr><td>コスト推定</td><td>$7.70</td></tr>
-<tr><td>終了状態</td><td>自然終了</td></tr>
-<tr><td>実施日時</td><td>2026-11-20（12:43:26–12:55:03 JST）</td></tr>
-</table>
-<p class='note'>MV完成版「海は上へ落ちる」（138MB）は GitHub Releases に原物のまま収録した。下のプレイヤーでそのまま再生できる。</p><video controls preload="metadata" src="https://github.com/sean-sunagaku/prac-bench/releases/download/media-2026-11-20/task-08-astra_mv.mp4" style="max-width:100%;width:720px"></video><p></p>
-<p class='klabel'>動画：public/footage/01-coast.mp4（10.5 MB）</p>
-<video controls preload='none' src='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/astra/public/footage/01-coast.mp4'></video>
-<p><a class='btn' href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/astra/public/footage/01-coast.mp4' target='_blank' rel='noopener'>動画を直接開く</a></p>
-<p class='klabel'>動画：public/footage/02-lens.mp4（3.4 MB）</p>
-<video controls preload='none' src='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/astra/public/footage/02-lens.mp4'></video>
-<p><a class='btn' href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/astra/public/footage/02-lens.mp4' target='_blank' rel='noopener'>動画を直接開く</a></p>
-<p class='klabel'>動画：public/footage/03-keeper.mp4（4.8 MB）</p>
-<video controls preload='none' src='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/astra/public/footage/03-keeper.mp4'></video>
-<p><a class='btn' href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/astra/public/footage/03-keeper.mp4' target='_blank' rel='noopener'>動画を直接開く</a></p>
-<p class='klabel'>音声：public/theme.wav（32.3 MB）</p>
-<audio controls preload='none' src='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/astra/public/theme.wav'></audio>
-<p class='klabel'>画像</p><div class='gal'>
-<figure><a href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/astra/artwork/balcony.png' target='_blank' rel='noopener'><img loading='lazy' src='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/astra/artwork/balcony.png' alt='artwork/balcony.png'></a><figcaption>artwork/balcony.png</figcaption></figure>
-<figure><a href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/astra/artwork/calf.png' target='_blank' rel='noopener'><img loading='lazy' src='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/astra/artwork/calf.png' alt='artwork/calf.png'></a><figcaption>artwork/calf.png</figcaption></figure>
-<figure><a href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/astra/artwork/coast.png' target='_blank' rel='noopener'><img loading='lazy' src='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/astra/artwork/coast.png' alt='artwork/coast.png'></a><figcaption>artwork/coast.png</figcaption></figure>
-<figure><a href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/astra/artwork/cup.png' target='_blank' rel='noopener'><img loading='lazy' src='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/astra/artwork/cup.png' alt='artwork/cup.png'></a><figcaption>artwork/cup.png</figcaption></figure>
-<figure><a href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/astra/artwork/dawn.png' target='_blank' rel='noopener'><img loading='lazy' src='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/astra/artwork/dawn.png' alt='artwork/dawn.png'></a><figcaption>artwork/dawn.png</figcaption></figure>
-<figure><a href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/astra/artwork/depth/balcony.png' target='_blank' rel='noopener'><img loading='lazy' src='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/astra/artwork/depth/balcony.png' alt='artwork/depth/balcony.png'></a><figcaption>artwork/depth/balcony.png</figcaption></figure>
-</div>
-<p class='klabel'>検証結果（RUN.md より）</p>
-<div class='verify'>【検証結果】
-完成。楽曲 112.0秒 + MV（1920×1080、112.0秒、字幕ストリーム付き）。素材クリップ約35本を使ったリリース一式。</div>
-<p><a href='https://github.com/sean-sunagaku/prac-bench/tree/main/results/2026-11-20/task-08-free-music-mv/astra' target='_blank' rel='noopener'>このモデルの全ファイルを GitHub で見る</a> ／ <a href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-08-free-music-mv/astra/RUN.md' target='_blank' rel='noopener'>RUN.md</a></p>
-</section>
-<section class="card" id="sol">
-<h3 style='margin-top:0'>Sol（GPT-6.2 Sol / Codex） <span class="badge b-part">部分（音声のみ）</span></h3>
-<table class='meta'>
-<tr><td>判定</td><td>部分（音声のみ）</td></tr>
-<tr><td>実装時間</td><td>90:20</td></tr>
-<tr><td>トークン（入力/出力）</td><td>1,508,297/32,358</td></tr>
-<tr><td>コスト推定</td><td>$2.13</td></tr>
-<tr><td>終了状態</td><td>90分タイムアウトで打ち切り</td></tr>
-<tr><td>実施日時</td><td>2026-11-20（12:48:26–14:18:46 JST）</td></tr>
-</table>
-<p class='klabel'>音声：.studio/review/audio-preview.wav（563 KB）</p>
-<audio controls preload='none' src='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/sol/.studio/review/audio-preview.wav'></audio>
-<p class='klabel'>画像</p><div class='gal'>
-<figure><a href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/sol/.studio/plates/after.png' target='_blank' rel='noopener'><img loading='lazy' src='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/sol/.studio/plates/after.png' alt='.studio/plates/after.png'></a><figcaption>.studio/plates/after.png</figcaption></figure>
-<figure><a href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/sol/.studio/plates/anchor.png' target='_blank' rel='noopener'><img loading='lazy' src='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/sol/.studio/plates/anchor.png' alt='.studio/plates/anchor.png'></a><figcaption>.studio/plates/anchor.png</figcaption></figure>
-<figure><a href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/sol/.studio/plates/arc.png' target='_blank' rel='noopener'><img loading='lazy' src='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/sol/.studio/plates/arc.png' alt='.studio/plates/arc.png'></a><figcaption>.studio/plates/arc.png</figcaption></figure>
-<figure><a href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/sol/.studio/plates/dawn.png' target='_blank' rel='noopener'><img loading='lazy' src='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/sol/.studio/plates/dawn.png' alt='.studio/plates/dawn.png'></a><figcaption>.studio/plates/dawn.png</figcaption></figure>
-<figure><a href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/sol/.studio/plates/deep.png' target='_blank' rel='noopener'><img loading='lazy' src='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/sol/.studio/plates/deep.png' alt='.studio/plates/deep.png'></a><figcaption>.studio/plates/deep.png</figcaption></figure>
-<figure><a href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/sol/.studio/plates/ember.png' target='_blank' rel='noopener'><img loading='lazy' src='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/sol/.studio/plates/ember.png' alt='.studio/plates/ember.png'></a><figcaption>.studio/plates/ember.png</figcaption></figure>
-</div>
-<p class='klabel'>検証結果（RUN.md より）</p>
-<div class='verify'>【検証結果】
-音声のみ完成（142.5秒）。MV レンダラー（Swift/Metal）を製作中に 90分タイムアウト到達し、動画は未完成。
-【備考】
-Codex の90分上限に到達（rc=2）。打ち切り時点の成果物を記録。</div>
-<p><a href='https://github.com/sean-sunagaku/prac-bench/tree/main/results/2026-11-20/task-08-free-music-mv/sol' target='_blank' rel='noopener'>このモデルの全ファイルを GitHub で見る</a> ／ <a href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-08-free-music-mv/sol/RUN.md' target='_blank' rel='noopener'>RUN.md</a></p>
-</section>
-<section class="card" id="opus">
-<h3 style='margin-top:0'>Opus（Claude Code / Opus） <span class="badge b-ok">充足</span></h3>
-<table class='meta'>
-<tr><td>判定</td><td>充足</td></tr>
-<tr><td>実装時間</td><td>66:39</td></tr>
-<tr><td>トークン（入力/出力）</td><td>63,913,041/739,334</td></tr>
-<tr><td>コスト推定</td><td>$166.02</td></tr>
-<tr><td>終了状態</td><td>自然終了</td></tr>
-<tr><td>実施日時</td><td>2026-11-20（12:54:11–14:00:50 JST）</td></tr>
-</table>
-<p class='note'>MV本編 QED_MV.mp4（143MB）は GitHub Releases に原物のまま収録した。下のプレイヤーでそのまま再生できる。</p><video controls preload="metadata" src="https://github.com/sean-sunagaku/prac-bench/releases/download/media-2026-11-20/QED_MV.mp4" style="max-width:100%;width:720px"></video><p></p>
-<p class='klabel'>音声：QED.flac（45.7 MB）</p>
-<audio controls preload='none' src='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/opus/QED.flac'></audio>
-<p class='klabel'>画像</p><div class='gal'>
-<figure><a href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/opus/docs/frames/contact_sheet.jpg' target='_blank' rel='noopener'><img loading='lazy' src='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/opus/docs/frames/contact_sheet.jpg' alt='docs/frames/contact_sheet.jpg'></a><figcaption>docs/frames/contact_sheet.jpg</figcaption></figure>
-<figure><a href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/opus/thumbnail.png' target='_blank' rel='noopener'><img loading='lazy' src='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/opus/thumbnail.png' alt='thumbnail.png'></a><figcaption>thumbnail.png</figcaption></figure>
-<figure><a href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/opus/docs/analysis.png' target='_blank' rel='noopener'><img loading='lazy' src='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/opus/docs/analysis.png' alt='docs/analysis.png'></a><figcaption>docs/analysis.png</figcaption></figure>
-</div>
-<p><a class='btn' href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-08-free-music-mv/opus/docs/asr_transcript.md' target='_blank' rel='noopener'>レポート：docs/asr_transcript.md</a></p>
-<p><a class='btn' href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-08-free-music-mv/opus/lyrics.md' target='_blank' rel='noopener'>レポート：lyrics.md</a></p>
-<p class='klabel'>検証結果（RUN.md より）</p>
-<div class='verify'>【検証結果】
-完成。楽曲 208.6秒（5件中最長、歌詞付き）+ MV（1920×1080、208.6秒）。合成・ボーカル・ミックスのソース一式付き。</div>
-<p><a href='https://github.com/sean-sunagaku/prac-bench/tree/main/results/2026-11-20/task-08-free-music-mv/opus' target='_blank' rel='noopener'>このモデルの全ファイルを GitHub で見る</a> ／ <a href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-08-free-music-mv/opus/RUN.md' target='_blank' rel='noopener'>RUN.md</a></p>
-</section>
-</main><footer>Prac-Bench 実施結果レポート（2026-11-20）／ 数値・判定・所見の出典：リポジトリ内 results/2026-11-20/comparison.md および各 RUN.md</footer><section><h2>テキスト成果物（全文）</h2><p>各モデルの文書系テキスト成果物と運営の実施記録（RUN.md）を全文収録する。コードやバイナリはリポジトリと outputs/ を参照。</p>
-<h3>neon</h3>
+<details><summary>テキスト成果物（全文）</summary><h3>neon</h3>
 <details><summary>RUN.md（運営の実施記録）</summary><pre style="white-space:pre-wrap;word-break:break-word"># RUN — task-08-free-music-mv / neon
 
 - 実施日: 2026-11-20（15:47:57–16:17:10 JST）
@@ -3903,7 +3796,34 @@ License: LGPL-2.1-or-later
     Lesser General Public License for more details.
     https://www.gnu.org/licenses/old-licenses/lgpl-2.1.html
 </pre></details>
-<h3>carbon</h3>
+</details><div class=klabel>音声</div><p>neon — orbital_rain_master.mp3</p><audio controls preload="metadata" src="outputs/task-08-free-music-mv/neon/orbital_rain_master.mp3" style="width:100%"></audio>
+</section><section class="card panel" data-model="carbon" id="carbon">
+<h3 style='margin-top:0'>Carbon（Gemini 4 Carbon / agy・high） <span class="badge b-part">部分（音声のみ）</span></h3>
+<table class='meta'>
+<tr><td>判定</td><td>部分（音声のみ）</td></tr>
+<tr><td>実装時間</td><td>30:05</td></tr>
+<tr><td>トークン（入力/出力）</td><td>取得不可</td></tr>
+<tr><td>コスト推定</td><td>取得不可</td></tr>
+<tr><td>終了状態</td><td>agy の30分印刷タイムアウトで打ち切り（成果物は打ち切り時点のもの）</td></tr>
+<tr><td>実施日時</td><td>2026-11-20（16:17:10–16:47:15 JST）</td></tr>
+</table>
+<p class='klabel'>音声：singularity_bloom_master.m4a（511 KB）</p>
+<audio controls preload='none' src='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/carbon/singularity_bloom_master.m4a'></audio>
+<p class='klabel'>画像</p><div class='gal'>
+<figure><a href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/carbon/frames_preview/01_title_cathedral.png' target='_blank' rel='noopener'><img loading='lazy' src='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/carbon/frames_preview/01_title_cathedral.png' alt='frames_preview/01_title_cathedral.png'></a><figcaption>frames_preview/01_title_cathedral.png</figcaption></figure>
+<figure><a href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/carbon/frames_preview/02_cyber_tunnel_3d.png' target='_blank' rel='noopener'><img loading='lazy' src='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/carbon/frames_preview/02_cyber_tunnel_3d.png' alt='frames_preview/02_cyber_tunnel_3d.png'></a><figcaption>frames_preview/02_cyber_tunnel_3d.png</figcaption></figure>
+<figure><a href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/carbon/frames_preview/03_singularity_3d.png' target='_blank' rel='noopener'><img loading='lazy' src='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/carbon/frames_preview/03_singularity_3d.png' alt='frames_preview/03_singularity_3d.png'></a><figcaption>frames_preview/03_singularity_3d.png</figcaption></figure>
+<figure><a href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/carbon/frames_preview/04_silence_bloom.png' target='_blank' rel='noopener'><img loading='lazy' src='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/carbon/frames_preview/04_silence_bloom.png' alt='frames_preview/04_silence_bloom.png'></a><figcaption>frames_preview/04_silence_bloom.png</figcaption></figure>
+<figure><a href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/carbon/frames_preview/05_drop1_hypernova.png' target='_blank' rel='noopener'><img loading='lazy' src='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/carbon/frames_preview/05_drop1_hypernova.png' alt='frames_preview/05_drop1_hypernova.png'></a><figcaption>frames_preview/05_drop1_hypernova.png</figcaption></figure>
+<figure><a href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/carbon/frames_preview/06_split_montage.png' target='_blank' rel='noopener'><img loading='lazy' src='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/carbon/frames_preview/06_split_montage.png' alt='frames_preview/06_split_montage.png'></a><figcaption>frames_preview/06_split_montage.png</figcaption></figure>
+</div>
+<p class='klabel'>検証結果（RUN.md より）</p>
+<div class='verify'>【検証結果】
+音声のみ完成（146.0秒）。MV はフレームプレビュー8枚とレンダラー binary までで、mp4 は存在しない。なお README は MV ファイルを成果物として記載しているが実物がない（自己申告と実物の不一致）。
+【備考】
+試行3回。1回目（初回バッチ）の成果物は運営側アーカイブに退避、2回目は agy クォータ上限（429）で失敗、3回目（クォータ復旧後）が本記録。</div>
+<p><a href='https://github.com/sean-sunagaku/prac-bench/tree/main/results/2026-11-20/task-08-free-music-mv/carbon' target='_blank' rel='noopener'>このモデルの全ファイルを GitHub で見る</a> ／ <a href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-08-free-music-mv/carbon/RUN.md' target='_blank' rel='noopener'>RUN.md</a></p>
+<details><summary>テキスト成果物（全文）</summary><h3>carbon</h3>
 <details><summary>RUN.md（運営の実施記録）</summary><pre style="white-space:pre-wrap;word-break:break-word"># RUN — task-08-free-music-mv / carbon
 
 - 実施日: 2026-11-20（16:17:10–16:47:15 JST）
@@ -4039,7 +3959,43 @@ swiftc -O src/mv_renderer.swift -framework Metal -framework CoreGraphics -framew
 ./build/mv_renderer
 ```
 </pre></details>
-<h3>astra</h3>
+</details><div class=klabel>音声</div><p>carbon — singularity_bloom_master.m4a</p><audio controls preload="metadata" src="outputs/task-08-free-music-mv/carbon/singularity_bloom_master.m4a" style="width:100%"></audio>
+<div class=klabel>音声</div><p>carbon — singularity_bloom_master.wav</p><audio controls preload="metadata" src="outputs/task-08-free-music-mv/carbon/singularity_bloom_master.wav" style="width:100%"></audio>
+</section><section class="card panel" data-model="astra" id="astra">
+<h3 style='margin-top:0'>Astra（GPT-6.2 Astra / Codex） <span class="badge b-ok">充足</span></h3>
+<table class='meta'>
+<tr><td>判定</td><td>充足</td></tr>
+<tr><td>実装時間</td><td>11:37</td></tr>
+<tr><td>トークン（入力/出力）</td><td>9,665,366/71,909</td></tr>
+<tr><td>コスト推定</td><td>$7.70</td></tr>
+<tr><td>終了状態</td><td>自然終了</td></tr>
+<tr><td>実施日時</td><td>2026-11-20（12:43:26–12:55:03 JST）</td></tr>
+</table>
+<p class='note'>MV完成版「海は上へ落ちる」（138MB）は GitHub Releases に原物のまま収録した。下のプレイヤーでそのまま再生できる。</p><video controls preload="metadata" src="https://github.com/sean-sunagaku/prac-bench/releases/download/media-2026-11-20/task-08-astra_mv.mp4" style="max-width:100%;width:720px"></video><p></p>
+<p class='klabel'>動画：public/footage/01-coast.mp4（10.5 MB）</p>
+<video controls preload='none' src='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/astra/public/footage/01-coast.mp4'></video>
+<p><a class='btn' href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/astra/public/footage/01-coast.mp4' target='_blank' rel='noopener'>動画を直接開く</a></p>
+<p class='klabel'>動画：public/footage/02-lens.mp4（3.4 MB）</p>
+<video controls preload='none' src='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/astra/public/footage/02-lens.mp4'></video>
+<p><a class='btn' href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/astra/public/footage/02-lens.mp4' target='_blank' rel='noopener'>動画を直接開く</a></p>
+<p class='klabel'>動画：public/footage/03-keeper.mp4（4.8 MB）</p>
+<video controls preload='none' src='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/astra/public/footage/03-keeper.mp4'></video>
+<p><a class='btn' href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/astra/public/footage/03-keeper.mp4' target='_blank' rel='noopener'>動画を直接開く</a></p>
+<p class='klabel'>音声：public/theme.wav（32.3 MB）</p>
+<audio controls preload='none' src='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/astra/public/theme.wav'></audio>
+<p class='klabel'>画像</p><div class='gal'>
+<figure><a href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/astra/artwork/balcony.png' target='_blank' rel='noopener'><img loading='lazy' src='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/astra/artwork/balcony.png' alt='artwork/balcony.png'></a><figcaption>artwork/balcony.png</figcaption></figure>
+<figure><a href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/astra/artwork/calf.png' target='_blank' rel='noopener'><img loading='lazy' src='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/astra/artwork/calf.png' alt='artwork/calf.png'></a><figcaption>artwork/calf.png</figcaption></figure>
+<figure><a href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/astra/artwork/coast.png' target='_blank' rel='noopener'><img loading='lazy' src='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/astra/artwork/coast.png' alt='artwork/coast.png'></a><figcaption>artwork/coast.png</figcaption></figure>
+<figure><a href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/astra/artwork/cup.png' target='_blank' rel='noopener'><img loading='lazy' src='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/astra/artwork/cup.png' alt='artwork/cup.png'></a><figcaption>artwork/cup.png</figcaption></figure>
+<figure><a href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/astra/artwork/dawn.png' target='_blank' rel='noopener'><img loading='lazy' src='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/astra/artwork/dawn.png' alt='artwork/dawn.png'></a><figcaption>artwork/dawn.png</figcaption></figure>
+<figure><a href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/astra/artwork/depth/balcony.png' target='_blank' rel='noopener'><img loading='lazy' src='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/astra/artwork/depth/balcony.png' alt='artwork/depth/balcony.png'></a><figcaption>artwork/depth/balcony.png</figcaption></figure>
+</div>
+<p class='klabel'>検証結果（RUN.md より）</p>
+<div class='verify'>【検証結果】
+完成。楽曲 112.0秒 + MV（1920×1080、112.0秒、字幕ストリーム付き）。素材クリップ約35本を使ったリリース一式。</div>
+<p><a href='https://github.com/sean-sunagaku/prac-bench/tree/main/results/2026-11-20/task-08-free-music-mv/astra' target='_blank' rel='noopener'>このモデルの全ファイルを GitHub で見る</a> ／ <a href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-08-free-music-mv/astra/RUN.md' target='_blank' rel='noopener'>RUN.md</a></p>
+<details><summary>テキスト成果物（全文）</summary><h3>astra</h3>
 <details><summary>RUN.md（運営の実施記録）</summary><pre style="white-space:pre-wrap;word-break:break-word"># RUN — task-08-free-music-mv / astra
 
 - 実施日: 2026-11-20（12:43:26–12:55:03 JST）
@@ -4132,7 +4088,34 @@ THE SEA FALLS UP
 </pre></details>
 <details><summary>production/art-calf.txt</summary><pre style="white-space:pre-wrap;word-break:break-word">One beautifully drawn young HUMPBACK WHALE CALF, full entire animal, isolated cutout on genuine transparent background, horizontal wide 16:9 asset for traditional Japanese painted animation. A juvenile calf distinct from an adult: a slightly larger rounder head relative to short plump body, slate blue-gray and dusty teal back with very few barnacles, softly ivory pleated throat and pale speckles, curious dark eye. Head points LEFT in a lively rising pose. Tail extends RIGHT to one clear, angled, anatomically accurate forked fluke; one long pectoral fin sweeps diagonally back and the other tilts toward the viewer. Beautiful gouache pigment texture and nuanced golden rim lighting from lower left, fine animation graphite contour lines. Camera side view seen a little from below, as if swimming up to its mother. Whole silhouette spans 84% canvas width, plenty of breathing room, all body parts and tail inside the canvas. No second whale, water, cloud, lettering, horizon, shadow, frame, or any background.
 </pre></details>
-<h3>sol</h3>
+</details><div class=klabel>音声</div><p>astra — 海は上へ落ちる.mp3</p><audio controls preload="metadata" src="outputs/task-08-free-music-mv/astra/海は上へ落ちる.mp3" style="width:100%"></audio>
+</section><section class="card panel" data-model="sol" id="sol">
+<h3 style='margin-top:0'>Sol（GPT-6.2 Sol / Codex） <span class="badge b-part">部分（音声のみ）</span></h3>
+<table class='meta'>
+<tr><td>判定</td><td>部分（音声のみ）</td></tr>
+<tr><td>実装時間</td><td>90:20</td></tr>
+<tr><td>トークン（入力/出力）</td><td>1,508,297/32,358</td></tr>
+<tr><td>コスト推定</td><td>$2.13</td></tr>
+<tr><td>終了状態</td><td>90分タイムアウトで打ち切り</td></tr>
+<tr><td>実施日時</td><td>2026-11-20（12:48:26–14:18:46 JST）</td></tr>
+</table>
+<p class='klabel'>音声：.studio/review/audio-preview.wav（563 KB）</p>
+<audio controls preload='none' src='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/sol/.studio/review/audio-preview.wav'></audio>
+<p class='klabel'>画像</p><div class='gal'>
+<figure><a href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/sol/.studio/plates/after.png' target='_blank' rel='noopener'><img loading='lazy' src='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/sol/.studio/plates/after.png' alt='.studio/plates/after.png'></a><figcaption>.studio/plates/after.png</figcaption></figure>
+<figure><a href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/sol/.studio/plates/anchor.png' target='_blank' rel='noopener'><img loading='lazy' src='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/sol/.studio/plates/anchor.png' alt='.studio/plates/anchor.png'></a><figcaption>.studio/plates/anchor.png</figcaption></figure>
+<figure><a href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/sol/.studio/plates/arc.png' target='_blank' rel='noopener'><img loading='lazy' src='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/sol/.studio/plates/arc.png' alt='.studio/plates/arc.png'></a><figcaption>.studio/plates/arc.png</figcaption></figure>
+<figure><a href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/sol/.studio/plates/dawn.png' target='_blank' rel='noopener'><img loading='lazy' src='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/sol/.studio/plates/dawn.png' alt='.studio/plates/dawn.png'></a><figcaption>.studio/plates/dawn.png</figcaption></figure>
+<figure><a href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/sol/.studio/plates/deep.png' target='_blank' rel='noopener'><img loading='lazy' src='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/sol/.studio/plates/deep.png' alt='.studio/plates/deep.png'></a><figcaption>.studio/plates/deep.png</figcaption></figure>
+<figure><a href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/sol/.studio/plates/ember.png' target='_blank' rel='noopener'><img loading='lazy' src='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/sol/.studio/plates/ember.png' alt='.studio/plates/ember.png'></a><figcaption>.studio/plates/ember.png</figcaption></figure>
+</div>
+<p class='klabel'>検証結果（RUN.md より）</p>
+<div class='verify'>【検証結果】
+音声のみ完成（142.5秒）。MV レンダラー（Swift/Metal）を製作中に 90分タイムアウト到達し、動画は未完成。
+【備考】
+Codex の90分上限に到達（rc=2）。打ち切り時点の成果物を記録。</div>
+<p><a href='https://github.com/sean-sunagaku/prac-bench/tree/main/results/2026-11-20/task-08-free-music-mv/sol' target='_blank' rel='noopener'>このモデルの全ファイルを GitHub で見る</a> ／ <a href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-08-free-music-mv/sol/RUN.md' target='_blank' rel='noopener'>RUN.md</a></p>
+<details><summary>テキスト成果物（全文）</summary><h3>sol</h3>
 <details><summary>RUN.md（運営の実施記録）</summary><pre style="white-space:pre-wrap;word-break:break-word"># RUN — task-08-free-music-mv / sol
 
 - 実施日: 2026-11-20（12:48:26–14:18:46 JST）
@@ -7845,7 +7828,32 @@ License: LGPL-2.1-or-later
     Lesser General Public License for more details.
     https://www.gnu.org/licenses/old-licenses/lgpl-2.1.html
 </pre></details>
-<h3>opus</h3>
+</details><div class=klabel>音声</div><p>sol — 海が朝を思い出す.wav</p><audio controls preload="metadata" src="outputs/task-08-free-music-mv/sol/海が朝を思い出す.wav" style="width:100%"></audio>
+</section><section class="card panel" data-model="opus" id="opus">
+<h3 style='margin-top:0'>Opus（Claude Code / Opus） <span class="badge b-ok">充足</span></h3>
+<table class='meta'>
+<tr><td>判定</td><td>充足</td></tr>
+<tr><td>実装時間</td><td>66:39</td></tr>
+<tr><td>トークン（入力/出力）</td><td>63,913,041/739,334</td></tr>
+<tr><td>コスト推定</td><td>$166.02</td></tr>
+<tr><td>終了状態</td><td>自然終了</td></tr>
+<tr><td>実施日時</td><td>2026-11-20（12:54:11–14:00:50 JST）</td></tr>
+</table>
+<p class='note'>MV本編 QED_MV.mp4（143MB）は GitHub Releases に原物のまま収録した。下のプレイヤーでそのまま再生できる。</p><video controls preload="metadata" src="https://github.com/sean-sunagaku/prac-bench/releases/download/media-2026-11-20/QED_MV.mp4" style="max-width:100%;width:720px"></video><p></p>
+<p class='klabel'>音声：QED.flac（45.7 MB）</p>
+<audio controls preload='none' src='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/opus/QED.flac'></audio>
+<p class='klabel'>画像</p><div class='gal'>
+<figure><a href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/opus/docs/frames/contact_sheet.jpg' target='_blank' rel='noopener'><img loading='lazy' src='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/opus/docs/frames/contact_sheet.jpg' alt='docs/frames/contact_sheet.jpg'></a><figcaption>docs/frames/contact_sheet.jpg</figcaption></figure>
+<figure><a href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/opus/thumbnail.png' target='_blank' rel='noopener'><img loading='lazy' src='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/opus/thumbnail.png' alt='thumbnail.png'></a><figcaption>thumbnail.png</figcaption></figure>
+<figure><a href='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/opus/docs/analysis.png' target='_blank' rel='noopener'><img loading='lazy' src='https://raw.githubusercontent.com/sean-sunagaku/prac-bench/main/results/2026-11-20/task-08-free-music-mv/opus/docs/analysis.png' alt='docs/analysis.png'></a><figcaption>docs/analysis.png</figcaption></figure>
+</div>
+<p><a class='btn' href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-08-free-music-mv/opus/docs/asr_transcript.md' target='_blank' rel='noopener'>レポート：docs/asr_transcript.md</a></p>
+<p><a class='btn' href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-08-free-music-mv/opus/lyrics.md' target='_blank' rel='noopener'>レポート：lyrics.md</a></p>
+<p class='klabel'>検証結果（RUN.md より）</p>
+<div class='verify'>【検証結果】
+完成。楽曲 208.6秒（5件中最長、歌詞付き）+ MV（1920×1080、208.6秒）。合成・ボーカル・ミックスのソース一式付き。</div>
+<p><a href='https://github.com/sean-sunagaku/prac-bench/tree/main/results/2026-11-20/task-08-free-music-mv/opus' target='_blank' rel='noopener'>このモデルの全ファイルを GitHub で見る</a> ／ <a href='https://github.com/sean-sunagaku/prac-bench/blob/main/results/2026-11-20/task-08-free-music-mv/opus/RUN.md' target='_blank' rel='noopener'>RUN.md</a></p>
+<details><summary>テキスト成果物（全文）</summary><h3>opus</h3>
 <details><summary>RUN.md（運営の実施記録）</summary><pre style="white-space:pre-wrap;word-break:break-word"># RUN — task-08-free-music-mv / opus
 
 - 実施日: 2026-11-20（12:54:11–14:00:50 JST）
@@ -8039,12 +8047,34 @@ Q.E.D.
 - 対策: 歌の帯域だけ伴奏を下げるダイナミックEQ、ドラムバスの 2kHz を整理、合唱・ハモリ・ダブルのレベルと 3kHz を調整
 - 最終: ほぼ全行が歌詞どおり（同音異義の「照明／証明」などを除く）
 </pre></details>
-</section>
-<section><h2>音声（そのまま再生）</h2><p>neon — orbital_rain_master.mp3</p><audio controls preload="metadata" src="outputs/task-08-free-music-mv/neon/orbital_rain_master.mp3" style="width:100%"></audio>
-<p>carbon — singularity_bloom_master.m4a</p><audio controls preload="metadata" src="outputs/task-08-free-music-mv/carbon/singularity_bloom_master.m4a" style="width:100%"></audio>
-<p>carbon — singularity_bloom_master.wav</p><audio controls preload="metadata" src="outputs/task-08-free-music-mv/carbon/singularity_bloom_master.wav" style="width:100%"></audio>
-<p>astra — 海は上へ落ちる.mp3</p><audio controls preload="metadata" src="outputs/task-08-free-music-mv/astra/海は上へ落ちる.mp3" style="width:100%"></audio>
-<p>sol — 海が朝を思い出す.wav</p><audio controls preload="metadata" src="outputs/task-08-free-music-mv/sol/海が朝を思い出す.wav" style="width:100%"></audio>
-<p>opus — QED.flac</p><audio controls preload="metadata" src="outputs/task-08-free-music-mv/opus/QED.flac" style="width:100%"></audio>
-</section>
+</section></details><div class=klabel>音声</div><p>opus — QED.flac</p><audio controls preload="metadata" src="outputs/task-08-free-music-mv/opus/QED.flac" style="width:100%"></audio>
+</section></section></div></main><footer>Prac-Bench 実施結果レポート（2026-11-20）／ 数値・判定・所見の出典：リポジトリ内 results/2026-11-20/comparison.md および各 RUN.md</footer>
+
+
+<script>
+(function(){
+  var MODELS = ["neon","carbon","astra","sol","opus"];
+  var panels = Array.prototype.slice.call(document.querySelectorAll(".panel"));
+  var wrap = document.getElementById("panels");
+  var btns = Array.prototype.slice.call(document.querySelectorAll(".controls button"));
+  function show(mode, model){
+    btns.forEach(function(b){ b.classList.toggle("on", b.dataset.mode===mode && (mode==="all" || b.dataset.model===model)); });
+    if(mode==="all"){ wrap.className="panels compare"; panels.forEach(function(p){ p.classList.remove("active"); }); }
+    else { wrap.className="panels single"; panels.forEach(function(p){ p.classList.toggle("active", p.dataset.model===model); }); }
+    try{ history.replaceState(null,"", mode!=="all" ? "#"+model : "#all"); }catch(e){}
+  }
+  btns.forEach(function(b){ b.addEventListener("click", function(){ show(b.dataset.mode, b.dataset.model); }); });
+  document.addEventListener("keydown", function(e){
+    if(wrap.className.indexOf("single")<0) return;
+    var cur = -1;
+    panels.forEach(function(p,i){ if(p.classList.contains("active")) cur=i; });
+    if(e.key==="ArrowRight" && cur>=0 && cur<panels.length-1) show("one", panels[cur+1].dataset.model);
+    if(e.key==="ArrowLeft" && cur>0) show("one", panels[cur-1].dataset.model);
+  });
+  var h = (location.hash||"").replace("#","");
+  if(MODELS.indexOf(h)>=0) show("one", h);
+  else if(window.innerWidth>=1150) show("all");
+  else show("one", MODELS[0]);
+})();
+</script>
 </body></html>
